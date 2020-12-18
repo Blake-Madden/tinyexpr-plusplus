@@ -1,120 +1,111 @@
-[![Build Status](https://travis-ci.org/codeplea/tinyexpr.svg?branch=master)](https://travis-ci.org/codeplea/tinyexpr)
-
-
 <img alt="TinyExpr logo" src="https://codeplea.com/public/content/tinyexpr_logo.png" align="right"/>
 
-# TinyExpr
+# TinyExpr++
 
-TinyExpr is a very small recursive descent parser and evaluation engine for
+TinyExpr++ is a C++ version of the TinyExpr library.
+
+TinyExpr++ is a very small recursive descent parser and evaluation engine for
 math expressions. It's handy when you want to add the ability to evaluation
 math expressions at runtime without adding a bunch of cruft to you project.
 
-In addition to the standard math operators and precedence, TinyExpr also supports
+In addition to the standard math operators and precedence, TinyExpr++ also supports
 the standard C math functions and runtime binding of variables.
 
 ## Features
 
-- **C99 with no dependencies**.
+- **C++17 with no dependencies**.
 - Single source file and header file.
 - Simple and fast.
 - Implements standard operators precedence.
 - Exposes standard C math functions (sin, sqrt, ln, etc.).
 - Can add custom functions and variables easily.
 - Can bind variables at eval-time.
+- Can support non-US formulas (e.g., "pow(2,2; 2)" instead of "pow(2.2, 2)").
 - Released under the zlib license - free for nearly any use.
 - Easy to use and integrate with your code
-- Thread-safe, provided that your *malloc* is.
+- Thread-safe, parser is in a self-contained object.
 
 ## Building
 
-TinyExpr is self-contained in two files: `tinyexpr.c` and `tinyexpr.h`. To use
-TinyExpr, simply add those two files to your project.
+TinyExpr++ is self-contained in two files: `tinyexpr.cpp` and `tinyexpr.h`. To use
+TinyExpr++, simply add those two files to your project.
 
 ## Short Example
 
 Here is a minimal example to evaluate an expression at runtime.
 
-```C
+```cpp
     #include "tinyexpr.h"
-    printf("%f\n", te_interp("5*5", 0)); /* Prints 25. */
+    te_parser tep;
+    const char* c = "sqrt(5^2+7^2+11^2+(8-2)^2)";
+    const double r = tep.interpret("sqrt(5^2+7^2+11^2+(8-2)^2)");
+    printf("The expression:\n\t%s\nevaluates to:\n\t%f\n", c, r);
+    // prints 15.198684
 ```
 
 
 ## Usage
 
-TinyExpr defines only four functions:
+TinyExpr++'s te_parser class defines these functions:
 
-```C
-    double te_interp(const char *expression, int *error);
-    te_expr *te_compile(const char *expression, const te_variable *variables, int var_count, int *error);
-    double te_eval(const te_expr *expr);
-    void te_free(te_expr *expr);
+```cpp
+    double interpret(const char* expression);
+    double get_result();
+    bool success();
+    int get_last_error_position();
+    set_vars(const std::vector<te_variable>& vars);
+    std::vector<te_variable>& get_vars();
+    get_decimal_separator();
+    get_list_separator();
 ```
 
-## te_interp
-```C
-    double te_interp(const char *expression, int *error);
-```
+`interpret()` takes an expression and immediately returns the result of it. If there
+is a parse error, it returns NaN.
 
-`te_interp()` takes an expression and immediately returns the result of it. If there
-is a parse error, `te_interp()` returns NaN.
+`get_result()` can be called anytime afterwards to retrieve the result from `interpret()`.
 
-If the `error` pointer argument is not 0, then `te_interp()` will set `*error` to the position
-of the parse error on failure, and set `*error` to 0 on success.
+`success()` can be called to see if the previous call `interpret()` succeeded or not.
+
+If the parse failed, calling `get_last_error_position()` will return the 0-based index of where in the expression the parse failed.
 
 **example usage:**
 
-```C
-    int error;
+```cpp
+    te_parser tep;
 
-    double a = te_interp("(5+5)", 0); /* Returns 10. */
-    double b = te_interp("(5+5)", &error); /* Returns 10, error is set to 0. */
-    double c = te_interp("(5+5", &error); /* Returns NaN, error is set to 4. */
+    double a = tep.interpret("(5+5)"); /* Returns 10. */
+    double b = tep.interpret("(5+5)"); /* Returns 10, error is set to -1 (i.e., no error). */
+    double c = tep.interpret("(5+5");  /* Returns NaN, error is set to 3. */
 ```
 
-## te_compile, te_eval, te_free
-```C
-    te_expr *te_compile(const char *expression, const te_variable *lookup, int lookup_len, int *error);
-    double te_eval(const te_expr *n);
-    void te_free(te_expr *n);
-```
+Give `set_vars()` a list of constants, bound variables, and function pointers.
 
-Give `te_compile()` an expression with unbound variables and a list of
-variable names and pointers. `te_compile()` will return a `te_expr*` which can
-be evaluated later using `te_eval()`. On failure, `te_compile()` will return 0
-and optionally set the passed in `*error` to the location of the parse error.
+`interpret()` will then evaluate expressions using these variables and functions.
 
-You may also compile expressions without variables by passing `te_compile()`'s second
-and third arguments as 0.
-
-Give `te_eval()` a `te_expr*` from `te_compile()`. `te_eval()` will evaluate the expression
-using the current variable values.
-
-After you're finished, make sure to call `te_free()`.
 
 **example usage:**
 
-```C
-    double x, y;
-    /* Store variable names and pointers. */
-    te_variable vars[] = {{"x", &x}, {"y", &y}};
+```cpp
+    #include "tinyexpr.h"
+    #include <stdio.h>
 
-    int err;
-    /* Compile the expression with variables. */
-    te_expr *expr = te_compile("sqrt(x^2+y^2)", vars, 2, &err);
+    double x{0}, y{0};
+    // Store variable names and pointers.
+    te_parser tep;
+    tep.set_vars({{"x", &x}, {"y", &y}});
 
-    if (expr) {
+    // Compile the expression with variables.
+    auot result = tep.interpret("sqrt(x^2+y^2)");
+
+    if (tep.success()) {
         x = 3; y = 4;
-        const double h1 = te_eval(expr); /* Returns 5. */
+        const double h1 = tep.interpret(); /*Will use the previously used expression, returns 5. */
 
         x = 5; y = 12;
-        const double h2 = te_eval(expr); /* Returns 13. */
-
-        te_free(expr);
+        const double h2 = tep.interpret(); /* Returns 13. */
     } else {
-        printf("Parse error at %d\n", err);
+        printf("Parse error at %d\n", tep.get_last_error_position());
     }
-
 ```
 
 ## Longer Example
@@ -122,7 +113,7 @@ After you're finished, make sure to call `te_free()`.
 Here is a complete example that will evaluate an expression passed in from the command
 line. It also does error checking and binds the variables `x` and `y` to *3* and *4*, respectively.
 
-```C
+```cpp
     #include "tinyexpr.h"
     #include <stdio.h>
 
@@ -138,23 +129,24 @@ line. It also does error checking and binds the variables `x` and `y` to *3* and
 
         /* This shows an example where the variables
          * x and y are bound at eval-time. */
-        double x, y;
-        te_variable vars[] = {{"x", &x}, {"y", &y}};
+        double x{0}, y{0};
+        // Store variable names and pointers.
+        te_parser tep;
+        tep.set_vars({{"x", &x}, {"y", &y}});
 
         /* This will compile the expression and check for errors. */
-        int err;
-        te_expr *n = te_compile(expression, vars, 2, &err);
+        auto result = tep.interpret(expression);
 
-        if (n) {
+        if (tep.success()) {
             /* The variables can be changed here, and eval can be called as many
              * times as you like. This is fairly efficient because the parsing has
              * already been done. */
             x = 3; y = 4;
-            const double r = te_eval(n); printf("Result:\n\t%f\n", r);
-            te_free(n);
+            const double r = tep.interpret();
+            printf("Result:\n\t%f\n", r);
         } else {
             /* Show the user where the error is at. */
-            printf("\t%*s^\nError near here", err-1, "");
+            printf("\t%*s^\nError near here",  tep.get_last_error_position(), "");
         }
 
         return 0;
@@ -180,66 +172,113 @@ This produces the output:
 
 ## Binding to Custom Functions
 
-TinyExpr can also call to custom functions implemented in C. Here is a short example:
+TinyExpr++ can also call to custom functions implemented in C. Here is a short example:
 
-```C
+```cpp
 double my_sum(double a, double b) {
     /* Example C function that adds two numbers together. */
     return a + b;
 }
 
-te_variable vars[] = {
+te_parser tep;
+tep.set_vars({
     {"mysum", my_sum, TE_FUNCTION2} /* TE_FUNCTION2 used because my_sum takes two arguments. */
-};
+};)
 
-te_expr *n = te_compile("mysum(5, 6)", vars, 1, 0);
-
+const double r = tep.interpret("mysum(5, 6)");
 ```
+
+## Non-US Formatted Formulas
+
+TinyExpr++ supports other locales and non-US formatted formulas. Here is an example:
+
+```cpp
+#include "tinyexpr.h"
+#include <cstdio>
+#include <locale>
+#include <clocale>
+
+int main(int argc, char *argv[])
+{
+    /* Set locale to German.
+       This string is platform dependent. The following works on Windows,
+       consult your platform's documentation for more details.*/
+    setlocale(LC_ALL, "de-DE");
+    std::locale::global(std::locale("de-DE"));
+
+    /* After setting your locale to German, functions like strtod() will fail
+       with values like "3.14" because it expects "3,14" instead.
+       To fix this, we will tell the parser to use "," as the decimal separator
+       and ";" as list argument separator.*/
+
+    const char *expression = "pow(2,2; 2)"; // instead of "pow(2.2, 2)"
+    printf("Evaluating:\n\t%s\n", expression);
+
+    te_parser tep;
+    tep.set_decimal_separator(',');
+    tep.set_list_separator(';');
+
+    /* This will compile the expression and check for errors. */
+    auto r = tep.interpret(expression);
+
+    if (tep.success()) {
+        const double r = tep.interpret(expression); printf("Result:\n\t%f\n", r);
+    } else {
+        /* Show the user where the error is at. */
+        printf("\t%*s^\nError near here", tep.get_last_error_position(), "");
+    }
+
+    return 0;
+}
+```
+
+This produces the output:
+
+    $ example4
+      Evaluating:
+        pow(2,2; 2)
+      Result:
+        4,840000
 
 
 ## How it works
 
-`te_compile()` uses a simple recursive descent parser to compile your
+`te_parser::interpret()` uses a simple recursive descent parser to compile your
 expression into a syntax tree. For example, the expression `"sin x + 1/4"`
 parses as:
 
 ![example syntax tree](doc/e1.png?raw=true)
 
-`te_compile()` also automatically prunes constant branches. In this example,
+`te_parser::interpret()` also automatically prunes constant branches. In this example,
 the compiled expression returned by `te_compile()` would become:
 
 ![example syntax tree](doc/e2.png?raw=true)
 
-`te_eval()` will automatically load in any variables by their pointer, and then evaluate
-and return the result of the expression.
-
-`te_free()` should always be called when you're done with the compiled expression.
-
 
 ## Speed
 
-
-TinyExpr is pretty fast compared to C when the expression is short, when the
+TinyExpr++ is fairly fast compared to C when the expression is short, when the
 expression does hard calculations (e.g. exponentiation), and when some of the
-work can be simplified by `te_compile()`. TinyExpr is slow compared to C when the
+work can be simplified by `interpret()`. TinyExpr++ is slow compared to C when the
 expression is long and involves only basic arithmetic.
 
 Here is some example performance numbers taken from the included
-**benchmark.c** program:
+**benchmark.cpp** program:
 
-| Expression | te_eval time | native C time | slowdown  |
+| Expression | interpret time | native C time | slowdown  |
 | :------------- |-------------:| -----:|----:|
-| sqrt(a^1.5+a^2.5) | 15,641 ms | 14,478 ms | 8% slower |
-| a+5 | 765 ms | 563 ms | 36% slower |
-| a+(5*2) | 765 ms | 563 ms | 36% slower |
-| (a+5)*2 | 1422 ms | 563 ms | 153% slower |
-| (1/(a+1)+2/(a+2)+3/(a+3)) | 5,516 ms | 1,266 ms | 336% slower |
+| sqrt(a^1.5+a^2.5) | 16,363 ms | 13,193 ms | 24.03% slower |
+| a+5 | 3,051 ms | 1,255 ms | 143.11% slower |
+| a+(5*2) | 1,754 ms | 524 ms | 234.73% slower |
+| (a+5)*2 | 3,225 ms | 518 ms | 522.59% slower |
+| (1/(a+1)+2/(a+2)+3/(a+3)) | 12,754 ms | 680 ms | 1,775.59%  slower |
 
+Note that TinyExpr++ is slower compared to TinyExpr because of additional type safety checks.
 
 
 ## Grammar
 
-TinyExpr parses the following grammar:
+TinyExpr++ parses the following grammar:
 
     <list>      =    <expr> {"," <expr>}
     <expr>      =    <term> {("+" | "-") <term>}
@@ -264,7 +303,7 @@ for *0.5*)
 
 ## Functions supported
 
-TinyExpr supports addition (+), subtraction/negation (-), multiplication (\*),
+TinyExpr++ supports addition (+), subtraction/negation (-), multiplication (\*),
 division (/), exponentiation (^) and modulus (%) with the normal operator
 precedence (the one exception being that exponentiation is evaluated
 left-to-right, but this can be changed - see below).
@@ -287,7 +326,7 @@ Also, the following constants are available:
 ## Compile-time options
 
 
-By default, TinyExpr does exponentiation from left to right. For example:
+By default, TinyExpr++ does exponentiation from left to right. For example:
 
 `a^b^c == (a^b)^c` and `-a^b == (-a)^b`
 
@@ -308,12 +347,9 @@ then you can define `TE_NAT_LOG`.
 
 ## Hints
 
-- All functions/types start with the letters *te*.
-
 - To allow constant optimization, surround constant expressions in parentheses.
   For example "x+(1+5)" will evaluate the "(1+5)" expression at compile time and
   compile the entire expression as "x+6", saving a runtime calculation. The
   parentheses are important, because TinyExpr will not change the order of
   evaluation. If you instead compiled "x+1+5" TinyExpr will insist that "1" is
   added to "x" first, and "5" is added the result second.
-

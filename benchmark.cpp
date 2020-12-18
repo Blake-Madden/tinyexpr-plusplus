@@ -29,19 +29,19 @@
 
 
 
-#define loops 10000
+constexpr auto loops = 10000;
 
 
 
-typedef double (*function1)(double);
-
-void bench(const char *expr, function1 func) {
+void bench(const char *expr, te_fun1 func) {
     int i, j;
     volatile double d;
     double tmp;
     clock_t start;
 
-    te_variable lk = {"a", &tmp};
+    te_parser tep;
+    tep.set_vars({ {"a", &tmp} });
+    tep.compile(expr);
 
     printf("Expression: %s\n", expr);
 
@@ -62,30 +62,25 @@ void bench(const char *expr, function1 func) {
     else
         printf("\tinf\n");
 
-
-
-
     printf("interp ");
-    te_expr *n = te_compile(expr, &lk, 1, 0);
     start = clock();
     d = 0;
     for (j = 0; j < loops; ++j)
         for (i = 0; i < loops; ++i) {
             tmp = i;
-            d += te_eval(n);
+            d += tep.evaluate();
         }
-    const int eelapsed = (clock() - start) * 1000 / CLOCKS_PER_SEC;
-    te_free(n);
+    const int elapsed = (clock() - start) * 1000 / CLOCKS_PER_SEC;
 
     /*Million floats per second input.*/
     printf(" %.5g", d);
-    if (eelapsed)
-        printf("\t%5dms\t%5dmfps\n", eelapsed, loops * loops / eelapsed / 1000);
+    if (elapsed)
+        printf("\t%5dms\t%5dmfps\n", elapsed, loops * loops / elapsed / 1000);
     else
         printf("\tinf\n");
 
 
-    printf("%.2f%% longer\n", (((double)eelapsed / nelapsed) - 1.0) * 100.0);
+    printf("%.2f%% longer\n", (((double)elapsed / nelapsed) - 1.0) * 100.0);
 
 
     printf("\n");

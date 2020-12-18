@@ -24,7 +24,7 @@ static char *readline(const char *prompt) {
         len -= 1;
     }
 
-    line = malloc(len + 1);
+    line = (char*)malloc(len + 1);
     strcpy(line, buf);
     return line;
 }
@@ -34,9 +34,10 @@ static void add_history(const char *line) {}
 
 static int eval(const char *str) {
     int err = 0;
-    double r = te_interp(str, &err);
-    if (err != 0) {
-        printf("Error at position %i\n", err);
+    te_parser tep;
+    double r = tep.evaluate(str);
+    if (!tep.success()) {
+        printf("Error at position %i\n", tep.get_last_error_position());
         return -1;
     } else {
         printf("%g\n", r);
