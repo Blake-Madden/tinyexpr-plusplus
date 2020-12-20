@@ -17,13 +17,93 @@ the standard C math functions and runtime binding of variables.
 - Single source file and header file.
 - Simple and fast.
 - Implements standard operators precedence.
-- Exposes standard C math functions (sin, sqrt, ln, etc.).
+- Implements logical and comparison operators.
+- Exposes standard C math functions (sin, sqrt, ln, etc.), as well as some Excel-like functions (e.g., `AVERAGE()` and `IF()`).
 - Can add custom functions and variables easily.
-- Can bind variables at eval-time.
+- Can bind constants at eval-time.
+- Supports variadic functions (taking between 1-7 arguments).
+- Case insensitive.
 - Can support non-US formulas (e.g., "pow(2,2; 2)" instead of "pow(2.2, 2)").
 - Released under the zlib license - free for nearly any use.
 - Easy to use and integrate with your code
 - Thread-safe, parser is in a self-contained object.
+
+## Changes from TinyExpr
+
+The following are changes from the original TinyExpr C library:
+
+- Compiles as C++17 code.
+- `te_*` functions are now wrapped in a `te_parser` class.
+- `te_interp()`, `te_compile()`, and `te_eval()` have been replaced with `te_parser::compile()`, `te_parser::evaluate()`, and `te_parser::set_vars()`.
+    `set_vars()` sets your list of custom functions and variables. `compile()` compiles and optimizes an expression.
+    Finally, `evaluate()` will use the already compiled expression and return its result.
+    `evaluate()` also has an overload that compiles and evaluates an expression in one call.
+- Variable/function types (e.g., `TE_FUNCTION0`) have been removed; types are now deduced by the compiler. The available flags
+  for variables and funtions are now just combinations of `TE_DEFAULT`, `TE_PURE`, and `TE_VARIADIC`.
+- Formula parsing is now case insensitive.
+- Added support for variadic functions (can accept 1-7 arguments); enabled through the `TE_VARIADIC` flag.
+  Refer to the `AVERAGE()` function in `tinyexp.cpp`.
+- Added support for parsing formulas in non-US format (e.g., "pow(2,2; 2)" instead of "pow(2.2, 2)"). Useful for when the program's locale is non-English.
+  Refer to `example4.cpp` for a demonstration.
+- `te_expr` is now a derivable base class. This means that you can derive from `te_expr`, add new fields to that derived class (e.g., arrays, strings, even other classes)
+  and then use a custom class as an argument to the various function types that accept a `te_expr*` parameter. The function that you connect can then `dynamic_cast<>`
+  this argument and use its custom fields, thus greatly enhancing the functionality for these types of functions.
+  Refer to the `te_expr_array` class in `smoke.cpp` for an example.
+- Memory management is handled by the `te_parser` class (caller no longer needs to call `te_free`). Also, replaced `malloc/free` with `new/delete`.
+- Stricter type safety; uses `std::variant` (instead of unions) that support `double`, `const double*`, and 16 specific function pointer signatures.
+  Also uses `std::initializer` lists (instead of various pointer operations).
+- Separate enums are now used betwen `te_expr` and `state`'s types and are more strongly typed.
+- Added new built-in functions:
+    `and`: returns true if all conditions are true (accepts 1-7 arguments).
+    `avgerage`: returns the means for a range of values (accepts 1-7 arguments).
+    `cot`: returns the cotangent of an angle.
+    `combin`: alias for ncr, like the Excel function.
+    `fact`: alias for fac(), like the Excel function.
+    `if`: if a value is true, then returns second value; otherise, returns third.
+    `max`: returns the maximum of a range of values.
+    `min`: returns the minimum of a range of values.
+    `mod`: returns remainder from a division.
+    `or`: returns true if any condition is true (accepts 1-7 arguments).
+    `not`: returns logical negation of value.
+    `permut`: alias for npr, like the Excel function.
+    `power`: alias for pow(), like the Excel function.
+    `rand`: returns random number between 0 and 1.
+    `round`: returns a number, rounded to a given decimal point.
+    `sign`: returns the sign of a number: 1 if positive, -1 if negative, 0 if zero.
+    `sum`: returns the sum of a list of values (accepts 1-7 arguments).
+    `sqr`: returns a number squared.
+    `trunc`: returns the integer part of a number.
+- Added new operators:
+    `&`    logical AND.
+    `|`    logical OR.
+    `=`    equal to.
+    `<>`   not equal to.
+    `<`    less than.
+    `<=`   less than or equal to.
+    `>`    greater than.
+    `>=`   greater than or equal to.
+- Custom variables and functions are now stored in a `std::vector` (which can be easily accessed and updated via the new `get_vars()/set_vars()` functions).
+- Added `is_function_used()` and `is_variable_used()` functions to see if a specific function or variable was used in the last parsed formula.
+- Added `set_constant()` function to find and update the value of a constant (custom) variable by name.
+- Added `get_constant()` function to return the value of a constant (custom) variable by name.
+- Binary search is now used to look up custom variables and functions (small optimization).
+- When compiling an expression, you no longer need to specify the number custom functions/variables; it will deduce that for you.
+- The position of an error when evaluating an expression is now managed by the `te_parser` class and accessible via `get_last_error_position()`.
+- The position of aforementioned error is now 0-indexed (not 1-indexed); -1 indicates that there was no error.
+- Added `success()` function to indicate if the last parse succeeded or not.
+- Added `get_result()` function to get result from the last call to evaluate.
+- Now uses `std::numeric_limits` for math constants (instead of macro constants).
+- Replaced C-style casts with `static_cast<>`.
+- Replaced all macros with `constexpr`s and lambdas.
+- Replaced custom binary search used for built-in fuction searching with `std::lower_bound()`.
+- Now uses `nullptr` (instead of 0).
+- All data fields are now initialized.
+- Added Doxygen comments.
+- Added assertions to verify that built-in and custom functions/variables are sorted.
+- Added assertion to verify that there aren't any duplicate custom functions/variables.
+- `te_print()` is now only available in debug builds.
+- Added `[[nodiscard]]` attributes to improve compile-time warnings.
+- Added `constexpr` and `noexcept` for C++ optimization.
 
 ## Building
 
