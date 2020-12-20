@@ -54,34 +54,34 @@ The following are changes from the original TinyExpr C library:
   Also uses `std::initializer` lists (instead of various pointer operations).
 - Separate enums are now used betwen `te_expr` and `state`'s types and are more strongly typed.
 - Added new built-in functions:
-    `and`: returns true if all conditions are true (accepts 1-7 arguments).
-    `avgerage`: returns the means for a range of values (accepts 1-7 arguments).
-    `cot`: returns the cotangent of an angle.
-    `combin`: alias for ncr, like the Excel function.
-    `fact`: alias for fac(), like the Excel function.
-    `if`: if a value is true, then returns second value; otherise, returns third.
-    `max`: returns the maximum of a range of values.
-    `min`: returns the minimum of a range of values.
-    `mod`: returns remainder from a division.
-    `or`: returns true if any condition is true (accepts 1-7 arguments).
-    `not`: returns logical negation of value.
-    `permut`: alias for npr, like the Excel function.
-    `power`: alias for pow(), like the Excel function.
-    `rand`: returns random number between 0 and 1.
-    `round`: returns a number, rounded to a given decimal point.
-    `sign`: returns the sign of a number: 1 if positive, -1 if negative, 0 if zero.
-    `sum`: returns the sum of a list of values (accepts 1-7 arguments).
-    `sqr`: returns a number squared.
-    `trunc`: returns the integer part of a number.
+  - `and`: returns true if all conditions are true (accepts 1-7 arguments).
+  - `avgerage`: returns the means for a range of values (accepts 1-7 arguments).
+  - `cot`: returns the cotangent of an angle.
+  - `combin`: alias for ncr, like the Excel function.
+  - `fact`: alias for fac(), like the Excel function.
+  - `if`: if a value is true, then returns second value; otherise, returns third.
+  - `max`: returns the maximum of a range of values.
+  - `min`: returns the minimum of a range of values.
+  - `mod`: returns remainder from a division.
+  - `or`: returns true if any condition is true (accepts 1-7 arguments).
+  - `not`: returns logical negation of value.
+  - `permut`: alias for npr, like the Excel function.
+  - `power`: alias for pow(), like the Excel function.
+  - `rand`: returns random number between 0 and 1.
+  - `round`: returns a number, rounded to a given decimal point.
+  - `sign`: returns the sign of a number: 1 if positive, -1 if negative, 0 if zero.
+  - `sum`: returns the sum of a list of values (accepts 1-7 arguments).
+  - `sqr`: returns a number squared.
+  - `trunc`: returns the integer part of a number.
 - Added new operators:
-    `&`    logical AND.
-    `|`    logical OR.
-    `=`    equal to.
-    `<>`   not equal to.
-    `<`    less than.
-    `<=`   less than or equal to.
-    `>`    greater than.
-    `>=`   greater than or equal to.
+  - `&`    logical AND.
+  - `|`    logical OR.
+  - `=`    equal to.
+  - `<>`   not equal to.
+  - `<`    less than.
+  - `<=`   less than or equal to.
+  - `>`    greater than.
+  - `>=`   greater than or equal to.
 - Custom variables and functions are now stored in a `std::vector` (which can be easily accessed and updated via the new `get_vars()/set_vars()` functions).
 - Added `is_function_used()` and `is_variable_used()` functions to see if a specific function or variable was used in the last parsed formula.
 - Added `set_constant()` function to find and update the value of a constant (custom) variable by name.
