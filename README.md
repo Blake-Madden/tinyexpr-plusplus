@@ -60,8 +60,8 @@ The following are changes from the original TinyExpr C library:
   - `combin`: alias for `ncr()`, like the **Excel** function.
   - `fact`: alias for `fac()`, like the **Excel** function.
   - `if`: if a value is true, then returns second value; otherwise, returns third.
-  - `max`: returns the maximum of a range of values.
-  - `min`: returns the minimum of a range of values.
+  - `max`: returns the maximum of a range of values (accepts 1-7 arguments).
+  - `min`: returns the minimum of a range of values (accepts 1-7 arguments).
   - `mod`: returns remainder from a division.
   - `or`: returns true if any condition is true (accepts 1-7 arguments).
   - `not`: returns logical negation of value.
