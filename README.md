@@ -39,34 +39,34 @@ The following are changes from the original TinyExpr C library:
     Finally, `evaluate()` will use the already compiled expression and return its result.
     `evaluate()` also has an overload that compiles and evaluates an expression in one call.
 - Variable/function types (e.g., `TE_FUNCTION0`) have been removed; types are now deduced by the compiler. The available flags
-  for variables and funtions are now just combinations of `TE_DEFAULT`, `TE_PURE`, and `TE_VARIADIC`.
+  for variables and functions are now just combinations of `TE_DEFAULT`, `TE_PURE`, and `TE_VARIADIC`.
 - Formula parsing is now case insensitive.
 - Added support for variadic functions (can accept 1-7 arguments); enabled through the `TE_VARIADIC` flag.
   Refer to the `AVERAGE()` function in `tinyexp.cpp`.
-- Added support for parsing formulas in non-US format (e.g., "pow(2,2; 2)" instead of "pow(2.2, 2)"). Useful for when the program's locale is non-English.
+- Added support for parsing formulas in non-US format (e.g., "**pow(2,2; 2)**" instead of "**pow(2.2, 2)**"). Useful for when the program's locale is non-English.
   Refer to `example4.cpp` for a demonstration.
 - `te_expr` is now a derivable base class. This means that you can derive from `te_expr`, add new fields to that derived class (e.g., arrays, strings, even other classes)
   and then use a custom class as an argument to the various function types that accept a `te_expr*` parameter. The function that you connect can then `dynamic_cast<>`
   this argument and use its custom fields, thus greatly enhancing the functionality for these types of functions.
   Refer to the `te_expr_array` class in `smoke.cpp` for an example.
-- Memory management is handled by the `te_parser` class (caller no longer needs to call `te_free`). Also, replaced `malloc/free` with `new/delete`.
+- Memory management is handled by the `te_parser` class (you no longer need to call `te_free`). Also, replaced `malloc/free` with `new/delete`.
 - Stricter type safety; uses `std::variant` (instead of unions) that support `double`, `const double*`, and 16 specific function pointer signatures.
   Also uses `std::initializer` lists (instead of various pointer operations).
-- Separate enums are now used betwen `te_expr` and `state`'s types and are more strongly typed.
+- Separate enums are now used between `te_expr` and `state`'s types and are more strongly typed.
 - Added new built-in functions:
   - `and`: returns true if all conditions are true (accepts 1-7 arguments).
-  - `avgerage`: returns the means for a range of values (accepts 1-7 arguments).
+  - `average`: returns the means for a range of values (accepts 1-7 arguments).
   - `cot`: returns the cotangent of an angle.
-  - `combin`: alias for ncr, like the **Excel** function.
+  - `combin`: alias for `ncr()`, like the **Excel** function.
   - `fact`: alias for `fac()`, like the **Excel** function.
-  - `if`: if a value is true, then returns second value; otherise, returns third.
+  - `if`: if a value is true, then returns second value; otherwise, returns third.
   - `max`: returns the maximum of a range of values.
   - `min`: returns the minimum of a range of values.
   - `mod`: returns remainder from a division.
   - `or`: returns true if any condition is true (accepts 1-7 arguments).
   - `not`: returns logical negation of value.
-  - `permut`: alias for npr, like the **Excel** function.
-  - `power`: alias for pow(), like the **Excel** function.
+  - `permut`: alias for `npr()`, like the **Excel** function.
+  - `power`: alias for `pow()`, like the **Excel** function.
   - `rand`: returns random number between 0 and 1.
   - `round`: returns a number, rounded to a given decimal point.
   - `sign`: returns the sign of a number: 1 if positive, -1 if negative, 0 if zero.
@@ -95,7 +95,7 @@ The following are changes from the original TinyExpr C library:
 - Now uses `std::numeric_limits` for math constants (instead of macro constants).
 - Replaced C-style casts with `static_cast<>`.
 - Replaced all macros with `constexpr`s and lambdas.
-- Replaced custom binary search used for built-in fuction searching with `std::lower_bound()`.
+- Replaced custom binary search used for built-in function searching with `std::lower_bound()`.
 - Now uses `nullptr` (instead of 0).
 - All data fields are now initialized.
 - Added [Doxygen](https://github.com/doxygen/doxygen) comments.
