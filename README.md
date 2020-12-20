@@ -23,7 +23,7 @@ the standard C math functions and runtime binding of variables.
 - Can bind constants at eval-time.
 - Supports variadic functions (taking between 1-7 arguments).
 - Case insensitive.
-- Can support non-US formulas (e.g., "pow(2,2; 2)" instead of "pow(2.2, 2)").
+- Can support non-US formulas (e.g., "**pow(2,2; 2)**" instead of "**pow(2.2, 2)**").
 - Released under the zlib license - free for nearly any use.
 - Easy to use and integrate with your code
 - Thread-safe, parser is in a self-contained object.
@@ -57,16 +57,16 @@ The following are changes from the original TinyExpr C library:
   - `and`: returns true if all conditions are true (accepts 1-7 arguments).
   - `avgerage`: returns the means for a range of values (accepts 1-7 arguments).
   - `cot`: returns the cotangent of an angle.
-  - `combin`: alias for ncr, like the Excel function.
-  - `fact`: alias for fac(), like the Excel function.
+  - `combin`: alias for ncr, like the **Excel** function.
+  - `fact`: alias for `fac()`, like the **Excel** function.
   - `if`: if a value is true, then returns second value; otherise, returns third.
   - `max`: returns the maximum of a range of values.
   - `min`: returns the minimum of a range of values.
   - `mod`: returns remainder from a division.
   - `or`: returns true if any condition is true (accepts 1-7 arguments).
   - `not`: returns logical negation of value.
-  - `permut`: alias for npr, like the Excel function.
-  - `power`: alias for pow(), like the Excel function.
+  - `permut`: alias for npr, like the **Excel** function.
+  - `power`: alias for pow(), like the **Excel** function.
   - `rand`: returns random number between 0 and 1.
   - `round`: returns a number, rounded to a given decimal point.
   - `sign`: returns the sign of a number: 1 if positive, -1 if negative, 0 if zero.
@@ -87,7 +87,7 @@ The following are changes from the original TinyExpr C library:
 - Added `set_constant()` function to find and update the value of a constant (custom) variable by name.
 - Added `get_constant()` function to return the value of a constant (custom) variable by name.
 - Binary search is now used to look up custom variables and functions (small optimization).
-- When compiling an expression, you no longer need to specify the number custom functions/variables; it will deduce that for you.
+- You no longer need to specify the number of arguments for custom functions; it will deduce that for you.
 - The position of an error when evaluating an expression is now managed by the `te_parser` class and accessible via `get_last_error_position()`.
 - The position of aforementioned error is now 0-indexed (not 1-indexed); -1 indicates that there was no error.
 - Added `success()` function to indicate if the last parse succeeded or not.
@@ -98,7 +98,7 @@ The following are changes from the original TinyExpr C library:
 - Replaced custom binary search used for built-in fuction searching with `std::lower_bound()`.
 - Now uses `nullptr` (instead of 0).
 - All data fields are now initialized.
-- Added Doxygen comments.
+- Added [Doxygen](https://github.com/doxygen/doxygen) comments.
 - Added assertions to verify that built-in and custom functions/variables are sorted.
 - Added assertion to verify that there aren't any duplicate custom functions/variables.
 - `te_print()` is now only available in debug builds.
