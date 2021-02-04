@@ -126,7 +126,7 @@ Here is a minimal example to evaluate an expression at runtime.
 
 ## Usage
 
-TinyExpr++'s te_parser class defines these functions:
+TinyExpr++'s `te_parser` class defines these functions:
 
 ```cpp
     double interpret(const char* expression);
