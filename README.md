@@ -392,7 +392,7 @@ The following C math functions are also supported:
 
 - abs (calls to *fabs*), acos, asin, atan, atan2, ceil, cos, cosh, exp, floor, ln (calls to *log*), log (calls to *log10* by default, see below), log10, pow, sin, sinh, sqrt, tan, tanh
 
-The following functions are also built-in and provided by TinyExpr:
+The following functions are also built-in and provided by TinyExpr++:
 
 - fac (factorials e.g. `fac 5` == 120)
 - ncr (combinations e.g. `ncr(6,2)` == 15)
@@ -430,6 +430,6 @@ then you can define `TE_NAT_LOG`.
 - To allow constant optimization, surround constant expressions in parentheses.
   For example "x+(1+5)" will evaluate the "(1+5)" expression at compile time and
   compile the entire expression as "x+6", saving a runtime calculation. The
-  parentheses are important, because TinyExpr will not change the order of
+  parentheses are important, because TinyExpr++ will not change the order of
   evaluation. If you instead compiled "x+1+5" TinyExpr will insist that "1" is
   added to "x" first, and "5" is added the result second.
