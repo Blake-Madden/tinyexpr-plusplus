@@ -539,7 +539,7 @@ te_expr* te_parser::base(te_parser::state *s)
 
 te_expr* te_parser::power(te_parser::state *s) {
     /* <power>     =    {("-" | "+" | "&" | "|")} <base> */
-    int sign = 1;
+    int Sign{ 1 };
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
            (get_function2(s->m_value) == add || get_function2(s->m_value) == sub ||
@@ -551,13 +551,13 @@ te_expr* te_parser::power(te_parser::state *s) {
             get_function2(s->m_value) == _greater_than ||
             get_function2(s->m_value) == _greater_than_equal_to))
         {
-        if (get_function2(s->m_value) == sub) sign = -sign;
+        if (get_function2(s->m_value) == sub) Sign = -Sign;
         next_token(s);
         }
 
     te_expr* ret{ nullptr };
 
-    if (sign == 1) {
+    if (Sign == 1) {
         ret = base(s);
     } else {
         ret = new_expr(TE_PURE, variant_type(negate), { base(s) });
@@ -823,29 +823,23 @@ double te_parser::evaluate(const char* expression)
     }
 
 #ifndef NDEBUG
-void te_parser::te_print(const te_expr *n, int depth) {
-    int i{ 0 }, arity{0};
+void te_parser::te_print(const te_expr *n, int depth)
+    {
     printf("%*s", depth, "");
 
     if (is_function(n->m_value) || is_closure(n->m_value))
         {
-        arity = get_arity(n->m_value);
+        int arity = get_arity(n->m_value);
         printf("f%d", arity);
-        for (i = 0; i < arity; i++) {
-            printf(" %p", n->m_parameters[i]);
-        }
+        for (int i = 0; i < arity; i++)
+            { printf(" %p", n->m_parameters[i]); }
         printf("\n");
-            for (i = 0; i < arity; i++) {
-                te_print(n->m_parameters[i], depth + 1);
-            }
+        for (int i = 0; i < arity; i++)
+            { te_print(n->m_parameters[i], depth + 1); }
         }
     else if (is_constant(n->m_value))
-        {
-        printf("%f\n", get_constant(n->m_value));
-        }
+        { printf("%f\n", get_constant(n->m_value)); }
     else if (is_variable(n->m_value))
-        {
-        printf("bound %p\n", get_variable(n->m_value));
-        }
-}
+        { printf("bound %p\n", get_variable(n->m_value)); }
+    }
 #endif

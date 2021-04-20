@@ -90,7 +90,7 @@ using variant_type = std::variant<double, const double*, // indices 0-1
     te_confun0, te_confun1, te_confun2, te_confun3, te_confun4, te_confun5, te_confun6, te_confun7>; //indices 10-17
 
 /// A variable's flags, effecting how it is evaluated.
-/// @note This is a bitmask, so flags can be or'ed.
+/// @note This is a bitmask, so flags can be OR'ed.
 enum variable_flags
     {
     // note that because this is a bitmask, don't declare it as an enum class, just a C-style enum
@@ -234,8 +234,10 @@ class te_expr
     {
 public:
     te_expr(const variable_flags type, const variant_type& value) noexcept : m_type(type), m_value(value) {}
-    te_expr(const variable_flags type) noexcept : m_type(type) {}
+    explicit te_expr(const variable_flags type) noexcept : m_type(type) {}
     te_expr() noexcept {}
+    te_expr(const te_expr&) = delete;
+    te_expr& operator=(const te_expr&) = delete;
     virtual ~te_expr() {}
     /// The type that m_value represents.
     variable_flags m_type{ TE_DEFAULT };
