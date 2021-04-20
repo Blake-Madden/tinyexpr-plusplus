@@ -516,16 +516,21 @@ te_expr* te_parser::base(te_parser::state *s)
             { s->m_type = te_parser::state::token_type::TOK_ERROR; }
         else
             {
-            int i;
-            for(i = 0; i < arity; i++) {
+            int i{ 0 };
+            // If there are vars or other functions in the parameters, keep track of the original
+            // opening function; that is what we will do our variadic check on.
+            const auto varValid{ m_varFound };
+            const auto openingVar = m_currentVar;
+            // load any parameters
+            for(i = 0; i < arity; i++)
+                {
                 next_token(s);
                 ret->m_parameters[i] = expr(s);
-                if(s->m_type != te_parser::state::token_type::TOK_SEP) {
-                    break;
+                if(s->m_type != te_parser::state::token_type::TOK_SEP)
+                    { break; }
                 }
-            }
             if (s->m_type == te_parser::state::token_type::TOK_CLOSE && i != arity - 1 &&
-                m_varFound && is_variadic(m_currentVar->m_type))
+                varValid && is_variadic(openingVar->m_type))
                 { next_token(s); }
             else if(s->m_type != te_parser::state::token_type::TOK_CLOSE || i != arity - 1)
                 { s->m_type = te_parser::state::token_type::TOK_ERROR; }

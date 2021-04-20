@@ -22,6 +22,29 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+ /*
+  * TINYEXPR++ - Tiny recursive descent parser and evaluation engine in C++
+  * Copyright (c) 2020-2021 Blake Madden
+  *
+  * C++ version of the TinyExpr library.
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty. In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  *
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  *
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgement in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+ */
+
 #include "tinyexpr.h"
 #include <stdio.h>
 #include "minctest.h"
@@ -151,16 +174,18 @@ void test_results() {
         {"max(9, 7)", 9 },
         {"min(9, 7)", 7 },
         { "mod(12, 10)", 2 },
-        { "round(9.57878423, 0)", 10 },
-        { "round(9.57878423, 1)", 9.6 },
-        { "round(9.57878423, 2)", 9.58 },
-        { "round(9.57878423, 3)", 9.579 },
         { "sign(-7.9)", -1 },
         { "sign(7.9)", 1 },
         { "sign(0)", 0 },
         { "trunc(9.57878423)", 9 },
         { "trunc(9.3)", 9 },
         // variadic functions
+        { "round(9.57878423, 0)", 10 },
+        { "round(9.57878423)", 10 },
+        { "round(pow(2,2))", 4 }, // non-variadic function inside of variadic
+        { "round(9.57878423, 1)", 9.6 },
+        { "round(9.57878423, 2)", 9.58 },
+        { "round(9.57878423, 3)", 9.579 },
         { "sum(9)", 9 },
         { "sum(9,9)", 18 },
         { "sum(9,9,9)", 27 },
@@ -256,7 +281,7 @@ void test_syntax() {
         lequal(tep.get_last_error_position(), e);
         lok(r != r);
 
-        auto [[maybe_unused]] a = tep.evaluate(expr);
+        auto a = tep.evaluate(expr);
         lequal(tep.get_last_error_position(), e);
         lok(!tep.success());
 
@@ -379,7 +404,7 @@ void test_variables() {
         }
     }
 
-    auto [[maybe_unused]] a = tep.evaluate("xx*y^3");
+    auto a = tep.evaluate("xx*y^3");
     lok(!tep.success());
     lok(tep.get_last_error_position() != -1);
 
@@ -602,7 +627,7 @@ void test_closure() {
         const char *expr = cases[i].expr;
         const double answer = cases[i].answer;
 
-        auto [[maybe_unused]] a = tep.evaluate(expr);
+        auto a = tep.evaluate(expr);
         lok(tep.success());
 
         extra = 0;
