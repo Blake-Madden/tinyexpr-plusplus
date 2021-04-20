@@ -24,7 +24,7 @@
 
 /*
  * TINYEXPR++ - Tiny recursive descent parser and evaluation engine in C++
- * Copyright (c) 2020 Blake Madden
+ * Copyright (c) 2020-2021 Blake Madden
  * 
  * C++ version of the TinyExpr library.
  * 
@@ -124,24 +124,24 @@ For log = natural log uncomment the next line. */
     const auto total = sum(v1, v2, v3, v4, v5, v6, v7);
     return divide(total, validN);
     }
-[[nodiscard]] static double _round(double a, double b) noexcept
+[[nodiscard]] static double _round(double val, double decimal_places) noexcept
     {
-    const size_t decimalPlaces{ static_cast<size_t>(b) };
+    const size_t decimalPlaces{ std::isnan(decimal_places) ? 0 : static_cast<size_t>(decimal_places) };
     const size_t decimalPostition = (decimalPlaces == 0) ? 0 :
         (decimalPlaces == 1) ? 10 : (decimalPlaces == 2) ? 100 :
         (decimalPlaces == 3) ? 1000 : (decimalPlaces == 4) ? 10000 :
         (decimalPlaces == 5) ? 100000 : (decimalPlaces >= 6) ? 1000000 :
         10;
 
-    if (a < 0)
+    if (val < 0)
         {
-        return (decimalPostition == 0) ? std::ceil(a-0.5f) :
-            std::ceil((a * decimalPostition) - 0.5f)/decimalPostition;
+        return (decimalPostition == 0) ? std::ceil(val -0.5f) :
+            std::ceil((val * decimalPostition) - 0.5f)/decimalPostition;
         }
     else
         {
-        return (decimalPostition == 0) ? std::floor(a+0.5f) :
-            std::floor((a * decimalPostition) + 0.5f)/decimalPostition;
+        return (decimalPostition == 0) ? std::floor(val +0.5f) :
+            std::floor((val * decimalPostition) + 0.5f)/decimalPostition;
         }
     }
 // Combinations (without repetition)
@@ -316,7 +316,7 @@ const std::vector<te_variable> te_parser::m_functions = {
     {"pow",   static_cast<te_fun2>(std::pow),   TE_PURE},
     {"power",/* Excel alias*/   static_cast<te_fun2>(std::pow),   TE_PURE},
     {"rand",    static_cast<te_fun0>(random),    TE_PURE},
-    {"round",   static_cast<te_fun2>(_round),   TE_PURE},
+    {"round",   static_cast<te_fun2>(_round),   static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
     {"sign",   static_cast<te_fun1>(sign),   TE_PURE},
     {"sin",   static_cast<te_fun1>(std::sin),   TE_PURE},
     {"sinh",  static_cast<te_fun1>(std::sinh),  TE_PURE},

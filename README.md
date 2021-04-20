@@ -68,7 +68,7 @@ The following are changes from the original TinyExpr C library:
   - `permut`: alias for `npr()`, like the **Excel** function.
   - `power`: alias for `pow()`, like the **Excel** function.
   - `rand`: returns random number between 0 and 1.
-  - `round`: returns a number, rounded to a given decimal point.
+  - `round`: returns a number, rounded to a given decimal point. Decimal point is optional and defaults to 0.
   - `sign`: returns the sign of a number: 1 if positive, -1 if negative, 0 if zero.
   - `sum`: returns the sum of a list of values (accepts 1-7 arguments).
   - `sqr`: returns a number squared.
@@ -122,7 +122,6 @@ Here is a minimal example to evaluate an expression at runtime.
     printf("The expression:\n\t%s\nevaluates to:\n\t%f\n", c, r);
     // prints 15.198684
 ```
-
 
 ## Usage
 
@@ -249,7 +248,6 @@ This produces the output:
         Result:
                 5.000000
 
-
 ## Binding to Custom Functions
 
 TinyExpr++ can also call to custom functions implemented in C. Here is a short example:
@@ -320,7 +318,6 @@ This produces the output:
       Result:
         4,840000
 
-
 ## How it works
 
 `te_parser::interpret()` uses a simple recursive descent parser to compile your
@@ -333,7 +330,6 @@ parses as:
 the compiled expression returned by `te_compile()` would become:
 
 ![example syntax tree](doc/e2.png?raw=true)
-
 
 ## Speed
 
@@ -354,7 +350,6 @@ Here is some example performance numbers taken from the included
 | (1/(a+1)+2/(a+2)+3/(a+3)) | 12,754 ms | 680 ms | 1,775.59%  slower |
 
 Note that TinyExpr++ is slower compared to TinyExpr because of additional type safety checks.
-
 
 ## Grammar
 
@@ -380,7 +375,6 @@ underscore. Constants can be integers, decimal numbers, or in scientific
 notation (e.g.  *1e3* for *1000*). A leading zero is not required (e.g. *.5*
 for *0.5*)
 
-
 ## Functions supported
 
 TinyExpr++ supports addition (+), subtraction/negation (-), multiplication (\*),
@@ -404,7 +398,6 @@ Also, the following constants are available:
 
 
 ## Compile-time options
-
 
 By default, TinyExpr++ does exponentiation from left to right. For example:
 
