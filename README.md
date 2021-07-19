@@ -49,6 +49,7 @@ The following are changes from the original TinyExpr C library:
   and then use a custom class as an argument to the various function types that accept a `te_expr*` parameter. The function that you connect can then `dynamic_cast<>`
   this argument and use its custom fields, thus greatly enhancing the functionality for these types of functions.
   Refer to the `te_expr_array` class in `smoke.cpp` for an example.
+- Added exception support, where exceptions are thrown for situations like divide by zero. Calls to `compile` and `evaluate` should be wrapped in `try`...`catch` blocks.
 - Memory management is handled by the `te_parser` class (you no longer need to call `te_free`). Also, replaced `malloc/free` with `new/delete`.
 - Stricter type safety; uses `std::variant` (instead of unions) that support `double`, `const double*`, and 16 specific function pointer signatures.
   Also uses `std::initializer` lists (instead of various pointer operations).
@@ -58,6 +59,7 @@ The following are changes from the original TinyExpr C library:
   - `average`: returns the means for a range of values (accepts 1-7 arguments).
   - `cot`: returns the cotangent of an angle.
   - `combin`: alias for `ncr()`, like the **Excel** function.
+  - `clamp`: contrains a value to a range.
   - `fact`: alias for `fac()`, like the **Excel** function.
   - `if`: if a value is true, then returns second value; otherwise, returns third.
   - `max`: returns the maximum of a range of values (accepts 1-7 arguments).

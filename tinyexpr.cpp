@@ -92,12 +92,10 @@ For log = natural log uncomment the next line. */
     const std::uniform_real_distribution<> distr(0, 1);
     return distr(gen);
     }
-[[nodiscard]] constexpr static double divide(double a, double b) noexcept
+[[nodiscard]] constexpr static double divide(double a, double b)
     {
-    if (a == 0.0 && b == 0.0)
-        { return std::numeric_limits<double>::quiet_NaN(); }
-    else if (b == 0.0)
-        { return std::numeric_limits<double>::infinity(); }
+    if (b == 0)
+        { throw std::exception("Division by zero."); }
     return a / b;
     }
 [[nodiscard]] static double sum(double v1, double v2, double v3, double v4,
@@ -281,12 +279,20 @@ const std::vector<te_variable> te_parser::m_functions = {
     /* must be in alphabetical order */
     {"abs",   static_cast<te_fun1>(std::fabs),  TE_PURE},
     {"acos",  static_cast<te_fun1>(std::acos),  TE_PURE},
-    {"and",  static_cast<te_fun7>(_and_variadic),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)}, // variadic, accepts 1-7 arguments
+    {"and",  static_cast<te_fun7>(_and_variadic), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)}, // variadic, accepts 1-7 arguments
     {"asin",  static_cast<te_fun1>(std::asin),  TE_PURE},
     {"atan",  static_cast<te_fun1>(std::atan),  TE_PURE},
     {"atan2", static_cast<te_fun2>(std::atan2), TE_PURE},
-    {"average",  static_cast<te_fun7>(average),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"average",  static_cast<te_fun7>(average), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
     {"ceil",  static_cast<te_fun1>(std::ceil),  TE_PURE},
+    {"clamp",  static_cast<te_fun3>(
+        [](const double num, const double start, const double end)
+            {
+            if (start > end)
+                { throw std::exception("Error in CLAMP: start of range cannot be larger than end of range."); }
+            return std::clamp<double>(num, start, end);
+            }),
+        TE_PURE},
     {"combin",   static_cast<te_fun2>(ncr),   TE_PURE},
     {"cos",   static_cast<te_fun1>(std::cos),   TE_PURE},
     {"cosh",  static_cast<te_fun1>(std::cosh),  TE_PURE},
