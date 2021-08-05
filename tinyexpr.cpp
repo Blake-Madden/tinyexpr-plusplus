@@ -98,6 +98,12 @@ For log = natural log uncomment the next line. */
         { throw std::exception("Division by zero."); }
     return a / b;
     }
+[[nodiscard]] static double modulus(double a, double b)
+    {
+    if (b == 0)
+        { throw std::exception("Modulus by zero."); }
+    return std::fmod(a,b);
+    }
 [[nodiscard]] static double sum(double v1, double v2, double v3, double v4,
                                 double v5, double v6, double v7) noexcept
     {
@@ -312,7 +318,7 @@ const std::vector<te_variable> te_parser::m_functions = {
     {"log10", static_cast<te_fun1>(std::log10), TE_PURE},
     {"max",  static_cast<te_fun7>(_max),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
     {"min",  static_cast<te_fun7>(_min),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"mod",  static_cast<te_fun2>(std::fmod),  TE_PURE},
+    {"mod",  static_cast<te_fun2>(modulus),  TE_PURE},
     {"ncr",   static_cast<te_fun2>(ncr),   TE_PURE},
     {"not",  static_cast<te_fun1>(_not),  TE_PURE},
     {"npr",   static_cast<te_fun2>(npr),   TE_PURE},
@@ -423,7 +429,7 @@ void te_parser::next_token(te_parser::state *s)
                 else if (tok == '*') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = mul; }
                 else if (tok == '/') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = divide; }
                 else if (tok == '^') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(std::pow); }
-                else if (tok == '%') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(std::fmod); }
+                else if (tok == '%') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = modulus; }
                 else if (tok == '(') { s->m_type = te_parser::state::token_type::TOK_OPEN; }
                 else if (tok == ')') { s->m_type = te_parser::state::token_type::TOK_CLOSE; }
                 else if (tok == get_list_separator()) { s->m_type = te_parser::state::token_type::TOK_SEP; }
@@ -644,7 +650,7 @@ te_expr* te_parser::term(te_parser::state *s) {
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
         (get_function2(s->m_value) == mul || get_function2(s->m_value) == divide ||
-         get_function2(s->m_value) == static_cast<te_fun2>(std::fmod))) {
+         get_function2(s->m_value) == modulus)) {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
         ret = new_expr(TE_PURE, t, { ret, factor(s) });
