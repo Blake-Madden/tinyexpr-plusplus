@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Zlib
 /*
  * TINYEXPR - Tiny recursive descent parser and evaluation engine in C
  *
@@ -72,7 +73,7 @@ For log = natural log uncomment the next line. */
 [[nodiscard]] constexpr static double pi() noexcept { return 3.14159265358979323846; }
 [[nodiscard]] constexpr static double e() noexcept { return 2.71828182845904523536; }
 [[nodiscard]] static double fac(double a) noexcept {/* simplest version of factorial */
-    if (a < 0.0)
+    if (a < 0.0 || std::isnan(a))
         return std::numeric_limits<double>::quiet_NaN();
     if (a > std::numeric_limits<unsigned int>::max())
         return std::numeric_limits<double>::infinity();
@@ -150,7 +151,7 @@ For log = natural log uncomment the next line. */
     }
 // Combinations (without repetition)
 [[nodiscard]] static double ncr(double n, double r) noexcept {
-    if (n < 0.0 || r < 0.0 || n < r) return std::numeric_limits<double>::quiet_NaN();
+    if (n < 0.0 || r < 0.0 || n < r || std::isnan(n) || std::isnan(r)) return std::numeric_limits<double>::quiet_NaN();
     if (n > std::numeric_limits<unsigned int>::max() || r > std::numeric_limits<unsigned int>::max()) return std::numeric_limits<double>::infinity();
     const unsigned long int un = static_cast<unsigned int>(n);
     unsigned long int ur = static_cast<unsigned int>(r);
