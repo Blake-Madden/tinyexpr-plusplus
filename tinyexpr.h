@@ -295,7 +295,7 @@ public:
         { return m_parseSuccess; }
     /// @returns The zero-based index into the last parsed expression where the parse failed, or -1 if no error occurred.
     /// @note Call success() to see if the last parse succeeded or not.
-    [[nodiscard]] long get_last_error_position() const noexcept
+    [[nodiscard]] int64_t get_last_error_position() const noexcept
         { return m_errorPos; }
 
     /// Sets the list of custom variables and functions.
@@ -588,7 +588,7 @@ private:
     static void te_free(te_expr* n);
     static void te_free_parameters(te_expr* n);
     static void optimize(te_expr* n);
-    [[nodiscard]] static auto find_builtin(const char* name, const long len)
+    [[nodiscard]] static auto find_builtin(const char* name, const size_t len)
         {
         // debug sanity check
         assert(std::is_sorted(m_functions.cbegin(), m_functions.cend(),
@@ -602,7 +602,7 @@ private:
         }
 
     [[nodiscard]] static auto find_lookup(TE_RELEASE_CONST state* s,
-                                          const char* name, const long len)
+                                          const char* name, const size_t len)
         {
         // debug sanity checks
         assert(std::is_sorted(s->m_lookup.cbegin(), s->m_lookup.cend(),
@@ -656,7 +656,7 @@ private:
     std::vector<te_variable> m_vars;
 
     bool m_parseSuccess{ false };
-    long m_errorPos{ 0 };
+    int64_t m_errorPos{ 0 };
     double m_result{ std::numeric_limits<double>::quiet_NaN() };
     char m_decimalSeparator{ '.' };
     char m_listSeparator{ ',' };
