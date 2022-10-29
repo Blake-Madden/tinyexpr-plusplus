@@ -180,7 +180,7 @@ Give `set_vars()` a list of constants, bound variables, and function pointers.
 
     if (tep.success()) {
         x = 3; y = 4;
-        const double h1 = tep.evaluate(); /*Will use the previously used expression, returns 5. */
+        const double h1 = tep.evaluate(); /* Will use the previously used expression, returns 5. */
 
         x = 5; y = 12;
         const double h2 = tep.evaluate(); /* Returns 13. */
@@ -374,7 +374,7 @@ In addition, whitespace between tokens is ignored.
 Valid variable names consist of a lower case letter followed by any combination
 of: lower case letters *a* through *z*, the digits *0* through *9*, and
 underscore. Constants can be integers, decimal numbers, or in scientific
-notation (e.g.  *1e3* for *1000*). A leading zero is not required (e.g. *.5*
+notation (e.g., *1e3* for *1000*). A leading zero is not required (e.g., *.5*
 for *0.5*)
 
 ## Functions supported
@@ -409,7 +409,7 @@ This is by design. It's the way that spreadsheets do it (e.g. Excel, Google Shee
 
 
 If you would rather have exponentiation work from right to left, you need to
-define `TE_POW_FROM_RIGHT` when compiling `tinyexpr.c`. There is a
+define `TE_POW_FROM_RIGHT` when compiling `tinyexpr.cpp`. There is a
 commented-out define near the top of that file. With this option enabled, the
 behaviour is:
 
