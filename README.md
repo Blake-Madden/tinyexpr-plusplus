@@ -120,7 +120,7 @@ Here is a minimal example to evaluate an expression at runtime.
     #include "tinyexpr.h"
     te_parser tep;
     const char* c = "sqrt(5^2+7^2+11^2+(8-2)^2)";
-    const double r = tep.interpret("sqrt(5^2+7^2+11^2+(8-2)^2)");
+    const double r = tep.evaluate("sqrt(5^2+7^2+11^2+(8-2)^2)");
     printf("The expression:\n\t%s\nevaluates to:\n\t%f\n", c, r);
     // prints 15.198684
 ```
@@ -130,7 +130,7 @@ Here is a minimal example to evaluate an expression at runtime.
 TinyExpr++'s `te_parser` class defines these functions:
 
 ```cpp
-    double interpret(const char* expression);
+    double evaluate(const char* expression);
     double get_result();
     bool success();
     int get_last_error_position();
@@ -140,12 +140,12 @@ TinyExpr++'s `te_parser` class defines these functions:
     get_list_separator();
 ```
 
-`interpret()` takes an expression and immediately returns the result of it. If there
+`evaluate()` takes an expression and immediately returns the result of it. If there
 is a parse error, it returns NaN.
 
-`get_result()` can be called anytime afterwards to retrieve the result from `interpret()`.
+`get_result()` can be called anytime afterwards to retrieve the result from `evaluate()`.
 
-`success()` can be called to see if the previous call `interpret()` succeeded or not.
+`success()` can be called to see if the previous call `evaluate()` succeeded or not.
 
 If the parse failed, calling `get_last_error_position()` will return the 0-based index of where in the expression the parse failed.
 
@@ -154,14 +154,14 @@ If the parse failed, calling `get_last_error_position()` will return the 0-based
 ```cpp
     te_parser tep;
 
-    double a = tep.interpret("(5+5)"); /* Returns 10. */
-    double b = tep.interpret("(5+5)"); /* Returns 10, error is set to -1 (i.e., no error). */
-    double c = tep.interpret("(5+5");  /* Returns NaN, error is set to 3. */
+    double a = tep.evaluate("(5+5)"); /* Returns 10. */
+    double b = tep.evaluate("(5+5)"); /* Returns 10, error is set to -1 (i.e., no error). */
+    double c = tep.evaluate("(5+5");  /* Returns NaN, error is set to 3. */
 ```
 
 Give `set_vars()` a list of constants, bound variables, and function pointers.
 
-`interpret()` will then evaluate expressions using these variables and functions.
+`evaluate()` will then evaluate expressions using these variables and functions.
 
 
 **example usage:**
@@ -176,14 +176,14 @@ Give `set_vars()` a list of constants, bound variables, and function pointers.
     tep.set_vars({{"x", &x}, {"y", &y}});
 
     // Compile the expression with variables.
-    auot result = tep.interpret("sqrt(x^2+y^2)");
+    auot result = tep.evaluate("sqrt(x^2+y^2)");
 
     if (tep.success()) {
         x = 3; y = 4;
-        const double h1 = tep.interpret(); /*Will use the previously used expression, returns 5. */
+        const double h1 = tep.evaluate(); /*Will use the previously used expression, returns 5. */
 
         x = 5; y = 12;
-        const double h2 = tep.interpret(); /* Returns 13. */
+        const double h2 = tep.evaluate(); /* Returns 13. */
     } else {
         printf("Parse error at %d\n", tep.get_last_error_position());
     }
@@ -216,14 +216,14 @@ line. It also does error checking and binds the variables `x` and `y` to *3* and
         tep.set_vars({{"x", &x}, {"y", &y}});
 
         /* This will compile the expression and check for errors. */
-        auto result = tep.interpret(expression);
+        auto result = tep.evaluate(expression);
 
         if (tep.success()) {
             /* The variables can be changed here, and eval can be called as many
              * times as you like. This is fairly efficient because the parsing has
              * already been done. */
             x = 3; y = 4;
-            const double r = tep.interpret();
+            const double r = tep.evaluate();
             printf("Result:\n\t%f\n", r);
         } else {
             /* Show the user where the error is at. */
@@ -265,7 +265,7 @@ tep.set_vars({
     {"mysum", my_sum, TE_FUNCTION2} /* TE_FUNCTION2 used because my_sum takes two arguments. */
 };)
 
-const double r = tep.interpret("mysum(5, 6)");
+const double r = tep.evaluate("mysum(5, 6)");
 ```
 
 ## Non-US Formatted Formulas
@@ -299,10 +299,10 @@ int main(int argc, char *argv[])
     tep.set_list_separator(';');
 
     /* This will compile the expression and check for errors. */
-    auto r = tep.interpret(expression);
+    auto r = tep.evaluate(expression);
 
     if (tep.success()) {
-        const double r = tep.interpret(expression); printf("Result:\n\t%f\n", r);
+        const double r = tep.evaluate(expression); printf("Result:\n\t%f\n", r);
     } else {
         /* Show the user where the error is at. */
         printf("\t%*s^\nError near here", tep.get_last_error_position(), "");
@@ -322,13 +322,13 @@ This produces the output:
 
 ## How it works
 
-`te_parser::interpret()` uses a simple recursive descent parser to compile your
+`te_parser::evaluate()` uses a simple recursive descent parser to compile your
 expression into a syntax tree. For example, the expression `"sin x + 1/4"`
 parses as:
 
 ![example syntax tree](doc/e1.png?raw=true)
 
-`te_parser::interpret()` also automatically prunes constant branches. In this example,
+`te_parser::evaluate()` also automatically prunes constant branches. In this example,
 the compiled expression returned by `te_compile()` would become:
 
 ![example syntax tree](doc/e2.png?raw=true)
@@ -337,13 +337,13 @@ the compiled expression returned by `te_compile()` would become:
 
 TinyExpr++ is fairly fast compared to C when the expression is short, when the
 expression does hard calculations (e.g. exponentiation), and when some of the
-work can be simplified by `interpret()`. TinyExpr++ is slow compared to C when the
+work can be simplified by `evaluate()`. TinyExpr++ is slow compared to C when the
 expression is long and involves only basic arithmetic.
 
 Here is some example performance numbers taken from the included
 **benchmark.cpp** program:
 
-| Expression | interpret time | native C time | slowdown  |
+| Expression | evaluate time | native C time | slowdown  |
 | :------------- |-------------:| -----:|----:|
 | sqrt(a^1.5+a^2.5) | 16,363 ms | 13,193 ms | 24.03% slower |
 | a+5 | 3,051 ms | 1,255 ms | 143.11% slower |
