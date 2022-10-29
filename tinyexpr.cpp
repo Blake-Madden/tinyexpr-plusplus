@@ -90,7 +90,7 @@ For log = natural log uncomment the next line. */
     {
     std::random_device rd;
     std::mt19937 gen(rd());
-    const std::uniform_real_distribution<> distr(0, 1);
+    std::uniform_real_distribution<> distr(0, 1);
     return distr(gen);
     }
 [[nodiscard]] constexpr static double divide(double a, double b)
