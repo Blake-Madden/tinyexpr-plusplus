@@ -336,7 +336,7 @@ the compiled expression returned by `te_compile()` would become:
 ## Speed
 
 TinyExpr++ is fairly fast compared to C when the expression is short, when the
-expression does hard calculations (e.g. exponentiation), and when some of the
+expression does hard calculations (e.g., exponentiation), and when some of the
 work can be simplified by `evaluate()`. TinyExpr++ is slow compared to C when the
 expression is long and involves only basic arithmetic.
 
@@ -390,9 +390,9 @@ The following C math functions are also supported:
 
 The following functions are also built-in and provided by TinyExpr++:
 
-- fac (factorials e.g. `fac 5` == 120)
-- ncr (combinations e.g. `ncr(6,2)` == 15)
-- npr (permutations e.g. `npr(6,2)` == 30)
+- fac (factorials e.g., `fac 5` == 120)
+- ncr (combinations e.g., `ncr(6,2)` == 15)
+- npr (permutations e.g., `npr(6,2)` == 30)
 
 Also, the following constants are available:
 
@@ -405,8 +405,7 @@ By default, TinyExpr++ does exponentiation from left to right. For example:
 
 `a^b^c == (a^b)^c` and `-a^b == (-a)^b`
 
-This is by design. It's the way that spreadsheets do it (e.g. Excel, Google Sheets).
-
+This is by design. It's the way that spreadsheets do it (e.g., Excel, Google Sheets).
 
 If you would rather have exponentiation work from right to left, you need to
 define `TE_POW_FROM_RIGHT` when compiling `tinyexpr.cpp`. There is a
@@ -415,7 +414,7 @@ behaviour is:
 
 `a^b^c == a^(b^c)` and `-a^b == -(a^b)`
 
-That will match how many scripting languages do it (e.g. Python, Ruby).
+That will match how many scripting languages do it (e.g., Python, Ruby).
 
 Also, if you'd like `log` to default to the natural log instead of `log10`,
 then you can define `TE_NAT_LOG`.
