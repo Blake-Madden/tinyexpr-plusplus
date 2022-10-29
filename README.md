@@ -6,7 +6,7 @@ TinyExpr++ is a C++ version of the TinyExpr library.
 
 TinyExpr++ is a very small recursive descent parser and evaluation engine for
 math expressions. It's handy when you want to add the ability to evaluation
-math expressions at runtime without adding a bunch of cruft to you project.
+math expressions at runtime without adding a bunch of cruft to your project.
 
 In addition to the standard math operators and precedence, TinyExpr++ also supports
 the standard C math functions and runtime binding of variables.
