@@ -90,7 +90,7 @@ using variant_type = std::variant<double, const double*, // indices 0-1
     te_fun0, te_fun1, te_fun2, te_fun3, te_fun4, te_fun5, te_fun6, te_fun7, // indices 2-9
     te_confun0, te_confun1, te_confun2, te_confun3, te_confun4, te_confun5, te_confun6, te_confun7>; //indices 10-17
 
-/// A variable's flags, effecting how it is evaluated.
+/// @brief A variable's flags, effecting how it is evaluated.
 /// @note This is a bitmask, so flags can be OR'ed.
 enum variable_flags
     {
@@ -202,15 +202,15 @@ public:
         size_t j = 1;
         for (size_t i = 0; i < n1; i+=j)
             {
-            //if the first character of the substring matches then start comparing
+            // if the first character of the substring matches then start comparing
             if (eq(s1[i], s2[0]) )
                 {
-                //if only looking for one character then return
+                // if only looking for one character then return
                 if (n2 == 1)
                     {
                     return s1+i;
                     }
-                //already know the first chars match, so start at next one
+                // already know the first chars match, so start at next one
                 for (j = 1; j < n2; ++j)
                     {
                     if (!eq(s1[i+j], s2[j]) )
@@ -218,7 +218,7 @@ public:
                         break;
                         }
                     }
-                //if every character matched then return it
+                // if every character matched then return it
                 if (n2 == j)
                     {
                     return s1+i;
@@ -229,12 +229,14 @@ public:
         }
     };
 
-/// A compiled expression.
-/// Can also be an additional object that can be passed to te_confun0-te_confun7 functions via a te_variable.
+/// @brief A compiled expression.
+/// @details Can also be an additional object that can be passed to
+///     te_confun0-te_confun7 functions via a te_variable.
 class te_expr
     {
 public:
-    te_expr(const variable_flags type, const variant_type& value) noexcept : m_type(type), m_value(value) {}
+    te_expr(const variable_flags type, const variant_type& value) noexcept :
+        m_type(type), m_value(value) {}
     explicit te_expr(const variable_flags type) noexcept : m_type(type) {}
     te_expr() noexcept {}
     te_expr(const te_expr&) = delete;
@@ -268,23 +270,31 @@ public:
 class te_parser
     {
 public:
-    te_parser() noexcept {}
+    /// @private
+    te_parser() = default;
+    /// @private
     te_parser(const te_parser&) = delete;
+    /// @private
     te_parser(te_parser&&) = delete;
+    /// @private
     te_parser& operator=(const te_parser&) = delete;
+    /// @private
     te_parser& operator=(te_parser&&) = delete;
+    /// @private
     ~te_parser() { te_free(m_compiledExpression); }
-    /** Parses the input @c expression.
+    /** @brief Parses the input @c expression.
         @param expression The formula to compile.
         @returns Whether the expression compiled or not.
-        @sa success().*/
+        @sa success().
+        @throws std::exception Throws an exception if division or modulus by zero occurrs.*/
     bool compile(const char* expression);
-    /** Evaluates expression passed to compile() previuosly and returns its result.
+    /** @brief Evaluates expression passed to compile() previuosly and returns its result.
         @returns The result, or NaN on error.*/
     [[nodiscard]] double evaluate();
-    /** Compiles and evaluates an expression and returns its result.
+    /** @brief Compiles and evaluates an expression and returns its result.
         @param expression The formula to compile and evaluate.
-        @returns The result, or NaN on error.*/
+        @returns The result, or NaN on error.
+        @throws std::exception Throws an exception if division or modulus by zero occurrs.*/
     [[nodiscard]] double evaluate(const char* expression);
     /// @returns The last call to evaluate()'s result (which will be NaN on error).
     [[nodiscard]] double get_result() const noexcept
@@ -298,13 +308,14 @@ public:
     [[nodiscard]] int64_t get_last_error_position() const noexcept
         { return m_errorPos; }
 
-    /// Sets the list of custom variables and functions.
+    /// @brief Sets the list of custom variables and functions.
     /// @param vars The list of variables and functions.
     void set_vars(const std::vector<te_variable>& vars)
         {
         m_vars = vars;
         std::sort(m_vars.begin(), m_vars.end(),
-            [](const auto& lhv, const auto& rhv) noexcept { return lhv.m_name < rhv.m_name; });
+            [](const auto& lhv, const auto& rhv) noexcept
+            { return lhv.m_name < rhv.m_name; });
         }
     /// @returns The list of custom variables and functions.
     [[nodiscard]] const std::vector<te_variable>& get_vars() const noexcept
@@ -313,15 +324,15 @@ public:
     /// @returns The decimal separator used for nunmbers.
     [[nodiscard]] char get_decimal_separator() const noexcept
         { return m_decimalSeparator; }
-    /// Sets the decimal separator used for nunmbers.
+    /// @brief Sets the decimal separator used for nunmbers.
     /// @param sep The decimal separator.
     void set_decimal_separator(const char sep)  noexcept
         { m_decimalSeparator = sep; }
 
-    /// Changes a constant variable's value.
+    /// @brief Changes a constant variable's value.
     /// @param name The name of the (constant) variable.
     /// @param value The new value to set the constant to.
-    /// @returns True if the constant variable was found and updates, false otherwise.
+    /// @returns @c true if the constant variable was found and updates, false otherwise.
     bool set_constant(const char* name, const double value)
         {
         auto cvar = find_variable(name);
@@ -336,7 +347,7 @@ public:
             return true;
             }
         }
-    /// Retrieves a constant variable's value.
+    /// @brief Retrieves a constant variable's value.
     /// @param name The name of the (constant) variable.
     /// @returns The value of the constant variable if found, NaN otherwise.
     double get_constant(const char* name) const
@@ -363,12 +374,12 @@ public:
     void set_list_separator(const char sep)  noexcept
         { m_listSeparator = sep; }
     
-    /// @returns True if @c name is a function that had been used in the last parsed formula.
+    /// @returns @c true if @c name is a function that had been used in the last parsed formula.
     /// @param name The name of the function.
     /// @sa compile() and evaluate().
     [[nodiscard]] bool is_function_used(const char* name) const
         { return m_usedFunctions.find(std::basic_string<char, case_insensitive_char_traits>(name)) != m_usedFunctions.cend(); }
-    /// @returns True if @c name is a variable that had been used in the last parsed formula.
+    /// @returns @c true if @c name is a variable that had been used in the last parsed formula.
     /// @param name The name of the variable.
     /// @sa compile() and evaluate().
     [[nodiscard]] bool is_variable_used(const char* name) const
