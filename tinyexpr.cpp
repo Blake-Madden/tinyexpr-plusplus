@@ -70,9 +70,9 @@ For log = natural log uncomment the next line. */
 [[nodiscard]] constexpr static double _and(double a, double b) noexcept { return (a && b) ? 1 : 0; }
 [[nodiscard]] constexpr static double _or(double a, double b) noexcept { return (a || b) ? 1 : 0; }
 [[nodiscard]] constexpr static double _not(double a) noexcept { return !a; }
-[[nodiscard]] constexpr static double pi() noexcept { return 3.14159265358979323846; }
-[[nodiscard]] constexpr static double e() noexcept { return 2.71828182845904523536; }
-[[nodiscard]] static double fac(double a) noexcept {/* simplest version of factorial */
+[[nodiscard]] constexpr static double _pi() noexcept { return 3.14159265358979323846; }
+[[nodiscard]] constexpr static double _e() noexcept { return 2.71828182845904523536; }
+[[nodiscard]] static double _fac(double a) noexcept {/* simplest version of factorial */
     if (a < 0.0 || std::isnan(a))
         return std::numeric_limits<double>::quiet_NaN();
     if (a > std::numeric_limits<unsigned int>::max())
@@ -86,27 +86,27 @@ For log = natural log uncomment the next line. */
     }
     return static_cast<double>(result);
 }
-[[nodiscard]] static double random()
+[[nodiscard]] static double _random()
     {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> distr(0, 1);
     return distr(gen);
     }
-[[nodiscard]] constexpr static double divide(double a, double b)
+[[nodiscard]] constexpr static double _divide(double a, double b)
     {
     if (b == 0)
-        { throw std::exception("Division by zero."); }
+        { throw std::runtime_error(std::string("Division by zero.")); }
     return a / b;
     }
-[[nodiscard]] static double modulus(double a, double b)
+[[nodiscard]] static double _modulus(double a, double b)
     {
     if (b == 0)
-        { throw std::exception("Modulus by zero."); }
+        { throw std::runtime_error(std::string("Modulus by zero.")); }
     return std::fmod(a,b);
     }
-[[nodiscard]] static double sum(double v1, double v2, double v3, double v4,
-                                double v5, double v6, double v7) noexcept
+[[nodiscard]] static double _sum(double v1, double v2, double v3, double v4,
+                                 double v5, double v6, double v7) noexcept
     {
     return (std::isnan(v1) ? 0 : v1) +
         (std::isnan(v2) ? 0 : v2) +
@@ -126,8 +126,8 @@ For log = natural log uncomment the next line. */
         (std::isnan(v5) ? 0 : 1) +
         (std::isnan(v6) ? 0 : 1) +
         (std::isnan(v7) ? 0 : 1);
-    const auto total = sum(v1, v2, v3, v4, v5, v6, v7);
-    return divide(total, validN);
+    const auto total = _sum(v1, v2, v3, v4, v5, v6, v7);
+    return _divide(total, validN);
     }
 [[nodiscard]] static double _round(double val, double decimal_places) noexcept
     {
@@ -150,7 +150,7 @@ For log = natural log uncomment the next line. */
         }
     }
 // Combinations (without repetition)
-[[nodiscard]] static double ncr(double n, double r) noexcept {
+[[nodiscard]] static double _ncr(double n, double r) noexcept {
     if (n < 0.0 || r < 0.0 || n < r || std::isnan(n) || std::isnan(r)) return std::numeric_limits<double>::quiet_NaN();
     if (n > std::numeric_limits<unsigned int>::max() || r > std::numeric_limits<unsigned int>::max()) return std::numeric_limits<double>::infinity();
     const unsigned long int un = static_cast<unsigned int>(n);
@@ -166,10 +166,10 @@ For log = natural log uncomment the next line. */
     return static_cast<double>(result);
 }
 // Permutations (without repetition)
-[[nodiscard]] static double npr(double n, double r) noexcept { return ncr(n, r) * fac(r); }
-[[nodiscard]] constexpr static double add(double a, double b) noexcept { return a + b; }
-[[nodiscard]] constexpr static double sub(double a, double b) noexcept { return a - b; }
-[[nodiscard]] constexpr static double mul(double a, double b) noexcept { return a * b; }
+[[nodiscard]] static double _npr(double n, double r) noexcept { return _ncr(n, r) * _fac(r); }
+[[nodiscard]] constexpr static double _add(double a, double b) noexcept { return a + b; }
+[[nodiscard]] constexpr static double _sub(double a, double b) noexcept { return a - b; }
+[[nodiscard]] constexpr static double _mul(double a, double b) noexcept { return a * b; }
 [[nodiscard]] constexpr static double _sqr(double a) noexcept { return a*a; }
 [[nodiscard]] static double _max_maybe_nan(double v1, double v2_maybe_nan) noexcept
     { return std::max(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
@@ -226,13 +226,13 @@ For log = natural log uncomment the next line. */
 [[nodiscard]] constexpr static double _if(double a, double b, double c) noexcept
     { return (a != 0.0) ? b : c; }
 // cotangent
-[[nodiscard]] static double cot(double a) noexcept
+[[nodiscard]] static double _cot(double a) noexcept
     {
     if (a == 0.0)
         { return std::numeric_limits<double>::quiet_NaN(); }
     return 1 / std::tan(a);
     }
-[[nodiscard]] constexpr static double sign(double a) noexcept
+[[nodiscard]] constexpr static double _sign(double a) noexcept
     { return (a < 0.0) ? -1 : (a > 0.0) ? 1 : 0; }
 [[nodiscard]] constexpr static double negate(double a) noexcept { return -a; }
 [[nodiscard]] constexpr static double comma([[maybe_unused]] double a, double b) noexcept { return b; }
@@ -296,18 +296,21 @@ const std::vector<te_variable> te_parser::m_functions = {
         [](const double num, const double start, const double end)
             {
             if (start > end)
-                { throw std::exception("Error in CLAMP: start of range cannot be larger than end of range."); }
+                {
+                throw std::runtime_error(
+                    std::string("Error in CLAMP: start of range cannot be larger than end of range."));
+                }
             return std::clamp<double>(num, start, end);
             }),
         TE_PURE},
-    {"combin",   static_cast<te_fun2>(ncr),   TE_PURE},
+    {"combin",   static_cast<te_fun2>(_ncr),   TE_PURE},
     {"cos",   static_cast<te_fun1>(std::cos),   TE_PURE},
     {"cosh",  static_cast<te_fun1>(std::cosh),  TE_PURE},
-    {"cot",  static_cast<te_fun1>(cot),  TE_PURE},
-    {"e",     static_cast<te_fun0>(e),     TE_PURE},
+    {"cot",  static_cast<te_fun1>(_cot),  TE_PURE},
+    {"e",     static_cast<te_fun0>(_e),     TE_PURE},
     {"exp",   static_cast<te_fun1>(std::exp),   TE_PURE},
-    {"fac",   static_cast<te_fun1>(fac),   TE_PURE},
-    {"fact",   static_cast<te_fun1>(fac),   TE_PURE},
+    {"fac",   static_cast<te_fun1>(_fac),   TE_PURE},
+    {"fact",   static_cast<te_fun1>(_fac),   TE_PURE},
     {"floor", static_cast<te_fun1>(std::floor), TE_PURE},
     {"if", static_cast<te_fun3>(_if), TE_PURE},
     {"ln",    static_cast<te_fun1>(std::log),   TE_PURE},
@@ -319,23 +322,23 @@ const std::vector<te_variable> te_parser::m_functions = {
     {"log10", static_cast<te_fun1>(std::log10), TE_PURE},
     {"max",  static_cast<te_fun7>(_max),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
     {"min",  static_cast<te_fun7>(_min),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"mod",  static_cast<te_fun2>(modulus),  TE_PURE},
-    {"ncr",   static_cast<te_fun2>(ncr),   TE_PURE},
+    {"mod",  static_cast<te_fun2>(_modulus),  TE_PURE},
+    {"ncr",   static_cast<te_fun2>(_ncr),   TE_PURE},
     {"not",  static_cast<te_fun1>(_not),  TE_PURE},
-    {"npr",   static_cast<te_fun2>(npr),   TE_PURE},
+    {"npr",   static_cast<te_fun2>(_npr),   TE_PURE},
     {"or",  static_cast<te_fun7>(_or_variadic),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"permut",   static_cast<te_fun2>(npr),   TE_PURE},
-    {"pi",    static_cast<te_fun0>(pi),    TE_PURE},
+    {"permut",   static_cast<te_fun2>(_npr),   TE_PURE},
+    {"pi",    static_cast<te_fun0>(_pi),    TE_PURE},
     {"pow",   static_cast<te_fun2>(std::pow),   TE_PURE},
     {"power",/* Excel alias*/   static_cast<te_fun2>(std::pow),   TE_PURE},
-    {"rand",    static_cast<te_fun0>(random),    TE_PURE},
+    {"rand",    static_cast<te_fun0>(_random),    TE_PURE},
     {"round",   static_cast<te_fun2>(_round),   static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"sign",   static_cast<te_fun1>(sign),   TE_PURE},
+    {"sign",   static_cast<te_fun1>(_sign),   TE_PURE},
     {"sin",   static_cast<te_fun1>(std::sin),   TE_PURE},
     {"sinh",  static_cast<te_fun1>(std::sinh),  TE_PURE},
     {"sqr",  static_cast<te_fun1>(_sqr),  TE_PURE},
     {"sqrt",  static_cast<te_fun1>(std::sqrt),  TE_PURE},
-    {"sum",  static_cast<te_fun7>(sum),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"sum",  static_cast<te_fun7>(_sum),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
     {"tan",   static_cast<te_fun1>(std::tan),   TE_PURE},
     {"tanh",  static_cast<te_fun1>(std::tanh),  TE_PURE},
     {"trunc",  static_cast<te_fun1>(std::trunc),  TE_PURE}
@@ -425,12 +428,12 @@ void te_parser::next_token(te_parser::state *s)
                 {
                 /* Look for an operator or special character. */
                 const auto tok = s->m_next++[0];
-                if (tok == '+') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = add; }
-                else if (tok == '-') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = sub; }
-                else if (tok == '*') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = mul; }
-                else if (tok == '/') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = divide; }
+                if (tok == '+') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _add; }
+                else if (tok == '-') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _sub; }
+                else if (tok == '*') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _mul; }
+                else if (tok == '/') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _divide; }
                 else if (tok == '^') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(std::pow); }
-                else if (tok == '%') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = modulus; }
+                else if (tok == '%') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _modulus; }
                 else if (tok == '(') { s->m_type = te_parser::state::token_type::TOK_OPEN; }
                 else if (tok == ')') { s->m_type = te_parser::state::token_type::TOK_CLOSE; }
                 else if (tok == get_list_separator()) { s->m_type = te_parser::state::token_type::TOK_SEP; }
@@ -560,7 +563,7 @@ te_expr* te_parser::power(te_parser::state *s) {
     int Sign{ 1 };
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-           (get_function2(s->m_value) == add || get_function2(s->m_value) == sub ||
+           (get_function2(s->m_value) == _add || get_function2(s->m_value) == _sub ||
             get_function2(s->m_value) == _and || get_function2(s->m_value) == _or ||
             get_function2(s->m_value) == _equal ||
             get_function2(s->m_value) == _not_equal ||
@@ -569,7 +572,7 @@ te_expr* te_parser::power(te_parser::state *s) {
             get_function2(s->m_value) == _greater_than ||
             get_function2(s->m_value) == _greater_than_equal_to))
         {
-        if (get_function2(s->m_value) == sub) Sign = -Sign;
+        if (get_function2(s->m_value) == _sub) Sign = -Sign;
         next_token(s);
         }
 
@@ -650,8 +653,8 @@ te_expr* te_parser::term(te_parser::state *s) {
     te_expr* ret = factor(s);
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-        (get_function2(s->m_value) == mul || get_function2(s->m_value) == divide ||
-         get_function2(s->m_value) == modulus)) {
+        (get_function2(s->m_value) == _mul || get_function2(s->m_value) == _divide ||
+         get_function2(s->m_value) == _modulus)) {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
         ret = new_expr(TE_PURE, t, { ret, factor(s) });
@@ -667,7 +670,7 @@ te_expr* te_parser::expr(te_parser::state *s) {
 
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-        (get_function2(s->m_value) == add ||
+        (get_function2(s->m_value) == _add ||
          get_function2(s->m_value) == _and ||
          get_function2(s->m_value) == _or ||
          get_function2(s->m_value) == _equal ||
@@ -676,7 +679,7 @@ te_expr* te_parser::expr(te_parser::state *s) {
          get_function2(s->m_value) == _less_than_equal_to ||
          get_function2(s->m_value) == _greater_than ||
          get_function2(s->m_value) == _greater_than_equal_to ||
-         get_function2(s->m_value) == sub))
+         get_function2(s->m_value) == _sub))
         {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
