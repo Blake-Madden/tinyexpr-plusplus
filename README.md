@@ -45,7 +45,7 @@ The following are changes from the original TinyExpr C library:
 - `te_expr` is now a derivable base class. This means that you can derive from `te_expr`, add new fields to that derived class (e.g., arrays, strings, even other classes)
   and then use a custom class as an argument to the various function types that accept a `te_expr*` parameter. The function that you connect can then `dynamic_cast<>`
   this argument and use its custom fields, thus greatly enhancing the functionality for these types of functions.
-  Refer to the `te_expr_array` class in `smoke.cpp` for an example.
+  Refer to the `te_expr_array` class in `tests/tetests.cpp` for an example.
 - Added exception support, where exceptions are thrown for situations like divide by zero. Calls to `compile` and `evaluate` should be wrapped in `try`...`catch` blocks.
 - Memory management is handled by the `te_parser` class (you no longer need to call `te_free`). Also, replaced `malloc/free` with `new/delete`.
 - Stricter type safety; uses `std::variant` (instead of unions) that support `double`, `const double*`, and 16 specific function pointer signatures.
