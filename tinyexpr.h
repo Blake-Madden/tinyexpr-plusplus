@@ -665,7 +665,8 @@ private:
 
             if (uniqueEnd != s->m_lookup.end())
                 {
-                printf(("\n'" + uniqueEnd->m_name + "' was entered in the custom variable/function list twice!\n").c_str());
+                printf("\n'%s' was entered in the custom variable/function list twice!\n"
+                    uniqueEnd->m_name.c_str());
                 assert(0 && "Custom variable/function listed twice!");
                 }
             }
