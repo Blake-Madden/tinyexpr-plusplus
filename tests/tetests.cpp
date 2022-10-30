@@ -753,3 +753,15 @@ TEST_CASE("Closure", "[closure]")
     CHECK(tep.success());
     CHECK(tep.evaluate() == 57);
     }
+
+TEST_CASE("Constants", "[constants]")
+    {
+    te_parser tep;
+    // could be done via add_var() also
+    tep.set_constant("SALARY", 15.25);
+    CHECK(tep.evaluate("SALARY") == 15.25);
+
+    tep.set_constant("SALARY", 17.75);
+    CHECK(tep.evaluate("SALARY") == 17.75);
+    CHECK(tep.get_constant("SALARY") == 17.75);
+    }

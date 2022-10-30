@@ -304,7 +304,8 @@ public:
     /// @sa get_last_error_position().
     [[nodiscard]] bool success() const noexcept
         { return m_parseSuccess; }
-    /// @returns The zero-based index into the last parsed expression where the parse failed, or -1 if no error occurred.
+    /// @returns The zero-based index into the last parsed expression where the parse failed,
+    ///     or -1 if no error occurred.
     /// @note Call success() to see if the last parse succeeded or not.
     [[nodiscard]] int64_t get_last_error_position() const noexcept
         { return m_errorPos; }
@@ -318,6 +319,17 @@ public:
             [](const auto& lhv, const auto& rhv) noexcept
             { return lhv.m_name < rhv.m_name; });
         }
+    /// @brief Adds a custom variable or function.
+    /// @param var The variable/function to add.
+    /// @note Prefer using set_vars() as it will be more optimal
+    ///     (less sorts will need to be performed).
+    void add_var(const te_variable& var)
+        {
+        m_vars.push_back(var);
+        std::sort(m_vars.begin(), m_vars.end(),
+            [](const auto& lhv, const auto& rhv) noexcept
+            { return lhv.m_name < rhv.m_name; });
+        }
     /// @returns The list of custom variables and functions.
     [[nodiscard]] const std::vector<te_variable>& get_vars() const noexcept
         { return m_vars; }
@@ -327,44 +339,40 @@ public:
         { return m_decimalSeparator; }
     /// @brief Sets the decimal separator used for nunmbers.
     /// @param sep The decimal separator.
-    void set_decimal_separator(const char sep)  noexcept
+    void set_decimal_separator(const char sep) noexcept
         { m_decimalSeparator = sep; }
 
-    /// @brief Changes a constant variable's value.
+    /// @brief Sets a constant variable's value.
     /// @param name The name of the (constant) variable.
     /// @param value The new value to set the constant to.
-    /// @returns @c true if the constant variable was found and updates, false otherwise.
-    bool set_constant(const char* name, const double value)
+    /// @note If the constant variable hasn't been added yet (via set_vars()),
+    ///     then this will add it.
+    void set_constant(const char* name, const double value)
         {
         auto cvar = find_variable(name);
         if (cvar == get_vars().end() || !is_constant(cvar->m_value))
-            { return false; }
+            { add_var({ name, value }); }
         else
             {
             cvar->m_value = value;
             // if previously compiled, then re-compile since this constant would have been optimized
             if (m_expression.length())
                 { compile(m_expression.c_str()); }
-            return true;
             }
         }
     /// @brief Retrieves a constant variable's value.
     /// @param name The name of the (constant) variable.
     /// @returns The value of the constant variable if found, NaN otherwise.
-    double get_constant(const char* name) const
+    [[nodiscard]] double get_constant(const char* name) const
         {
         auto cvar = find_variable(name);
-        try
-            {
-            return (cvar == get_vars().end() || !is_constant(cvar->m_value)) ?
-                std::numeric_limits<double>::quiet_NaN() :
-                std::get<double>(cvar->m_value);
-            }
-        catch (std::bad_variant_access const& ex)
-            {
-            printf(ex.what());
-            return std::numeric_limits<double>::quiet_NaN();
-            }
+        if (cvar == get_vars().cend() || !is_constant(cvar->m_value))
+            { return std::numeric_limits<double>::quiet_NaN(); }
+        if (const auto val = std::get_if<double>(&cvar->m_value);
+            val != nullptr)
+            { return *val; }
+        else
+            { return std::numeric_limits<double>::quiet_NaN(); }
         }
 
     /// @returns The separator used between function arguments.
@@ -372,24 +380,31 @@ public:
         { return m_listSeparator; }
     /// Sets the separator used between function arguments.
     /// @param sep The list separator.
-    void set_list_separator(const char sep)  noexcept
+    void set_list_separator(const char sep) noexcept
         { m_listSeparator = sep; }
     
     /// @returns @c true if @c name is a function that had been used in the last parsed formula.
     /// @param name The name of the function.
     /// @sa compile() and evaluate().
     [[nodiscard]] bool is_function_used(const char* name) const
-        { return m_usedFunctions.find(std::basic_string<char, case_insensitive_char_traits>(name)) != m_usedFunctions.cend(); }
+        {
+        return m_usedFunctions.find(
+            std::basic_string<char, case_insensitive_char_traits>(name)) != m_usedFunctions.cend();
+        }
     /// @returns @c true if @c name is a variable that had been used in the last parsed formula.
     /// @param name The name of the variable.
     /// @sa compile() and evaluate().
     [[nodiscard]] bool is_variable_used(const char* name) const
-        { return m_usedVars.find(std::basic_string<char, case_insensitive_char_traits>(name)) != m_usedVars.cend(); }
+        {
+        return m_usedVars.find(
+            std::basic_string<char, case_insensitive_char_traits>(name)) != m_usedVars.cend();
+        }
 private:
     /// @returns The list of custom variables and functions.
     [[nodiscard]] std::vector<te_variable>& get_vars() noexcept
         { return m_vars; }
-    /// @returns An iterator to the custom variable or function with the given @c name, or end of get_vars() if not found.
+    /// @returns An iterator to the custom variable or function with the given @c name,
+    ///     or end of get_vars() if not found.
     [[nodiscard]] std::vector<te_variable>::iterator find_variable(const char* name)
         {
         if (!name) return m_vars.end();
