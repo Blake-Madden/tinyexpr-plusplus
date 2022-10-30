@@ -88,6 +88,26 @@ double clo2(const te_expr* context, double a, double b) {
     return a + b;
 }
 
+inline double AddEm(const double a, const double b){
+    return a+b;
+}
+
+inline double AddEm3(const double a, const double b, const double c){
+    return a+b+c;
+}
+
+inline double __value(const double a){
+    return a;
+}
+
+inline double return5(){
+    return 5;
+}
+
+inline double __mult(const double a, const double b, const double c, const double d){
+    return a*b*c*d;
+}
+
 class te_expr_array : public te_expr
 {
 public:
@@ -97,7 +117,7 @@ public:
 
 double cell(const te_expr* context, double a) {
     auto* c = dynamic_cast<const te_expr_array*>(context);
-    return c->m_data[(int)a];
+    return static_cast<double>(c->m_data[a]);
 }
 
 TEST_CASE("Main tests", "[main]")
@@ -764,4 +784,512 @@ TEST_CASE("Constants", "[constants]")
     tep.set_constant("SALARY", 17.75);
     CHECK(tep.evaluate("SALARY") == 17.75);
     CHECK(tep.get_constant("SALARY") == 17.75);
+    }
+
+TEST_CASE("Long names", "[longnames]")
+    {
+    te_parser p;
+    p.set_vars(
+        {
+            { "AddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResult", AddEm }
+        });
+    p.compile(("AddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResult(1, 2)"));
+    CHECK(p.evaluate() == 3.0);
+    }
+
+TEST_CASE("Precedence", "[precedence]")
+    {
+    te_parser p;
+    p.compile("5+2-1*31/2-20+21%2*2");
+    CHECK_THAT(-26.5, Catch::Matchers::WithinRel(p.evaluate()));
+    }
+
+TEST_CASE("Round", "[round]")
+    {
+    te_parser p;
+    p.compile(("round(1.5, 0)"));
+    CHECK(2 == p.evaluate());
+
+    p.compile(("round(1.6, 0)"));
+    CHECK(2 == p.evaluate());
+
+    p.compile(("round(1.4, 0)"));
+    CHECK(1 == p.evaluate());
+
+    p.compile(("rOund(0.0, 0)"));
+    CHECK(0 == p.evaluate());
+
+    p.compile(("round(-11.6, 0)"));
+    CHECK(-12 == p.evaluate());
+
+    p.compile(("round(-11.5, 0)"));
+    CHECK(-12 == p.evaluate());
+
+    p.compile(("round(-11.4, 0)"));
+    CHECK(-11 == p.evaluate());
+
+    p.compile(("rouNd(11.6, 0)"));
+    CHECK(12 == p.evaluate());
+
+    p.compile(("round(11.5, 0)"));
+    CHECK(12 == p.evaluate());
+
+    p.compile(("round(11.4, 0)"));
+    CHECK(11 == p.evaluate());
+    }
+
+TEST_CASE("Logical operators", "[logic]")
+    {
+    te_parser p;
+
+    //OR
+    p.compile(("0 | 1"));
+    CHECK(1 == p.evaluate());
+    p.compile(("1 | 1"));
+    CHECK(1 == p.evaluate());
+    p.compile(("0 | 0"));
+    CHECK(0 == p.evaluate());
+    //AND
+    p.compile(("0 & 1"));
+    CHECK(0 == p.evaluate());
+    p.compile(("1 | 1"));
+    CHECK(1 == p.evaluate());
+    p.compile(("0 | 0"));
+    CHECK(0 == p.evaluate());
+    //equality
+    p.compile(("5=5"));
+    CHECK(1 == p.evaluate());
+    p.compile(("5<>5"));
+    CHECK(0 == p.evaluate());
+    p.compile(("5.1 <>5"));
+    CHECK(1 == p.evaluate());
+    //less than
+    p.compile(("5.1 < 5"));
+    CHECK(0 == p.evaluate());
+    p.compile(("5 < 5"));
+    CHECK(0 == p.evaluate());
+    p.compile(("5.1 < 5.19"));
+    CHECK(1 == p.evaluate());
+    p.compile(("-6 < 1"));
+    CHECK(1 == p.evaluate());
+    //less than or equal to
+    p.compile(("5.1 <= 5"));
+    CHECK(0 == p.evaluate());
+    p.compile(("5 <= 5"));
+    CHECK(1 == p.evaluate());
+    p.compile(("5.1 <= 5.19"));
+    CHECK(1 == p.evaluate());
+    p.compile(("-6 <= 1"));
+    CHECK(1 == p.evaluate());
+    //greater than
+    p.compile(("5.1 > 5"));
+    CHECK(1 == p.evaluate());
+    p.compile(("5 > 5"));
+    CHECK(0 == p.evaluate());
+    p.compile(("5.19 > 5.1"));
+    CHECK(1 == p.evaluate());
+    p.compile(("1 > -6"));
+    CHECK(1 == p.evaluate());
+    //greater than or equal to
+    p.compile(("5.1 >= 5"));
+    CHECK(1 == p.evaluate());
+    p.compile(("5 >= 5"));
+    CHECK(1 == p.evaluate());
+    p.compile(("5.19 >= 5.1"));
+    CHECK(1 == p.evaluate());
+    p.compile(("1 >= -6"));
+    CHECK(1 == p.evaluate());
+    }
+
+TEST_CASE("Statistics", "[stats]")
+    {
+    te_parser p;
+
+    p.compile(("SUM(1, 2, 3, 4)"));
+    CHECK(10 == p.evaluate());
+    p.compile(("SUM(1.1, 2.7, 3, 4.9)"));
+    CHECK_THAT(11.7, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("AVERAGE(1, 2, 3, 4, 5)"));
+    CHECK(3 == p.evaluate());
+    p.compile(("AVERAGE(1.1, 2.7, 3.2, 4, 5.7)"));
+    CHECK_THAT(3.34, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MIN(1.1)"));
+    CHECK_THAT(1.1, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MIN(1.1, 1.2)"));
+    CHECK_THAT(1.1, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MIN(-1, 2)"));
+    CHECK_THAT(-1, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MIN(-1, 2, 0, -5.8, 9)"));
+    CHECK_THAT(-5.8, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MIN(-9, 2, 0, -5.8, 9)"));
+    CHECK_THAT(-9, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MIN(-9, -87)"));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MIN(-9, 2, -87)"));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MIN(-9, 2, 0, -87)"));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MIN(-9, 2, 0, -5.8, -87)"));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MIN(-9, 2, 0, -5.8, 9, -87)"));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MIN(-9, 2, 0, -5.8, 9, 8, -87)"));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MAX(1.1)"));
+    CHECK_THAT(1.1, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MAX(1.1, 1.2)"));
+    CHECK_THAT(1.2, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MAX(-1, 2)"));
+    CHECK_THAT(2, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MAX(1.1, 1.2, 0, 5.8)"));
+    CHECK_THAT(5.8, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MAX(9.1, 1.2, 0, 5.8)"));
+    CHECK_THAT(9.1, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MAX(9.1, 127)"));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MAX(9.1, 1.2, 127)"));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MAX(9.1, 1.2, 0, 127)"));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MAX(9.1, 1.2, 0, 5.8, 127)"));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MAX(9.1, 1.2, 0, 5.8, 80, 127)"));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("MAX(9.1, 1.2, 0, 5.8, 80, -1, 127)"));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    }
+
+TEST_CASE("Round higher precision", "[round]")
+    {
+    te_parser p;
+
+    p.compile(("round(1.55, 1)"));
+    CHECK_THAT(1.6, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(-1.55, 1)"));
+    CHECK_THAT(-1.6, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(3.1415678, 2)"));
+    CHECK_THAT(3.14, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(3.1415678, 3)"));
+    CHECK_THAT(3.142, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(3.1415678, 4)"));
+    CHECK_THAT(3.1416, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(3.1415678, 5)"));
+    CHECK_THAT(3.14157, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(3.1415678, 6)"));
+    CHECK_THAT(3.141568, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(3.14156785, 7)"));
+    CHECK_THAT(3.141568, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(-3.1415678, 6)"));
+    CHECK_THAT(-3.141568, Catch::Matchers::WithinRel(p.evaluate()));
+    }
+
+TEST_CASE("Math operators", "[math]")
+    {
+    te_parser p;
+
+    p.compile(("9*3/2+8-2"));
+    CHECK_THAT(19.5, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("9*((3/2)+(8-2))"));//change up the order of operations
+    CHECK_THAT(67.5, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("9*3^3/2+8-(11%2)"));
+    CHECK_THAT(128.5, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("9.2*3.4^3/2+8.7-(11%2)"));
+    CHECK_THAT(188.4984, Catch::Matchers::WithinRel(p.evaluate()));
+    }
+
+TEST_CASE("Division", "[math]")
+    {
+    te_parser p;
+
+    p.compile("4/2.2");
+    CHECK_THAT(1.81818, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    }
+
+TEST_CASE("Modulus", "[math]")
+    {
+    te_parser p;
+
+    p.compile(("MOD(5,2)"));
+    CHECK(1 == p.evaluate());
+    CHECK(0 == p.evaluate("MOD(5,2.5)"));
+    CHECK(2 == p.evaluate("MOD(5,3)"));
+    CHECK(0 == p.evaluate("MOD(5,5)"));
+    CHECK(5 == p.evaluate("MOD(5,6)"));
+    }
+
+TEST_CASE("Is function used", "[functions]")
+    {
+    te_parser p;
+
+    p.set_vars({
+        { "MULT", __mult }
+        });
+    p.compile(("log(5)+sin(atan(6))-MULT(2,30,4,5)+1"));
+    CHECK(p.is_function_used(("MULT")));
+    CHECK(p.is_function_used(("Log")));
+    CHECK(p.is_function_used(("sin")));
+    CHECK(p.is_function_used(("atan")));
+    CHECK(p.is_function_used(("MULT")));
+    CHECK_FALSE(p.is_function_used(("tan")));
+    }
+
+TEST_CASE("Is variable used", "[functions]")
+    {
+    te_parser p;
+
+    p.set_vars({
+        {"STRESS_L", 10.1},
+        {"P_LEVEL", .5},
+        {"z", .75} });
+    p.compile(("z + STRESS_L"));
+    CHECK(p.is_variable_used(("z")));
+    CHECK(p.is_variable_used(("STRESS_L")));
+    CHECK_FALSE(p.is_variable_used(("P_LEVEL")));
+    }
+
+TEST_CASE("Custom test", "[functions]")
+    {
+    te_parser p;
+
+    SECTION("Custom test unknown parameters")
+        {
+        p.set_vars({ { "MULT", __mult} });
+        p.compile(("MULT(2,30,4,5)+1"));
+        CHECK(1201 == p.evaluate());
+        }
+    SECTION("0 Parameters")
+        {
+        p.set_vars({ {"Return5", return5} });
+        p.compile(("Return5()"));
+        CHECK_THAT(5, Catch::Matchers::WithinRel(p.evaluate()));
+        }
+    SECTION("1 Parameter")
+        {
+        p.set_vars({ { "value", __value} });
+        p.compile(("value(2.1)"));
+        CHECK_THAT(2.1, Catch::Matchers::WithinRel(p.evaluate()));
+        }
+    SECTION("2 Parameters")
+        {
+        p.set_vars({ { "AddEm", AddEm} });
+        p.compile(("ADDEM(2.1, 86.8)"));
+        CHECK_THAT(88.9, Catch::Matchers::WithinRel(p.evaluate()));
+        }
+    SECTION("3 Parameters")
+        {
+        p.set_vars({ {"AddEm3", AddEm3} });
+        p.compile(("ADDEM3(2.1, 86.8, 2)"));
+        CHECK_THAT(90.9, Catch::Matchers::WithinRel(p.evaluate()));
+        }
+    SECTION("Custom variables")
+        {
+        p.set_vars({ {"STRESS_L", 10.1},
+            {"P_LEVEL", .5} });
+        p.compile(("STRESS_L*P_LEVEL"));
+        CHECK_THAT(5.05, Catch::Matchers::WithinRel(p.evaluate()));
+        p.set_constant("P_LEVEL", .9);
+        CHECK_THAT(9.09, Catch::Matchers::WithinRel(p.evaluate()));
+        p.compile(("IF(STRESS_L >= P_LEVEL, 1, 0)"));
+        CHECK(1 == p.evaluate());
+        }
+    }
+
+TEST_CASE("Permutation & Combination", "[math]")
+    {
+    te_parser p;
+
+    // COMB
+    p.compile(("COMBIN(15, 3)"));
+    CHECK(455 == p.evaluate());
+    // PERMUT
+    p.compile(("PERMUT(15, 3)"));
+    CHECK(2'730 == p.evaluate());
+    }
+
+TEST_CASE("Additional math functions", "[math]")
+    {
+    te_parser p;
+
+    p.compile(("SQR(3)"));
+    CHECK_THAT(9, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("SIN(3)"));
+    CHECK_THAT(0.141120008, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+
+    p.compile(("COS(7)"));
+    CHECK_THAT(.7539, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+
+    p.compile(("TAN(7)"));
+    CHECK_THAT(.871447983, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+
+    p.compile(("ATAN(7)"));
+    CHECK_THAT(1.42889927, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+
+    p.compile(("SINH(7)"));
+    CHECK_THAT(548.316123, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+
+    p.compile(("COSH(1)"));
+    CHECK_THAT(1.54308, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+
+    p.compile(("FLOOR(-3.2)"));
+    CHECK_THAT(-4, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("FLOOR(3.2)"));
+    CHECK_THAT(3, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("CEIL(-3.2)"));
+    CHECK_THAT(-3, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("CEIL(3.2)"));
+    CHECK_THAT(4, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("TRUNC(-3.2)"));
+    CHECK_THAT(-3, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("TRUNC(3.2)"));
+    CHECK_THAT(3, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("LOG(10)"));
+    CHECK_THAT(1, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("LOG(100)"));
+    CHECK_THAT(2, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("LN(10)"));
+    CHECK_THAT(2.30258509, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+
+    p.compile(("LN(100)"));
+    CHECK_THAT(4.60517019, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+
+    p.compile(("ABS(-2.7)"));
+    CHECK_THAT(2.7, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("ABS(68.84)"));
+    CHECK_THAT(68.84, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("IF(0, 1, -1)"));
+    CHECK_THAT(-1, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("IF(1, 1, -1)"));
+    CHECK_THAT(1, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("POW(3, 3)"));
+    CHECK_THAT(27, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("POW(3, 0)"));
+    CHECK_THAT(1, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("POW(-4, 2)"));
+    CHECK_THAT(16, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("SIGN(-85.6)"));
+    CHECK_THAT(-1, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("SIGN(89.0)"));
+    CHECK_THAT(1, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("SIGN(0)"));
+    CHECK_THAT(0, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("COT(0.1)"));
+    CHECK_THAT(9.9666, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+
+    p.compile(("COT(1.57)"));
+    CHECK_THAT(0.0007963, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+
+    p.compile(("EXP(3)"));
+    CHECK_THAT(20.085540, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+
+    p.compile(("SQRT(9)"));
+    CHECK_THAT(3, Catch::Matchers::WithinRel(p.evaluate()));
+    p.compile(("SQRT(27.04)"));
+    CHECK_THAT(5.2, Catch::Matchers::WithinRel(p.evaluate()));
+    }
+
+TEST_CASE("Logical functions", "[logic]")
+    {
+    te_parser p;
+
+    SECTION("AND")
+        {
+        p.compile(("AND(1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("AND(1, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("AND(1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("AND(0)"));
+        CHECK(0 == p.evaluate());
+        p.compile(("AND(1, 0)"));
+        CHECK(0 == p.evaluate());
+        p.compile(("AND(0, 1)"));
+        CHECK(0 == p.evaluate());
+        p.compile(("AND(0, 0)"));
+        CHECK(0 == p.evaluate());
+        p.compile(("AND(1, 1, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("AND(1, 1, 1, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("AND(1, 1, 1, 1, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("AND(1, 1, 1, 1, 1, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("AND(1, 1, 1, 1, 1, 1, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("AND(1, 1, 1, 1, 1, 1, 0)"));
+        CHECK(0 == p.evaluate());
+        p.compile(("AND(1, 1, 1, 1, 1, 0, 1)"));
+        CHECK(0 == p.evaluate());
+        p.compile(("AND(1, 1, 1, 1, 0, 1, 1)"));
+        CHECK(0 == p.evaluate());
+        p.compile(("AND(1, 1, 1, 0, 1, 1, 1)"));
+        CHECK(0 == p.evaluate());
+        p.compile(("AND(1, 1, 0, 1, 1, 1, 1)"));
+        CHECK(0 == p.evaluate());
+        }
+
+    SECTION("OR")
+        {
+        p.compile(("OR(1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(1, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(0)"));
+        CHECK(0 == p.evaluate());
+        p.compile(("OR(1, 0)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(0, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(0, 0)"));
+        CHECK(0 == p.evaluate());
+        p.compile(("OR(1, 0, 0)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(1, 0, 0, 0)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(1, 0, 0, 0, 0)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(1, 0, 0, 0, 0, 0)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(1, 0, 0, 0, 0, 0, 0)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(0, 0, 0, 0, 0, 0, 0)"));
+        CHECK(0 == p.evaluate());
+        p.compile(("OR(0, 0, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(0, 0, 0, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(0, 0, 0, 0, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(0, 0, 0, 0, 0, 1)"));
+        CHECK(1 == p.evaluate());
+        p.compile(("OR(0, 0, 0, 0, 0, 0, 1)"));
+        CHECK(1 == p.evaluate());
+        }
     }
