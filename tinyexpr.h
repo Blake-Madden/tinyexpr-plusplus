@@ -346,13 +346,15 @@ public:
     /// @param name The name of the (constant) variable.
     /// @param value The new value to set the constant to.
     /// @note If the constant variable hasn't been added yet (via set_vars()),
-    ///     then this will add it.
+    ///     then this will add it.\n
+    ///     If a variable with the provided name is found but is not a constant,
+    ///     then this will be ignored.
     void set_constant(const char* name, const double value)
         {
         auto cvar = find_variable(name);
-        if (cvar == get_vars().end() || !is_constant(cvar->m_value))
+        if (cvar == get_vars().end())
             { add_var({ name, value }); }
-        else
+        else if (is_constant(cvar->m_value))
             {
             cvar->m_value = value;
             // if previously compiled, then re-compile since this constant would have been optimized
