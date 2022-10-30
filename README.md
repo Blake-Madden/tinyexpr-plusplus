@@ -317,6 +317,8 @@ This produces the output:
       Result:
         4,840000
 
+Refer to [Examples](Examples.md) for more examples.
+
 ## How it works
 
 `te_parser::evaluate()` uses a simple recursive descent parser to compile your
