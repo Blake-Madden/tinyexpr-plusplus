@@ -62,6 +62,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cassert>
+#include <stdexcept>
 #include <cctype>
 #include <set>
 
@@ -93,12 +94,16 @@ using variant_type = std::variant<double, const double*, // indices 0-1
 
 /// @brief A variable's flags, effecting how it is evaluated.
 /// @note This is a bitmask, so flags can be OR'ed.
+/// @internal Note that because this is a bitmask, don't declare it as an enum class,
+///     just a C-style enum.
 enum variable_flags
     {
-    // note that because this is a bitmask, don't declare it as an enum class, just a C-style enum
-    TE_DEFAULT = 0, // don't do anything special when evaluating
-    TE_PURE = 1 << 1, // don't update when simple evaluation is ran (i.e., only updated when expression is compiled)
-    TE_VARIADIC = 1 << 2 // function that can take 1-7 argument (unused arguments are set to NaN).
+    /// Don't do anything special when evaluating.
+    TE_DEFAULT = 0,
+    /// Don't update when simple evaluation is ran (i.e., only updated when expression is compiled).
+    TE_PURE = 1 << 1,
+    /// Function that can take 1-7 argument (unused arguments are set to NaN).
+    TE_VARIADIC = 1 << 2
     };
 
 // turns off const in various places for debug builds.
@@ -239,9 +244,13 @@ public:
     te_expr(const variable_flags type, const variant_type& value) noexcept :
         m_type(type), m_value(value) {}
     explicit te_expr(const variable_flags type) noexcept : m_type(type) {}
+    /// @private
     te_expr() noexcept {}
+    /// @private
     te_expr(const te_expr&) = delete;
+    /// @private
     te_expr& operator=(const te_expr&) = delete;
+    /// @private
     virtual ~te_expr() {}
     /// The type that m_value represents.
     variable_flags m_type{ TE_DEFAULT };
@@ -251,7 +260,7 @@ public:
     std::vector<te_expr*> m_parameters{ nullptr };
     };
 
-/// Custom variable or function that can be added to a te_parser.
+/// @brief Custom variable or function that can be added to a te_parser.
 class te_variable
     {
 public:
@@ -267,7 +276,7 @@ public:
     te_expr* m_context{ nullptr };
     };
 
-/// Math formula parser.
+/// @brief Math formula parser.
 class te_parser
     {
 public:
@@ -418,9 +427,12 @@ private:
             std::basic_string_view<char, case_insensitive_char_traits>(name),
             [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
         // did it find an exact match?
-        return (foundPos != m_vars.end() && foundPos->m_name.compare(0, foundPos->m_name.length(), name) == 0) ? foundPos : m_vars.end();
+        return (foundPos != m_vars.end() &&
+                foundPos->m_name.compare(0, foundPos->m_name.length(), name) == 0) ?
+            foundPos : m_vars.end();
         }
-    /// @returns An iterator to the custom variable or function with the given @c name, or end of get_vars() if not found.
+    /// @returns An iterator to the custom variable or function with the given @c name,
+    ///     or end of get_vars() if not found.
     [[nodiscard]] std::vector<te_variable>::const_iterator find_variable(const char* name) const
         {
         if (!name) return m_vars.cend();
@@ -432,7 +444,9 @@ private:
             std::basic_string_view<char, case_insensitive_char_traits>(name),
             [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
         // did it find an exact match?
-        return (foundPos != m_vars.cend() && foundPos->m_name.compare(0, foundPos->m_name.length(), name) == 0) ? foundPos : m_vars.cend();
+        return (foundPos != m_vars.cend() &&
+                foundPos->m_name.compare(0, foundPos->m_name.length(), name) == 0) ?
+            foundPos : m_vars.cend();
         }
     [[nodiscard]] constexpr static auto is_pure(const variable_flags type)
         { return (((type)&TE_PURE) != 0); }
@@ -604,16 +618,18 @@ private:
 
         TE_RELEASE_CONST std::vector<te_variable>& m_lookup;
         };
-    [[nodiscard]] static te_expr* new_expr(const variable_flags type, const variant_type& value, const std::initializer_list<te_expr*> parameters);
+    [[nodiscard]] static te_expr* new_expr(const variable_flags type,
+        const variant_type& value, const std::initializer_list<te_expr*> parameters);
     [[nodiscard]] static constexpr bool is_letter(const char c) noexcept
         { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
     /* Parses the input expression and binds variables.
-       @returns NULL on error. */
-    [[nodiscard]] te_expr* te_compile(const char* expression, TE_RELEASE_CONST std::vector<te_variable>& variables);
+       @returns null on error. */
+    [[nodiscard]] te_expr* te_compile(const char* expression,
+        TE_RELEASE_CONST std::vector<te_variable>& variables);
     /* Evaluates the expression. */
     [[nodiscard]] static double te_eval(const te_expr* n);
     /* Frees the expression. */
-    /* This is safe to call on NULL pointers. */
+    /* This is safe to call on null pointers. */
     static void te_free(te_expr* n);
     static void te_free_parameters(te_expr* n);
     static void optimize(te_expr* n);
@@ -627,7 +643,9 @@ private:
             std::basic_string_view<char, case_insensitive_char_traits>(name, len),
             [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
         // did it find an exact match?
-        return (foundPos != m_functions.cend() && foundPos->m_name.compare(0, foundPos->m_name.length(), name, len) == 0) ? foundPos : m_functions.cend();
+        return (foundPos != m_functions.cend() &&
+                foundPos->m_name.compare(0, foundPos->m_name.length(), name, len) == 0) ?
+            foundPos : m_functions.cend();
         }
 
     [[nodiscard]] static auto find_lookup(TE_RELEASE_CONST state* s,
@@ -647,8 +665,8 @@ private:
 
             if (uniqueEnd != s->m_lookup.end())
                 {
-                fprintf(stderr, ("\n'" + uniqueEnd->m_name + "' was entered in the custom variable/function list twice!\n").c_str());
-                assert(0 && "Custom variable/function list twice!");
+                printf(("\n'" + uniqueEnd->m_name + "' was entered in the custom variable/function list twice!\n").c_str());
+                assert(0 && "Custom variable/function listed twice!");
                 }
             }
 #endif
@@ -657,7 +675,9 @@ private:
             std::basic_string_view<char, case_insensitive_char_traits>(name, len),
             [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
         // did it find an exact match?
-        return (foundPos != s->m_lookup.cend() && foundPos->m_name.compare(0, foundPos->m_name.length(), name, len) == 0) ? foundPos : s->m_lookup.cend();
+        return (foundPos != s->m_lookup.cend() &&
+                foundPos->m_name.compare(0, foundPos->m_name.length(), name, len) == 0) ?
+            foundPos : s->m_lookup.cend();
         }
 
 #ifndef NDEBUG
