@@ -230,14 +230,17 @@ For log = natural log uncomment the next line. */
     {
     if (a == 0.0)
         { return std::numeric_limits<double>::quiet_NaN(); }
-    return 1 / std::tan(a);
+    return 1 / static_cast<double>(std::tan(a));
     }
 [[nodiscard]] constexpr static double _sign(double a) noexcept
     { return (a < 0.0) ? -1 : (a > 0.0) ? 1 : 0; }
-[[nodiscard]] constexpr static double negate(double a) noexcept { return -a; }
-[[nodiscard]] constexpr static double comma([[maybe_unused]] double a, double b) noexcept { return b; }
+[[nodiscard]] constexpr static double _negate(double a) noexcept
+    { return -a; }
+[[nodiscard]] constexpr static double _comma([[maybe_unused]] double a, double b) noexcept
+    { return b; }
 
-te_expr* te_parser::new_expr(const variable_flags type, const variant_type& value, const std::initializer_list<te_expr*> parameters)
+te_expr* te_parser::new_expr(const variable_flags type, const variant_type& value,
+                             const std::initializer_list<te_expr*> parameters)
     {
     const auto arity = get_arity(value);
     te_expr* ret = new te_expr;
@@ -249,7 +252,6 @@ te_expr* te_parser::new_expr(const variable_flags type, const variant_type& valu
     if (parameters.size())
         { std::copy(parameters.begin(), parameters.end(), ret->m_parameters.begin()); }
     ret->m_type = type;
-    ret->m_value = 0;
     return ret;
     }
 
@@ -581,8 +583,8 @@ te_expr* te_parser::power(te_parser::state *s) {
     if (Sign == 1) {
         ret = base(s);
     } else {
-        ret = new_expr(TE_PURE, variant_type(negate), { base(s) });
-        ret->m_value = negate;
+        ret = new_expr(TE_PURE, variant_type(_negate), { base(s) });
+        ret->m_value = _negate;
     }
 
     return ret;
@@ -597,7 +599,7 @@ te_expr *factor(te_parser::state *s) {
 
     if (ret->m_type == (TE_PURE) &&
         is_function1(ret->m_value) &&
-        get_function1(ret->m_value) == negate) {
+        get_function1(ret->m_value) == _negate) {
         te_expr *se = ret->m_parameters[0];
         free(ret);
         ret = se;
@@ -625,8 +627,8 @@ te_expr *factor(te_parser::state *s) {
     }
 
     if (neg) {
-        ret = new_expr(TE_PURE, variant_type(negate), { ret });
-        ret->m_value = negate;
+        ret = new_expr(TE_PURE, variant_type(_negate), { ret });
+        ret->m_value = _negate;
     }
 
     return ret;
@@ -696,8 +698,8 @@ te_expr* te_parser::list(te_parser::state *s) {
 
     while (s->m_type == te_parser::state::token_type::TOK_SEP) {
         next_token(s);
-        ret = new_expr(TE_PURE, variant_type(comma), { ret, expr(s) });
-        ret->m_value = comma;
+        ret = new_expr(TE_PURE, variant_type(_comma), { ret, expr(s) });
+        ret->m_value = _comma;
     }
 
     return ret;
