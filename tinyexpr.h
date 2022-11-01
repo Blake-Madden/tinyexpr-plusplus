@@ -296,15 +296,15 @@ public:
         @param expression The formula to compile.
         @returns Whether the expression compiled or not.
         @sa success().
-        @throws std::runtime_error Throws an exception if division or modulus by zero occurrs.*/
+        @throws std::runtime_error Throws an exception if division or modulus by zero occurs.*/
     bool compile(const char* expression);
-    /** @brief Evaluates expression passed to compile() previuosly and returns its result.
+    /** @brief Evaluates expression passed to compile() previously and returns its result.
         @returns The result, or NaN on error.*/
     [[nodiscard]] double evaluate();
     /** @brief Compiles and evaluates an expression and returns its result.
         @param expression The formula to compile and evaluate.
         @returns The result, or NaN on error.
-        @throws std::runtime_error Throws an exception if division or modulus by zero occurrs.*/
+        @throws std::runtime_error Throws an exception if division or modulus by zero occurs.*/
     [[nodiscard]] double evaluate(const char* expression);
     /// @returns The last call to evaluate()'s result (which will be NaN on error).
     [[nodiscard]] double get_result() const noexcept
@@ -313,6 +313,11 @@ public:
     /// @sa get_last_error_position().
     [[nodiscard]] bool success() const noexcept
         { return m_parseSuccess; }
+    /// @brief Gets the compiled expression, which will the optimized version
+    ///     of the original expression.
+    /// @returns The compiled expression.
+    [[nodiscard]] const te_expr* get_compiled_expression() const noexcept
+        { return m_compiledExpression; }
     /// @returns The zero-based index into the last parsed expression where the parse failed,
     ///     or -1 if no error occurred.
     /// @note Call success() to see if the last parse succeeded or not.
@@ -343,10 +348,10 @@ public:
     [[nodiscard]] const std::vector<te_variable>& get_vars() const noexcept
         { return m_vars; }
 
-    /// @returns The decimal separator used for nunmbers.
+    /// @returns The decimal separator used for numbers.
     [[nodiscard]] char get_decimal_separator() const noexcept
         { return m_decimalSeparator; }
-    /// @brief Sets the decimal separator used for nunmbers.
+    /// @brief Sets the decimal separator used for numbers.
     /// @param sep The decimal separator.
     void set_decimal_separator(const char sep) noexcept
         { m_decimalSeparator = sep; }
@@ -410,6 +415,11 @@ public:
         return m_usedVars.find(
             std::basic_string<char, case_insensitive_char_traits>(name)) != m_usedVars.cend();
         }
+
+#ifndef NDEBUG
+    /* Prints debugging information on the syntax tree. */
+    static void te_print(const te_expr* n, int depth);
+#endif
 private:
     /// @returns The list of custom variables and functions.
     [[nodiscard]] std::vector<te_variable>& get_vars() noexcept
@@ -680,11 +690,6 @@ private:
                 foundPos->m_name.compare(0, foundPos->m_name.length(), name, len) == 0) ?
             foundPos : s->m_lookup.cend();
         }
-
-#ifndef NDEBUG
-    /* Prints debugging information on the syntax tree. */
-    static void te_print(const te_expr* n, int depth);
-#endif
 
     void next_token(state* s);
     [[nodiscard]] te_expr* base(state* s);
