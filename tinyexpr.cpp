@@ -61,29 +61,40 @@ For log = natural log uncomment the next line. */
 #include "tinyexpr.h"
 
 // builtin functions
-[[nodiscard]] constexpr static double _equal(double a, double b) noexcept { return (a == b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _not_equal(double a, double b) noexcept { return (a != b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _less_than(double a, double b) noexcept { return (a < b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _less_than_equal_to(double a, double b) noexcept { return (a <= b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _greater_than(double a, double b) noexcept { return (a > b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _greater_than_equal_to(double a, double b) noexcept { return (a >= b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _and(double a, double b) noexcept { return (a && b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _or(double a, double b) noexcept { return (a || b) ? 1 : 0; }
+[[nodiscard]] constexpr static double _equal(double a, double b) noexcept
+    { return (a == b) ? 1 : 0; }
+[[nodiscard]] constexpr static double _not_equal(double a, double b) noexcept
+    { return (a != b) ? 1 : 0; }
+[[nodiscard]] constexpr static double _less_than(double a, double b) noexcept
+    { return (a < b) ? 1 : 0; }
+[[nodiscard]] constexpr static double _less_than_equal_to(double a, double b)
+    noexcept { return (a <= b) ? 1 : 0; }
+[[nodiscard]] constexpr static double _greater_than(double a, double b) noexcept
+    { return (a > b) ? 1 : 0; }
+[[nodiscard]] constexpr static double _greater_than_equal_to(double a, double b) noexcept
+    { return (a >= b) ? 1 : 0; }
+[[nodiscard]] constexpr static double _and(double a, double b) noexcept
+    { return (a && b) ? 1 : 0; }
+[[nodiscard]] constexpr static double _or(double a, double b) noexcept
+    { return (a || b) ? 1 : 0; }
 [[nodiscard]] constexpr static double _not(double a) noexcept { return !a; }
-[[nodiscard]] constexpr static double _pi() noexcept { return 3.14159265358979323846; }
-[[nodiscard]] constexpr static double _e() noexcept { return 2.71828182845904523536; }
+[[nodiscard]] constexpr static double _pi() noexcept
+    { return 3.14159265358979323846; }
+[[nodiscard]] constexpr static double _e() noexcept
+    { return 2.71828182845904523536; }
 [[nodiscard]] static double _fac(double a) noexcept {/* simplest version of factorial */
     if (a < 0.0 || std::isnan(a))
-        return std::numeric_limits<double>::quiet_NaN();
+        { return std::numeric_limits<double>::quiet_NaN(); }
     if (a > std::numeric_limits<unsigned int>::max())
-        return std::numeric_limits<double>::infinity();
+        { return std::numeric_limits<double>::infinity(); }
     const auto ua = static_cast<size_t>(a);
     unsigned long int result{ 1 }, i{ 1 };
-    for (i = 1; i <= ua; i++) {
+    for (i = 1; i <= ua; i++)
+        {
         if (i > std::numeric_limits<unsigned long>::max() / result)
             return std::numeric_limits<double>::infinity();
         result *= i;
-    }
+        }
     return static_cast<double>(result);
 }
 [[nodiscard]] static double _random()
@@ -131,40 +142,45 @@ For log = natural log uncomment the next line. */
     }
 [[nodiscard]] static double _round(double val, double decimal_places) noexcept
     {
-    const size_t decimalPlaces{ std::isnan(decimal_places) ? 0 : static_cast<size_t>(decimal_places) };
+    const size_t decimalPlaces{ std::isnan(decimal_places) ?
+        0 : static_cast<size_t>(decimal_places) };
     const size_t decimalPostition = (decimalPlaces == 0) ? 0 :
         (decimalPlaces == 1) ? 10 : (decimalPlaces == 2) ? 100 :
-        (decimalPlaces == 3) ? 1000 : (decimalPlaces == 4) ? 10000 :
-        (decimalPlaces == 5) ? 100000 : (decimalPlaces >= 6) ? 1000000 :
+        (decimalPlaces == 3) ? 1'000 : (decimalPlaces == 4) ? 10'000 :
+        (decimalPlaces == 5) ? 100'000 : (decimalPlaces >= 6) ? 1'000'000 :
         10;
 
     if (val < 0)
         {
-        return (decimalPostition == 0) ? std::ceil(val -0.5f) :
+        return (decimalPostition == 0) ? std::ceil(val - 0.5f) :
             std::ceil((val * decimalPostition) - 0.5f)/decimalPostition;
         }
     else
         {
-        return (decimalPostition == 0) ? std::floor(val +0.5f) :
+        return (decimalPostition == 0) ? std::floor(val + 0.5f) :
             std::floor((val * decimalPostition) + 0.5f)/decimalPostition;
         }
     }
 // Combinations (without repetition)
-[[nodiscard]] static double _ncr(double n, double r) noexcept {
-    if (n < 0.0 || r < 0.0 || n < r || std::isnan(n) || std::isnan(r)) return std::numeric_limits<double>::quiet_NaN();
-    if (n > std::numeric_limits<unsigned int>::max() || r > std::numeric_limits<unsigned int>::max()) return std::numeric_limits<double>::infinity();
-    const unsigned long int un = static_cast<unsigned int>(n);
-    unsigned long int ur = static_cast<unsigned int>(r);
-    unsigned long int result = 1;
+[[nodiscard]] static double _ncr(double n, double r) noexcept
+    {
+    if (n < 0.0 || r < 0.0 || n < r || std::isnan(n) || std::isnan(r))
+        { return std::numeric_limits<double>::quiet_NaN(); }
+    if (n > std::numeric_limits<unsigned int>::max() || r > std::numeric_limits<unsigned int>::max())
+        { return std::numeric_limits<double>::infinity(); }
+    const unsigned long int un{ static_cast<unsigned int>(n) };
+    unsigned long int ur{ static_cast<unsigned int>(r) };
+    unsigned long int result{ 1 };
     if (ur > un / 2) ur = un - ur;
-    for (decltype(ur) i = 1; i <= ur; i++) {
+    for (decltype(ur) i = 1; i <= ur; i++)
+        {
         if (result > std::numeric_limits<unsigned long>::max() / (un - ur + i))
             return std::numeric_limits<double>::infinity();
         result *= un - ur + i;
         result /= i;
-    }
+        }
     return static_cast<double>(result);
-}
+    }
 // Permutations (without repetition)
 [[nodiscard]] static double _npr(double n, double r) noexcept { return _ncr(n, r) * _fac(r); }
 [[nodiscard]] constexpr static double _add(double a, double b) noexcept { return a + b; }
@@ -252,6 +268,7 @@ te_expr* te_parser::new_expr(const variable_flags type, const variant_type& valu
     if (parameters.size())
         { std::copy(parameters.begin(), parameters.end(), ret->m_parameters.begin()); }
     ret->m_type = type;
+    ret->m_value = double{ 0.0 };
     return ret;
     }
 
@@ -288,7 +305,8 @@ const std::vector<te_variable> te_parser::m_functions = {
     /* must be in alphabetical order */
     {"abs", static_cast<te_fun1>(std::fabs), TE_PURE},
     {"acos", static_cast<te_fun1>(std::acos), TE_PURE},
-    {"and", static_cast<te_fun7>(_and_variadic), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)}, // variadic, accepts 1-7 arguments
+    // variadic, accepts 1-7 arguments
+    {"and", static_cast<te_fun7>(_and_variadic), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
     {"asin", static_cast<te_fun1>(std::asin), TE_PURE},
     {"atan", static_cast<te_fun1>(std::atan), TE_PURE},
     {"atan2", static_cast<te_fun2>(std::atan2), TE_PURE},
@@ -376,7 +394,10 @@ void te_parser::next_token(te_parser::state *s)
             if (is_letter(s->m_next[0]))
                 {
                 const char* start = s->m_next;
-                while (is_letter(s->m_next[0]) || (s->m_next[0] >= '0' && s->m_next[0] <= '9') || (s->m_next[0] == '_')) s->m_next++;
+                while (is_letter(s->m_next[0]) ||
+                       (s->m_next[0] >= '0' && s->m_next[0] <= '9') ||
+                       (s->m_next[0] == '_'))
+                    { s->m_next++; }
 
                 m_varFound = false;
                 m_currentVar = find_lookup(s, start, s->m_next - start);
@@ -457,7 +478,8 @@ void te_parser::next_token(te_parser::state *s)
 
 te_expr* te_parser::base(te_parser::state *s)
     {
-    /* <base>      =    <constant> | <variable> | <function-0> {"(" ")"} | <function-1> <power> | <function-X> "(" <expr> {"," <expr>} ")" | "(" <list> ")" */
+    /* <base>      =    <constant> | <variable> | <function-0> {"(" ")"} | <function-1> <power> |
+                        <function-X> "(" <expr> {"," <expr>} ")" | "(" <list> ")" */
     te_expr* ret{ nullptr };
     int arity{ 0 };
 
@@ -827,13 +849,15 @@ bool te_parser::compile(const char* expression)
     m_expression.assign(expression);
 
     m_compiledExpression = te_compile(expression, get_vars());
-    m_parseSuccess = (m_compiledExpression) ? true : false;
+    m_parseSuccess = (m_compiledExpression != nullptr) ? true : false;
     return m_parseSuccess;
     }
 
 double te_parser::evaluate()
     {
-    m_result = (m_compiledExpression) ? te_eval(m_compiledExpression) : std::numeric_limits<double>::quiet_NaN();
+    m_result = (m_compiledExpression) ?
+        te_eval(m_compiledExpression) :
+        std::numeric_limits<double>::quiet_NaN();
     return m_result;
     }
 
@@ -855,7 +879,7 @@ void te_parser::te_print(const te_expr *n, int depth)
         int arity = get_arity(n->m_value);
         printf("f%d", arity);
         for (int i = 0; i < arity; i++)
-            { printf(" %p", n->m_parameters[i]); }
+            { printf(" %p", static_cast<void*>(n->m_parameters[i])); }
         printf("\n");
         for (int i = 0; i < arity; i++)
             { te_print(n->m_parameters[i], depth + 1); }
@@ -863,6 +887,6 @@ void te_parser::te_print(const te_expr *n, int depth)
     else if (is_constant(n->m_value))
         { printf("%f\n", get_constant(n->m_value)); }
     else if (is_variable(n->m_value))
-        { printf("bound %p\n", get_variable(n->m_value)); }
+        { printf("bound %p\n", static_cast<const void*>(get_variable(n->m_value))); }
     }
 #endif
