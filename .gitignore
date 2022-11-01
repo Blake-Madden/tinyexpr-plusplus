@@ -1,3 +1,4 @@
 ﻿/tests/.vs
 /tests/out
 /.vs
+CMakeSettings.json

@@ -49,7 +49,10 @@
 #include <array>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <catch2/benchmark/catch_benchmark_all.hpp>
 
+namespace TETesting
+{
 double sum0() {
     return 6;
 }
@@ -118,6 +121,34 @@ public:
 double cell(const te_expr* context, double a) {
     auto* c = dynamic_cast<const te_expr_array*>(context);
     return static_cast<double>(c->m_data[a]);
+}
+
+double bench_a5(double a) {
+    return a+5;
+}
+
+double bench_a55(double a) {
+    return 5+a+5;
+}
+
+double bench_a5abs(double a) {
+    return fabs(a+5);
+}
+
+double bench_a52(double a) {
+    return (a+5)*2;
+}
+
+double bench_a10(double a) {
+    return a+(5*2);
+}
+
+double bench_as(double a) {
+    return sqrt(pow(a, 1.5) + pow(a, 2.5));
+}
+
+double bench_al(double a) {
+    return (1/(a+1)+2/(a+2)+3/(a+3));
 }
 
 TEST_CASE("Main tests", "[main]")
@@ -1293,3 +1324,46 @@ TEST_CASE("Logical functions", "[logic]")
         CHECK(1 == p.evaluate());
         }
     }
+
+TEST_CASE("Benchmarks", "[!benchmark]")
+    {
+    double benchmarkVar{ 9 };
+    te_parser tep;
+    tep.set_vars({ {"a", &benchmarkVar} });
+
+    BENCHMARK("a+5 Compiled")
+        { return tep.evaluate("a+5"); };
+    BENCHMARK("a+5 Native")
+        { return bench_a5(benchmarkVar); };
+
+    BENCHMARK("5+a+5 Compiled")
+        { return tep.evaluate("5+a+5"); };
+    BENCHMARK("5+a+5 Native")
+        { return bench_a55(benchmarkVar); };
+
+    BENCHMARK("abs(a+5) Compiled")
+        { return tep.evaluate("abs(a+5)"); };
+    BENCHMARK("abs(a+5) Native")
+        { return bench_a5abs(benchmarkVar); };
+
+    BENCHMARK("sqrt(a^1.5+a^2.5) Compiled")
+        { return tep.evaluate("sqrt(a^1.5+a^2.5)"); };
+    BENCHMARK("sqrt(a^1.5+a^2.5) Native")
+        { return bench_as(benchmarkVar); };
+
+    BENCHMARK("a+(5*2) Compiled")
+        { return tep.evaluate("a+(5*2)"); };
+    BENCHMARK("a+(5*2) Native")
+        { return bench_a10(benchmarkVar); };
+
+    BENCHMARK("(a+5)*2 Compiled")
+        { return tep.evaluate("(a+5)*2"); };
+    BENCHMARK("(a+5)*2 Native")
+        { return bench_a52(benchmarkVar); };
+
+    BENCHMARK("(1/(a+1)+2/(a+2)+3/(a+3)) Compiled")
+        { return tep.evaluate("(1/(a+1)+2/(a+2)+3/(a+3))"); };
+    BENCHMARK("(1/(a+1)+2/(a+2)+3/(a+3)) Native")
+        { return bench_al(benchmarkVar); };
+    }
+}
