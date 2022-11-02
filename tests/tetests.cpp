@@ -439,7 +439,7 @@ TEST_CASE("Variables", "[variables]")
     double x{ 0 }, y{ 0 }, test{ 0 };
 
     te_parser tep;
-    tep.set_vars({ {"x", &x}, {"y", &y}, {"te_st", &test} });
+    tep.set_variables_and_functions({ {"x", &x}, {"y", &y}, {"te_st", &test} });
     [[maybe_unused]] auto exprRes = tep.evaluate("cos x + sin y");
     CHECK(tep.success());
     CHECK(tep.get_last_error_position() == -1);
@@ -512,7 +512,7 @@ TEST_CASE("Dynamic", "[dynamic]")
         };
 
     te_parser tep;
-    tep.set_vars(lookup);
+    tep.set_variables_and_functions(lookup);
 
     CHECK(tep.evaluate("x") == 2);
     CHECK(tep.evaluate("f+x") == 7);
@@ -582,7 +582,7 @@ TEST_CASE("Functions", "[functions]")
     double x{ 0 }, y{ 0 };
 
     te_parser tep;
-    tep.set_vars({ {"x", &x}, {"y", &y} });
+    tep.set_variables_and_functions({ {"x", &x}, {"y", &y} });
 
     for (x = -5; x < 5; x += 0.2)
         {
@@ -639,7 +639,7 @@ TEST_CASE("Power", "[power]")
         {"b", &b}
     };
     te_parser tep;
-    tep.set_vars(lookup);
+    tep.set_variables_and_functions(lookup);
 
 #ifdef TE_POW_FROM_RIGHT
     CHECK(tep.evaluate("2^3^4") == tep.evaluate("2^(3^4)"));
@@ -753,7 +753,7 @@ TEST_CASE("Closure", "[closure]")
     };
 
     te_parser tep;
-    tep.set_vars(lookup);
+    tep.set_variables_and_functions(lookup);
 
     extra = 0;
     double answer{ 6 };
@@ -820,7 +820,7 @@ TEST_CASE("Constants", "[constants]")
 TEST_CASE("Long names", "[longnames]")
     {
     te_parser p;
-    p.set_vars(
+    p.set_variables_and_functions(
         {
             { "AddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResult", AddEm }
         });
@@ -1060,7 +1060,7 @@ TEST_CASE("Is function used", "[functions]")
     {
     te_parser p;
 
-    p.set_vars({
+    p.set_variables_and_functions({
         { "MULT", __mult }
         });
     p.compile(("log(5)+sin(atan(6))-MULT(2,30,4,5)+1"));
@@ -1076,7 +1076,7 @@ TEST_CASE("Is variable used", "[functions]")
     {
     te_parser p;
 
-    p.set_vars({
+    p.set_variables_and_functions({
         {"STRESS_L", 10.1},
         {"P_LEVEL", .5},
         {"z", .75} });
@@ -1092,37 +1092,37 @@ TEST_CASE("Custom test", "[functions]")
 
     SECTION("Custom test unknown parameters")
         {
-        p.set_vars({ { "MULT", __mult} });
+        p.set_variables_and_functions({ { "MULT", __mult} });
         p.compile(("MULT(2,30,4,5)+1"));
         CHECK(1201 == p.evaluate());
         }
     SECTION("0 Parameters")
         {
-        p.set_vars({ {"Return5", return5} });
+        p.set_variables_and_functions({ {"Return5", return5} });
         p.compile(("Return5()"));
         CHECK_THAT(5, Catch::Matchers::WithinRel(p.evaluate()));
         }
     SECTION("1 Parameter")
         {
-        p.set_vars({ { "value", __value} });
+        p.set_variables_and_functions({ { "value", __value} });
         p.compile(("value(2.1)"));
         CHECK_THAT(2.1, Catch::Matchers::WithinRel(p.evaluate()));
         }
     SECTION("2 Parameters")
         {
-        p.set_vars({ { "AddEm", AddEm} });
+        p.set_variables_and_functions({ { "AddEm", AddEm} });
         p.compile(("ADDEM(2.1, 86.8)"));
         CHECK_THAT(88.9, Catch::Matchers::WithinRel(p.evaluate()));
         }
     SECTION("3 Parameters")
         {
-        p.set_vars({ {"AddEm3", AddEm3} });
+        p.set_variables_and_functions({ {"AddEm3", AddEm3} });
         p.compile(("ADDEM3(2.1, 86.8, 2)"));
         CHECK_THAT(90.9, Catch::Matchers::WithinRel(p.evaluate()));
         }
     SECTION("Custom variables")
         {
-        p.set_vars({ {"STRESS_L", 10.1},
+        p.set_variables_and_functions({ {"STRESS_L", 10.1},
             {"P_LEVEL", .5} });
         p.compile(("STRESS_L*P_LEVEL"));
         CHECK_THAT(5.05, Catch::Matchers::WithinRel(p.evaluate()));
@@ -1328,23 +1328,23 @@ TEST_CASE("Logical functions", "[logic]")
 TEST_CASE("Validate variables", "[names]")
     {
     te_parser tep;
-    CHECK_THROWS(tep.add_var({ "", 5 }));
-    CHECK_THROWS(tep.set_vars({ { "", 5 } }));
-    CHECK_THROWS(tep.set_vars({ { "Var WithSpace", 5 } }));
-    CHECK_THROWS(tep.set_vars({ { "Varÿ", 5 } }));
-    CHECK_THROWS(tep.set_vars({ { "_Var", 5 } }));
-    CHECK_THROWS(tep.set_vars({ { "Var$", 5 } }));
-    CHECK_THROWS(tep.set_vars({ { "Var ", 5 } }));
+    CHECK_THROWS(tep.add_variable_or_function({ "", 5 }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "", 5 } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Var WithSpace", 5 } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Varÿ", 5 } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "_Var", 5 } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Var$", 5 } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Var ", 5 } }));
 
     // should be fine
-    CHECK_NOTHROW(tep.set_vars({ { "Var_OK74_", 5 } }));
+    CHECK_NOTHROW(tep.set_variables_and_functions({ { "Var_OK74_", 5 } }));
     }
 
 TEST_CASE("Benchmarks", "[!benchmark]")
     {
     double benchmarkVar{ 9 };
     te_parser tep;
-    tep.set_vars({ {"a", &benchmarkVar} });
+    tep.set_variables_and_functions({ {"a", &benchmarkVar} });
 
     BENCHMARK("a+5 Compiled")
         { return tep.evaluate("a+5"); };

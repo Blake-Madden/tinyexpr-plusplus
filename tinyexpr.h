@@ -330,7 +330,7 @@ public:
     ///     followed by additional English letters, numbers, or underscores.
     /// @throws std::runtime_error Throws an exception if an illegal character is found
     ///     in the variable name.
-    void set_vars(const std::vector<te_variable>& vars)
+    void set_variables_and_functions(const std::vector<te_variable>& vars)
         {
         for (const auto& var : vars)
             { validate_name(var); }
@@ -339,13 +339,17 @@ public:
             [](const auto& lhv, const auto& rhv) noexcept
             { return lhv.m_name < rhv.m_name; });
         }
+    /// @private
+    [[deprecated("Use set_variables_and_functions() instead.")]]
+    void set_vars(const std::vector<te_variable>& vars)
+        { set_variables_and_functions(vars); }
     /// @brief Adds a custom variable or function.
     /// @param var The variable/function to add.
-    /// @note Prefer using set_vars() as it will be more optimal
+    /// @note Prefer using set_variables_and_functions() as it will be more optimal
     ///     (less sorts will need to be performed).
     /// @throws std::runtime_error Throws an exception if an illegal character is found
     ///     in the variable name.
-    void add_var(const te_variable& var)
+    void add_variable_or_function(const te_variable& var)
         {
         validate_name(var);
         m_vars.push_back(var);
@@ -353,6 +357,10 @@ public:
             [](const auto& lhv, const auto& rhv) noexcept
             { return lhv.m_name < rhv.m_name; });
         }
+    /// @private
+    [[deprecated("Use add_variable_or_function() instead.")]]
+    void add_var(const te_variable& var)
+        { add_variable_or_function(var); }
     /// @returns The list of custom variables and functions.
     [[nodiscard]] const std::vector<te_variable>& get_vars() const noexcept
         { return m_vars; }
@@ -368,7 +376,7 @@ public:
     /// @brief Sets a constant variable's value.
     /// @param name The name of the (constant) variable.
     /// @param value The new value to set the constant to.
-    /// @note If the constant variable hasn't been added yet (via set_vars()),
+    /// @note If the constant variable hasn't been added yet (via set_variables_and_functions()),
     ///     then this will add it.\n
     ///     If a variable with the provided name is found but is not a constant,
     ///     then this will be ignored.
@@ -376,7 +384,7 @@ public:
         {
         auto cvar = find_variable(name);
         if (cvar == get_vars().end())
-            { add_var({ name, value }); }
+            { add_variable_or_function({ name, value }); }
         else if (is_constant(cvar->m_value))
             {
             cvar->m_value = value;
