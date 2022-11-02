@@ -1325,6 +1325,21 @@ TEST_CASE("Logical functions", "[logic]")
         }
     }
 
+TEST_CASE("Validate variables", "[names]")
+    {
+    te_parser tep;
+    CHECK_THROWS(tep.add_var({ "", 5 }));
+    CHECK_THROWS(tep.set_vars({ { "", 5 } }));
+    CHECK_THROWS(tep.set_vars({ { "Var WithSpace", 5 } }));
+    CHECK_THROWS(tep.set_vars({ { "Varÿ", 5 } }));
+    CHECK_THROWS(tep.set_vars({ { "_Var", 5 } }));
+    CHECK_THROWS(tep.set_vars({ { "Var$", 5 } }));
+    CHECK_THROWS(tep.set_vars({ { "Var ", 5 } }));
+
+    // should be fine
+    CHECK_NOTHROW(tep.set_vars({ { "Var_OK74_", 5 } }));
+    }
+
 TEST_CASE("Benchmarks", "[!benchmark]")
     {
     double benchmarkVar{ 9 };

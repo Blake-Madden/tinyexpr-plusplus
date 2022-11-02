@@ -326,8 +326,14 @@ public:
 
     /// @brief Sets the list of custom variables and functions.
     /// @param vars The list of variables and functions.
+    /// @note Valid variable and function names must begin with a letter from a-z (A-Z),
+    ///     followed by additional English letters, numbers, or underscores.
+    /// @throws std::runtime_error Throws an exception if an illegal character is found
+    ///     in the variable name.
     void set_vars(const std::vector<te_variable>& vars)
         {
+        for (const auto& var : vars)
+            { validate_name(var); }
         m_vars = vars;
         std::sort(m_vars.begin(), m_vars.end(),
             [](const auto& lhv, const auto& rhv) noexcept
@@ -337,8 +343,11 @@ public:
     /// @param var The variable/function to add.
     /// @note Prefer using set_vars() as it will be more optimal
     ///     (less sorts will need to be performed).
+    /// @throws std::runtime_error Throws an exception if an illegal character is found
+    ///     in the variable name.
     void add_var(const te_variable& var)
         {
+        validate_name(var);
         m_vars.push_back(var);
         std::sort(m_vars.begin(), m_vars.end(),
             [](const auto& lhv, const auto& rhv) noexcept
@@ -421,6 +430,30 @@ public:
     static void te_print(const te_expr* n, int depth);
 #endif
 private:
+    /// @brief Validates that a variable only contains legal characters
+    ///     (and has a valid length).
+    /// @throws std::runtime_error Throws an exception if an illegal character is found.
+    void validate_name(const te_variable& var)
+        {
+        if (var.m_name.empty())
+            { throw std::runtime_error("Variable name is empty."); }
+        if (!is_letter(var.m_name[0]))
+            {
+            throw std::string("Variable name must begin with an English letter: ") + var.m_name.c_str();
+            }
+        const auto barCharPos = std::find_if(var.m_name.cbegin(), var.m_name.cend(),
+            [](const auto ch) noexcept
+                {
+                return !(is_letter(ch) ||
+                    (ch >= '0' && ch <= '9') ||
+                    (ch == '_'));
+                });
+        if (barCharPos != var.m_name.cend())
+            {
+            throw std::runtime_error(
+                std::string("Invalid character in variable name: ") + var.m_name.c_str());
+            }
+        }
     /// @returns The list of custom variables and functions.
     [[nodiscard]] std::vector<te_variable>& get_vars() noexcept
         { return m_vars; }
