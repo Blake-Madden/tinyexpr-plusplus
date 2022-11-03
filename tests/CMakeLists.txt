@@ -13,6 +13,16 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# https://github.com/bilke/cmake-modules/blob/master/CodeCoverage.cmake
+IF(CMAKE_COMPILER_IS_GNUCXX)
+    LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake_modules")
+    INCLUDE(CodeCoverage)
+    APPEND_COVERAGE_COMPILER_FLAGS()
+    SETUP_TARGET_FOR_COVERAGE_LCOV(NAME ${CMAKE_PROJECT_NAME}_coverage
+                                   EXECUTABLE ${CMAKE_PROJECT_NAME}
+                                   DEPENDENCIES ${CMAKE_PROJECT_NAME})
+ENDIF()
+
 # place Catch2 at the same folder level as this repo if it isn't installed
 # (you will need to do this on Windows or macOS or if version 3 of Catch2 isn't installed)
 GET_FILENAME_COMPONENT(_fullpath "${_dir}" REALPATH)
@@ -23,10 +33,10 @@ ELSE()
     FIND_PACKAGE(Catch2 3 REQUIRED)
 ENDIF()
 
-ADD_EXECUTABLE(TETestRunner ../tinyexpr.cpp tetests.cpp)
-TARGET_LINK_LIBRARIES(TETestRunner PRIVATE Catch2::Catch2WithMain)
+ADD_EXECUTABLE(${CMAKE_PROJECT_NAME} ../tinyexpr.cpp tetests.cpp)
+TARGET_LINK_LIBRARIES(${CMAKE_PROJECT_NAME} PRIVATE Catch2::Catch2WithMain)
 
 # load the test cases into the runner
 INCLUDE(CTest)
 INCLUDE(Catch)
-CATCH_DISCOVER_TESTS(TETestRunner)
+CATCH_DISCOVER_TESTS(${CMAKE_PROJECT_NAME})
