@@ -91,6 +91,31 @@ double clo2(const te_expr* context, double a, double b) {
     return a + b;
 }
 
+double clo3(const te_expr* context, double a, double b, double c) {
+    if (context) return *(std::get<const double*>(context->m_value)) + a + b + c;
+    return a + b + c;
+}
+
+double clo4(const te_expr* context, double a, double b, double c, double d) {
+    if (context) return *(std::get<const double*>(context->m_value)) + a + b + c + d;
+    return a + b + c + d;
+}
+
+double clo5(const te_expr* context, double a, double b, double c, double d, double e) {
+    if (context) return *(std::get<const double*>(context->m_value)) + a + b + c + d + e;
+    return a + b + c + d + e;
+}
+
+double clo6(const te_expr* context, double a, double b, double c, double d, double e, double f) {
+    if (context) return *(std::get<const double*>(context->m_value)) + a + b + c + d + e + f;
+    return a + b + c + d + e + f;
+}
+
+double clo7(const te_expr* context, double a, double b, double c, double d, double e, double f, double g) {
+    if (context) return *(std::get<const double*>(context->m_value)) + a + b + c + d + e + f + g;
+    return a + b + c + d + e + f + g;
+}
+
 inline double AddEm(const double a, const double b){
     return a+b;
 }
@@ -749,6 +774,11 @@ TEST_CASE("Closure", "[closure]")
         {"c0", clo0, TE_DEFAULT, &te},
         {"c1", clo1, TE_DEFAULT, &te},
         {"c2", clo2, TE_DEFAULT, &te},
+        {"c3", clo3, TE_DEFAULT, &te},
+        {"c4", clo4, TE_DEFAULT, &te},
+        {"c5", clo5, TE_DEFAULT, &te},
+        {"c6", clo6, TE_DEFAULT, &te},
+        {"c7", clo7, TE_DEFAULT, &te},
         {"cell", cell, TE_DEFAULT, &teArray},
     };
 
@@ -766,27 +796,103 @@ TEST_CASE("Closure", "[closure]")
     CHECK(tep.success());
     CHECK(tep.evaluate() == answer + extra);
 
-    extra = 0;
-    answer = 8;
-    res = tep.evaluate("c1 4");
-    CHECK(tep.success());
-    CHECK(tep.evaluate() == answer + extra);
+    SECTION("C1")
+        {
+        extra = 0;
+        answer = 8;
+        res = tep.evaluate("c1 4");
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
 
-    extra = 10;
-    res = tep.evaluate();
-    CHECK(tep.success());
-    CHECK(tep.evaluate() == answer + extra);
+        extra = 10;
+        res = tep.evaluate();
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+        }
 
-    extra = 0;
-    answer = 30;
-    res = tep.evaluate("c2 (10, 20)");
-    CHECK(tep.success());
-    CHECK(tep.evaluate() == answer + extra);
+    SECTION("C2")
+        {
+        extra = 0;
+        answer = 30;
+        res = tep.evaluate("c2 (10, 20)");
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
 
-    extra = 10;
-    res = tep.evaluate();
-    CHECK(tep.success());
-    CHECK(tep.evaluate() == answer + extra);
+        extra = 10;
+        res = tep.evaluate();
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+        }
+
+    SECTION("C3")
+        {
+        extra = 0;
+        answer = 35;
+        res = tep.evaluate("c3 (10, 20, 5)");
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+
+        extra = 10;
+        res = tep.evaluate();
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+        }
+
+    SECTION("C4")
+        {
+        extra = 0;
+        answer = 37;
+        res = tep.evaluate("c4 (10, 20, 5, 2)");
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+
+        extra = 10;
+        res = tep.evaluate();
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+        }
+
+    SECTION("C5")
+        {
+        extra = 0;
+        answer = 45;
+        res = tep.evaluate("c5 (10, 20, 5, 2, 8)");
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+
+        extra = 10;
+        res = tep.evaluate();
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+        }
+
+    SECTION("C6")
+        {
+        extra = 0;
+        answer = 54;
+        res = tep.evaluate("c6 (10, 20, 5, 2, 8, 9)");
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+
+        extra = 10;
+        res = tep.evaluate();
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+        }
+
+    SECTION("C7")
+        {
+        extra = 0;
+        answer = 58;
+        res = tep.evaluate("c7 (10, 20, 5, 2, 8, 9, 4)");
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+
+        extra = 10;
+        res = tep.evaluate();
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == answer + extra);
+        }
 
     res = tep.evaluate("cell 0");
     CHECK(tep.success());
@@ -1328,16 +1434,28 @@ TEST_CASE("Logical functions", "[logic]")
 TEST_CASE("Validate variables", "[names]")
     {
     te_parser tep;
-    CHECK_THROWS(tep.add_variable_or_function({ "", 5 }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "", 5 } }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "Var WithSpace", 5 } }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "Varÿ", 5 } }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "_Var", 5 } }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "Var$", 5 } }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "Var ", 5 } }));
+    CHECK_THROWS(tep.add_variable_or_function({ "", 5.0 }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "", 5.0 } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Var WithSpace", 5.0 } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Varÿ", 5.0 } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "_Var", 5.0 } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Var$", 5.0 } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Var ", 5.0 } }));
 
     // should be fine
-    CHECK_NOTHROW(tep.set_variables_and_functions({ { "Var_OK74_", 5 } }));
+    CHECK_NOTHROW(tep.set_variables_and_functions({ { "Var_OK74_", 5.0 } }));
+    }
+
+TEST_CASE("Clamp", "[clamp]")
+    {
+    te_parser tep;
+
+    CHECK(tep.evaluate("CLAMP(1, 1, 9)") == 1);
+    CHECK(tep.evaluate("CLAMP(0, 1, 9)") == 1);
+    CHECK(tep.evaluate("CLAMP(9, 1, 9)") == 9);
+    CHECK(tep.evaluate("CLAMP(10, 1, 9)") == 9);
+    CHECK(tep.evaluate("CLAMP(4, 1, 9)") == 4);
+    CHECK_THROWS(tep.evaluate("CLAMP(4, 10, 9)"));
     }
 
 TEST_CASE("Benchmarks", "[!benchmark]")
@@ -1380,5 +1498,13 @@ TEST_CASE("Benchmarks", "[!benchmark]")
         { return tep.evaluate("(1/(a+1)+2/(a+2)+3/(a+3))"); };
     BENCHMARK("(1/(a+1)+2/(a+2)+3/(a+3)) Native")
         { return bench_al(benchmarkVar); };
+    }
+
+TEST_CASE("Random", "[random]")
+    {
+    te_parser tep;
+    // can't have reproducible results for rand, so just run it and make
+    // sure it doesn't crash
+    CHECK_NOTHROW(tep.evaluate("rand()"));
     }
 }
