@@ -128,7 +128,7 @@ For log = natural log uncomment the next line. */
         (std::isnan(v7) ? 0 : v7);
     }
 [[nodiscard]] static double _average(double v1, double v2, double v3, double v4,
-                                     double v5, double v6, double v7) noexcept
+                                     double v5, double v6, double v7)
     {
     const auto validN = (std::isnan(v1) ? 0 : 1) +
         (std::isnan(v2) ? 0 : 1) +
@@ -481,7 +481,6 @@ te_expr* te_parser::base(te_parser::state *s)
     /* <base>      =    <constant> | <variable> | <function-0> {"(" ")"} | <function-1> <power> |
                         <function-X> "(" <expr> {"," <expr>} ")" | "(" <list> ")" */
     te_expr* ret{ nullptr };
-    int arity{ 0 };
 
     if (s->m_type == te_parser::state::token_type::TOK_OPEN)
         {
@@ -545,7 +544,7 @@ te_expr* te_parser::base(te_parser::state *s)
         is_function6(s->m_value) || is_closure6(s->m_value) ||
         is_function7(s->m_value) || is_closure7(s->m_value))
         {
-        arity = get_arity(s->m_value);
+        const int arity = get_arity(s->m_value);
 
         ret = new_expr(s->m_varType, s->m_value, {});
         ret->m_value = s->m_value;
@@ -731,6 +730,7 @@ double te_parser::te_eval(const te_expr *n)
     {
     if (!n) return std::numeric_limits<double>::quiet_NaN();
 
+    // cppcheck-suppress unreadVariable
     const auto M = [&n = std::as_const(n)](const size_t e) constexpr noexcept
         {
         return (e < n->m_parameters.size()) ? te_eval(n->m_parameters[e]) :
