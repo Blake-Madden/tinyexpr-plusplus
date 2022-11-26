@@ -869,6 +869,17 @@ double te_parser::evaluate(const char* expression)
         { return std::numeric_limits<double>::quiet_NaN(); }
     }
 
+std::string te_parser::list_available_functions_and_variables()
+    {
+    std::string report = "Built-in Functions:\n";
+    for (const auto& func : m_functions)
+        { report.append(func.m_name.c_str()).append("\n"); }
+    report.append("\nCustom Functions & Variables:\n");
+    for (const auto& func : get_variables_and_functions())
+        { report.append(func.m_name.c_str()).append("\n"); }
+    return report;
+    }
+
 #ifndef NDEBUG
 void te_parser::te_print(const te_expr *n, int depth)
     {

@@ -1508,6 +1508,13 @@ TEST_CASE("Random", "[random]")
     CHECK_NOTHROW(tep.evaluate("rand()"));
     }
 
+TEST_CASE("AvailableFunctions", "[available]")
+    {
+    te_parser tep;
+    // nothing to really test, just call it and make sur it doesn't crash
+    CHECK_NOTHROW(tep.list_available_functions_and_variables());
+    }
+
 TEST_CASE("Benchmarks", "[!benchmark]")
     {
     double benchmarkVar{ 9 };

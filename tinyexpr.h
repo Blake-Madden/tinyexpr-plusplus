@@ -445,6 +445,9 @@ public:
             std::basic_string<char, case_insensitive_char_traits>(name)) != m_usedVars.cend();
         }
 
+    /// @returns A report of all available functions and variables.
+    [[nodiscard]] std::string list_available_functions_and_variables();
+
 #ifndef NDEBUG
     /* Prints debugging information on the syntax tree. */
     static void te_print(const te_expr* n, int depth);

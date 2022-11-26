@@ -53,7 +53,7 @@ The following are changes from the original TinyExpr C library:
 - Separate enums are now used between `te_expr` and `state`'s types and are more strongly typed.
 - Added new built-in functions:
   - `and`: returns true (i.e., non-zero) if all conditions are true (accepts 1-7 arguments).
-  - `average`: returns the means for a range of values (accepts 1-7 arguments).
+  - `average`: returns the mean for a range of values (accepts 1-7 arguments).
   - `cot`: returns the cotangent of an angle.
   - `combin`: alias for `ncr()`, like the **Excel** function.
   - `clamp`: contrains a value to a range.
@@ -84,6 +84,7 @@ The following are changes from the original TinyExpr C library:
 - Custom variables and functions are now stored in a `std::vector` (which can be easily accessed and updated via the new `get_variables_and_functions()/set_variables_and_functions()` functions).
 - Added `is_function_used()` and `is_variable_used()` functions to see if a specific function or variable was used in the last parsed formula.
 - Added `set_constant()` function to find and update the value of a constant (custom) variable by name.
+(In this context, a constant is a variable mapped to a double value in the parser, rather than mapped to a runtime variable.)
 - Added `get_constant()` function to return the value of a constant (custom) variable by name.
 - Binary search is now used to look up custom variables and functions (small optimization).
 - You no longer need to specify the number of arguments for custom functions; it will deduce that for you.
