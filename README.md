@@ -45,7 +45,7 @@ The following are changes from the original TinyExpr C library:
 - `te_expr` is now a derivable base class. This means that you can derive from `te_expr`, add new fields to that derived class (e.g., arrays, strings, even other classes)
   and then use a custom class as an argument to the various function types that accept a `te_expr*` parameter. The function that you connect can then `dynamic_cast<>`
   this argument and use its custom fields, thus greatly enhancing the functionality for these types of functions.
-  (Refer to the `te_expr_array` class in `tests/tetests.cpp` for an example.)
+  (See below for example.)
 - Added exception support, where exceptions are thrown for situations like divide by zero. Calls to `compile` and `evaluate` should be wrapped in `try`...`catch` blocks.
 - Memory management is handled by the `te_parser` class (you no longer need to call `te_free`). Also, replaced `malloc/free` with `new/delete`.
 - Stricter type safety; uses `std::variant` (instead of unions) that support `double`, `const double*`, and 16 specific function signatures (that will work with lambdas or function pointers).
@@ -297,6 +297,66 @@ const double r = tep.evaluate("mysum(5, 6)");
 // will be 11
 ```
 
+## Binding to Custom Classes
+
+A class derived from `te_expr` can be bound to custom functions. This enables you to
+have full access to an object (via these functions) when parsing an expression.
+
+The following demonstrates creating a `te_expr`-derived class which contains an array of values:
+
+```cpp
+class te_expr_array : public te_expr
+    {
+public:
+    explicit te_expr_array(const variable_flags type) noexcept :
+        te_expr(type) {}
+    std::array<double, 5> m_data = { 5, 6, 7, 8, 9 };
+    };
+```
+
+Next, create two functions that can accept this object and perform
+actions on it. (Note that proper error handling is not included for brevity.):
+
+```cpp
+// Returns the value of a cell from the object's data.
+double cell(const te_expr* context, double a)
+    {
+    auto* c = dynamic_cast<const te_expr_array*>(context);
+    return static_cast<double>(c->m_data[static_cast<size_t>(a)]);
+    }
+
+// Returns the max value of the object's data.
+double cell_max(const te_expr* context)
+    {
+    auto* c = dynamic_cast<const te_expr_array*>(context);
+    return static_cast<double>(
+        *std::max_element(c->m_data.cbegin(), c->m_data.cend()));
+    }
+```
+
+Finally, create an instance of the class and connect the custom functions to it,
+while also adding them to the parser:
+
+```cpp
+te_expr_array teArray{ TE_DEFAULT };
+
+te_parser tep;
+tep.set_variables_and_functions(
+    {
+        {"cell", cell, TE_DEFAULT, &teArray},
+        {"cellmax", cell_max, TE_DEFAULT, &teArray}
+    });
+
+// change the object's data and evaluate their summation
+// (will be 30)
+teArray.m_data = { 6, 7, 8, 5, 4 };
+auto result = tep.evaluate("SUM(CELL 0, CELL 1, CELL 2, CELL 3, CELL 4)");
+
+// call the other function, getting the object's max value
+// (will be 8)
+res = tep.evaluate("CellMax()");
+```
+
 ## Non-US Formatted Formulas
 
 TinyExpr++ supports other locales and non-US formatted formulas. Here is an example:
@@ -441,7 +501,7 @@ By default, TinyExpr++ does exponentiation from left to right. For example:
 This is by design; it's the way that spreadsheets do it (e.g., Excel, Google Sheets).
 
 If you would rather have exponentiation work from right to left, you need to
-define `TE_POW_FROM_RIGHT` when compiling `tinyexpr.cpp`. There is a
+define `TE_POW_FROM_RIGHT` when compiling. There is a
 commented-out define near the top of that file. With this option enabled, the
 behavior is:
 

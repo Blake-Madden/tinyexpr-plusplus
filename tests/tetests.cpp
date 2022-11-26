@@ -137,16 +137,27 @@ inline double __mult(const double a, const double b, const double c, const doubl
 }
 
 class te_expr_array : public te_expr
-{
+    {
 public:
-    te_expr_array(const variable_flags type) noexcept : te_expr(type) {}
-    std::array<double, 5> m_data = { 5,6,7,8,9 };
-};
+    explicit te_expr_array(const variable_flags type) noexcept :
+        te_expr(type) {}
+    std::array<double, 5> m_data = { 5, 6, 7, 8, 9 };
+    };
 
-double cell(const te_expr* context, double a) {
+// Returns the value of a cell from the object's data.
+double cell(const te_expr* context, double a)
+    {
     auto* c = dynamic_cast<const te_expr_array*>(context);
     return static_cast<double>(c->m_data[static_cast<size_t>(a)]);
-}
+    }
+
+// Returns the max value object's data.
+double cell_max(const te_expr* context)
+    {
+    auto* c = dynamic_cast<const te_expr_array*>(context);
+    return static_cast<double>(
+        *std::max_element(c->m_data.cbegin(), c->m_data.cend()));
+    }
 
 double bench_a5(double a) {
     return a+5;
@@ -763,12 +774,48 @@ TEST_CASE("Syntax Errors", "[syntax]")
     CHECK_THAT(tep.evaluate("pi * 2"), Catch::Matchers::WithinRel(6.2832, 0.00001));
     }
 
+TEST_CASE("Cells", "[closure]")
+    {
+    te_expr_array teArray{ TE_DEFAULT };
+
+    te_parser tep;
+    tep.set_variables_and_functions(
+        {
+            {"cell", cell, TE_DEFAULT, &teArray},
+            {"cellmax", cell_max, TE_DEFAULT, &teArray}
+        });
+
+    auto res = tep.evaluate("cell 0");
+    CHECK(tep.success());
+    CHECK(tep.evaluate() == 5);
+
+    res = tep.evaluate("cell 1");
+    CHECK(tep.success());
+    CHECK(tep.evaluate() == 6);
+
+    res = tep.evaluate("cell 0 + cell 1");
+    CHECK(tep.success());
+    CHECK(tep.evaluate() == 11);
+
+    res = tep.evaluate("cell 1 * cell 3 + cell 4");
+    CHECK(tep.success());
+    CHECK(tep.evaluate() == 57);
+
+    teArray.m_data = { 6, 7, 8, 5, 4 };
+    res = tep.evaluate("SUM(CELL 0, CELL 1, CELL 2, CELL 3, CELL 4)");
+    CHECK(tep.success());
+    CHECK(tep.evaluate() == 30);
+
+    res = tep.evaluate("CellMax()");
+    CHECK(tep.success());
+    CHECK(tep.evaluate() == 8);
+    }
+
 TEST_CASE("Closure", "[closure]")
     {
     double extra{ 0 };
 
     te_expr te{ TE_DEFAULT, &extra };
-    te_expr_array teArray{ TE_DEFAULT };
 
     std::vector<te_variable> lookup = {
         {"c0", clo0, TE_DEFAULT, &te},
@@ -778,8 +825,7 @@ TEST_CASE("Closure", "[closure]")
         {"c4", clo4, TE_DEFAULT, &te},
         {"c5", clo5, TE_DEFAULT, &te},
         {"c6", clo6, TE_DEFAULT, &te},
-        {"c7", clo7, TE_DEFAULT, &te},
-        {"cell", cell, TE_DEFAULT, &teArray},
+        {"c7", clo7, TE_DEFAULT, &te}
     };
 
     te_parser tep;
@@ -893,22 +939,6 @@ TEST_CASE("Closure", "[closure]")
         CHECK(tep.success());
         CHECK(tep.evaluate() == answer + extra);
         }
-
-    res = tep.evaluate("cell 0");
-    CHECK(tep.success());
-    CHECK(tep.evaluate() == 5);
-
-    res = tep.evaluate("cell 1");
-    CHECK(tep.success());
-    CHECK(tep.evaluate() == 6);
-
-    res = tep.evaluate("cell 0 + cell 1");
-    CHECK(tep.success());
-    CHECK(tep.evaluate() == 11);
-
-    res = tep.evaluate("cell 1 * cell 3 + cell 4");
-    CHECK(tep.success());
-    CHECK(tep.evaluate() == 57);
     }
 
 TEST_CASE("Constants", "[constants]")
