@@ -335,8 +335,8 @@ public:
         {
         for (const auto& var : vars)
             { validate_name(var); }
-        m_vars = vars;
-        std::sort(m_vars.begin(), m_vars.end(),
+        m_custom_funcs_and_vars = vars;
+        std::sort(m_custom_funcs_and_vars.begin(), m_custom_funcs_and_vars.end(),
             [](const auto& lhv, const auto& rhv) noexcept
             { return lhv.m_name < rhv.m_name; });
         }
@@ -353,8 +353,8 @@ public:
     void add_variable_or_function(const te_variable& var)
         {
         validate_name(var);
-        m_vars.push_back(var);
-        std::sort(m_vars.begin(), m_vars.end(),
+        m_custom_funcs_and_vars.push_back(var);
+        std::sort(m_custom_funcs_and_vars.begin(), m_custom_funcs_and_vars.end(),
             [](const auto& lhv, const auto& rhv) noexcept
             { return lhv.m_name < rhv.m_name; });
         }
@@ -364,18 +364,18 @@ public:
         { add_variable_or_function(var); }
     /// @private
     [[nodiscard]] const std::vector<te_variable>& get_variables_and_functions() const noexcept
-        { return m_vars; }
+        { return m_custom_funcs_and_vars; }
     /// @returns The list of custom variables and functions.
     [[nodiscard]] std::vector<te_variable>& get_variables_and_functions() noexcept
-        { return m_vars; }
+        { return m_custom_funcs_and_vars; }
     /// @private
     [[deprecated("Use get_variables_and_functions() instead.")]]
     [[nodiscard]] const std::vector<te_variable>& get_vars() const noexcept
-        { return m_vars; }
+        { return m_custom_funcs_and_vars; }
     /// @private
     [[deprecated("Use get_variables_and_functions() instead.")]]
     [[nodiscard]] std::vector<te_variable>& get_vars() noexcept
-        { return m_vars; }
+        { return m_custom_funcs_and_vars; }
 
     /// @returns The decimal separator used for numbers.
     [[nodiscard]] char get_decimal_separator() const noexcept
@@ -480,35 +480,35 @@ private:
     /// @param name The name of the function or variable to search for.
     [[nodiscard]] std::vector<te_variable>::iterator find_variable_or_function(const char* name)
         {
-        if (!name) return m_vars.end();
+        if (!name) return m_custom_funcs_and_vars.end();
         // debug sanity check
-        assert(std::is_sorted(m_vars.cbegin(), m_vars.cend(),
+        assert(std::is_sorted(m_custom_funcs_and_vars.cbegin(), m_custom_funcs_and_vars.cend(),
             [](const auto& lhv, const auto& rhv) noexcept { return lhv.m_name < rhv.m_name; }));
 
-        const auto foundPos = std::lower_bound(m_vars.begin(), m_vars.end(),
+        const auto foundPos = std::lower_bound(m_custom_funcs_and_vars.begin(), m_custom_funcs_and_vars.end(),
             std::basic_string_view<char, case_insensitive_char_traits>(name),
             [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
         // did it find an exact match?
-        return (foundPos != m_vars.end() &&
+        return (foundPos != m_custom_funcs_and_vars.end() &&
                 foundPos->m_name.compare(0, foundPos->m_name.length(), name) == 0) ?
-            foundPos : m_vars.end();
+            foundPos : m_custom_funcs_and_vars.end();
         }
     /// @private
     [[nodiscard]] std::vector<te_variable>::const_iterator
         find_variable_or_function(const char* name) const
         {
-        if (!name) return m_vars.cend();
+        if (!name) return m_custom_funcs_and_vars.cend();
         // debug sanity check
-        assert(std::is_sorted(m_vars.cbegin(), m_vars.cend(),
+        assert(std::is_sorted(m_custom_funcs_and_vars.cbegin(), m_custom_funcs_and_vars.cend(),
             [](const auto& lhv, const auto& rhv) noexcept { return lhv.m_name < rhv.m_name; }));
 
-        const auto foundPos = std::lower_bound(m_vars.cbegin(), m_vars.cend(),
+        const auto foundPos = std::lower_bound(m_custom_funcs_and_vars.cbegin(), m_custom_funcs_and_vars.cend(),
             std::basic_string_view<char, case_insensitive_char_traits>(name),
             [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
         // did it find an exact match?
-        return (foundPos != m_vars.cend() &&
+        return (foundPos != m_custom_funcs_and_vars.cend() &&
                 foundPos->m_name.compare(0, foundPos->m_name.length(), name) == 0) ?
-            foundPos : m_vars.cend();
+            foundPos : m_custom_funcs_and_vars.cend();
         }
     /// @private
     [[deprecated("Use find_variable_or_function() instead.")]]
@@ -772,7 +772,7 @@ private:
     std::set<std::basic_string<char, case_insensitive_char_traits>> m_usedVars;
 
     static const std::vector<te_variable> m_functions;
-    std::vector<te_variable> m_vars;
+    std::vector<te_variable> m_custom_funcs_and_vars;
 
     bool m_parseSuccess{ false };
     int64_t m_errorPos{ 0 };
