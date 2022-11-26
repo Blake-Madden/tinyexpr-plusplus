@@ -145,7 +145,7 @@ public:
 
 double cell(const te_expr* context, double a) {
     auto* c = dynamic_cast<const te_expr_array*>(context);
-    return static_cast<double>(c->m_data[a]);
+    return static_cast<double>(c->m_data[static_cast<size_t>(a)]);
 }
 
 double bench_a5(double a) {
