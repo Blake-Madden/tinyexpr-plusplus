@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     double x{ 0 }, y{ 0 };
     // Store variable names and pointers.
     te_parser tep;
-    tep.set_vars({ {"x", &x}, {"y", &y} });
+    tep.set_variables_and_functions({ {"x", &x}, {"y", &y} });
 
     /* This will compile the expression and check for errors. */
     if (tep.compile(expression)) {
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     printf("Evaluating:\n\t%s\n", expression);
 
     te_parser tep;
-    tep.set_vars({{"mysum", my_sum}});
+    tep.set_variables_and_functions({{"mysum", my_sum}});
 
     if (tep.compile(expression)) {
         const double r = tep.evaluate();

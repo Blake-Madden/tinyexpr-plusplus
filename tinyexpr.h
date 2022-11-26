@@ -270,7 +270,7 @@ public:
     variant_type m_value;
     /// The type that m_value represents.
     variable_flags m_type{ TE_DEFAULT };
-    /// If m_value is a function pointer of type te_confun0-te_confun7, then
+    /// If @c m_value is a function pointer of type `te_confun0`-`te_confun7`, then
     /// this is passed to that function when called. This is useful for passing
     /// an object which manages additional data to your functions.
     te_expr* m_context{ nullptr };
@@ -319,7 +319,7 @@ public:
     [[nodiscard]] const te_expr* get_compiled_expression() const noexcept
         { return m_compiledExpression; }
     /// @returns The zero-based index into the last parsed expression where the parse failed,
-    ///     or -1 if no error occurred.
+    ///     or @c -1 if no error occurred.
     /// @note Call success() to see if the last parse succeeded or not.
     [[nodiscard]] int64_t get_last_error_position() const noexcept
         { return m_errorPos; }
@@ -411,7 +411,7 @@ public:
     /// @returns The separator used between function arguments.
     [[nodiscard]] char get_list_separator() const noexcept
         { return m_listSeparator; }
-    /// Sets the separator used between function arguments.
+    /// @brief Sets the separator used between function arguments.
     /// @param sep The list separator.
     void set_list_separator(const char sep) noexcept
         { m_listSeparator = sep; }
@@ -440,6 +440,7 @@ public:
 private:
     /// @brief Validates that a variable only contains legal characters
     ///     (and has a valid length).
+    /// @param var The variable to validate.
     /// @throws std::runtime_error Throws an exception if an illegal character is found.
     void validate_name(const te_variable& var)
         {
@@ -467,6 +468,7 @@ private:
         { return m_vars; }
     /// @returns An iterator to the custom variable or function with the given @c name,
     ///     or end of get_vars() if not found.
+    /// @param name The name of the function or variable to search for.
     [[nodiscard]] std::vector<te_variable>::iterator find_variable(const char* name)
         {
         if (!name) return m_vars.end();
@@ -484,6 +486,7 @@ private:
         }
     /// @returns An iterator to the custom variable or function with the given @c name,
     ///     or end of get_vars() if not found.
+    /// @param name The name of the function or variable to search for.
     [[nodiscard]] std::vector<te_variable>::const_iterator find_variable(const char* name) const
         {
         if (!name) return m_vars.cend();
@@ -673,8 +676,11 @@ private:
         const variant_type& value, const std::initializer_list<te_expr*> parameters);
     [[nodiscard]] static constexpr bool is_letter(const char c) noexcept
         { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
-    /* Parses the input expression and binds variables.
-       @returns null on error. */
+    /** @brief Parses the input expression and binds variables.
+        @param expression The formula to parse.
+        @param variables The collection of custom functions and
+            variables to add to the parser.
+        @returns null on error.*/
     [[nodiscard]] te_expr* te_compile(const char* expression,
         TE_RELEASE_CONST std::vector<te_variable>& variables);
     /* Evaluates the expression. */

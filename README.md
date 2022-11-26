@@ -1,8 +1,8 @@
-<img alt="TinyExpr logo" src="https://codeplea.com/public/content/tinyexpr_logo.png" align="right"/>
+<img alt="TinyExpr logo" src="doc/tinyexpr_logo.png" align="right"/>
 
 # TinyExpr++
 
-TinyExpr++ is the C++ version of the TinyExpr library, which is a small
+TinyExpr++ is the C++ version of the [TinyExpr](https://github.com/codeplea/tinyexpr) library, which is a small
 recursive descent parser and evaluation engine for math expressions.
 
 In addition to math operators and precedence, TinyExpr++ also supports
@@ -20,7 +20,7 @@ the standard C math functions and runtime binding of variables and user-defined 
 - Can bind constants at eval-time.
 - Supports variadic functions (taking between 1-7 arguments).
 - Case insensitive.
-- Can support non-US formulas (e.g., "**pow(2,2; 2)**" instead of "**pow(2.2, 2)**").
+- Can support non-US formulas (e.g., `pow(2,2; 2)` instead of `pow(2.2, 2)`).
 - Released under the zlib license - free for nearly any use.
 - Easy to use and integrate with your code
 - Thread-safe, parser is in a self-contained object.
@@ -31,21 +31,21 @@ The following are changes from the original TinyExpr C library:
 
 - Compiles as C++17 code.
 - `te_*` functions are now wrapped in a `te_parser` class.
-- `te_interp()`, `te_compile()`, and `te_eval()` have been replaced with `te_parser::compile()`, `te_parser::evaluate()`, and `te_parser::set_vars()`.
-    `set_vars()` sets your list of custom functions and variables. `compile()` compiles and optimizes an expression.
+- `te_interp()`, `te_compile()`, and `te_eval()` have been replaced with `te_parser::compile()`, `te_parser::evaluate()`, and `te_parser::set_variables_and_functions()`.
+    `set_variables_and_functions()` sets your list of custom functions and variables. `compile()` compiles and optimizes an expression.
     Finally, `evaluate()` will use the already compiled expression and return its result.
     `evaluate()` also has an overload that compiles and evaluates an expression in one call.
 - Variable/function types (e.g., `TE_FUNCTION0`) have been removed; types are now deduced by the compiler. The available flags
   for variables and functions are now just combinations of `TE_DEFAULT`, `TE_PURE`, and `TE_VARIADIC`.
 - Formula parsing is now case insensitive.
 - Added support for variadic functions (can accept 1-7 arguments); enabled through the `TE_VARIADIC` flag.
-  Refer to the `AVERAGE()` function in `tinyexp.cpp`.
+  (Refer to the `AVERAGE()` function in `tinyexp.cpp` for an example.)
 - Added support for parsing formulas in non-US format (e.g., "**pow(2,2; 2)**" instead of "**pow(2.2, 2)**"). Useful for when the program's locale is non-English.
-  Refer to `example4.cpp` for a demonstration.
+  (Refer to [Example 4](Examples.md) for a demonstration.)
 - `te_expr` is now a derivable base class. This means that you can derive from `te_expr`, add new fields to that derived class (e.g., arrays, strings, even other classes)
   and then use a custom class as an argument to the various function types that accept a `te_expr*` parameter. The function that you connect can then `dynamic_cast<>`
   this argument and use its custom fields, thus greatly enhancing the functionality for these types of functions.
-  Refer to the `te_expr_array` class in `tests/tetests.cpp` for an example.
+  (Refer to the `te_expr_array` class in `tests/tetests.cpp` for an example.)
 - Added exception support, where exceptions are thrown for situations like divide by zero. Calls to `compile` and `evaluate` should be wrapped in `try`...`catch` blocks.
 - Memory management is handled by the `te_parser` class (you no longer need to call `te_free`). Also, replaced `malloc/free` with `new/delete`.
 - Stricter type safety; uses `std::variant` (instead of unions) that support `double`, `const double*`, and 16 specific function pointer signatures.
@@ -81,7 +81,7 @@ The following are changes from the original TinyExpr C library:
   - `<=`   less than or equal to.
   - `>`    greater than.
   - `>=`   greater than or equal to.
-- Custom variables and functions are now stored in a `std::vector` (which can be easily accessed and updated via the new `get_vars()/set_vars()` functions).
+- Custom variables and functions are now stored in a `std::vector` (which can be easily accessed and updated via the new `get_vars()/set_variables_and_functions()` functions).
 - Added `is_function_used()` and `is_variable_used()` functions to see if a specific function or variable was used in the last parsed formula.
 - Added `set_constant()` function to find and update the value of a constant (custom) variable by name.
 - Added `get_constant()` function to return the value of a constant (custom) variable by name.
@@ -95,7 +95,7 @@ The following are changes from the original TinyExpr C library:
 - Replaced C-style casts with `static_cast<>`.
 - Replaced all macros with `constexpr`s and lambdas.
 - Replaced custom binary search used for built-in function searching with `std::lower_bound()`.
-- Now uses `nullptr` (instead of 0).
+- Now uses `nullptr` (instead of `0`).
 - All data fields are now initialized.
 - Added [Doxygen](https://github.com/doxygen/doxygen) comments.
 - Added assertions to verify that built-in and custom functions/variables are sorted.
@@ -131,7 +131,7 @@ TinyExpr++'s `te_parser` class defines these functions:
     double get_result();
     bool success();
     int get_last_error_position();
-    set_vars(const std::vector<te_variable>& vars);
+    set_variables_and_functions(const std::vector<te_variable>& vars);
     std::vector<te_variable>& get_vars();
     get_decimal_separator();
     get_list_separator();
@@ -156,7 +156,7 @@ If the parse failed, calling `get_last_error_position()` will return the 0-based
     double c = tep.evaluate("(5+5");  /* Returns NaN, error is set to 3. */
 ```
 
-Give `set_vars()` a list of constants, bound variables, and function pointers.
+Give `set_variables_and_functions()` a list of constants, bound variables, and function pointers.
 
 `evaluate()` will then evaluate expressions using these variables and functions.
 
@@ -170,7 +170,7 @@ Give `set_vars()` a list of constants, bound variables, and function pointers.
     double x{0}, y{0};
     // Store variable names and pointers.
     te_parser tep;
-    tep.set_vars({{"x", &x}, {"y", &y}});
+    tep.set_variables_and_functions({{"x", &x}, {"y", &y}});
 
     // Compile the expression with variables.
     auot result = tep.evaluate("sqrt(x^2+y^2)");
@@ -210,7 +210,7 @@ line. It also does error checking and binds the variables `x` and `y` to *3* and
         double x{0}, y{0};
         // Store variable names and pointers.
         te_parser tep;
-        tep.set_vars({{"x", &x}, {"y", &y}});
+        tep.set_variables_and_functions({{"x", &x}, {"y", &y}});
 
         /* This will compile the expression and check for errors. */
         auto result = tep.evaluate(expression);
@@ -258,7 +258,7 @@ double my_sum(double a, double b) {
 }
 
 te_parser tep;
-tep.set_vars({
+tep.set_variables_and_functions({
     {"mysum", my_sum, TE_FUNCTION2} /* TE_FUNCTION2 used because my_sum takes two arguments. */
 };)
 
