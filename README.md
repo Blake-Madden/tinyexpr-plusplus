@@ -48,21 +48,21 @@ The following are changes from the original TinyExpr C library:
   (Refer to the `te_expr_array` class in `tests/tetests.cpp` for an example.)
 - Added exception support, where exceptions are thrown for situations like divide by zero. Calls to `compile` and `evaluate` should be wrapped in `try`...`catch` blocks.
 - Memory management is handled by the `te_parser` class (you no longer need to call `te_free`). Also, replaced `malloc/free` with `new/delete`.
-- Stricter type safety; uses `std::variant` (instead of unions) that support `double`, `const double*`, and 16 specific function pointer signatures.
+- Stricter type safety; uses `std::variant` (instead of unions) that support `double`, `const double*`, and 16 specific function signatures (that will work with lambdas or function pointers).
   Also uses `std::initializer` lists (instead of various pointer operations).
 - Separate enums are now used between `te_expr` and `state`'s types and are more strongly typed.
 - Added new built-in functions:
-  - `and`: returns true if all conditions are true (accepts 1-7 arguments).
+  - `and`: returns true (i.e., non-zero) if all conditions are true (accepts 1-7 arguments).
   - `average`: returns the means for a range of values (accepts 1-7 arguments).
   - `cot`: returns the cotangent of an angle.
   - `combin`: alias for `ncr()`, like the **Excel** function.
   - `clamp`: contrains a value to a range.
   - `fact`: alias for `fac()`, like the **Excel** function.
-  - `if`: if a value is true, then returns second value; otherwise, returns third.
+  - `if`: if a value is true (i.e., non-zero), then returns the second argument; otherwise, returns the third argument.
   - `max`: returns the maximum of a range of values (accepts 1-7 arguments).
   - `min`: returns the minimum of a range of values (accepts 1-7 arguments).
   - `mod`: returns remainder from a division.
-  - `or`: returns true if any condition is true (accepts 1-7 arguments).
+  - `or`: returns true (i.e., non-zero) if any condition is true (accepts 1-7 arguments).
   - `not`: returns logical negation of value.
   - `permut`: alias for `npr()`, like the **Excel** function.
   - `power`: alias for `pow()`, like the **Excel** function.
@@ -139,6 +139,7 @@ bool success();
 int get_last_error_position();
 set_variables_and_functions(const std::vector<te_variable>& vars);
 std::vector<te_variable>& get_variables_and_functions();
+add_variable_or_function(const te_variable& var);
 get_decimal_separator();
 get_list_separator();
 ```
@@ -152,6 +153,12 @@ is a parse error, it returns NaN (which can be verified by using `std::isnan()`)
 
 If the parse failed, calling `get_last_error_position()` will return the 0-based index of where in the expression the parse failed.
 
+`set_variables_and_functions()`, `get_variables_and_functions()`, and `add_variable_or_function()` are used
+to add custom variables and functions to the parser.
+
+`get_decimal_separator()` and `get_list_separator()` can be used to parse non-US formatted formulas.
+
+
 **example usage:**
 
 ```cpp
@@ -162,7 +169,7 @@ double b = tep.evaluate("(5+5)"); /* Returns 10, error is set to -1 (i.e., no er
 double c = tep.evaluate("(5+5");  /* Returns NaN, error is set to 3. */
 ```
 
-Give `set_variables_and_functions()` a list of constants, bound variables, and function pointers.
+Give `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas.
 
 `evaluate()` will then evaluate expressions using these variables and functions.
 
@@ -183,10 +190,12 @@ auot result = tep.evaluate("sqrt(x^2+y^2)");
 
 if (tep.success()) {
     x = 3; y = 4;
-    const double h1 = tep.evaluate(); /* Will use the previously used expression, returns 5. */
+    // Will use the previously used expression, returns 5.
+    const double h1 = tep.evaluate();
 
     x = 5; y = 12;
-    const double h2 = tep.evaluate(); /* Returns 13. */
+    // Returns 13.
+    const double h2 = tep.evaluate();
 } else {
     printf("Parse error at %d\n", tep.get_last_error_position());
 }
@@ -223,8 +232,8 @@ int main(int argc, char *argv[])
 
     if (tep.success()) {
         /* The variables can be changed here, and eval can be called as many
-            * times as you like. This is fairly efficient because the parsing has
-            * already been done. */
+           times as you like. This is fairly efficient because the parsing has
+           already been done. */
         x = 3; y = 4;
         const double r = tep.evaluate();
         printf("Result:\n\t%f\n", r);
@@ -255,20 +264,37 @@ This produces the output:
 
 ## Binding to Custom Functions
 
-TinyExpr++ can also call to custom functions implemented in C. Here is a short example:
+TinyExpr++ can also call custom functions. Here is a short example:
 
 ```cpp
-double my_sum(double a, double b) {
-    /* Example C function that adds two numbers together. */
+double my_sum(double a, double b)
+    {
+    /* Example function that adds two numbers together. */
     return a + b;
-}
+    }
 
 te_parser tep;
-tep.set_variables_and_functions({
-    {"mysum", my_sum, TE_FUNCTION2} /* TE_FUNCTION2 used because my_sum takes two arguments. */
-};)
+tep.set_variables_and_functions(
+{
+    { "mysum", my_sum } // function pointer
+});
 
 const double r = tep.evaluate("mysum(5, 6)");
+// will be 11
+```
+
+Here is an example of using a lambda:
+
+```cpp
+te_parser tep;
+tep.set_variables_and_functions({
+    { "mysum",
+        [](double a, double b) noexcept
+            { return a + b; } }
+    });
+
+const double r = tep.evaluate("mysum(5, 6)");
+// will be 11
 ```
 
 ## Non-US Formatted Formulas
@@ -305,7 +331,8 @@ int main(int argc, char *argv[])
     auto r = tep.evaluate(expression);
 
     if (tep.success()) {
-        const double r = tep.evaluate(expression); printf("Result:\n\t%f\n", r);
+        const double r = tep.evaluate(expression);
+        printf("Result:\n\t%f\n", r);
     } else {
         /* Show the user where the error is at. */
         printf("\t%*s^\nError near here", tep.get_last_error_position(), "");
@@ -431,5 +458,5 @@ then you can define `TE_NAT_LOG`.
   For example, `x+(1+5)` will evaluate the `(1+5)` expression at compile time and
   compile the entire expression as `x+6`, saving a runtime calculation. The
   parentheses are important, because TinyExpr++ will not change the order of
-  evaluation. If you instead compiled `x+1+5` TinyExpr will insist that `1` is
+  evaluation. If you instead compiled `x+1+5` TinyExpr++ will insist that `1` is
   added to `x` first, and `5` is added the result second.

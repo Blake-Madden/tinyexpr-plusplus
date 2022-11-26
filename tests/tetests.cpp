@@ -1458,6 +1458,26 @@ TEST_CASE("Clamp", "[clamp]")
     CHECK_THROWS(tep.evaluate("CLAMP(4, 10, 9)"));
     }
 
+TEST_CASE("Lambdas", "[lambdas]")
+    {
+    te_parser tep;
+    tep.set_variables_and_functions({
+        { "mysum",
+            [](double a, double b) noexcept
+                { return a + b; } }
+        });
+
+    CHECK(tep.evaluate("MYSUM(5, 6)") == 11);
+    }
+
+TEST_CASE("Random", "[random]")
+    {
+    te_parser tep;
+    // can't have reproducible results for rand, so just run it and make
+    // sure it doesn't crash
+    CHECK_NOTHROW(tep.evaluate("rand()"));
+    }
+
 TEST_CASE("Benchmarks", "[!benchmark]")
     {
     double benchmarkVar{ 9 };
@@ -1498,13 +1518,5 @@ TEST_CASE("Benchmarks", "[!benchmark]")
         { return tep.evaluate("(1/(a+1)+2/(a+2)+3/(a+3))"); };
     BENCHMARK("(1/(a+1)+2/(a+2)+3/(a+3)) Native")
         { return bench_al(benchmarkVar); };
-    }
-
-TEST_CASE("Random", "[random]")
-    {
-    te_parser tep;
-    // can't have reproducible results for rand, so just run it and make
-    // sure it doesn't crash
-    CHECK_NOTHROW(tep.evaluate("rand()"));
     }
 }
