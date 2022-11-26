@@ -81,7 +81,7 @@ The following are changes from the original TinyExpr C library:
   - `<=`   less than or equal to.
   - `>`    greater than.
   - `>=`   greater than or equal to.
-- Custom variables and functions are now stored in a `std::vector` (which can be easily accessed and updated via the new `get_vars()/set_variables_and_functions()` functions).
+- Custom variables and functions are now stored in a `std::vector` (which can be easily accessed and updated via the new `get_variables_and_functions()/set_variables_and_functions()` functions).
 - Added `is_function_used()` and `is_variable_used()` functions to see if a specific function or variable was used in the last parsed formula.
 - Added `set_constant()` function to find and update the value of a constant (custom) variable by name.
 - Added `get_constant()` function to return the value of a constant (custom) variable by name.
@@ -138,7 +138,7 @@ double get_result();
 bool success();
 int get_last_error_position();
 set_variables_and_functions(const std::vector<te_variable>& vars);
-std::vector<te_variable>& get_vars();
+std::vector<te_variable>& get_variables_and_functions();
 get_decimal_separator();
 get_list_separator();
 ```

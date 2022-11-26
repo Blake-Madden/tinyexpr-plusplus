@@ -9,13 +9,13 @@ include "tinyexpr.h"
 #include <cstdio>
 
 int main(int argc, char *argv[])
-{
+    {
     te_parser tep;
     const char *c = "sqrt(5^2+7^2+11^2+(8-2)^2)";
     double r = tep.evaluate(c);
     printf("The expression:\n\t%s\nevaluates to:\n\t%f\n", c, r);
     return 0;
-}
+    }
 ```
 
 ## Example 2
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 #include <cstdio>
 
 int main(int argc, char* argv[])
-{
+    {
     if (argc < 2) {
         printf("Usage: example2 \"expression\"\n");
         return 0;
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
     }
 
     return 0;
-}
+    }
 ```
 
 ## Example 3
@@ -74,7 +74,7 @@ double my_sum(double a, double b) {
 
 
 int main(int argc, char *argv[])
-{
+    {
     const char *expression = "mysum(5, 6)";
     printf("Evaluating:\n\t%s\n", expression);
 
@@ -89,9 +89,8 @@ int main(int argc, char *argv[])
         printf("\t%*s^\nError near here", tep.get_last_error_position(), "");
     }
 
-
     return 0;
-}
+    }
 ```
 
 ## Example 4
@@ -103,7 +102,7 @@ int main(int argc, char *argv[])
 #include <clocale>
 
 int main(int argc, char *argv[])
-{
+    {
     /* Set locale to German.
        This string is platform dependent. The following works on Windows,
        consult your platform's documentation for more details.*/
@@ -130,5 +129,5 @@ int main(int argc, char *argv[])
     }
 
     return 0;
-}
+    }
 ```

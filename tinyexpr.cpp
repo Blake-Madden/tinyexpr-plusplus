@@ -848,7 +848,7 @@ bool te_parser::compile(const char* expression)
         }
     m_expression.assign(expression);
 
-    m_compiledExpression = te_compile(expression, get_vars());
+    m_compiledExpression = te_compile(expression, get_variables_and_functions());
     m_parseSuccess = (m_compiledExpression != nullptr) ? true : false;
     return m_parseSuccess;
     }

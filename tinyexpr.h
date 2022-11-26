@@ -362,8 +362,19 @@ public:
     [[deprecated("Use add_variable_or_function() instead.")]]
     void add_var(const te_variable& var)
         { add_variable_or_function(var); }
+    /// @private
+    [[nodiscard]] const std::vector<te_variable>& get_variables_and_functions() const noexcept
+        { return m_vars; }
     /// @returns The list of custom variables and functions.
+    [[nodiscard]] std::vector<te_variable>& get_variables_and_functions() noexcept
+        { return m_vars; }
+    /// @private
+    [[deprecated("Use get_variables_and_functions() instead.")]]
     [[nodiscard]] const std::vector<te_variable>& get_vars() const noexcept
+        { return m_vars; }
+    /// @private
+    [[deprecated("Use get_variables_and_functions() instead.")]]
+    [[nodiscard]] std::vector<te_variable>& get_vars() noexcept
         { return m_vars; }
 
     /// @returns The decimal separator used for numbers.
@@ -383,8 +394,8 @@ public:
     ///     then this will be ignored.
     void set_constant(const char* name, const double value)
         {
-        auto cvar = find_variable(name);
-        if (cvar == get_vars().end())
+        auto cvar = find_variable_or_function(name);
+        if (cvar == get_variables_and_functions().end())
             { add_variable_or_function({ name, value }); }
         else if (is_constant(cvar->m_value))
             {
@@ -399,8 +410,8 @@ public:
     /// @returns The value of the constant variable if found, NaN otherwise.
     [[nodiscard]] double get_constant(const char* name) const
         {
-        auto cvar = find_variable(name);
-        if (cvar == get_vars().cend() || !is_constant(cvar->m_value))
+        auto cvar = find_variable_or_function(name);
+        if (cvar == get_variables_and_functions().cend() || !is_constant(cvar->m_value))
             { return std::numeric_limits<double>::quiet_NaN(); }
         if (const auto val = std::get_if<double>(&cvar->m_value);
             val != nullptr)
@@ -464,13 +475,10 @@ private:
                 std::string("Invalid character in variable name: ") + var.m_name.c_str());
             }
         }
-    /// @returns The list of custom variables and functions.
-    [[nodiscard]] std::vector<te_variable>& get_vars() noexcept
-        { return m_vars; }
     /// @returns An iterator to the custom variable or function with the given @c name,
-    ///     or end of get_vars() if not found.
+    ///     or end of get_variables_and_functions() if not found.
     /// @param name The name of the function or variable to search for.
-    [[nodiscard]] std::vector<te_variable>::iterator find_variable(const char* name)
+    [[nodiscard]] std::vector<te_variable>::iterator find_variable_or_function(const char* name)
         {
         if (!name) return m_vars.end();
         // debug sanity check
@@ -485,10 +493,9 @@ private:
                 foundPos->m_name.compare(0, foundPos->m_name.length(), name) == 0) ?
             foundPos : m_vars.end();
         }
-    /// @returns An iterator to the custom variable or function with the given @c name,
-    ///     or end of get_vars() if not found.
-    /// @param name The name of the function or variable to search for.
-    [[nodiscard]] std::vector<te_variable>::const_iterator find_variable(const char* name) const
+    /// @private
+    [[nodiscard]] std::vector<te_variable>::const_iterator
+        find_variable_or_function(const char* name) const
         {
         if (!name) return m_vars.cend();
         // debug sanity check
@@ -503,6 +510,15 @@ private:
                 foundPos->m_name.compare(0, foundPos->m_name.length(), name) == 0) ?
             foundPos : m_vars.cend();
         }
+    /// @private
+    [[deprecated("Use find_variable_or_function() instead.")]]
+    [[nodiscard]] std::vector<te_variable>::iterator find_variable(const char* name)
+        { return find_variable_or_function(name); }
+    /// @private
+    [[deprecated("Use find_variable_or_function() instead.")]]
+    [[nodiscard]] std::vector<te_variable>::const_iterator find_variable(const char* name) const
+        { return find_variable_or_function(name); }
+
     [[nodiscard]] constexpr static auto is_pure(const variable_flags type)
         { return (((type)&TE_PURE) != 0); }
     [[nodiscard]] constexpr static auto is_variadic(const variable_flags type)
