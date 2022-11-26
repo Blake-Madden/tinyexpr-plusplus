@@ -465,14 +465,14 @@ private:
             {
             throw std::string("Variable name must begin with an English letter: ") + var.m_name.c_str();
             }
-        const auto barCharPos = std::find_if(var.m_name.cbegin(), var.m_name.cend(),
+        const auto varCharPos = std::find_if(var.m_name.cbegin(), var.m_name.cend(),
             [](const auto ch) noexcept
                 {
                 return !(is_letter(ch) ||
                     (ch >= '0' && ch <= '9') ||
                     (ch == '_'));
                 });
-        if (barCharPos != var.m_name.cend())
+        if (varCharPos != var.m_name.cend())
             {
             throw std::runtime_error(
                 std::string("Invalid character in variable name: ") + var.m_name.c_str());
