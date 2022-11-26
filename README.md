@@ -15,7 +15,7 @@ the standard C math functions and runtime binding of variables and user-defined 
 - Simple and fast.
 - Implements standard operator precedence.
 - Implements logical and comparison operators.
-- Exposes standard C math functions (sin, sqrt, ln, etc.), as well as some Excel-like functions (e.g., `AVERAGE()` and `IF()`).
+- Exposes standard C math functions (`sin`, `sqrt`, `ln`, etc.), as well as some Excel-like functions (e.g., `AVERAGE()` and `IF()`).
 - Can add custom functions and variables easily.
 - Can bind constants at eval-time.
 - Supports variadic functions (taking between 1-7 arguments).
@@ -40,7 +40,7 @@ The following are changes from the original TinyExpr C library:
 - Formula parsing is now case insensitive.
 - Added support for variadic functions (can accept 1-7 arguments); enabled through the `TE_VARIADIC` flag.
   (Refer to the `AVERAGE()` function in `tinyexp.cpp` for an example.)
-- Added support for parsing formulas in non-US format (e.g., "**pow(2,2; 2)**" instead of "**pow(2.2, 2)**"). Useful for when the program's locale is non-English.
+- Added support for parsing formulas in non-US format (e.g., `pow(2,2; 2)` instead of `pow(2.2, 2)`). Useful for when the program's locale is non-English.
   (Refer to [Example 4](Examples.md) for a demonstration.)
 - `te_expr` is now a derivable base class. This means that you can derive from `te_expr`, add new fields to that derived class (e.g., arrays, strings, even other classes)
   and then use a custom class as an argument to the various function types that accept a `te_expr*` parameter. The function that you connect can then `dynamic_cast<>`
@@ -66,9 +66,9 @@ The following are changes from the original TinyExpr C library:
   - `not`: returns logical negation of value.
   - `permut`: alias for `npr()`, like the **Excel** function.
   - `power`: alias for `pow()`, like the **Excel** function.
-  - `rand`: returns random number between 0 and 1.
-  - `round`: returns a number, rounded to a given decimal point. Decimal point is optional and defaults to 0.
-  - `sign`: returns the sign of a number: 1 if positive, -1 if negative, 0 if zero.
+  - `rand`: returns random number between @c 0 and @c 1.
+  - `round`: returns a number, rounded to a given decimal point. Decimal point is optional and defaults to @c 0.
+  - `sign`: returns the sign of a number: @c 1 if positive, @c -1 if negative, @c 0 if zero.
   - `sum`: returns the sum of a list of values (accepts 1-7 arguments).
   - `sqr`: returns a number squared.
   - `trunc`: returns the integer part of a number.
@@ -88,7 +88,7 @@ The following are changes from the original TinyExpr C library:
 - Binary search is now used to look up custom variables and functions (small optimization).
 - You no longer need to specify the number of arguments for custom functions; it will deduce that for you.
 - The position of an error when evaluating an expression is now managed by the `te_parser` class and accessible via `get_last_error_position()`.
-- The position of aforementioned error is now 0-indexed (not 1-indexed); -1 indicates that there was no error.
+- The position of aforementioned error is now 0-indexed (not 1-indexed); @c -1 indicates that there was no error.
 - Added `success()` function to indicate if the last parse succeeded or not.
 - Added `get_result()` function to get result from the last call to evaluate.
 - Now uses `std::numeric_limits` for math constants (instead of macro constants).
@@ -138,7 +138,7 @@ TinyExpr++'s `te_parser` class defines these functions:
 ```
 
 `evaluate()` takes an expression and immediately returns the result of it. If there
-is a parse error, it returns NaN.
+is a parse error, it returns NaN (which can be verified by using `std::isnan()`).
 
 `get_result()` can be called anytime afterwards to retrieve the result from `evaluate()`.
 
@@ -165,9 +165,9 @@ Give `set_variables_and_functions()` a list of constants, bound variables, and f
 
 ```cpp
     #include "tinyexpr.h"
-    #include <stdio.h>
+    #include <cstdio>
 
-    double x{0}, y{0};
+    double x{ 0 }, y{ 0 };
     // Store variable names and pointers.
     te_parser tep;
     tep.set_variables_and_functions({{"x", &x}, {"y", &y}});
@@ -189,11 +189,11 @@ Give `set_variables_and_functions()` a list of constants, bound variables, and f
 ## Longer Example
 
 Here is a complete example that will evaluate an expression passed in from the command
-line. It also does error checking and binds the variables `x` and `y` to *3* and *4*, respectively.
+line. It also does error checking and binds the variables `x` and `y` to `3` and `4`, respectively.
 
 ```cpp
     #include "tinyexpr.h"
-    #include <stdio.h>
+    #include <cstdio>
 
     int main(int argc, char *argv[])
     {
@@ -207,7 +207,7 @@ line. It also does error checking and binds the variables `x` and `y` to *3* and
 
         /* This shows an example where the variables
          * x and y are bound at eval-time. */
-        double x{0}, y{0};
+        double x{ 0 }, y{ 0 };
         // Store variable names and pointers.
         te_parser tep;
         tep.set_variables_and_functions({{"x", &x}, {"y", &y}});
@@ -371,27 +371,29 @@ TinyExpr++ parses the following grammar:
 In addition, whitespace between tokens is ignored.
 
 Valid variable names consist of a lower case letter followed by any combination
-of: lower case letters *a* through *z*, the digits *0* through *9*, and
+of: lower case letters `a` through `z`, the digits `0` through `9`, and
 underscore. Constants can be integers, decimal numbers, or in scientific
-notation (e.g., *1e3* for *1000*). A leading zero is not required (e.g., *.5*
-for *0.5*)
+notation (e.g., `1e3` for `1000`). A leading zero is not required (e.g., `.5`
+for `0.5`)
 
 ## Functions supported
 
-TinyExpr++ supports addition (+), subtraction/negation (-), multiplication (\*),
-division (/), exponentiation (^) and modulus (%) with the normal operator
+TinyExpr++ supports addition (`+`), subtraction/negation (`-`), multiplication (`*`),
+division (`/`), exponentiation (`^`) and modulus (`%`) with the normal operator
 precedence (the one exception being that exponentiation is evaluated
 left-to-right, but this can be changed - see below).
 
 The following C math functions are also supported:
 
-- abs (calls to *fabs*), acos, asin, atan, atan2, ceil, cos, cosh, exp, floor, ln (calls to *log*), log (calls to *log10* by default, see below), log10, pow, sin, sinh, sqrt, tan, tanh
+- `abs` (calls to `fabs()`), `acos`, `asin`, `atan`, `atan2`, `ceil`, `cos`, `cosh`, `exp`, `floor`, 
+`ln` (calls to `log()`), `log` (calls to `log10()` by default, see below), `log10`, `pow`,
+`sin`, `sinh`, `sqrt`, `tan`, `tanh`
 
 The following functions are also built-in and provided by TinyExpr++:
 
-- fac (factorials e.g., `fac 5` == 120)
-- ncr (combinations e.g., `ncr(6,2)` == 15)
-- npr (permutations e.g., `npr(6,2)` == 30)
+- `fac` (factorials e.g., `fac 5` == 120)
+- `ncr` (combinations e.g., `ncr(6,2)` == 15)
+- `npr` (permutations e.g., `npr(6,2)` == 30)
 
 Also, the following constants are available:
 
@@ -404,7 +406,7 @@ By default, TinyExpr++ does exponentiation from left to right. For example:
 
 `a^b^c == (a^b)^c` and `-a^b == (-a)^b`
 
-This is by design. It's the way that spreadsheets do it (e.g., Excel, Google Sheets).
+This is by design; it's the way that spreadsheets do it (e.g., Excel, Google Sheets).
 
 If you would rather have exponentiation work from right to left, you need to
 define `TE_POW_FROM_RIGHT` when compiling `tinyexpr.cpp`. There is a
@@ -421,8 +423,8 @@ then you can define `TE_NAT_LOG`.
 ## Hints
 
 - To allow constant optimization, surround constant expressions in parentheses.
-  For example "x+(1+5)" will evaluate the "(1+5)" expression at compile time and
-  compile the entire expression as "x+6", saving a runtime calculation. The
+  For example `x+(1+5)` will evaluate the `(1+5)` expression at compile time and
+  compile the entire expression as `x+6`, saving a runtime calculation. The
   parentheses are important, because TinyExpr++ will not change the order of
-  evaluation. If you instead compiled "x+1+5" TinyExpr will insist that "1" is
-  added to "x" first, and "5" is added the result second.
+  evaluation. If you instead compiled `x+1+5` TinyExpr will insist that `1` is
+  added to `x` first, and `5` is added the result second.

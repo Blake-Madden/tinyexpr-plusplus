@@ -294,7 +294,8 @@ public:
     ~te_parser() { te_free(m_compiledExpression); }
     /** @brief Parses the input @c expression.
         @param expression The formula to compile.
-        @returns Whether the expression compiled or not.
+        @returns Whether the expression compiled or not. (This can be checked
+            by calling success() afterwards as well.)
         @sa success().
         @throws std::runtime_error Throws an exception if division or modulus by zero occurs.*/
     bool compile(const char* expression);

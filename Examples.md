@@ -6,7 +6,7 @@ The following are full-program examples.
 
 ```cpp
 include "tinyexpr.h"
-#include <stdio.h>
+#include <cstdio>
 
 int main(int argc, char *argv[])
 {
@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
 ```cpp
 #include "tinyexpr.h"
-#include <stdio.h>
+#include <cstdio>
 
 int main(int argc, char* argv[])
 {
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 
 ```cpp
 #include "tinyexpr.h"
-#include <stdio.h>
+#include <cstdio>
 
 
 /* An example of calling a C function. */
