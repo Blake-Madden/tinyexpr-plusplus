@@ -108,13 +108,13 @@ For log = natural log uncomment the next line. */
 [[nodiscard]] constexpr static double _divide(double a, double b)
     {
     if (b == 0)
-        { throw std::runtime_error(std::string("Division by zero.")); }
+        { return std::numeric_limits<double>::quiet_NaN(); }
     return a / b;
     }
 [[nodiscard]] static double _modulus(double a, double b)
     {
     if (b == 0)
-        { throw std::runtime_error(std::string("Modulus by zero.")); }
+        { return std::numeric_limits<double>::quiet_NaN(); }
     return std::fmod(a,b);
     }
 [[nodiscard]] static double _sum(double v1, double v2, double v3, double v4,
@@ -316,12 +316,9 @@ const std::vector<te_variable> te_parser::m_functions = {
     {"clamp", static_cast<te_fun3>(
         [](const double num, const double start, const double end)
             {
-            if (start > end)
-                {
-                throw std::runtime_error(
-                    std::string("Error in CLAMP: start of range cannot be larger than end of range."));
-                }
-            return std::clamp<double>(num, start, end);
+            return (start <= end) ?
+                std::clamp<double>(num, start, end) :
+                std::clamp<double>(num, end, start);
             }),
         TE_PURE},
     {"combin",   static_cast<te_fun2>(_ncr),   TE_PURE},

@@ -298,7 +298,7 @@ public:
         @returns Whether the expression compiled or not. (This can be checked
             by calling success() afterwards as well.)
         @sa success().
-        @throws std::runtime_error Throws an exception if division or modulus by zero occurs.*/
+        @note Returns NaN if division or modulus by zero occurs.*/
     bool compile(const char* expression);
     /** @brief Evaluates expression passed to compile() previously and returns its result.
         @returns The result, or NaN on error.*/
@@ -306,7 +306,7 @@ public:
     /** @brief Compiles and evaluates an expression and returns its result.
         @param expression The formula to compile and evaluate.
         @returns The result, or NaN on error.
-        @throws std::runtime_error Throws an exception if division or modulus by zero occurs.*/
+        @note Returns NaN if division or modulus by zero occurs.*/
     [[nodiscard]] double evaluate(const char* expression);
     /// @returns The last call to evaluate()'s result (which will be NaN on error).
     [[nodiscard]] double get_result() const noexcept

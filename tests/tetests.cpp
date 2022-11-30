@@ -606,11 +606,11 @@ TEST_CASE("Zeros", "[zeros]")
     {
     te_parser tep;
 
-    CHECK_THROWS(tep.evaluate("0/0"));
-    CHECK_THROWS(tep.evaluate("1/0"));
-    CHECK_THROWS(tep.evaluate("1%0"));
-    CHECK_THROWS(tep.evaluate("1%(1%0)"));
-    CHECK_THROWS(tep.evaluate("(1%0)%1"));
+    CHECK(std::isnan(tep.evaluate("0/0")));
+    CHECK(std::isnan(tep.evaluate("1/0")));
+    CHECK(std::isnan(tep.evaluate("1%0")));
+    CHECK(std::isnan(tep.evaluate("1%(1%0)")));
+    CHECK(std::isnan(tep.evaluate("(1%0)%1")));
     }
 
 TEST_CASE("Functions", "[functions]")
@@ -1485,7 +1485,9 @@ TEST_CASE("Clamp", "[clamp]")
     CHECK(tep.evaluate("CLAMP(9, 1, 9)") == 9);
     CHECK(tep.evaluate("CLAMP(10, 1, 9)") == 9);
     CHECK(tep.evaluate("CLAMP(4, 1, 9)") == 4);
-    CHECK_THROWS(tep.evaluate("CLAMP(4, 10, 9)"));
+    // wrong order
+    CHECK(tep.evaluate("CLAMP(10, 9, 1)") == 9);
+    CHECK(tep.evaluate("CLAMP(0, 9, 1)") == 1);
     }
 
 TEST_CASE("Lambdas", "[lambdas]")
