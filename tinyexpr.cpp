@@ -610,25 +610,25 @@ te_expr* te_parser::power(te_parser::state *s) {
 }
 
 #ifdef TE_POW_FROM_RIGHT
-te_expr *factor(te_parser::state *s) {
+te_expr* te_parser::factor(te_parser::state *s) {
     /* <factor>    =    <power> {"^" <power>} */
     te_expr* ret = power(s);
 
-    int neg = 0;
+    int neg{ 0 };
 
-    if (ret->m_type == (TE_PURE) &&
+    if (ret->m_type == TE_PURE &&
         is_function1(ret->m_value) &&
         get_function1(ret->m_value) == _negate) {
         te_expr *se = ret->m_parameters[0];
-        free(ret);
+        delete ret;
         ret = se;
         neg = 1;
     }
 
-    te_expr *insertion = 0;
+    te_expr* insertion{ nullptr };
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
-        is_function2(ret->m_value) &&
-           (get_function2(ret->m_value) == static_cast<te_fun2>(std::pow))) {
+        is_function2(s->m_value) &&
+           (get_function2(s->m_value) == static_cast<te_fun2>(std::pow))) {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
 
