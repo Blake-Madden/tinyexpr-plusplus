@@ -8,6 +8,8 @@ recursive descent parser and evaluation engine for math expressions.
 In addition to math operators and precedence, TinyExpr++ also supports
 the standard C math functions and runtime binding of variables and user-defined functions.
 
+[![cppcheck](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/cppcheck.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/cppcheck.yml)
+
 ## Features
 
 - **C++17 with no dependencies**.
