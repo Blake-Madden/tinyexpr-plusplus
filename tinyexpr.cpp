@@ -867,6 +867,7 @@ double te_parser::evaluate(const char* expression)
         { return std::numeric_limits<double>::quiet_NaN(); }
     }
 
+// cppcheck-suppress unusedFunction
 std::string te_parser::list_available_functions_and_variables()
     {
     std::string report = "Built-in Functions:\n";
