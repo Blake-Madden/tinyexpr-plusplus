@@ -86,13 +86,13 @@ For log = natural log uncomment the next line. */
 [[nodiscard]] static double _fac(double a) noexcept {/* simplest version of factorial */
     if (a < 0.0 || std::isnan(a))
         { return std::numeric_limits<double>::quiet_NaN(); }
-    if (a > std::numeric_limits<unsigned int>::max())
+    if (a > (std::numeric_limits<unsigned int>::max)())
         { return std::numeric_limits<double>::infinity(); }
     const auto ua = static_cast<size_t>(a);
     unsigned long int result{ 1 }, i{ 1 };
     for (i = 1; i <= ua; i++)
         {
-        if (i > std::numeric_limits<unsigned long>::max() / result)
+        if (i > (std::numeric_limits<unsigned long>::max)() / result)
             return std::numeric_limits<double>::infinity();
         result *= i;
         }
@@ -167,7 +167,7 @@ For log = natural log uncomment the next line. */
     {
     if (n < 0.0 || r < 0.0 || n < r || std::isnan(n) || std::isnan(r))
         { return std::numeric_limits<double>::quiet_NaN(); }
-    if (n > std::numeric_limits<unsigned int>::max() || r > std::numeric_limits<unsigned int>::max())
+    if (n > ((std::numeric_limits<unsigned int>::max)()) || r > (std::numeric_limits<unsigned int>::max)())
         { return std::numeric_limits<double>::infinity(); }
     const unsigned long int un{ static_cast<unsigned int>(n) };
     unsigned long int ur{ static_cast<unsigned int>(r) };
@@ -175,7 +175,7 @@ For log = natural log uncomment the next line. */
     if (ur > un / 2) ur = un - ur;
     for (decltype(ur) i = 1; i <= ur; i++)
         {
-        if (result > std::numeric_limits<unsigned long>::max() / (un - ur + i))
+        if (result > ((std::numeric_limits<unsigned long>::max)()) / (un - ur + i))
             return std::numeric_limits<double>::infinity();
         result *= un - ur + i;
         result /= i;
@@ -189,7 +189,7 @@ For log = natural log uncomment the next line. */
 [[nodiscard]] constexpr static double _mul(double a, double b) noexcept { return a * b; }
 [[nodiscard]] constexpr static double _sqr(double a) noexcept { return a*a; }
 [[nodiscard]] static double _max_maybe_nan(double v1, double v2_maybe_nan) noexcept
-    { return std::max(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
+    { return (std::max)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
 [[nodiscard]] static double _max(double v1, double v2, double v3, double v4,
                                  double v5, double v6, double v7) noexcept
     {
@@ -202,7 +202,7 @@ For log = natural log uncomment the next line. */
     return _max_maybe_nan(maxVal, v7);
     }
 [[nodiscard]] static double _min_maybe_nan(double v1, double v2_maybe_nan) noexcept
-    { return std::min(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
+    { return (std::min)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
 [[nodiscard]] static double _min(double v1, double v2, double v3, double v4,
                                  double v5, double v6, double v7) noexcept
     {
