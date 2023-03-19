@@ -20,10 +20,8 @@ jobs:
              cd tinyexpr-plusplus/tests
              cmake ./
              make
-             ls
              cd bin
              ls
              TETestRunner --reporter JUnit::out=TE-junit.xml
-             ls
              cat TE-junit.xml
              
