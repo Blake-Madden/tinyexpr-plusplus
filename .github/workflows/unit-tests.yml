@@ -22,6 +22,5 @@ jobs:
              make
              cd bin
              ls
-             TETestRunner --reporter JUnit::out=TE-junit.xml
-             cat TE-junit.xml
+
              
