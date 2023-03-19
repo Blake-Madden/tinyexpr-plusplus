@@ -21,7 +21,7 @@ jobs:
              cmake ./
              make
              cd bin
-             ls
-             pwd
+             ./TETestRunner --reporter JUnit::out=TE-junit.xml
+             cat TE-junit.xml
 
              
