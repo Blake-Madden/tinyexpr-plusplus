@@ -35,7 +35,7 @@ jobs:
              fi
              
              cd ..
-             cmake -DTE_POW_FROM_RIGHT ./
+             cmake -DTE_POW_FROM_RIGHT=1 ./
              make
              cd bin
              ./TETestRunner --reporter JUnit::out=TE-junit.xml
