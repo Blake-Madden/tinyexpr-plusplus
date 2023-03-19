@@ -1,0 +1,23 @@
+name: unit-tests
+on: [push]
+
+jobs:
+  build:
+    name: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: checkout cmake
+        run: |
+             sudo apt install cmake
+          
+      - name: checkout catch2
+        run: |
+             cd ..
+             git clone https://github.com/catchorg/Catch2.git
+             cd tinyexpr-plusplus/tests
+             cmake ./
+             make
+             ls
+             
