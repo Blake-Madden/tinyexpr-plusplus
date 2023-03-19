@@ -27,10 +27,10 @@ jobs:
              failures=$(cat TE-junit.xml | grep -Po '(failures)="\K[^"]*')
              echo "Error count is: ${errors}"
              echo "Failure count is: ${failures}"
-             if ([ "$errors" -gt 0 ];)
+             if [ "$errors" -gt 0 ]; then
                exit 1
              fi
-             if ([ "$failures" -gt 0 ];)
+             if [ "$failures" -gt 0 ]; then
                exit 1
              fi
 
