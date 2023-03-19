@@ -23,5 +23,14 @@ jobs:
              cd bin
              ./TETestRunner --reporter JUnit::out=TE-junit.xml
              cat TE-junit.xml
+             errors=$(cat TE-junit.xml | grep -Po '(errors)="[^"]*')
+             warnings=$(cat TE-junit.xml | grep -Po '(warnings)="[^"]*')
+             echo "var value is: ${errors}"
+             echo "var value is: ${warnings}"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test runner results
+          path: TE-junit.xml
 
              
