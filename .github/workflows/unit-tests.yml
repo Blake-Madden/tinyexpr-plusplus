@@ -23,10 +23,16 @@ jobs:
              cd bin
              ./TETestRunner --reporter JUnit::out=TE-junit.xml
              cat TE-junit.xml
-             errors=$(cat TE-junit.xml | grep -Po '(errors)="[^"]*')
-             failures=$(cat TE-junit.xml | grep -Po '(failures)="[^"]*')
+             errors=$(cat TE-junit.xml | grep -Po '(errors)="\K[^"]*')
+             failures=$(cat TE-junit.xml | grep -Po '(failures)="\K[^"]*')
              echo "var value is: ${errors}"
              echo "var value is: ${failures}"
+             if ([ "$errors" -gt "0" ];)
+               exit 1
+             fi
+             if ([ "$failures" -gt "0" ];)
+               exit 1
+             fi
 
       - uses: actions/upload-artifact@v3
         with:
