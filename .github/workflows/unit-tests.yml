@@ -8,9 +8,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: checkout cmake
+      - name: install tools
         run: |
              sudo apt install cmake
+             sudo apt install lcov
           
       - name: checkout catch2
         run: |
