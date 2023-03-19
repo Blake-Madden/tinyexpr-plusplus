@@ -22,5 +22,6 @@ jobs:
              make
              cd bin
              ls
+             pwd
 
              
