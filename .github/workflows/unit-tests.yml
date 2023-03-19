@@ -33,10 +33,22 @@ jobs:
              if [ "$failures" -gt 0 ]; then
                exit 1
              fi
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: test runner results
-          path: TE-junit.xml
+             
+             cd ..
+             cmake -DTE_POW_FROM_RIGHT ./
+             make
+             cd bin
+             ./TETestRunner --reporter JUnit::out=TE-junit.xml
+             cat TE-junit2.xml
+             errors=$(cat TE-junit2.xml | grep -Po '(errors)="\K[^"]*')
+             failures=$(cat TE-junit2.xml | grep -Po '(failures)="\K[^"]*')
+             echo "Error count is: ${errors}"
+             echo "Failure count is: ${failures}"
+             if [ "$errors" -gt 0 ]; then
+               exit 1
+             fi
+             if [ "$failures" -gt 0 ]; then
+               exit 1
+             fi
 
              
