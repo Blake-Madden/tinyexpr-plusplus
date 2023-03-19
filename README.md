@@ -10,6 +10,7 @@ the standard C math functions and runtime binding of variables and user-defined 
 
 [![cppcheck](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/cppcheck.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/cppcheck.yml)
 [![doxygen](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/doxygen.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/doxygen.yml)
+[![unit-tests](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/unit-tests.yml)
 
 ## Features
 
