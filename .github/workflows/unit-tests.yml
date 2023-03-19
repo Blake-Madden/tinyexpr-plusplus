@@ -38,7 +38,7 @@ jobs:
              cmake -DTE_POW_FROM_RIGHT=1 ./
              make
              cd bin
-             ./TETestRunner --reporter JUnit::out=TE-junit.xml
+             ./TETestRunner --reporter JUnit::out=TE-junit2.xml
              cat TE-junit2.xml
              errors=$(cat TE-junit2.xml | grep -Po '(errors)="\K[^"]*')
              failures=$(cat TE-junit2.xml | grep -Po '(failures)="\K[^"]*')
