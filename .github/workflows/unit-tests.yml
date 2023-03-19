@@ -24,9 +24,9 @@ jobs:
              ./TETestRunner --reporter JUnit::out=TE-junit.xml
              cat TE-junit.xml
              errors=$(cat TE-junit.xml | grep -Po '(errors)="[^"]*')
-             warnings=$(cat TE-junit.xml | grep -Po '(warnings)="[^"]*')
+             failures=$(cat TE-junit.xml | grep -Po '(failures)="[^"]*')
              echo "var value is: ${errors}"
-             echo "var value is: ${warnings}"
+             echo "var value is: ${failures}"
 
       - uses: actions/upload-artifact@v3
         with:
