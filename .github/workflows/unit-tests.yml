@@ -13,12 +13,19 @@ jobs:
              sudo apt install cmake
              sudo apt install lcov
           
-      - name: checkout catch2
+      - name: build test runner
         run: |
              cd ..
              git clone https://github.com/catchorg/Catch2.git
              cd tinyexpr-plusplus/tests
              cmake ./
              make
-             ls
+
+      - name: run tests
+        run: |
+             TETestRunner --reporter JUnit::out=TE-junit.xml
+ 
+      - name: review results
+        run: |
+             cat TE-junit.xml
              
