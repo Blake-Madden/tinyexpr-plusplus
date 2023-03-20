@@ -98,6 +98,12 @@ For log = natural log uncomment the next line. */
         }
     return static_cast<double>(result);
 }
+
+[[nodiscard]] static double absolute_value(double n)
+    {
+    return std::fabs(static_cast<double>(n));
+    }
+    
 [[nodiscard]] static double _random()
     {
     std::random_device rd;
@@ -304,7 +310,7 @@ void te_parser::te_free(te_expr *n)
 
 const std::vector<te_variable> te_parser::m_functions = {
     /* must be in alphabetical order */
-    {"abs", static_cast<te_fun1>(std::fabs), TE_PURE},
+    {"abs", static_cast<te_fun1>(absolute_value), TE_PURE},
     {"acos", static_cast<te_fun1>(std::acos), TE_PURE},
     // variadic, accepts 1-7 arguments
     {"and", static_cast<te_fun7>(_and_variadic), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
