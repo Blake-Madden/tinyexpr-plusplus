@@ -1,5 +1,6 @@
 ﻿/tests/.vs
-/tests/out
+/tests/bin/
+/tests/out/
 /.vs
+/doc/html/
 CMakeSettings.json
-/doc/html

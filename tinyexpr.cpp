@@ -99,10 +99,81 @@ For log = natural log uncomment the next line. */
     return static_cast<double>(result);
 }
 
-[[nodiscard]] static double absolute_value(double n)
-    {
-    return std::fabs(static_cast<double>(n));
-    }
+[[nodiscard]]
+static double _absolute_value(double n)
+    { return std::fabs(static_cast<double>(n)); }
+
+[[nodiscard]]
+static double _log(double x)
+    { return std::log(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _log10(double x)
+    { return std::log10(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _pow(double x, double y)
+    { return std::pow(static_cast<double>(x), static_cast<double>(y)); }
+
+[[nodiscard]]
+static double _tan(double x)
+    { return std::tan(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _tanh(double x)
+    { return std::tanh(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _trunc(double x)
+    { return std::trunc(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _sin(double x)
+    { return std::sin(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _sinh(double x)
+    { return std::sinh(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _sqrt(double x)
+    { return std::sqrt(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _floor(double x)
+    { return std::floor(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _ceil(double x)
+    { return std::ceil(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _exp(double x)
+    { return std::exp(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _cos(double x)
+    { return std::cos(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _cosh(double x)
+    { return std::cosh(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _acos(double x)
+    { return std::acos(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _asin(double x)
+    { return std::asin(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _atan(double x)
+    { return std::atan(static_cast<double>(x)); }
+
+[[nodiscard]]
+static double _atan2(double y, double x)
+    { return std::atan2(static_cast<double>(y), (static_cast<double>(x))); }
     
 [[nodiscard]] static double _random()
     {
@@ -236,7 +307,7 @@ For log = natural log uncomment the next line. */
 [[nodiscard]] static double _or_maybe_nan(double v1, double v2_maybe_nan) noexcept
     { return std::isnan(v2_maybe_nan) ? v1 : (v1 || v2_maybe_nan); }
 [[nodiscard]] static double _or_variadic(double v1, double v2, double v3, double v4,
-                                          double v5, double v6, double v7) noexcept
+                                         double v5, double v6, double v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
     auto orVal = _or_maybe_nan(v1, v2);
@@ -310,15 +381,15 @@ void te_parser::te_free(te_expr *n)
 
 const std::vector<te_variable> te_parser::m_functions = {
     /* must be in alphabetical order */
-    {"abs", static_cast<te_fun1>(absolute_value), TE_PURE},
-    {"acos", static_cast<te_fun1>(std::acos), TE_PURE},
+    {"abs", static_cast<te_fun1>(_absolute_value), TE_PURE},
+    {"acos", static_cast<te_fun1>(_acos), TE_PURE},
     // variadic, accepts 1-7 arguments
     {"and", static_cast<te_fun7>(_and_variadic), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"asin", static_cast<te_fun1>(std::asin), TE_PURE},
-    {"atan", static_cast<te_fun1>(std::atan), TE_PURE},
-    {"atan2", static_cast<te_fun2>(std::atan2), TE_PURE},
+    {"asin", static_cast<te_fun1>(_asin), TE_PURE},
+    {"atan", static_cast<te_fun1>(_atan), TE_PURE},
+    {"atan2", static_cast<te_fun2>(_atan2), TE_PURE},
     {"average", static_cast<te_fun7>(_average), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"ceil", static_cast<te_fun1>(std::ceil), TE_PURE},
+    {"ceil", static_cast<te_fun1>(_ceil), TE_PURE},
     {"clamp", static_cast<te_fun3>(
         [](const double num, const double start, const double end)
             {
@@ -327,45 +398,45 @@ const std::vector<te_variable> te_parser::m_functions = {
                 std::clamp<double>(num, end, start);
             }),
         TE_PURE},
-    {"combin",   static_cast<te_fun2>(_ncr),   TE_PURE},
-    {"cos",   static_cast<te_fun1>(std::cos),   TE_PURE},
-    {"cosh",  static_cast<te_fun1>(std::cosh),  TE_PURE},
-    {"cot",  static_cast<te_fun1>(_cot),  TE_PURE},
-    {"e",     static_cast<te_fun0>(_e),     TE_PURE},
-    {"exp",   static_cast<te_fun1>(std::exp),   TE_PURE},
-    {"fac",   static_cast<te_fun1>(_fac),   TE_PURE},
-    {"fact",   static_cast<te_fun1>(_fac),   TE_PURE},
-    {"floor", static_cast<te_fun1>(std::floor), TE_PURE},
+    {"combin", static_cast<te_fun2>(_ncr), TE_PURE},
+    {"cos", static_cast<te_fun1>(_cos), TE_PURE},
+    {"cosh", static_cast<te_fun1>(_cosh), TE_PURE},
+    {"cot", static_cast<te_fun1>(_cot), TE_PURE},
+    {"e", static_cast<te_fun0>(_e), TE_PURE},
+    {"exp", static_cast<te_fun1>(_exp), TE_PURE},
+    {"fac", static_cast<te_fun1>(_fac), TE_PURE},
+    {"fact", static_cast<te_fun1>(_fac), TE_PURE},
+    {"floor", static_cast<te_fun1>(_floor), TE_PURE},
     {"if", static_cast<te_fun3>(_if), TE_PURE},
-    {"ln",    static_cast<te_fun1>(std::log),   TE_PURE},
+    {"ln", static_cast<te_fun1>(_log), TE_PURE},
 #ifdef TE_NAT_LOG
-    {"log",   static_cast<te_fun1>(std::log),   TE_PURE},
+    {"log", static_cast<te_fun1>(_log), TE_PURE},
 #else
-    {"log",   static_cast<te_fun1>(std::log10), TE_PURE},
+    {"log", static_cast<te_fun1>(_log10), TE_PURE},
 #endif
-    {"log10", static_cast<te_fun1>(std::log10), TE_PURE},
-    {"max", static_cast<te_fun7>(_max),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"min", static_cast<te_fun7>(_min),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"mod", static_cast<te_fun2>(_modulus),  TE_PURE},
-    {"ncr",   static_cast<te_fun2>(_ncr),   TE_PURE},
-    {"not", static_cast<te_fun1>(_not),  TE_PURE},
-    {"npr",   static_cast<te_fun2>(_npr),   TE_PURE},
-    {"or", static_cast<te_fun7>(_or_variadic),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"permut",   static_cast<te_fun2>(_npr),   TE_PURE},
-    {"pi",    static_cast<te_fun0>(_pi),    TE_PURE},
-    {"pow",   static_cast<te_fun2>(std::pow),   TE_PURE},
-    {"power",/* Excel alias*/   static_cast<te_fun2>(std::pow),   TE_PURE},
-    {"rand",    static_cast<te_fun0>(_random),    TE_PURE},
-    {"round",   static_cast<te_fun2>(_round),   static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"sign",   static_cast<te_fun1>(_sign),   TE_PURE},
-    {"sin",   static_cast<te_fun1>(std::sin),   TE_PURE},
-    {"sinh", static_cast<te_fun1>(std::sinh),  TE_PURE},
-    {"sqr", static_cast<te_fun1>(_sqr),  TE_PURE},
-    {"sqrt", static_cast<te_fun1>(std::sqrt),  TE_PURE},
-    {"sum", static_cast<te_fun7>(_sum),  static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"tan",   static_cast<te_fun1>(std::tan),   TE_PURE},
-    {"tanh", static_cast<te_fun1>(std::tanh),  TE_PURE},
-    {"trunc", static_cast<te_fun1>(std::trunc),  TE_PURE}
+    {"log10", static_cast<te_fun1>(_log10), TE_PURE},
+    {"max", static_cast<te_fun7>(_max), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"min", static_cast<te_fun7>(_min), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"mod", static_cast<te_fun2>(_modulus), TE_PURE},
+    {"ncr", static_cast<te_fun2>(_ncr), TE_PURE},
+    {"not", static_cast<te_fun1>(_not), TE_PURE},
+    {"npr", static_cast<te_fun2>(_npr), TE_PURE},
+    {"or", static_cast<te_fun7>(_or_variadic), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"permut", static_cast<te_fun2>(_npr), TE_PURE},
+    {"pi", static_cast<te_fun0>(_pi), TE_PURE},
+    {"pow", static_cast<te_fun2>(_pow), TE_PURE},
+    {"power",/* Excel alias*/ static_cast<te_fun2>(_pow), TE_PURE},
+    {"rand", static_cast<te_fun0>(_random), TE_PURE},
+    {"round", static_cast<te_fun2>(_round), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"sign", static_cast<te_fun1>(_sign), TE_PURE},
+    {"sin", static_cast<te_fun1>(_sin), TE_PURE},
+    {"sinh", static_cast<te_fun1>(_sinh), TE_PURE},
+    {"sqr", static_cast<te_fun1>(_sqr), TE_PURE},
+    {"sqrt", static_cast<te_fun1>(_sqrt), TE_PURE},
+    {"sum", static_cast<te_fun7>(_sum), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"tan", static_cast<te_fun1>(_tan), TE_PURE},
+    {"tanh", static_cast<te_fun1>(_tanh), TE_PURE},
+    {"trunc", static_cast<te_fun1>(_trunc), TE_PURE}
 };
 
 void te_parser::next_token(te_parser::state *s)
