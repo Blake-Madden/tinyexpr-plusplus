@@ -19,7 +19,7 @@ jobs:
              git clone https://github.com/catchorg/Catch2.git
              cd tinyexpr-plusplus/tests
              cmake ./
-             make
+             make -j4
              cd bin
              ./TETestRunner --reporter JUnit::out=TE-junit.xml
              cat TE-junit.xml
@@ -36,7 +36,7 @@ jobs:
              
              cd ..
              cmake -DTE_POW_FROM_RIGHT=1 ./
-             make
+             make -j4
              cd bin
              ./TETestRunner --reporter JUnit::out=TE-junit2.xml
              cat TE-junit2.xml
