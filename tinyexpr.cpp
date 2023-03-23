@@ -530,7 +530,7 @@ void te_parser::next_token(te_parser::state *s)
                 else if (tok == '-') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _sub; }
                 else if (tok == '*') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _mul; }
                 else if (tok == '/') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _divide; }
-                else if (tok == '^') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(std::pow); }
+                else if (tok == '^') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(_pow); }
                 else if (tok == '%') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _modulus; }
                 else if (tok == '(') { s->m_type = te_parser::state::token_type::TOK_OPEN; }
                 else if (tok == ')') { s->m_type = te_parser::state::token_type::TOK_CLOSE; }
@@ -705,7 +705,7 @@ te_expr* te_parser::factor(te_parser::state *s) {
     te_expr* insertion{ nullptr };
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-           (get_function2(s->m_value) == static_cast<te_fun2>(std::pow))) {
+           (get_function2(s->m_value) == static_cast<te_fun2>(_pow))) {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
 
@@ -735,7 +735,7 @@ te_expr* te_parser::factor(te_parser::state *s) {
     te_expr* ret = power(s);
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-        (get_function2(s->m_value) == static_cast<te_fun2>(std::pow))) {
+        (get_function2(s->m_value) == static_cast<te_fun2>(_pow))) {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
         ret = new_expr(TE_PURE, t, { ret, power(s) });
