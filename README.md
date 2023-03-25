@@ -3,7 +3,7 @@
 # TinyExpr++
 
 TinyExpr++ is the C++ version of the [TinyExpr](https://github.com/codeplea/tinyexpr) library, which is a small
-recursive descent parser and evaluation engine for math expressions.
+recursive-descent parser and evaluation engine for math expressions.
 
 In addition to math operators and precedence, TinyExpr++ also supports
 the standard C math functions and runtime binding of variables and user-defined functions.
