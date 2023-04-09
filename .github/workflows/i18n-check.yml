@@ -1,0 +1,43 @@
+name: i18n-check
+on: [push]
+
+jobs:
+  build:
+    name: i18n-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: install i18n-check
+        run: |
+             git clone https://github.com/Blake-Madden/i18n-check.git --recurse-submodules
+             cd i18n-check
+             cmake ./
+             make -j4
+             cd ..
+
+      - name: analyze
+        run: |
+             # Just checking file format here
+             ./i18n-check/bin/i18n-check ./ --ignore=i18n-check,tests -q -v --disable=notL10NAvailable -o i18nresults.txt
+
+      - name: review results
+        run: |
+             REPORTFILE=./i18nresults.txt
+             WARNINGSFILE=./warnings.txt
+             if test -f "$REPORTFILE"; then
+                cat "$REPORTFILE" > "$WARNINGSFILE"
+                # are there any warnings?
+                if grep -qP '\[[a-zA-Z0-9]+\]' "$WARNINGSFILE"; then
+                    # print the remaining warnings
+                    echo Warnings detected:
+                    echo ==================
+                    cat "$WARNINGSFILE" | grep -P '\[[a-zA-Z0-9]+\]'
+                    # fail the job
+                    exit 1
+                else
+                    echo No issues detected
+                fi
+             else
+                echo "$REPORTFILE" not found
+             fi
