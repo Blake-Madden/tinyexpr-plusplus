@@ -174,7 +174,7 @@ static double _atan(double x)
 [[nodiscard]]
 static double _atan2(double y, double x)
     { return std::atan2(static_cast<double>(y), (static_cast<double>(x))); }
-    
+
 [[nodiscard]] static double _random()
     {
     std::random_device rd;
@@ -527,24 +527,69 @@ void te_parser::next_token(te_parser::state *s)
                 /* Look for an operator or special character. */
                 const auto tok = s->m_next++[0];
                 if (tok == '+') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _add; }
-                else if (tok == '-') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _sub; }
-                else if (tok == '*') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _mul; }
-                else if (tok == '/') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _divide; }
-                else if (tok == '^') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(_pow); }
-                else if (tok == '%') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _modulus; }
-                else if (tok == '(') { s->m_type = te_parser::state::token_type::TOK_OPEN; }
-                else if (tok == ')') { s->m_type = te_parser::state::token_type::TOK_CLOSE; }
-                else if (tok == get_list_separator()) { s->m_type = te_parser::state::token_type::TOK_SEP; }
+                else if (tok == '-')
+                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _sub; }
+                else if (tok == '*')
+                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _mul; }
+                else if (tok == '/')
+                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _divide; }
+                else if (tok == '^')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value =
+                        static_cast<te_fun2>(_pow);
+                    }
+                else if (tok == '%')
+                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _modulus; }
+                else if (tok == '(')
+                    { s->m_type = te_parser::state::token_type::TOK_OPEN; }
+                else if (tok == ')')
+                    { s->m_type = te_parser::state::token_type::TOK_CLOSE; }
+                else if (tok == get_list_separator())
+                    { s->m_type = te_parser::state::token_type::TOK_SEP; }
                 // logical operators
-                else if (tok == '=') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(_equal); }
-                else if (tok == '<' && s->m_next[0] == '>') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(_not_equal); ++s->m_next; }
-                else if (tok == '<' && s->m_next[0] == '=') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(_less_than_equal_to); ++s->m_next; }
-                else if (tok == '<') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(_less_than); }
-                else if (tok == '>' && s->m_next[0] == '=') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(_greater_than_equal_to); ++s->m_next; }
-                else if (tok == '>') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(_greater_than); }
-                else if (tok == '&') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(_and); }
-                else if (tok == '|') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = static_cast<te_fun2>(_or); }
-                else if (tok == ' ' || tok == '\t' || tok == '\n' || tok == '\r') { /*noop*/ }
+                else if (tok == '=')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value =
+                        static_cast<te_fun2>(_equal);
+                    }
+                else if (tok == '<' && s->m_next[0] == '>')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_not_equal); ++s->m_next;
+                    }
+                else if (tok == '<' && s->m_next[0] == '=')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value =
+                        static_cast<te_fun2>(_less_than_equal_to); ++s->m_next;
+                    }
+                else if (tok == '<')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_less_than);
+                    }
+                else if (tok == '>' && s->m_next[0] == '=')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_greater_than_equal_to);
+                    ++s->m_next;
+                    }
+                else if (tok == '>')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_greater_than);
+                    }
+                else if (tok == '&')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_and);
+                    }
+                else if (tok == '|')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value =
+                        static_cast<te_fun2>(_or);
+                    }
+                else if (tok == ' ' || tok == '\t' || tok == '\n' || tok == '\r')
+                    { /*noop*/ }
                 else { s->m_type = te_parser::state::token_type::TOK_ERROR; }
                 }
             }

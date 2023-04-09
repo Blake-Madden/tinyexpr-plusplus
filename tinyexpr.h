@@ -90,8 +90,10 @@ using te_confun7 = double (*)(const te_expr*, double, double, double, double, do
 
 // do not change the ordering of these, the indices are used to determine the value type of a te_variable
 using variant_type = std::variant<double, const double*, // indices 0-1
-    te_fun0, te_fun1, te_fun2, te_fun3, te_fun4, te_fun5, te_fun6, te_fun7, // indices 2-9
-    te_confun0, te_confun1, te_confun2, te_confun3, te_confun4, te_confun5, te_confun6, te_confun7>; //indices 10-17
+    // indices 2-9
+    te_fun0, te_fun1, te_fun2, te_fun3, te_fun4, te_fun5, te_fun6, te_fun7,
+    // indices 10-17
+    te_confun0, te_confun1, te_confun2, te_confun3, te_confun4, te_confun5, te_confun6, te_confun7>;
 
 /// @brief A variable's flags, effecting how it is evaluated.
 /// @note This is a bitmask, so flags can be OR'ed.
@@ -99,11 +101,12 @@ using variant_type = std::variant<double, const double*, // indices 0-1
 ///     just a C-style enum.
 enum variable_flags
     {
-    /// Don't do anything special when evaluating.
+    /// @brief Don't do anything special when evaluating.
     TE_DEFAULT = 0,
-    /// Don't update when simple evaluation is ran (i.e., only updated when expression is compiled).
+    /// @brief Don't update when simple evaluation is ran
+    ///     (i.e., only updated when expression is compiled).
     TE_PURE = 1 << 1,
-    /// Function that can take 1-7 argument (unused arguments are set to NaN).
+    /// @brief Function that can take 1-7 argument (unused arguments are set to NaN).
     TE_VARIADIC = 1 << 2
     };
 
@@ -253,11 +256,11 @@ public:
     te_expr& operator=(const te_expr&) = delete;
     /// @private
     virtual ~te_expr() {}
-    /// The type that m_value represents.
+    /// @brief The type that m_value represents.
     variable_flags m_type{ TE_DEFAULT };
-    /// The double constant, double pointer, or function to bind to.
+    /// @brief The double constant, double pointer, or function to bind to.
     variant_type m_value;
-    /// Additional parameters.
+    /// @brief Additional parameters.
     std::vector<te_expr*> m_parameters{ nullptr };
     };
 
@@ -265,11 +268,11 @@ public:
 class te_variable
     {
 public:
-    /// The name as it would appear in a formula.
+    /// @brief The name as it would appear in a formula.
     std::basic_string<char, case_insensitive_char_traits> m_name;
-    /// The double constant, double pointer, or function to bind the name to.
+    /// @brief The double constant, double pointer, or function to bind the name to.
     variant_type m_value;
-    /// The type that m_value represents.
+    /// @brief The type that m_value represents.
     variable_flags m_type{ TE_DEFAULT };
     /// If @c m_value is a function pointer of type `te_confun0`-`te_confun7`, then
     /// this is passed to that function when called. This is useful for passing
@@ -302,28 +305,34 @@ public:
     bool compile(const char* expression);
     /** @brief Evaluates expression passed to compile() previously and returns its result.
         @returns The result, or NaN on error.*/
-    [[nodiscard]] double evaluate();
+    [[nodiscard]]
+    double evaluate();
     /** @brief Compiles and evaluates an expression and returns its result.
         @param expression The formula to compile and evaluate.
         @returns The result, or NaN on error.
         @note Returns NaN if division or modulus by zero occurs.*/
-    [[nodiscard]] double evaluate(const char* expression);
+    [[nodiscard]]
+    double evaluate(const char* expression);
     /// @returns The last call to evaluate()'s result (which will be NaN on error).
-    [[nodiscard]] double get_result() const noexcept
+    [[nodiscard]]
+    double get_result() const noexcept
         { return m_result; }
     /// @returns Whether the last call to compile() was successful.
     /// @sa get_last_error_position().
-    [[nodiscard]] bool success() const noexcept
+    [[nodiscard]]
+    bool success() const noexcept
         { return m_parseSuccess; }
     /// @brief Gets the compiled expression, which will the optimized version
     ///     of the original expression.
     /// @returns The compiled expression.
-    [[nodiscard]] const te_expr* get_compiled_expression() const noexcept
+    [[nodiscard]]
+    const te_expr* get_compiled_expression() const noexcept
         { return m_compiledExpression; }
     /// @returns The zero-based index into the last parsed expression where the parse failed,
     ///     or @c -1 if no error occurred.
     /// @note Call success() to see if the last parse succeeded or not.
-    [[nodiscard]] int64_t get_last_error_position() const noexcept
+    [[nodiscard]]
+    int64_t get_last_error_position() const noexcept
         { return m_errorPos; }
 
     /// @brief Sets the list of custom variables and functions.
@@ -364,22 +373,27 @@ public:
     void add_var(const te_variable& var)
         { add_variable_or_function(var); }
     /// @private
-    [[nodiscard]] const std::vector<te_variable>& get_variables_and_functions() const noexcept
+    [[nodiscard]]
+    const std::vector<te_variable>& get_variables_and_functions() const noexcept
         { return m_custom_funcs_and_vars; }
     /// @returns The list of custom variables and functions.
-    [[nodiscard]] std::vector<te_variable>& get_variables_and_functions() noexcept
+    [[nodiscard]]
+    std::vector<te_variable>& get_variables_and_functions() noexcept
         { return m_custom_funcs_and_vars; }
     /// @private
     [[deprecated("Use get_variables_and_functions() instead.")]]
-    [[nodiscard]] const std::vector<te_variable>& get_vars() const noexcept
+    [[nodiscard]]
+    const std::vector<te_variable>& get_vars() const noexcept
         { return m_custom_funcs_and_vars; }
     /// @private
     [[deprecated("Use get_variables_and_functions() instead.")]]
-    [[nodiscard]] std::vector<te_variable>& get_vars() noexcept
+    [[nodiscard]]
+    std::vector<te_variable>& get_vars() noexcept
         { return m_custom_funcs_and_vars; }
 
     /// @returns The decimal separator used for numbers.
-    [[nodiscard]] char get_decimal_separator() const noexcept
+    [[nodiscard]]
+    char get_decimal_separator() const noexcept
         { return m_decimalSeparator; }
     /// @brief Sets the decimal separator used for numbers.
     /// @param sep The decimal separator.
@@ -409,7 +423,8 @@ public:
     /// @brief Retrieves a constant variable's value.
     /// @param name The name of the (constant) variable.
     /// @returns The value of the constant variable if found, NaN otherwise.
-    [[nodiscard]] double get_constant(const char* name) const
+    [[nodiscard]]
+    double get_constant(const char* name) const
         {
         auto cvar = find_variable_or_function(name);
         if (cvar == get_variables_and_functions().cend() || !is_constant(cvar->m_value))
@@ -422,17 +437,19 @@ public:
         }
 
     /// @returns The separator used between function arguments.
-    [[nodiscard]] char get_list_separator() const noexcept
+    [[nodiscard]]
+    char get_list_separator() const noexcept
         { return m_listSeparator; }
     /// @brief Sets the separator used between function arguments.
     /// @param sep The list separator.
     void set_list_separator(const char sep) noexcept
         { m_listSeparator = sep; }
-    
+
     /// @returns @c true if @c name is a function that had been used in the last parsed formula.
     /// @param name The name of the function.
     /// @sa compile() and evaluate().
-    [[nodiscard]] bool is_function_used(const char* name) const
+    [[nodiscard]]
+    bool is_function_used(const char* name) const
         {
         return m_usedFunctions.find(
             std::basic_string<char, case_insensitive_char_traits>(name)) != m_usedFunctions.cend();
@@ -440,14 +457,16 @@ public:
     /// @returns @c true if @c name is a variable that had been used in the last parsed formula.
     /// @param name The name of the variable.
     /// @sa compile() and evaluate().
-    [[nodiscard]] bool is_variable_used(const char* name) const
+    [[nodiscard]]
+    bool is_variable_used(const char* name) const
         {
         return m_usedVars.find(
             std::basic_string<char, case_insensitive_char_traits>(name)) != m_usedVars.cend();
         }
 
     /// @returns A report of all available functions and variables.
-    [[nodiscard]] std::string list_available_functions_and_variables();
+    [[nodiscard]]
+    std::string list_available_functions_and_variables();
 
 #ifndef NDEBUG
     /* Prints debugging information on the syntax tree. */
@@ -464,7 +483,8 @@ private:
             { throw std::runtime_error("Variable name is empty."); }
         if (!is_letter(var.m_name[0]))
             {
-            throw std::string("Variable name must begin with an English letter: ") + var.m_name.c_str();
+            throw std::runtime_error(
+                std::string("Variable name must begin with an English letter: ") + var.m_name.c_str());
             }
         const auto varCharPos = std::find_if(var.m_name.cbegin(), var.m_name.cend(),
             [](const auto ch) noexcept
@@ -482,14 +502,16 @@ private:
     /// @returns An iterator to the custom variable or function with the given @c name,
     ///     or end of get_variables_and_functions() if not found.
     /// @param name The name of the function or variable to search for.
-    [[nodiscard]] std::vector<te_variable>::iterator find_variable_or_function(const char* name)
+    [[nodiscard]]
+    std::vector<te_variable>::iterator find_variable_or_function(const char* name)
         {
         if (!name) return m_custom_funcs_and_vars.end();
         // debug sanity check
         assert(std::is_sorted(m_custom_funcs_and_vars.cbegin(), m_custom_funcs_and_vars.cend(),
             [](const auto& lhv, const auto& rhv) noexcept { return lhv.m_name < rhv.m_name; }));
 
-        const auto foundPos = std::lower_bound(m_custom_funcs_and_vars.begin(), m_custom_funcs_and_vars.end(),
+        const auto foundPos = std::lower_bound(m_custom_funcs_and_vars.begin(),
+             m_custom_funcs_and_vars.end(),
             std::basic_string_view<char, case_insensitive_char_traits>(name),
             [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
         // did it find an exact match?
@@ -498,7 +520,8 @@ private:
             foundPos : m_custom_funcs_and_vars.end();
         }
     /// @private
-    [[nodiscard]] std::vector<te_variable>::const_iterator
+    [[nodiscard]]
+    std::vector<te_variable>::const_iterator
         find_variable_or_function(const char* name) const
         {
         if (!name) return m_custom_funcs_and_vars.cend();
@@ -506,7 +529,8 @@ private:
         assert(std::is_sorted(m_custom_funcs_and_vars.cbegin(), m_custom_funcs_and_vars.cend(),
             [](const auto& lhv, const auto& rhv) noexcept { return lhv.m_name < rhv.m_name; }));
 
-        const auto foundPos = std::lower_bound(m_custom_funcs_and_vars.cbegin(), m_custom_funcs_and_vars.cend(),
+        const auto foundPos = std::lower_bound(m_custom_funcs_and_vars.cbegin(),
+            m_custom_funcs_and_vars.cend(),
             std::basic_string_view<char, case_insensitive_char_traits>(name),
             [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
         // did it find an exact match?
@@ -516,19 +540,24 @@ private:
         }
     /// @private
     [[deprecated("Use find_variable_or_function() instead.")]]
-    [[nodiscard]] std::vector<te_variable>::iterator find_variable(const char* name)
+    [[nodiscard]]
+    std::vector<te_variable>::iterator find_variable(const char* name)
         { return find_variable_or_function(name); }
     /// @private
     [[deprecated("Use find_variable_or_function() instead.")]]
-    [[nodiscard]] std::vector<te_variable>::const_iterator find_variable(const char* name) const
+    [[nodiscard]]
+    std::vector<te_variable>::const_iterator find_variable(const char* name) const
         { return find_variable_or_function(name); }
 
-    [[nodiscard]] constexpr static auto is_pure(const variable_flags type)
+    [[nodiscard]]
+    constexpr static auto is_pure(const variable_flags type)
         { return (((type)&TE_PURE) != 0); }
-    [[nodiscard]] constexpr static auto is_variadic(const variable_flags type)
+    [[nodiscard]]
+    constexpr static auto is_variadic(const variable_flags type)
         { return (((type)&TE_VARIADIC) != 0); }
     /// @returns Number of parameters that a function/variable takes.
-    [[nodiscard]] inline static auto get_arity(const variant_type& var) noexcept
+    [[nodiscard]]
+    inline static auto get_arity(const variant_type& var) noexcept
         {
         return (var.index() == 0 || var.index() == 1) ? 0 :
             (is_function0(var) || is_closure0(var)) ? 0 :
@@ -541,132 +570,170 @@ private:
             (is_function7(var) || is_closure7(var)) ? 7 :
             0;
         }
-    [[nodiscard]] constexpr static bool is_constant(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_constant(const variant_type& var) noexcept
         { return var.index() == 0; }
-    [[nodiscard]] constexpr static double get_constant(const variant_type& var)
+    [[nodiscard]]
+    constexpr static double get_constant(const variant_type& var)
         {
         assert(std::holds_alternative<double>(var));
         return std::get<0>(var);
         }
-    [[nodiscard]] constexpr static bool is_variable(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_variable(const variant_type& var) noexcept
         { return var.index() == 1; }
-    [[nodiscard]] constexpr static const double* get_variable(const variant_type& var)
+    [[nodiscard]]
+    constexpr static const double* get_variable(const variant_type& var)
         {
         assert(std::holds_alternative<const double*>(var));
         return std::get<1>(var);
         }
-    [[nodiscard]] constexpr static bool is_function(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_function(const variant_type& var) noexcept
         { return (var.index() >= 2 && var.index() <= 9); }
-    [[nodiscard]] constexpr static bool is_function0(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_function0(const variant_type& var) noexcept
         { return var.index() == 2; }
-    [[nodiscard]] constexpr static te_fun0 get_function0(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_fun0 get_function0(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun0>(var));
         return std::get<2>(var);
         }
-    [[nodiscard]] constexpr static bool is_function1(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_function1(const variant_type& var) noexcept
         { return var.index() == 3; }
-    [[nodiscard]] constexpr static te_fun1 get_function1(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_fun1 get_function1(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun1>(var));
         return std::get<3>(var);
         }
-    [[nodiscard]] constexpr static bool is_function2(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_function2(const variant_type& var) noexcept
         { return var.index() == 4; }
-    [[nodiscard]] constexpr static te_fun2 get_function2(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_fun2 get_function2(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun2>(var));
         return std::get<4>(var);
         }
-    [[nodiscard]] constexpr static bool is_function3(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_function3(const variant_type& var) noexcept
         { return var.index() == 5; }
-    [[nodiscard]] constexpr static te_fun3 get_function3(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_fun3 get_function3(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun3>(var));
         return std::get<5>(var);
         }
-    [[nodiscard]] constexpr static bool is_function4(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_function4(const variant_type& var) noexcept
         { return var.index() == 6; }
-    [[nodiscard]] constexpr static te_fun4 get_function4(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_fun4 get_function4(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun4>(var));
         return std::get<6>(var);
         }
-    [[nodiscard]] constexpr static bool is_function5(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_function5(const variant_type& var) noexcept
         { return var.index() == 7; }
-    [[nodiscard]] constexpr static te_fun5 get_function5(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_fun5 get_function5(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun5>(var));
         return std::get<7>(var);
         }
-    [[nodiscard]] constexpr static bool is_function6(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_function6(const variant_type& var) noexcept
         { return var.index() == 8; }
-    [[nodiscard]] constexpr static te_fun6 get_function6(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_fun6 get_function6(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun6>(var));
         return std::get<8>(var);
         }
-    [[nodiscard]] constexpr static bool is_function7(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_function7(const variant_type& var) noexcept
         { return var.index() == 9; }
-    [[nodiscard]] constexpr static te_fun7 get_function7(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_fun7 get_function7(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun7>(var));
         return std::get<9>(var);
         }
-    [[nodiscard]] constexpr static bool is_closure(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_closure(const variant_type& var) noexcept
         { return (var.index() >= 10 && var.index() <= 17); }
-    [[nodiscard]] constexpr static bool is_closure0(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_closure0(const variant_type& var) noexcept
         { return var.index() == 10; }
-    [[nodiscard]] constexpr static te_confun0 get_closure0(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_confun0 get_closure0(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun0>(var));
         return std::get<10>(var);
         }
-    [[nodiscard]] constexpr static bool is_closure1(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_closure1(const variant_type& var) noexcept
         { return var.index() == 11; }
-    [[nodiscard]] constexpr static te_confun1 get_closure1(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_confun1 get_closure1(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun1>(var));
         return std::get<11>(var);
         }
-    [[nodiscard]] constexpr static bool is_closure2(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_closure2(const variant_type& var) noexcept
         { return var.index() == 12; }
-    [[nodiscard]] constexpr static te_confun2 get_closure2(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_confun2 get_closure2(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun2>(var));
         return std::get<12>(var);
         }
-    [[nodiscard]] constexpr static bool is_closure3(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_closure3(const variant_type& var) noexcept
         { return var.index() == 13; }
-    [[nodiscard]] constexpr static te_confun3 get_closure3(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_confun3 get_closure3(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun3>(var));
         return std::get<13>(var);
         }
-    [[nodiscard]] constexpr static bool is_closure4(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_closure4(const variant_type& var) noexcept
         { return var.index() == 14; }
-    [[nodiscard]] constexpr static te_confun4 get_closure4(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_confun4 get_closure4(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun4>(var));
         return std::get<14>(var);
         }
-    [[nodiscard]] constexpr static bool is_closure5(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_closure5(const variant_type& var) noexcept
         { return var.index() == 15; }
-    [[nodiscard]] constexpr static te_confun5 get_closure5(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_confun5 get_closure5(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun5>(var));
         return std::get<15>(var);
         }
-    [[nodiscard]] constexpr static bool is_closure6(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_closure6(const variant_type& var) noexcept
         { return var.index() == 16; }
-    [[nodiscard]] constexpr static te_confun6 get_closure6(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_confun6 get_closure6(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun6>(var));
         return std::get<16>(var);
         }
-    [[nodiscard]] constexpr static bool is_closure7(const variant_type& var) noexcept
+    [[nodiscard]]
+    constexpr static bool is_closure7(const variant_type& var) noexcept
         { return var.index() == 17; }
-    [[nodiscard]] constexpr static te_confun7 get_closure7(const variant_type& var)
+    [[nodiscard]]
+    constexpr static te_confun7 get_closure7(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun7>(var));
         return std::get<17>(var);
@@ -693,25 +760,30 @@ private:
 
         TE_RELEASE_CONST std::vector<te_variable>& m_lookup;
         };
-    [[nodiscard]] static te_expr* new_expr(const variable_flags type,
+    [[nodiscard]]
+    static te_expr* new_expr(const variable_flags type,
         const variant_type& value, const std::initializer_list<te_expr*> parameters);
-    [[nodiscard]] static constexpr bool is_letter(const char c) noexcept
+    [[nodiscard]]
+    static constexpr bool is_letter(const char c) noexcept
         { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
     /** @brief Parses the input expression and binds variables.
         @param expression The formula to parse.
         @param variables The collection of custom functions and
             variables to add to the parser.
         @returns null on error.*/
-    [[nodiscard]] te_expr* te_compile(const char* expression,
+    [[nodiscard]]
+    te_expr* te_compile(const char* expression,
         TE_RELEASE_CONST std::vector<te_variable>& variables);
     /* Evaluates the expression. */
-    [[nodiscard]] static double te_eval(const te_expr* n);
+    [[nodiscard]]
+    static double te_eval(const te_expr* n);
     /* Frees the expression. */
     /* This is safe to call on null pointers. */
     static void te_free(te_expr* n);
     static void te_free_parameters(te_expr* n);
     static void optimize(te_expr* n);
-    [[nodiscard]] static auto find_builtin(const char* name, const size_t len)
+    [[nodiscard]]
+    static auto find_builtin(const char* name, const size_t len)
         {
         // debug sanity check
         assert(std::is_sorted(m_functions.cbegin(), m_functions.cend(),
@@ -726,7 +798,8 @@ private:
             foundPos : m_functions.cend();
         }
 
-    [[nodiscard]] static auto find_lookup(TE_RELEASE_CONST state* s,
+    [[nodiscard]]
+    static auto find_lookup(TE_RELEASE_CONST state* s,
                                           const char* name, const size_t len)
         {
         // debug sanity checks
@@ -760,12 +833,18 @@ private:
         }
 
     void next_token(state* s);
-    [[nodiscard]] te_expr* base(state* s);
-    [[nodiscard]] te_expr* power(state* s);
-    [[nodiscard]] te_expr* factor(state* s);
-    [[nodiscard]] te_expr* term(state* s);
-    [[nodiscard]] te_expr* expr(state* s);
-    [[nodiscard]] te_expr* list(state* s);
+    [[nodiscard]]
+    te_expr* base(state* s);
+    [[nodiscard]]
+    te_expr* power(state* s);
+    [[nodiscard]]
+    te_expr* factor(state* s);
+    [[nodiscard]]
+    te_expr* term(state* s);
+    [[nodiscard]]
+    te_expr* expr(state* s);
+    [[nodiscard]]
+    te_expr* list(state* s);
 
     std::string m_expression;
     te_expr* m_compiledExpression{ nullptr };

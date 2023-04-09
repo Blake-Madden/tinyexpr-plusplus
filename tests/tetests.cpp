@@ -1009,28 +1009,28 @@ TEST_CASE("Logical operators", "[logic]")
     {
     te_parser p;
 
-    //OR
+    // OR
     p.compile(("0 | 1"));
     CHECK(1 == p.evaluate());
     p.compile(("1 | 1"));
     CHECK(1 == p.evaluate());
     p.compile(("0 | 0"));
     CHECK(0 == p.evaluate());
-    //AND
+    // AND
     p.compile(("0 & 1"));
     CHECK(0 == p.evaluate());
     p.compile(("1 | 1"));
     CHECK(1 == p.evaluate());
     p.compile(("0 | 0"));
     CHECK(0 == p.evaluate());
-    //equality
+    // equality
     p.compile(("5=5"));
     CHECK(1 == p.evaluate());
     p.compile(("5<>5"));
     CHECK(0 == p.evaluate());
     p.compile(("5.1 <>5"));
     CHECK(1 == p.evaluate());
-    //less than
+    // less than
     p.compile(("5.1 < 5"));
     CHECK(0 == p.evaluate());
     p.compile(("5 < 5"));
@@ -1039,7 +1039,7 @@ TEST_CASE("Logical operators", "[logic]")
     CHECK(1 == p.evaluate());
     p.compile(("-6 < 1"));
     CHECK(1 == p.evaluate());
-    //less than or equal to
+    // less than or equal to
     p.compile(("5.1 <= 5"));
     CHECK(0 == p.evaluate());
     p.compile(("5 <= 5"));
@@ -1048,7 +1048,7 @@ TEST_CASE("Logical operators", "[logic]")
     CHECK(1 == p.evaluate());
     p.compile(("-6 <= 1"));
     CHECK(1 == p.evaluate());
-    //greater than
+    // greater than
     p.compile(("5.1 > 5"));
     CHECK(1 == p.evaluate());
     p.compile(("5 > 5"));
@@ -1057,7 +1057,7 @@ TEST_CASE("Logical operators", "[logic]")
     CHECK(1 == p.evaluate());
     p.compile(("1 > -6"));
     CHECK(1 == p.evaluate());
-    //greater than or equal to
+    // greater than or equal to
     p.compile(("5.1 >= 5"));
     CHECK(1 == p.evaluate());
     p.compile(("5 >= 5"));
@@ -1164,7 +1164,7 @@ TEST_CASE("Math operators", "[math]")
 
     p.compile(("9*3/2+8-2"));
     CHECK_THAT(19.5, Catch::Matchers::WithinRel(p.evaluate()));
-    p.compile(("9*((3/2)+(8-2))"));//change up the order of operations
+    p.compile(("9*((3/2)+(8-2))")); // change up the order of operations
     CHECK_THAT(67.5, Catch::Matchers::WithinRel(p.evaluate()));
     p.compile(("9*3^3/2+8-(11%2)"));
     CHECK_THAT(128.5, Catch::Matchers::WithinRel(p.evaluate()));
