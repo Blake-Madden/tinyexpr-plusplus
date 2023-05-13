@@ -34,13 +34,10 @@ jobs:
         run: |
            cd ..
            git clone https://github.com/catchorg/Catch2.git
-           cd ${{ github.workspace }}
-           echo ${{ github.workspace }}
-           echo ${{ env.build }}
-           echo '${{ github.workspace }}/tests/build'
+           cd tinyexpr-plusplus
 
       - name: Configure CMake
-        run: cmake -B ${{ env.build }} -DCMAKE_BUILD_TYPE=${{ env.config }}
+        run: cmake -B ./tests/build -DCMAKE_BUILD_TYPE=${{ env.config }}
 
       # Build is not required unless generated source files are used
       # - name: Build CMake
