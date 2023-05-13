@@ -64,7 +64,7 @@ The following are changes from the original TinyExpr C library:
   - `average`: returns the mean for a range of values (accepts 1-7 arguments).
   - `cot`: returns the cotangent of an angle.
   - `combin`: alias for `ncr()`, like the **Excel** function.
-  - `clamp`: contrains a value to a range.
+  - `clamp`: constrains a value to a range.
   - `fact`: alias for `fac()`, like the **Excel** function.
   - `if`: if a value is true (i.e., non-zero), then returns the second argument; otherwise, returns the third argument.
   - `max`: returns the maximum of a range of values (accepts 1-7 arguments).
@@ -195,7 +195,7 @@ te_parser tep;
 tep.set_variables_and_functions({{"x", &x}, {"y", &y}});
 
 // Compile the expression with variables.
-auot result = tep.evaluate("sqrt(x^2+y^2)");
+auto result = tep.evaluate("sqrt(x^2+y^2)");
 
 if (tep.success()) {
     x = 3; y = 4;
