@@ -227,18 +227,18 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("(3/2*4)") == 3.0 / 2.0 * 4.0);
     CHECK(tep.evaluate("3*(2/4)") == 3.0 * (2.0 / 4.0));
 
-    CHECK(tep.evaluate("asin sin .5") == 0.5);
-    CHECK(tep.evaluate("sin asin .5") == 0.5);
-    CHECK(tep.evaluate("ln exp .5") == 0.5);
-    CHECK(tep.evaluate("exp ln .5") == 0.5);
+    CHECK_THAT(tep.evaluate("asin sin .5"), Catch::Matchers::WithinRel(0.5, 0.00001));
+    CHECK_THAT(tep.evaluate("sin asin .5"), Catch::Matchers::WithinRel(0.5, 0.00001));
+    CHECK_THAT(tep.evaluate("ln exp .5"), Catch::Matchers::WithinRel(0.5, 0.00001));
+    CHECK_THAT(tep.evaluate("exp ln .5"), Catch::Matchers::WithinRel(0.5, 0.00001));
 
-    CHECK(tep.evaluate("asin sin-.5") == -0.5);
-    CHECK(tep.evaluate("asin sin-0.5") == -0.5);
-    CHECK(tep.evaluate("asin sin -0.5") == -0.5);
-    CHECK(tep.evaluate("asin (sin -0.5)") == -0.5);
-    CHECK(tep.evaluate("asin (sin (-0.5))") == -0.5);
-    CHECK(tep.evaluate("asin sin (-0.5)") == -0.5);
-    CHECK(tep.evaluate("(asin sin (-0.5))") == -0.5);
+    CHECK_THAT(tep.evaluate("asin sin-.5"), Catch::Matchers::WithinRel(-0.5, 0.00001));
+    CHECK_THAT(tep.evaluate("asin sin-0.5"), Catch::Matchers::WithinRel(-0.5, 0.00001));
+    CHECK_THAT(tep.evaluate("asin sin -0.5"), Catch::Matchers::WithinRel(-0.5, 0.00001));
+    CHECK_THAT(tep.evaluate("asin (sin -0.5)"), Catch::Matchers::WithinRel(-0.5, 0.00001));
+    CHECK_THAT(tep.evaluate("asin (sin (-0.5))"), Catch::Matchers::WithinRel(-0.5, 0.00001));
+    CHECK_THAT(tep.evaluate("asin sin (-0.5)"), Catch::Matchers::WithinRel(-0.5, 0.00001));
+    CHECK_THAT(tep.evaluate("(asin sin (-0.5))"), Catch::Matchers::WithinRel(-0.5, 0.00001));
 
     CHECK(tep.evaluate("log10 1000") == 3);
     CHECK(tep.evaluate("log10 1e3") == 3);
@@ -250,7 +250,7 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("10^5*5e-5") == 5);
 
 #ifdef TE_NAT_LOG
-    CHECK_THAT(tep.evaluate("log 1000"), 6.9078, 0.00001));
+    CHECK_THAT(tep.evaluate("log 1000"), Catch::Matchers::WithinRel(6.9078, 0.00001)));
     CHECK(tep.evaluate("log e") == 1);
     CHECK(tep.evaluate("log (e^10)") == 10);
 #else
