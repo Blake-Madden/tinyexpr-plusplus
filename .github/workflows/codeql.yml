@@ -33,6 +33,11 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      
+    - name: install tools
+      run: |
+           sudo apt install cmake
+           sudo apt install lcov
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
