@@ -36,8 +36,8 @@ jobs:
              cd bin
              ./TETestRunner --reporter JUnit::out=TE-junit2.xml
              cat TE-junit2.xml
-             errors=$(cat TE-junit2.xml | grep -Po '(errors)="\K[^"]*')
-             failures=$(cat TE-junit2.xml | grep -Po '(failures)="\K[^"]*')
+             errors=$(cat TE-junit2.xml | ggrep -Po '(errors)="\K[^"]*')
+             failures=$(cat TE-junit2.xml | ggrep -Po '(failures)="\K[^"]*')
              echo "Error count is: ${errors}"
              echo "Failure count is: ${failures}"
              if [ "$errors" -gt 0 ]; then
