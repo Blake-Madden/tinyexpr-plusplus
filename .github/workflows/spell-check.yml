@@ -1,0 +1,32 @@
+name: Spell Check
+on: [push]
+
+jobs:
+  check-unix:
+    runs-on: ubuntu-latest
+    name: Check Spelling
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install codespell
+        run: |
+          pip install codespell
+      - name: Run codespell
+        run: |
+          codespell src/ *.md
+          rc=$?
+          if [ $rc != 0 ]; then
+          cat <<EOF
+
+          =================================== ERROR ===================================
+          Spell check failed, please correct the spelling mistakes at the locations
+          listed above. If any of the reported mistakes are false positives, please add
+          the lines provoking them to misc/suppressions/codespell-lines file or, if
+          there are many occurrences of the same word, add this word to codespell-words
+          file in the same directory.
+          EOF
+          >& 2
+              exit $rc
+          fi
