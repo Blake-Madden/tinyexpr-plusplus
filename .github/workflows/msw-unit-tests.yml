@@ -1,0 +1,39 @@
+name: Windows Build & Unit Tests
+on: [push]
+
+jobs:
+  build:
+    name: unit-tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+      - run: git config --global core.autocrlf input
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.1.3
+        with:
+            vs-prerelease: true
+      - name: Build & run tests
+        run: |
+             cd ..
+             git clone https://github.com/catchorg/Catch2.git
+             cd ${{ github.workspace }}/tests
+             cmake ./
+             msbuild TETestRunner.sln
+             cd bin\Debug
+             ./TETestRunner --reporter JUnit::te=te-junit.xml
+             cat te-junit.xml
+             $FileContent = Get-Content te-junit.xml
+             $errors = (Select-String -InputObject $FileContent -Pattern 'errors="([0-9]+)"' | % { $($_.matches.groups[1]) } )
+             $failures = (Select-String -InputObject $FileContent -Pattern 'failures="([0-9]+)"' | % { $($_.matches.groups[1]) } )
+             if ($errors.Value -gt 0)
+               {
+               Write-Host "Error count is: " + $errors.Value
+               exit 1
+               }
+             if ($failures.Value -gt 0)
+               {
+               Write-Host "Failure count is: " + $failures.Value
+               exit 1
+               }
