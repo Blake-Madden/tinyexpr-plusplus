@@ -35,9 +35,13 @@ jobs:
            cd ..
            git clone https://github.com/catchorg/Catch2.git
            cd tinyexpr-plusplus
+           pwd
+           dir
 
       - name: Configure CMake
-        run: cmake -B ./tests/build -DCMAKE_BUILD_TYPE=${{ env.config }}
+        run: |
+             cd tests
+             cmake -B ./build -DCMAKE_BUILD_TYPE=${{ env.config }}
 
       # Build is not required unless generated source files are used
       # - name: Build CMake
