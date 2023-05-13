@@ -3,7 +3,7 @@ on: [push]
 
 env:
   testrunner: 'TETestRunner'
-  outfile: 'out-junit.xml'
+  outfile: 'te-junit.xml'
 
 jobs:
   build:
