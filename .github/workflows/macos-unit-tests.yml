@@ -1,4 +1,4 @@
-name: macOS unit tests
+name: macOS Unit Tests
 on: [push]
 
 jobs:
@@ -10,6 +10,7 @@ jobs:
           
       - name: build & run tests
         run: |
+             brew install grep
              cd ..
              git clone https://github.com/catchorg/Catch2.git
              cd tinyexpr-plusplus/tests
@@ -18,8 +19,8 @@ jobs:
              cd bin
              ./TETestRunner --reporter JUnit::out=TE-junit.xml
              cat TE-junit.xml
-             errors=$(cat TE-junit.xml | grep -Po '(errors)="\K[^"]*')
-             failures=$(cat TE-junit.xml | grep -Po '(failures)="\K[^"]*')
+             errors=$(cat TE-junit.xml | ggrep -Po '(errors)="\K[^"]*')
+             failures=$(cat TE-junit.xml | ggrep -Po '(failures)="\K[^"]*')
              echo "Error count is: ${errors}"
              echo "Failure count is: ${failures}"
              if [ "$errors" -gt 0 ]; then
