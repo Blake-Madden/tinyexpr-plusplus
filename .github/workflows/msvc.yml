@@ -32,7 +32,6 @@ jobs:
         
       - name: install tools
         run: |
-           sudo apt install lcov
            cd ..
            git clone https://github.com/catchorg/Catch2.git
 
