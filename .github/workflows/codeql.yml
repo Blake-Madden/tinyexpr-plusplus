@@ -48,6 +48,8 @@ jobs:
 
     - name: Build
       run: |
+           git clone https://github.com/catchorg/Catch2.git
+           cd tinyexpr-plusplus/tests
            cmake ./
            make -j4
 
