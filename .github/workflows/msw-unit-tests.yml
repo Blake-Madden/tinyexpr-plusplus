@@ -22,9 +22,9 @@ jobs:
              cmake ./
              msbuild TETestRunner.sln
              cd bin\Debug
-             ./TETestRunner --reporter JUnit::te=te-junit.xml
-             cat te-junit.xml
-             $FileContent = Get-Content te-junit.xml
+             ./TETestRunner --reporter JUnit::out=out-junit.xml
+             cat out-junit.xml
+             $FileContent = Get-Content out-junit.xml
              $errors = (Select-String -InputObject $FileContent -Pattern 'errors="([0-9]+)"' | % { $($_.matches.groups[1]) } )
              $failures = (Select-String -InputObject $FileContent -Pattern 'failures="([0-9]+)"' | % { $($_.matches.groups[1]) } )
              if ($errors.Value -gt 0)
