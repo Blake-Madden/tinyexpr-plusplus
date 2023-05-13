@@ -35,7 +35,9 @@ jobs:
            cd ..
            git clone https://github.com/catchorg/Catch2.git
            cd ${{ github.workspace }}
+           echo ${{ github.workspace }}
            echo ${{ env.build }}
+           echo '${{ github.workspace }}/tests/build'
 
       - name: Configure CMake
         run: cmake -B ${{ env.build }} -DCMAKE_BUILD_TYPE=${{ env.config }}
