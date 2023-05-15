@@ -851,7 +851,7 @@ double te_parser::te_eval(const te_expr *n)
     if (!n) return std::numeric_limits<double>::quiet_NaN();
 
     // cppcheck-suppress unreadVariable
-    const auto M = [&n = std::as_const(n)](const size_t e) constexpr noexcept
+    const auto M = [&n = std::as_const(n)](const size_t e) noexcept
         {
         return (e < n->m_parameters.size()) ? te_eval(n->m_parameters[e]) :
             std::numeric_limits<double>::quiet_NaN();
