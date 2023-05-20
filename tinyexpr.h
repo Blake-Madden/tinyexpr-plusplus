@@ -105,9 +105,9 @@ enum variable_flags
     TE_DEFAULT = 0,
     /// @brief Don't update when simple evaluation is ran
     ///     (i.e., only updated when expression is compiled).
-    TE_PURE = 1 << 1,
+    TE_PURE = (1 << 0),
     /// @brief Function that can take 1-7 argument (unused arguments are set to NaN).
-    TE_VARIADIC = 1 << 2
+    TE_VARIADIC = (1 << 1)
     };
 
 // turns off const in various places for debug builds.
@@ -289,13 +289,10 @@ public:
     /// @private
     te_parser(const te_parser&) = delete;
     /// @private
-    te_parser(te_parser&&) = delete;
-    /// @private
     te_parser& operator=(const te_parser&) = delete;
     /// @private
-    te_parser& operator=(te_parser&&) = delete;
-    /// @private
-    ~te_parser() { te_free(m_compiledExpression); }
+    ~te_parser()
+        { te_free(m_compiledExpression); }
     /** @brief Parses the input @c expression.
         @param expression The formula to compile.
         @returns Whether the expression compiled or not. (This can be checked
