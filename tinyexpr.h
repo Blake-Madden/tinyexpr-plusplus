@@ -110,13 +110,6 @@ enum variable_flags
     TE_VARIADIC = (1 << 1)
     };
 
-// turns off const in various places for debug builds.
-#ifdef NDEBUG
-    #define TE_RELEASE_CONST const
-#else
-    #define TE_RELEASE_CONST
-#endif
-
 // Case insensitive comparison for char strings.
 class case_insensitive_char_traits
     {
@@ -702,7 +695,7 @@ private:
             TOK_CLOSE, TOK_NUMBER, TOK_VARIABLE, TOK_FUNCTION, TOK_INFIX
             };
         state(const char* expression, variable_flags varType,
-            TE_RELEASE_CONST std::set<te_variable>& vars) :
+            std::set<te_variable>& vars) :
             m_start(expression), m_next(expression),
             m_varType(varType), m_lookup(vars)
             {}
@@ -713,7 +706,7 @@ private:
         variant_type m_value;
         te_expr* context{ nullptr };
 
-        TE_RELEASE_CONST std::set<te_variable>& m_lookup;
+        std::set<te_variable>& m_lookup;
         };
     [[nodiscard]]
     static te_expr* new_expr(const variable_flags type,
@@ -728,7 +721,7 @@ private:
         @returns null on error.*/
     [[nodiscard]]
     te_expr* te_compile(const char* expression,
-        TE_RELEASE_CONST std::set<te_variable>& variables);
+        std::set<te_variable>& variables);
     /* Evaluates the expression. */
     [[nodiscard]]
     static double te_eval(const te_expr* n);
@@ -745,7 +738,7 @@ private:
         }
 
     [[nodiscard]]
-    static auto find_lookup(TE_RELEASE_CONST state* s,
+    static auto find_lookup(state* s,
                             const char* name, const size_t len)
         {
         return s->m_lookup.find(
