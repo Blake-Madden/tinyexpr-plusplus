@@ -249,7 +249,7 @@ public:
         m_type(type), m_value(value) {}
     explicit te_expr(const variable_flags type) noexcept : m_type(type) {}
     /// @private
-    te_expr() noexcept {}
+    te_expr() noexcept = default;
     /// @private
     te_expr(const te_expr&) = delete;
     /// @private
@@ -268,8 +268,14 @@ public:
 class te_variable
     {
 public:
+    /// @private
+    using name_type = std::basic_string<char, case_insensitive_char_traits>;
+    /// @private
+    [[nodiscard]]
+    bool operator<(const te_variable& that) const
+        { return m_name < that.m_name; }
     /// @brief The name as it would appear in a formula.
-    std::basic_string<char, case_insensitive_char_traits> m_name;
+    name_type m_name;
     /// @brief The double constant, double pointer, or function to bind the name to.
     variant_type m_value;
     /// @brief The type that m_value represents.
@@ -449,7 +455,7 @@ public:
     bool is_function_used(const char* name) const
         {
         return m_usedFunctions.find(
-            std::basic_string<char, case_insensitive_char_traits>(name)) != m_usedFunctions.cend();
+            te_variable::name_type{ name }) != m_usedFunctions.cend();
         }
     /// @returns @c true if @c name is a variable that had been used in the last parsed formula.
     /// @param name The name of the variable.
@@ -458,7 +464,7 @@ public:
     bool is_variable_used(const char* name) const
         {
         return m_usedVars.find(
-            std::basic_string<char, case_insensitive_char_traits>(name)) != m_usedVars.cend();
+            te_variable::name_type{ name }) != m_usedVars.cend();
         }
 
     /// @returns A report of all available functions and variables.
@@ -854,8 +860,8 @@ private:
 
     std::vector<te_variable>::const_iterator m_currentVar;
     bool m_varFound{ false };
-    std::set<std::basic_string<char, case_insensitive_char_traits>> m_usedFunctions;
-    std::set<std::basic_string<char, case_insensitive_char_traits>> m_usedVars;
+    std::set<te_variable::name_type> m_usedFunctions;
+    std::set<te_variable::name_type> m_usedVars;
 
     static const std::vector<te_variable> m_functions;
     std::vector<te_variable> m_custom_funcs_and_vars;
