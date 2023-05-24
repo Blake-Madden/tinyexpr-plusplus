@@ -19,6 +19,15 @@ the standard C math functions and runtime binding of variables and user-defined 
 [![i18n-check](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/i18n-check.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/i18n-check.yml)
 [![Spell Check](https://github.com/Blake-Madden/i18n-check/actions/workflows/spell-check.yml/badge.svg)](https://github.com/Blake-Madden/i18n-check/actions/workflows/spell-check.yml)
 
+## Compatibility Advisory
+
+`set_variables_and_functions()` now requires a `std::set<te_variable>` argument instead of a
+`std::vector<te_variable>`. Prefer calling this function with an initializer list or use a `std::set<te_variable>`.
+
+The previously deprecated functions `set_vars()`, `add_var()`, `get_vars()`, and `find_variable()` have been removed.
+Use `set_variables_and_functions()`, `add_variable_or_function()`, `get_variables_and_functions(),
+and `find_variable_or_function()` instead.
+
 ## Features
 
 - **C++17 with no dependencies**.
@@ -92,7 +101,7 @@ The following are changes from the original TinyExpr C library:
   - `<=`   less than or equal to.
   - `>`    greater than.
   - `>=`   greater than or equal to.
-- Custom variables and functions are now stored in a `std::vector` (which can be easily accessed and updated via the new `get_variables_and_functions()/set_variables_and_functions()` functions).
+- Custom variables and functions are now stored in a `std::set` (which can be easily accessed and updated via the new `get_variables_and_functions()/set_variables_and_functions()` functions).
 - Added `is_function_used()` and `is_variable_used()` functions to see if a specific function or variable was used in the last parsed formula.
 - Added `set_constant()` function to find and update the value of a constant (custom) variable by name.
 (In this context, a constant is a variable mapped to a double value in the parser, rather than mapped to a runtime variable.)
@@ -149,8 +158,8 @@ double evaluate(const char* expression);
 double get_result();
 bool success();
 int get_last_error_position();
-set_variables_and_functions(const std::vector<te_variable>& vars);
-std::vector<te_variable>& get_variables_and_functions();
+set_variables_and_functions(const std::set<te_variable>& vars);
+std::set<te_variable>& get_variables_and_functions();
 add_variable_or_function(const te_variable& var);
 get_decimal_separator();
 get_list_separator();
