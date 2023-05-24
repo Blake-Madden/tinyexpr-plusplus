@@ -62,28 +62,40 @@ For log = natural log uncomment the next line. */
 #include "tinyexpr.h"
 
 // builtin functions
-[[nodiscard]] constexpr static double _equal(double a, double b) noexcept
+[[nodiscard]]
+constexpr static double _equal(double a, double b) noexcept
     { return (a == b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _not_equal(double a, double b) noexcept
+[[nodiscard]]
+constexpr static double _not_equal(double a, double b) noexcept
     { return (a != b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _less_than(double a, double b) noexcept
+[[nodiscard]]
+constexpr static double _less_than(double a, double b) noexcept
     { return (a < b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _less_than_equal_to(double a, double b)
+[[nodiscard]]
+constexpr static double _less_than_equal_to(double a, double b)
     noexcept { return (a <= b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _greater_than(double a, double b) noexcept
+[[nodiscard]]
+constexpr static double _greater_than(double a, double b) noexcept
     { return (a > b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _greater_than_equal_to(double a, double b) noexcept
+[[nodiscard]]
+constexpr static double _greater_than_equal_to(double a, double b) noexcept
     { return (a >= b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _and(double a, double b) noexcept
+[[nodiscard]]
+constexpr static double _and(double a, double b) noexcept
     { return (a && b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _or(double a, double b) noexcept
+[[nodiscard]]
+constexpr static double _or(double a, double b) noexcept
     { return (a || b) ? 1 : 0; }
-[[nodiscard]] constexpr static double _not(double a) noexcept { return !a; }
-[[nodiscard]] constexpr static double _pi() noexcept
+[[nodiscard]]
+constexpr static double _not(double a) noexcept { return !a; }
+[[nodiscard]]
+constexpr static double _pi() noexcept
     { return 3.14159265358979323846; }
-[[nodiscard]] constexpr static double _e() noexcept
+[[nodiscard]]
+constexpr static double _e() noexcept
     { return 2.71828182845904523536; }
-[[nodiscard]] static double _fac(double a) noexcept {/* simplest version of factorial */
+[[nodiscard]]
+static double _fac(double a) noexcept {/* simplest version of factorial */
     if (a < 0.0 || std::isnan(a))
         { return std::numeric_limits<double>::quiet_NaN(); }
     if (a > (std::numeric_limits<unsigned int>::max)())
@@ -175,26 +187,30 @@ static double _atan(double x)
 static double _atan2(double y, double x)
     { return std::atan2(static_cast<double>(y), (static_cast<double>(x))); }
 
-[[nodiscard]] static double _random()
+[[nodiscard]]
+static double _random()
     {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> distr(0, 1);
     return distr(gen);
     }
-[[nodiscard]] constexpr static double _divide(double a, double b)
+[[nodiscard]]
+constexpr static double _divide(double a, double b)
     {
     if (b == 0)
         { return std::numeric_limits<double>::quiet_NaN(); }
     return a / b;
     }
-[[nodiscard]] static double _modulus(double a, double b)
+[[nodiscard]]
+static double _modulus(double a, double b)
     {
     if (b == 0)
         { return std::numeric_limits<double>::quiet_NaN(); }
     return std::fmod(a,b);
     }
-[[nodiscard]] static double _sum(double v1, double v2, double v3, double v4,
+[[nodiscard]]
+static double _sum(double v1, double v2, double v3, double v4,
                                  double v5, double v6, double v7) noexcept
     {
     return (std::isnan(v1) ? 0 : v1) +
@@ -205,7 +221,8 @@ static double _atan2(double y, double x)
         (std::isnan(v6) ? 0 : v6) +
         (std::isnan(v7) ? 0 : v7);
     }
-[[nodiscard]] static double _average(double v1, double v2, double v3, double v4,
+[[nodiscard]]
+static double _average(double v1, double v2, double v3, double v4,
                                      double v5, double v6, double v7)
     {
     const auto validN = (std::isnan(v1) ? 0 : 1) +
@@ -218,7 +235,8 @@ static double _atan2(double y, double x)
     const auto total = _sum(v1, v2, v3, v4, v5, v6, v7);
     return _divide(total, validN);
     }
-[[nodiscard]] static double _round(double val, double decimal_places) noexcept
+[[nodiscard]]
+static double _round(double val, double decimal_places) noexcept
     {
     const size_t decimalPlaces{ std::isnan(decimal_places) ?
         0 : static_cast<size_t>(decimal_places) };
@@ -240,7 +258,8 @@ static double _atan2(double y, double x)
         }
     }
 // Combinations (without repetition)
-[[nodiscard]] static double _ncr(double n, double r) noexcept
+[[nodiscard]]
+static double _ncr(double n, double r) noexcept
     {
     if (n < 0.0 || r < 0.0 || n < r || std::isnan(n) || std::isnan(r))
         { return std::numeric_limits<double>::quiet_NaN(); }
@@ -260,14 +279,21 @@ static double _atan2(double y, double x)
     return static_cast<double>(result);
     }
 // Permutations (without repetition)
-[[nodiscard]] static double _npr(double n, double r) noexcept { return _ncr(n, r) * _fac(r); }
-[[nodiscard]] constexpr static double _add(double a, double b) noexcept { return a + b; }
-[[nodiscard]] constexpr static double _sub(double a, double b) noexcept { return a - b; }
-[[nodiscard]] constexpr static double _mul(double a, double b) noexcept { return a * b; }
-[[nodiscard]] constexpr static double _sqr(double a) noexcept { return a*a; }
-[[nodiscard]] static double _max_maybe_nan(double v1, double v2_maybe_nan) noexcept
+[[nodiscard]]
+static double _npr(double n, double r) noexcept { return _ncr(n, r) * _fac(r); }
+[[nodiscard]]
+constexpr static double _add(double a, double b) noexcept { return a + b; }
+[[nodiscard]]
+constexpr static double _sub(double a, double b) noexcept { return a - b; }
+[[nodiscard]]
+constexpr static double _mul(double a, double b) noexcept { return a * b; }
+[[nodiscard]]
+constexpr static double _sqr(double a) noexcept { return a*a; }
+[[nodiscard]]
+static double _max_maybe_nan(double v1, double v2_maybe_nan) noexcept
     { return (std::max)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
-[[nodiscard]] static double _max(double v1, double v2, double v3, double v4,
+[[nodiscard]]
+static double _max(double v1, double v2, double v3, double v4,
                                  double v5, double v6, double v7) noexcept
     {
     // assumes that at least v1 is a number, rest can be NaN
@@ -278,9 +304,11 @@ static double _atan2(double y, double x)
     maxVal = _max_maybe_nan(maxVal, v6);
     return _max_maybe_nan(maxVal, v7);
     }
-[[nodiscard]] static double _min_maybe_nan(double v1, double v2_maybe_nan) noexcept
+[[nodiscard]]
+static double _min_maybe_nan(double v1, double v2_maybe_nan) noexcept
     { return (std::min)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
-[[nodiscard]] static double _min(double v1, double v2, double v3, double v4,
+[[nodiscard]]
+static double _min(double v1, double v2, double v3, double v4,
                                  double v5, double v6, double v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
@@ -291,9 +319,11 @@ static double _atan2(double y, double x)
     minVal = _min_maybe_nan(minVal, v6);
     return _min_maybe_nan(minVal, v7);
     }
-[[nodiscard]] static double _and_maybe_nan(double v1, double v2_maybe_nan) noexcept
+[[nodiscard]]
+static double _and_maybe_nan(double v1, double v2_maybe_nan) noexcept
     { return std::isnan(v2_maybe_nan) ? v1 : (v1 && v2_maybe_nan); }
-[[nodiscard]] static double _and_variadic(double v1, double v2, double v3, double v4,
+[[nodiscard]]
+static double _and_variadic(double v1, double v2, double v3, double v4,
                                           double v5, double v6, double v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
@@ -304,9 +334,11 @@ static double _atan2(double y, double x)
     andVal = _and_maybe_nan(andVal, v6);
     return _and_maybe_nan(andVal, v7);
     }
-[[nodiscard]] static double _or_maybe_nan(double v1, double v2_maybe_nan) noexcept
+[[nodiscard]]
+static double _or_maybe_nan(double v1, double v2_maybe_nan) noexcept
     { return std::isnan(v2_maybe_nan) ? v1 : (v1 || v2_maybe_nan); }
-[[nodiscard]] static double _or_variadic(double v1, double v2, double v3, double v4,
+[[nodiscard]]
+static double _or_variadic(double v1, double v2, double v3, double v4,
                                          double v5, double v6, double v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
@@ -317,20 +349,25 @@ static double _atan2(double y, double x)
     orVal = _or_maybe_nan(orVal, v6);
     return _or_maybe_nan(orVal, v7);
     }
-[[nodiscard]] constexpr static double _if(double a, double b, double c) noexcept
+[[nodiscard]]
+constexpr static double _if(double a, double b, double c) noexcept
     { return (a != 0.0) ? b : c; }
 // cotangent
-[[nodiscard]] static double _cot(double a) noexcept
+[[nodiscard]]
+static double _cot(double a) noexcept
     {
     if (a == 0.0)
         { return std::numeric_limits<double>::quiet_NaN(); }
     return 1 / static_cast<double>(std::tan(a));
     }
-[[nodiscard]] constexpr static double _sign(double a) noexcept
+[[nodiscard]]
+constexpr static double _sign(double a) noexcept
     { return (a < 0.0) ? -1 : (a > 0.0) ? 1 : 0; }
-[[nodiscard]] constexpr static double _negate(double a) noexcept
+[[nodiscard]]
+constexpr static double _negate(double a) noexcept
     { return -a; }
-[[nodiscard]] constexpr static double _comma([[maybe_unused]] double a, double b) noexcept
+[[nodiscard]]
+constexpr static double _comma([[maybe_unused]] double a, double b) noexcept
     { return b; }
 
 te_expr* te_parser::new_expr(const variable_flags type, const variant_type& value,

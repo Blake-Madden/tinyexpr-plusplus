@@ -784,11 +784,13 @@ private:
         {
         // debug sanity check
         assert(std::is_sorted(m_functions.cbegin(), m_functions.cend(),
-            [](const auto& lhv, const auto& rhv) noexcept { return lhv.m_name < rhv.m_name; }));
+            [](const auto& lhv, const auto& rhv) noexcept
+            { return lhv.m_name < rhv.m_name; }));
 
         const auto foundPos = std::lower_bound(m_functions.cbegin(), m_functions.cend(),
             std::basic_string_view<char, case_insensitive_char_traits>(name, len),
-            [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
+            [](const auto& var, const auto& sv) noexcept
+            { return var.m_name < sv; });
         // did it find an exact match?
         return (foundPos != m_functions.cend() &&
                 foundPos->m_name.compare(0, foundPos->m_name.length(), name, len) == 0) ?
@@ -797,19 +799,22 @@ private:
 
     [[nodiscard]]
     static auto find_lookup(TE_RELEASE_CONST state* s,
-                                          const char* name, const size_t len)
+                            const char* name, const size_t len)
         {
         // debug sanity checks
         assert(std::is_sorted(s->m_lookup.cbegin(), s->m_lookup.cend(),
-            [](const auto& lhv, const auto& rhv) noexcept { return lhv.m_name < rhv.m_name; }));
+            [](const auto& lhv, const auto& rhv) noexcept
+            { return lhv.m_name < rhv.m_name; }));
 #ifndef NDEBUG
         // see if there are any duplicates in the vars/functions
         if (s->m_lookup.size())
             {
             std::sort(s->m_lookup.begin(), s->m_lookup.end(),
-                [](const auto& lhv, const auto& rhv) noexcept { return lhv.m_name < rhv.m_name; });
+                [](const auto& lhv, const auto& rhv) noexcept
+                { return lhv.m_name < rhv.m_name; });
             auto uniqueEnd = std::adjacent_find(s->m_lookup.begin(), s->m_lookup.end(),
-                [](auto& lhv, auto& rhv) noexcept { return lhv.m_name == rhv.m_name; });
+                [](auto& lhv, auto& rhv) noexcept
+                { return lhv.m_name == rhv.m_name; });
 
             if (uniqueEnd != s->m_lookup.end())
                 {
@@ -822,7 +827,8 @@ private:
 
         const auto foundPos = std::lower_bound(s->m_lookup.cbegin(), s->m_lookup.cend(),
             std::basic_string_view<char, case_insensitive_char_traits>(name, len),
-            [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
+            [](const auto& var, const auto& sv) noexcept
+            { return var.m_name < sv; });
         // did it find an exact match?
         return (foundPos != s->m_lookup.cend() &&
                 foundPos->m_name.compare(0, foundPos->m_name.length(), name, len) == 0) ?
