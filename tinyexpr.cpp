@@ -416,7 +416,7 @@ void te_parser::te_free(te_expr *n)
     delete n;
     }
 
-const std::vector<te_variable> te_parser::m_functions = {
+const std::set<te_variable> te_parser::m_functions = {
     /* must be in alphabetical order */
     {"abs", static_cast<te_fun1>(_absolute_value), TE_PURE},
     {"acos", static_cast<te_fun1>(_acos), TE_PURE},
@@ -963,7 +963,7 @@ void te_parser::optimize(te_expr *n)
         }
     }
 
-te_expr* te_parser::te_compile(const char* expression, TE_RELEASE_CONST std::vector<te_variable>& variables)
+te_expr* te_parser::te_compile(const char* expression, TE_RELEASE_CONST std::set<te_variable>& variables)
     {
     state s(expression, TE_DEFAULT, variables);
 

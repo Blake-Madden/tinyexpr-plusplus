@@ -249,7 +249,7 @@ public:
         m_type(type), m_value(value) {}
     explicit te_expr(const variable_flags type) noexcept : m_type(type) {}
     /// @private
-    te_expr() noexcept = default;
+    te_expr() noexcept {};
     /// @private
     te_expr(const te_expr&) = delete;
     /// @private
@@ -344,14 +344,11 @@ public:
     ///     followed by additional English letters, numbers, or underscores.
     /// @throws std::runtime_error Throws an exception if an illegal character is found
     ///     in the variable name.
-    void set_variables_and_functions(const std::vector<te_variable>& vars)
+    void set_variables_and_functions(const std::set<te_variable>& vars)
         {
         for (const auto& var : vars)
             { validate_name(var); }
         m_custom_funcs_and_vars = vars;
-        std::sort(m_custom_funcs_and_vars.begin(), m_custom_funcs_and_vars.end(),
-            [](const auto& lhv, const auto& rhv) noexcept
-            { return lhv.m_name < rhv.m_name; });
         }
     /// @brief Adds a custom variable or function.
     /// @param var The variable/function to add.
@@ -362,18 +359,15 @@ public:
     void add_variable_or_function(const te_variable& var)
         {
         validate_name(var);
-        m_custom_funcs_and_vars.push_back(var);
-        std::sort(m_custom_funcs_and_vars.begin(), m_custom_funcs_and_vars.end(),
-            [](const auto& lhv, const auto& rhv) noexcept
-            { return lhv.m_name < rhv.m_name; });
+        m_custom_funcs_and_vars.insert(var);
         }
     /// @private
     [[nodiscard]]
-    const std::vector<te_variable>& get_variables_and_functions() const noexcept
+    const std::set<te_variable>& get_variables_and_functions() const noexcept
         { return m_custom_funcs_and_vars; }
     /// @returns The list of custom variables and functions.
     [[nodiscard]]
-    std::vector<te_variable>& get_variables_and_functions() noexcept
+    std::set<te_variable>& get_variables_and_functions() noexcept
         { return m_custom_funcs_and_vars; }
 
     /// @returns The decimal separator used for numbers.
@@ -399,7 +393,9 @@ public:
             { add_variable_or_function({ name, value }); }
         else if (is_constant(cvar->m_value))
             {
-            cvar->m_value = value;
+            auto nh = get_variables_and_functions().extract(cvar);
+            nh.value().m_value = value;
+            get_variables_and_functions().insert(std::move(nh));
             // if previously compiled, then re-compile since this constant would have been optimized
             if (m_expression.length())
                 { compile(m_expression.c_str()); }
@@ -488,40 +484,24 @@ private:
     ///     or end of get_variables_and_functions() if not found.
     /// @param name The name of the function or variable to search for.
     [[nodiscard]]
-    std::vector<te_variable>::iterator find_variable_or_function(const char* name)
+    std::set<te_variable>::iterator find_variable_or_function(const char* name)
         {
         if (!name) return m_custom_funcs_and_vars.end();
-        // debug sanity check
-        assert(std::is_sorted(m_custom_funcs_and_vars.cbegin(), m_custom_funcs_and_vars.cend(),
-            [](const auto& lhv, const auto& rhv) noexcept { return lhv.m_name < rhv.m_name; }));
 
-        const auto foundPos = std::lower_bound(m_custom_funcs_and_vars.begin(),
-             m_custom_funcs_and_vars.end(),
-            std::basic_string_view<char, case_insensitive_char_traits>(name),
-            [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
-        // did it find an exact match?
-        return (foundPos != m_custom_funcs_and_vars.end() &&
-                foundPos->m_name.compare(0, foundPos->m_name.length(), name) == 0) ?
-            foundPos : m_custom_funcs_and_vars.end();
+        return m_custom_funcs_and_vars.find(
+            te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
         }
-    /// @private
+
+    /// @returns An iterator to the custom variable or function with the given @c name,
+    ///     or end of get_variables_and_functions() if not found.
+    /// @param name The name of the function or variable to search for.
     [[nodiscard]]
-    std::vector<te_variable>::const_iterator
-        find_variable_or_function(const char* name) const
+    std::set<te_variable>::const_iterator find_variable_or_function(const char* name) const
         {
         if (!name) return m_custom_funcs_and_vars.cend();
-        // debug sanity check
-        assert(std::is_sorted(m_custom_funcs_and_vars.cbegin(), m_custom_funcs_and_vars.cend(),
-            [](const auto& lhv, const auto& rhv) noexcept { return lhv.m_name < rhv.m_name; }));
 
-        const auto foundPos = std::lower_bound(m_custom_funcs_and_vars.cbegin(),
-            m_custom_funcs_and_vars.cend(),
-            std::basic_string_view<char, case_insensitive_char_traits>(name),
-            [](const auto& var, const auto& sv) noexcept { return var.m_name < sv; });
-        // did it find an exact match?
-        return (foundPos != m_custom_funcs_and_vars.cend() &&
-                foundPos->m_name.compare(0, foundPos->m_name.length(), name) == 0) ?
-            foundPos : m_custom_funcs_and_vars.cend();
+        return m_custom_funcs_and_vars.find(
+            te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
         }
 
     [[nodiscard]]
@@ -722,7 +702,7 @@ private:
             TOK_CLOSE, TOK_NUMBER, TOK_VARIABLE, TOK_FUNCTION, TOK_INFIX
             };
         state(const char* expression, variable_flags varType,
-            TE_RELEASE_CONST std::vector<te_variable>& vars) :
+            TE_RELEASE_CONST std::set<te_variable>& vars) :
             m_start(expression), m_next(expression),
             m_varType(varType), m_lookup(vars)
             {}
@@ -733,7 +713,7 @@ private:
         variant_type m_value;
         te_expr* context{ nullptr };
 
-        TE_RELEASE_CONST std::vector<te_variable>& m_lookup;
+        TE_RELEASE_CONST std::set<te_variable>& m_lookup;
         };
     [[nodiscard]]
     static te_expr* new_expr(const variable_flags type,
@@ -748,7 +728,7 @@ private:
         @returns null on error.*/
     [[nodiscard]]
     te_expr* te_compile(const char* expression,
-        TE_RELEASE_CONST std::vector<te_variable>& variables);
+        TE_RELEASE_CONST std::set<te_variable>& variables);
     /* Evaluates the expression. */
     [[nodiscard]]
     static double te_eval(const te_expr* n);
@@ -760,57 +740,16 @@ private:
     [[nodiscard]]
     static auto find_builtin(const char* name, const size_t len)
         {
-        // debug sanity check
-        assert(std::is_sorted(m_functions.cbegin(), m_functions.cend(),
-            [](const auto& lhv, const auto& rhv) noexcept
-            { return lhv.m_name < rhv.m_name; }));
-
-        const auto foundPos = std::lower_bound(m_functions.cbegin(), m_functions.cend(),
-            std::basic_string_view<char, case_insensitive_char_traits>(name, len),
-            [](const auto& var, const auto& sv) noexcept
-            { return var.m_name < sv; });
-        // did it find an exact match?
-        return (foundPos != m_functions.cend() &&
-                foundPos->m_name.compare(0, foundPos->m_name.length(), name, len) == 0) ?
-            foundPos : m_functions.cend();
+        return m_functions.find(
+            te_variable{ te_variable::name_type{ name, len }, 0.0, TE_DEFAULT, nullptr });
         }
 
     [[nodiscard]]
     static auto find_lookup(TE_RELEASE_CONST state* s,
                             const char* name, const size_t len)
         {
-        // debug sanity checks
-        assert(std::is_sorted(s->m_lookup.cbegin(), s->m_lookup.cend(),
-            [](const auto& lhv, const auto& rhv) noexcept
-            { return lhv.m_name < rhv.m_name; }));
-#ifndef NDEBUG
-        // see if there are any duplicates in the vars/functions
-        if (s->m_lookup.size())
-            {
-            std::sort(s->m_lookup.begin(), s->m_lookup.end(),
-                [](const auto& lhv, const auto& rhv) noexcept
-                { return lhv.m_name < rhv.m_name; });
-            auto uniqueEnd = std::adjacent_find(s->m_lookup.begin(), s->m_lookup.end(),
-                [](auto& lhv, auto& rhv) noexcept
-                { return lhv.m_name == rhv.m_name; });
-
-            if (uniqueEnd != s->m_lookup.end())
-                {
-                printf("\n'%s' was entered in the custom variable/function list twice!\n",
-                    uniqueEnd->m_name.c_str());
-                assert(0 && "Custom variable/function listed twice!");
-                }
-            }
-#endif
-
-        const auto foundPos = std::lower_bound(s->m_lookup.cbegin(), s->m_lookup.cend(),
-            std::basic_string_view<char, case_insensitive_char_traits>(name, len),
-            [](const auto& var, const auto& sv) noexcept
-            { return var.m_name < sv; });
-        // did it find an exact match?
-        return (foundPos != s->m_lookup.cend() &&
-                foundPos->m_name.compare(0, foundPos->m_name.length(), name, len) == 0) ?
-            foundPos : s->m_lookup.cend();
+        return s->m_lookup.find(
+            te_variable{ te_variable::name_type{ name, len }, 0.0, TE_DEFAULT, nullptr });
         }
 
     void next_token(state* s);
@@ -830,13 +769,13 @@ private:
     std::string m_expression;
     te_expr* m_compiledExpression{ nullptr };
 
-    std::vector<te_variable>::const_iterator m_currentVar;
+    std::set<te_variable>::const_iterator m_currentVar;
     bool m_varFound{ false };
     std::set<te_variable::name_type> m_usedFunctions;
     std::set<te_variable::name_type> m_usedVars;
 
-    static const std::vector<te_variable> m_functions;
-    std::vector<te_variable> m_custom_funcs_and_vars;
+    static const std::set<te_variable> m_functions;
+    std::set<te_variable> m_custom_funcs_and_vars;
 
     bool m_parseSuccess{ false };
     int64_t m_errorPos{ 0 };

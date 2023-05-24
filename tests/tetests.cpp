@@ -533,7 +533,7 @@ TEST_CASE("Variables", "[variables]")
 TEST_CASE("Dynamic", "[dynamic]")
     {
     double x{ 2 }, f{ 5 };
-    const std::vector<te_variable> lookup =
+    const std::set<te_variable> lookup =
         {
         {"x", &x},
         {"f", &f},
@@ -670,7 +670,7 @@ TEST_CASE("Power", "[power]")
     {
     const double a{ 2 }, b{ 3 };
 
-    const std::vector<te_variable> lookup = {
+    const std::set<te_variable> lookup = {
         {"a", &a},
         {"b", &b}
     };
@@ -817,7 +817,7 @@ TEST_CASE("Closure", "[closure]")
 
     te_expr te{ TE_DEFAULT, &extra };
 
-    std::vector<te_variable> lookup = {
+    std::set<te_variable> lookup = {
         {"c0", clo0, TE_DEFAULT, &te},
         {"c1", clo1, TE_DEFAULT, &te},
         {"c2", clo2, TE_DEFAULT, &te},
