@@ -370,6 +370,7 @@ constexpr static double _negate(double a) noexcept
 constexpr static double _comma([[maybe_unused]] double a, double b) noexcept
     { return b; }
 
+//--------------------------------------------------
 te_expr* te_parser::new_expr(const variable_flags type, const variant_type& value,
                              const std::initializer_list<te_expr*> parameters)
     {
@@ -387,6 +388,7 @@ te_expr* te_parser::new_expr(const variable_flags type, const variant_type& valu
     return ret;
     }
 
+//--------------------------------------------------
 void te_parser::te_free_parameters(te_expr *n)
     {
     if (!n) return;
@@ -409,6 +411,7 @@ void te_parser::te_free_parameters(te_expr *n)
         }
     }
 
+//--------------------------------------------------
 void te_parser::te_free(te_expr *n)
     {
     if (!n) return;
@@ -416,6 +419,7 @@ void te_parser::te_free(te_expr *n)
     delete n;
     }
 
+//--------------------------------------------------
 const std::set<te_variable> te_parser::m_functions = {
     /* must be in alphabetical order */
     {"abs", static_cast<te_fun1>(_absolute_value), TE_PURE},
@@ -476,6 +480,7 @@ const std::set<te_variable> te_parser::m_functions = {
     {"trunc", static_cast<te_fun1>(_trunc), TE_PURE}
 };
 
+//--------------------------------------------------
 void te_parser::next_token(te_parser::state *s)
     {
     assert(s);
@@ -633,6 +638,7 @@ void te_parser::next_token(te_parser::state *s)
         } while (s->m_type == te_parser::state::token_type::TOK_NULL);
     }
 
+//--------------------------------------------------
 te_expr* te_parser::base(te_parser::state *s)
     {
     /* <base>      =    <constant> | <variable> | <function-0> {"(" ")"} | <function-1> <power> |
@@ -738,6 +744,7 @@ te_expr* te_parser::base(te_parser::state *s)
     return ret;
     }
 
+//--------------------------------------------------
 te_expr* te_parser::power(te_parser::state *s) {
     /* <power>     =    {("-" | "+" | "&" | "|")} <base> */
     int Sign{ 1 };
@@ -828,6 +835,7 @@ te_expr* te_parser::factor(te_parser::state *s) {
 }
 #endif
 
+//--------------------------------------------------
 te_expr* te_parser::term(te_parser::state *s) {
     /* <term>      =    <factor> {("*" | "/" | "%") <factor>} */
     te_expr* ret = factor(s);
@@ -844,6 +852,7 @@ te_expr* te_parser::term(te_parser::state *s) {
     return ret;
 }
 
+//--------------------------------------------------
 te_expr* te_parser::expr(te_parser::state *s) {
     /* <expr>      =    <term> {("+" | "-" | "&" | "|") <term>} */
     te_expr* ret = term(s);
@@ -870,6 +879,7 @@ te_expr* te_parser::expr(te_parser::state *s) {
     return ret;
 }
 
+//--------------------------------------------------
 te_expr* te_parser::list(te_parser::state *s) {
     /* <list>      =    <expr> {"," <expr>} */
     te_expr* ret = expr(s);
@@ -883,6 +893,7 @@ te_expr* te_parser::list(te_parser::state *s) {
     return ret;
 }
 
+//--------------------------------------------------
 double te_parser::te_eval(const te_expr *n)
     {
     if (!n) return std::numeric_limits<double>::quiet_NaN();
@@ -934,6 +945,7 @@ double te_parser::te_eval(const te_expr *n)
         { return std::numeric_limits<double>::quiet_NaN(); }
     }
 
+//--------------------------------------------------
 void te_parser::optimize(te_expr *n)
     {
     if (!n) return;
@@ -963,6 +975,7 @@ void te_parser::optimize(te_expr *n)
         }
     }
 
+//--------------------------------------------------
 te_expr* te_parser::te_compile(const char* expression, std::set<te_variable>& variables)
     {
     state s(expression, TE_DEFAULT, variables);
@@ -985,6 +998,7 @@ te_expr* te_parser::te_compile(const char* expression, std::set<te_variable>& va
         }
     }
 
+//--------------------------------------------------
 bool te_parser::compile(const char* expression)
     {
     assert(expression && "compile() should not be called with null!");
@@ -1010,6 +1024,7 @@ bool te_parser::compile(const char* expression)
     return m_parseSuccess;
     }
 
+//--------------------------------------------------
 double te_parser::evaluate()
     {
     m_result = (m_compiledExpression) ?
@@ -1018,6 +1033,7 @@ double te_parser::evaluate()
     return m_result;
     }
 
+//--------------------------------------------------
 double te_parser::evaluate(const char* expression)
     {
     if (compile(expression))
@@ -1026,6 +1042,7 @@ double te_parser::evaluate(const char* expression)
         { return std::numeric_limits<double>::quiet_NaN(); }
     }
 
+//--------------------------------------------------
 // cppcheck-suppress unusedFunction
 std::string te_parser::list_available_functions_and_variables()
     {
@@ -1038,6 +1055,7 @@ std::string te_parser::list_available_functions_and_variables()
     return report;
     }
 
+//--------------------------------------------------
 #ifndef NDEBUG
 void te_parser::te_print(const te_expr *n, int depth)
     {
