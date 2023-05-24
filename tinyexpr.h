@@ -353,10 +353,6 @@ public:
             [](const auto& lhv, const auto& rhv) noexcept
             { return lhv.m_name < rhv.m_name; });
         }
-    /// @private
-    [[deprecated("Use set_variables_and_functions() instead.")]]
-    void set_vars(const std::vector<te_variable>& vars)
-        { set_variables_and_functions(vars); }
     /// @brief Adds a custom variable or function.
     /// @param var The variable/function to add.
     /// @note Prefer using set_variables_and_functions() as it will be more optimal
@@ -372,26 +368,12 @@ public:
             { return lhv.m_name < rhv.m_name; });
         }
     /// @private
-    [[deprecated("Use add_variable_or_function() instead.")]]
-    void add_var(const te_variable& var)
-        { add_variable_or_function(var); }
-    /// @private
     [[nodiscard]]
     const std::vector<te_variable>& get_variables_and_functions() const noexcept
         { return m_custom_funcs_and_vars; }
     /// @returns The list of custom variables and functions.
     [[nodiscard]]
     std::vector<te_variable>& get_variables_and_functions() noexcept
-        { return m_custom_funcs_and_vars; }
-    /// @private
-    [[deprecated("Use get_variables_and_functions() instead.")]]
-    [[nodiscard]]
-    const std::vector<te_variable>& get_vars() const noexcept
-        { return m_custom_funcs_and_vars; }
-    /// @private
-    [[deprecated("Use get_variables_and_functions() instead.")]]
-    [[nodiscard]]
-    std::vector<te_variable>& get_vars() noexcept
         { return m_custom_funcs_and_vars; }
 
     /// @returns The decimal separator used for numbers.
@@ -541,16 +523,6 @@ private:
                 foundPos->m_name.compare(0, foundPos->m_name.length(), name) == 0) ?
             foundPos : m_custom_funcs_and_vars.cend();
         }
-    /// @private
-    [[deprecated("Use find_variable_or_function() instead.")]]
-    [[nodiscard]]
-    std::vector<te_variable>::iterator find_variable(const char* name)
-        { return find_variable_or_function(name); }
-    /// @private
-    [[deprecated("Use find_variable_or_function() instead.")]]
-    [[nodiscard]]
-    std::vector<te_variable>::const_iterator find_variable(const char* name) const
-        { return find_variable_or_function(name); }
 
     [[nodiscard]]
     constexpr static auto is_pure(const variable_flags type)
