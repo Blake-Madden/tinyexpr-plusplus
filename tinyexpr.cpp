@@ -963,7 +963,7 @@ void te_parser::optimize(te_expr *n)
         }
     }
 
-te_expr* te_parser::te_compile(const char* expression, TE_RELEASE_CONST std::set<te_variable>& variables)
+te_expr* te_parser::te_compile(const char* expression, std::set<te_variable>& variables)
     {
     state s(expression, TE_DEFAULT, variables);
 
