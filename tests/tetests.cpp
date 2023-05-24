@@ -1202,10 +1202,12 @@ TEST_CASE("Is function used", "[functions]")
     p.compile(("log(5)+sin(atan(6))-MULT(2,30,4,5)+1"));
     CHECK(p.is_function_used(("MULT")));
     CHECK(p.is_function_used(("Log")));
-    CHECK(p.is_function_used(("sin")));
-    CHECK(p.is_function_used(("atan")));
-    CHECK(p.is_function_used(("MULT")));
+    CHECK(p.is_function_used(("sIn")));
+    CHECK(p.is_function_used(("atAn")));
+    CHECK(p.is_function_used(("MuLT")));
     CHECK_FALSE(p.is_function_used(("tan")));
+    CHECK_FALSE(p.is_function_used(("sing")));
+    CHECK_FALSE(p.is_function_used(("si")));
     }
 
 TEST_CASE("Is variable used", "[functions]")
@@ -1217,9 +1219,11 @@ TEST_CASE("Is variable used", "[functions]")
         {"P_LEVEL", .5},
         {"z", .75} });
     p.compile(("z + STRESS_L"));
-    CHECK(p.is_variable_used(("z")));
-    CHECK(p.is_variable_used(("STRESS_L")));
+    CHECK(p.is_variable_used(("Z")));
+    CHECK(p.is_variable_used(("STRESs_L")));
     CHECK_FALSE(p.is_variable_used(("P_LEVEL")));
+    CHECK_FALSE(p.is_variable_used(("zz")));
+    CHECK_FALSE(p.is_variable_used(("TRESS_L")));
     }
 
 TEST_CASE("Custom test", "[functions]")
