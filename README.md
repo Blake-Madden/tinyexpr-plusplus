@@ -96,10 +96,12 @@ The following are changes from the original TinyExpr C library:
   - `<=`   less than or equal to.
   - `>`    greater than.
   - `>=`   greater than or equal to.
+  - `<<`   left shift operator.
+  - `>>`   right shift operator.
 - Custom variables and functions are now stored in a `std::set` (which can be easily accessed and updated via the new `get_variables_and_functions()/set_variables_and_functions()` functions).
 - Added `is_function_used()` and `is_variable_used()` functions to see if a specific function or variable was used in the last parsed formula.
 - Added `set_constant()` function to find and update the value of a constant (custom) variable by name.
-(In this context, a constant is a variable mapped to a double value in the parser, rather than mapped to a runtime variable.)
+  (In this context, a constant is a variable mapped to a double value in the parser, rather than mapped to a runtime variable.)
 - Added `get_constant()` function to return the value of a constant (custom) variable by name.
 - Binary search is now used to look up custom variables and functions (small optimization).
 - You no longer need to specify the number of arguments for custom functions; it will deduce that for you.
@@ -462,9 +464,12 @@ Note that TinyExpr++ is slower compared to TinyExpr because of additional type s
 
 ## Grammar
 
-TinyExpr++ parses the following grammar:
+TinyExpr++ parses the following grammar (from lowest-to-highest operator precedence):
 
-    <list>      =    <expr> {"," <expr>}
+    <list>      =    <expr> {(",", ";" [dependent on locale]) <expr>}
+    <expr>      =    <term> {("&" | "|") <term>}
+    <expr>      =    <term> {("<>" | "=" | "<") | "<=") | ">" | ">=") <term>}
+    <expr>      =    <term> {("<<" | ">>") <term>}
     <expr>      =    <term> {("+" | "-") <term>}
     <term>      =    <factor> {("*" | "/" | "%") <factor>}
     <factor>    =    <power> {"^" <power>}
@@ -487,8 +492,8 @@ for `0.5`)
 ## Functions supported
 
 TinyExpr++ supports addition (`+`), subtraction/negation (`-`), multiplication (`*`),
-division (`/`), exponentiation (`^`) and modulus (`%`) with the normal operator
-precedence (the one exception being that exponentiation is evaluated
+division (`/`), exponentiation (`^`), modulus (`%`), and left/right shift (`<<`, `>>`)
+with the normal operator precedence (the one exception being that exponentiation is evaluated
 left-to-right, but this can be changed - see below).
 
 The following C math functions are also supported:

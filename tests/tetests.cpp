@@ -1068,6 +1068,16 @@ TEST_CASE("Logical operators", "[logic]")
     CHECK(1 == p.evaluate());
     p.compile(("1 >= -6"));
     CHECK(1 == p.evaluate());
+
+    // more complex examples
+    CHECK(p.evaluate("1 + 1 - 2 < 1 + 1") == 1);
+    CHECK(p.evaluate("1 + 1 - 2 = 1 + 1 - 2") == 1);
+    CHECK(p.evaluate("1 + 1 - 2 <> 1 + 1 - 7") == 1);
+    CHECK(p.evaluate("1 - 1 & 2") == 0);
+    CHECK(p.evaluate("1 - 1 | 2 - 2") == 0);
+    CHECK(p.evaluate("1 - 1 | 2*4 - 2") == 1);
+
+    CHECK(p.evaluate("1 - 1 < 1 & 2") == 1);
     }
 
 TEST_CASE("Statistics", "[stats]")
@@ -1516,36 +1526,164 @@ TEST_CASE("Random", "[random]")
     CHECK_NOTHROW(tep.evaluate("rand()"));
     }
 
-TEST_CASE("Available Functions", "[available]")
+TEST_CASE("Available functions", "[available]")
     {
     te_parser tep;
     // nothing to really test, just call it and make sur it doesn't crash
     CHECK_NOTHROW(tep.list_available_functions_and_variables());
     }
 
+TEST_CASE("Shift operators", "[shift]")
+    {
+    te_parser tep;
+
+    for (uint64_t i = 0; i < 63; ++i)
+        {
+        CHECK(tep.evaluate((std::string("1 << ") + std::to_string(i)).c_str()) == ((uint64_t)1 << i));
+        CHECK(tep.evaluate((std::string("1 >> ") + std::to_string(i)).c_str()) == ((uint64_t)1 >> i));
+        }
+    for (uint64_t i = 0; i < 62; ++i)
+        {
+        CHECK(tep.evaluate((std::string("2 << ") + std::to_string(i)).c_str()) == ((uint64_t)2 << i));
+        CHECK(tep.evaluate((std::string("2 >> ") + std::to_string(i)).c_str()) == ((uint64_t)2 >> i));
+        }
+    SECTION("Left")
+        {
+        CHECK(tep.evaluate("0 << 4") == ((uint64_t)0 << 4));
+        CHECK_THROWS(tep.evaluate("1 << 64"));
+        CHECK_THROWS(tep.evaluate("1 << -5"));
+        CHECK(tep.evaluate("31 << 59") == ((uint64_t)31 << 59));
+        // overflow
+        CHECK_THROWS(tep.evaluate("32 << 59"));
+        CHECK_THROWS(tep.evaluate("2 << 63"));
+        CHECK_THROWS(tep.evaluate("-1 << 2"));
+        CHECK(tep.evaluate("1.0 << 4.0") == ((uint64_t)1 << 4));
+        CHECK_THROWS(tep.evaluate("1.01 << 2"));
+        CHECK_THROWS(tep.evaluate("1 << 2.001"));
+        // You may get a warning like such:
+        // warning C4554: '<<': check operator precedence for possible error; use parentheses to clarify precedence
+        // Good advice, but in this case we do follow the order of precedence where << and >> are the lowest
+        // of precedence amongst the operators (the compiler should do the same).
+        CHECK(tep.evaluate("(3 + 2 << 4 - 1)") == (3 + (uint64_t)2 << 4 - 1));
+        CHECK(tep.evaluate("(3 + 2 << 4 - 1)") == ((uint64_t)5 << 3));
+        CHECK(tep.evaluate("(3 + 2 << 2 * 2)") == (3 + (uint64_t)2 << 2 * 2));
+        }
+    SECTION("Right")
+        {
+        CHECK(tep.evaluate("0 >> 4") == ((uint64_t)0 >> 4));
+        CHECK_THROWS(tep.evaluate("1 >> 64"));
+        CHECK_THROWS(tep.evaluate("1 >> -5"));
+        CHECK(tep.evaluate("32 >> 4") == ((uint64_t)32 >> 4));
+        CHECK(tep.evaluate("32 >> 5") == ((uint64_t)32 >> 5));
+        // (32 / 64) = 0.5, which is floored to zero
+        CHECK(tep.evaluate("32 >> 6") == ((uint64_t)32 >> 6));
+        CHECK_THROWS(tep.evaluate("-1 >> 2"));
+        CHECK(tep.evaluate("1.0 >> 4.0") == ((uint64_t)1 >> 4));
+        CHECK_THROWS(tep.evaluate("1.01 >> 2"));
+        CHECK_THROWS(tep.evaluate("1 >> 2.001"));
+
+        CHECK(tep.evaluate("(3 + 2 >> 4 - 1)") == (3 + (uint64_t)2 >> 4 - 1));
+        CHECK(tep.evaluate("(3 + 2 >> 4 - 1)") == ((uint64_t)5 >> 3));
+        CHECK(tep.evaluate("(3 + 2 >> 2 * 2)") == (3 + (uint64_t)2 >> 2 * 2));
+        }
+    }
+
 TEST_CASE("String comparison helper", "[stringcmp]")
     {
-    te_string_less sl;
+    SECTION("Operator()")
+        {
+        te_string_less sl;
 
-    CHECK_FALSE(sl("", ""));
-    CHECK_FALSE(sl("a", "a"));
-    CHECK(sl("", "a"));
-    CHECK(sl("a", "b"));
-    CHECK(sl("abc", "abcd"));
-    CHECK_FALSE(sl("abcd", "abcd"));
-    CHECK_FALSE(sl("z", "abcd"));
-    CHECK(sl("abc", "z"));
+        CHECK_FALSE(sl("", ""));
+        CHECK_FALSE(sl("a", "a"));
+        CHECK(sl("", "a"));
+        CHECK(sl("a", "b"));
+        CHECK(sl("abc", "abcd"));
+        CHECK_FALSE(sl("abcd", "abcd"));
+        CHECK_FALSE(sl("z", "abcd"));
+        CHECK(sl("abc", "z"));
 
-    CHECK_FALSE(sl("A", "a"));
-    CHECK_FALSE(sl("a", "A"));
-    CHECK(sl("A", "b"));
-    CHECK(sl("a", "B"));
-    CHECK(sl("Abc", "abcd"));
-    CHECK(sl("abc", "ABCD"));
-    CHECK_FALSE(sl("ABCD", "abcd"));
-    CHECK_FALSE(sl("abcd", "ABCD"));
-    CHECK_FALSE(sl("z", "ABCD"));
-    CHECK(sl("ABC", "z"));
+        CHECK_FALSE(sl("A", "a"));
+        CHECK_FALSE(sl("a", "A"));
+        CHECK(sl("A", "b"));
+        CHECK(sl("a", "B"));
+        CHECK(sl("Abc", "abcd"));
+        CHECK(sl("abc", "ABCD"));
+        CHECK_FALSE(sl("ABCD", "abcd"));
+        CHECK_FALSE(sl("abcd", "ABCD"));
+        CHECK_FALSE(sl("z", "ABCD"));
+        CHECK(sl("ABC", "z"));
+        }
+    SECTION("tolower")
+        {
+        te_string_less sl;
+
+        CHECK(sl.tolower('A') == 'a');
+        CHECK(sl.tolower('B') == 'b');
+        CHECK(sl.tolower('C') == 'c');
+        CHECK(sl.tolower('D') == 'd');
+        CHECK(sl.tolower('E') == 'e');
+        CHECK(sl.tolower('F') == 'f');
+        CHECK(sl.tolower('G') == 'g');
+        CHECK(sl.tolower('H') == 'h');
+        CHECK(sl.tolower('I') == 'i');
+        CHECK(sl.tolower('J') == 'j');
+        CHECK(sl.tolower('K') == 'k');
+        CHECK(sl.tolower('L') == 'l');
+        CHECK(sl.tolower('M') == 'm');
+        CHECK(sl.tolower('N') == 'n');
+        CHECK(sl.tolower('O') == 'o');
+        CHECK(sl.tolower('P') == 'p');
+        CHECK(sl.tolower('Q') == 'q');
+        CHECK(sl.tolower('R') == 'r');
+        CHECK(sl.tolower('S') == 's');
+        CHECK(sl.tolower('T') == 't');
+        CHECK(sl.tolower('U') == 'u');
+        CHECK(sl.tolower('V') == 'v');
+        CHECK(sl.tolower('W') == 'w');
+        CHECK(sl.tolower('X') == 'x');
+        CHECK(sl.tolower('Y') == 'y');
+        CHECK(sl.tolower('Z') == 'z');
+
+        CHECK(sl.tolower('a') == 'a');
+        CHECK(sl.tolower('b') == 'b');
+        CHECK(sl.tolower('c') == 'c');
+        CHECK(sl.tolower('d') == 'd');
+        CHECK(sl.tolower('e') == 'e');
+        CHECK(sl.tolower('f') == 'f');
+        CHECK(sl.tolower('g') == 'g');
+        CHECK(sl.tolower('h') == 'h');
+        CHECK(sl.tolower('i') == 'i');
+        CHECK(sl.tolower('j') == 'j');
+        CHECK(sl.tolower('k') == 'k');
+        CHECK(sl.tolower('l') == 'l');
+        CHECK(sl.tolower('m') == 'm');
+        CHECK(sl.tolower('n') == 'n');
+        CHECK(sl.tolower('o') == 'o');
+        CHECK(sl.tolower('p') == 'p');
+        CHECK(sl.tolower('q') == 'q');
+        CHECK(sl.tolower('r') == 'r');
+        CHECK(sl.tolower('s') == 's');
+        CHECK(sl.tolower('t') == 't');
+        CHECK(sl.tolower('u') == 'u');
+        CHECK(sl.tolower('v') == 'v');
+        CHECK(sl.tolower('w') == 'w');
+        CHECK(sl.tolower('x') == 'x');
+        CHECK(sl.tolower('y') == 'y');
+        CHECK(sl.tolower('z') == 'z');
+
+        CHECK(sl.tolower('_') == '_');
+        CHECK(sl.tolower('0') == '0');
+        CHECK(sl.tolower('1') == '1');
+        CHECK(sl.tolower('2') == '2');
+        CHECK(sl.tolower('3') == '3');
+        CHECK(sl.tolower('4') == '4');
+        CHECK(sl.tolower('5') == '5');
+        CHECK(sl.tolower('6') == '6');
+        CHECK(sl.tolower('7') == '7');
+        CHECK(sl.tolower('8') == '8');
+        CHECK(sl.tolower('9') == '9');
+        }
     }
 
 TEST_CASE("Benchmarks", "[!benchmark]")

@@ -287,6 +287,71 @@ constexpr static double _add(double a, double b) noexcept { return a + b; }
 constexpr static double _sub(double a, double b) noexcept { return a - b; }
 [[nodiscard]]
 constexpr static double _mul(double a, double b) noexcept { return a * b; }
+
+// Shift operators
+//--------------------------------------------------
+[[nodiscard]]
+static double _left_shift(double a, double b)
+    {
+    if (std::floor(a) != a)
+        {
+        throw std::runtime_error(
+            "Left side of left shift (<<) operation must be an integer.");
+        }
+    else if (std::floor(b) != b)
+        {
+        throw std::runtime_error(
+            "Additive expression of left shift (<<) operation must be an integer.");
+        }
+    else if (a < 0)
+        {
+        throw std::runtime_error(
+            "Left side of left shift (<<) operation cannot be negative.");
+        }
+    // bitness is limited to 64-bit, so ensure shift doesn't go beyond that
+    // and cause undefined behavior
+    else if (b < 0 || b >= 64)
+        {
+        throw std::runtime_error(
+            "Additive expression of left shift (<<) operation must be between 0-63.");
+        }
+    const auto multipler = (static_cast<uint64_t>(1) << static_cast<uint64_t>(b));
+    const auto maxBaseNumber = (std::numeric_limits<uint64_t>::max() / multipler);
+    if (static_cast<uint64_t>(a) > maxBaseNumber)
+        {
+        throw std::runtime_error(
+            "Overflow in left shift (<<) operation; base number is too large.");
+        }
+    return static_cast<double>(static_cast<uint64_t>(a) << static_cast<uint64_t>(b));
+    }
+
+//--------------------------------------------------
+[[nodiscard]]
+static double _right_shift(double a, double b)
+    {
+    if (std::floor(a) != a)
+        {
+        throw std::runtime_error(
+            "Left side of right shift (>>) operation must be an integer.");
+        }
+    else if (std::floor(b) != b)
+        {
+        throw std::runtime_error(
+            "Additive expression of right shift (>>)operation must be an integer.");
+        }
+    else if (a < 0)
+        {
+        throw std::runtime_error(
+            "Left side of right shift (<<) operation cannot be negative.");
+        }
+    else if (b < 0 || b >= 64)
+        {
+        throw std::runtime_error(
+            "Additive expression of right shift (>>) operation must be between 0-63.");
+        }
+    return static_cast<double>(static_cast<uint64_t>(a) >> static_cast<uint64_t>(b));
+    }
+
 [[nodiscard]]
 constexpr static double _sqr(double a) noexcept { return a*a; }
 [[nodiscard]]
@@ -294,7 +359,7 @@ static double _max_maybe_nan(double v1, double v2_maybe_nan) noexcept
     { return (std::max)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
 [[nodiscard]]
 static double _max(double v1, double v2, double v3, double v4,
-                                 double v5, double v6, double v7) noexcept
+                   double v5, double v6, double v7) noexcept
     {
     // assumes that at least v1 is a number, rest can be NaN
     auto maxVal = _max_maybe_nan(v1, v2);
@@ -309,7 +374,7 @@ static double _min_maybe_nan(double v1, double v2_maybe_nan) noexcept
     { return (std::min)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
 [[nodiscard]]
 static double _min(double v1, double v2, double v3, double v4,
-                                 double v5, double v6, double v7) noexcept
+                   double v5, double v6, double v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
     auto minVal = _min_maybe_nan(v1, v2);
@@ -324,7 +389,7 @@ static double _and_maybe_nan(double v1, double v2_maybe_nan) noexcept
     { return std::isnan(v2_maybe_nan) ? v1 : (v1 && v2_maybe_nan); }
 [[nodiscard]]
 static double _and_variadic(double v1, double v2, double v3, double v4,
-                                          double v5, double v6, double v7) noexcept
+                            double v5, double v6, double v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
     auto andVal = _and_maybe_nan(v1, v2);
@@ -339,7 +404,7 @@ static double _or_maybe_nan(double v1, double v2_maybe_nan) noexcept
     { return std::isnan(v2_maybe_nan) ? v1 : (v1 || v2_maybe_nan); }
 [[nodiscard]]
 static double _or_variadic(double v1, double v2, double v3, double v4,
-                                         double v5, double v6, double v7) noexcept
+                           double v5, double v6, double v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
     auto orVal = _or_maybe_nan(v1, v2);
@@ -577,8 +642,8 @@ void te_parser::next_token(te_parser::state *s)
                     { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _divide; }
                 else if (tok == '^')
                     {
-                    s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value =
-                        static_cast<te_fun2>(_pow);
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_pow);
                     }
                 else if (tok == '%')
                     { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _modulus; }
@@ -588,21 +653,36 @@ void te_parser::next_token(te_parser::state *s)
                     { s->m_type = te_parser::state::token_type::TOK_CLOSE; }
                 else if (tok == get_list_separator())
                     { s->m_type = te_parser::state::token_type::TOK_SEP; }
+                // shift operators
+                else if (tok == '<' && s->m_next[0] == '<')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_left_shift);
+                    ++s->m_next;
+                    }
+                else if (tok == '>' && s->m_next[0] == '>')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_right_shift);
+                    ++s->m_next;
+                    }
                 // logical operators
                 else if (tok == '=')
                     {
-                    s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value =
-                        static_cast<te_fun2>(_equal);
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_equal);
                     }
                 else if (tok == '<' && s->m_next[0] == '>')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_not_equal); ++s->m_next;
+                    s->m_value = static_cast<te_fun2>(_not_equal);
+                    ++s->m_next;
                     }
                 else if (tok == '<' && s->m_next[0] == '=')
                     {
-                    s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value =
-                        static_cast<te_fun2>(_less_than_equal_to); ++s->m_next;
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_less_than_equal_to);
+                    ++s->m_next;
                     }
                 else if (tok == '<')
                     {
@@ -627,8 +707,8 @@ void te_parser::next_token(te_parser::state *s)
                     }
                 else if (tok == '|')
                     {
-                    s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value =
-                        static_cast<te_fun2>(_or);
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_or);
                     }
                 else if (tok == ' ' || tok == '\t' || tok == '\n' || tok == '\r')
                     { /*noop*/ }
@@ -745,35 +825,127 @@ te_expr* te_parser::base(te_parser::state *s)
     }
 
 //--------------------------------------------------
-te_expr* te_parser::power(te_parser::state *s) {
-    /* <power>     =    {("-" | "+" | "&" | "|")} <base> */
-    int Sign{ 1 };
-    while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
-        is_function2(s->m_value) &&
-           (get_function2(s->m_value) == _add || get_function2(s->m_value) == _sub ||
-            get_function2(s->m_value) == _and || get_function2(s->m_value) == _or ||
-            get_function2(s->m_value) == _equal ||
-            get_function2(s->m_value) == _not_equal ||
-            get_function2(s->m_value) == _less_than ||
-            get_function2(s->m_value) == _less_than_equal_to ||
-            get_function2(s->m_value) == _greater_than ||
-            get_function2(s->m_value) == _greater_than_equal_to))
-        {
-        if (get_function2(s->m_value) == _sub) Sign = -Sign;
+te_expr* te_parser::list(te_parser::state *s)
+    {
+    /* <list>      =    <expr> {"," <expr>} */
+    te_expr* ret = expr(s);
+
+    while (s->m_type == te_parser::state::token_type::TOK_SEP) {
         next_token(s);
-        }
-
-    te_expr* ret{ nullptr };
-
-    if (Sign == 1) {
-        ret = base(s);
-    } else {
-        ret = new_expr(TE_PURE, variant_type(_negate), { base(s) });
-        ret->m_value = _negate;
+        ret = new_expr(TE_PURE, variant_type(_comma), { ret, expr(s) });
+        ret->m_value = _comma;
     }
 
     return ret;
-}
+    }
+
+//--------------------------------------------------
+te_expr* te_parser::expr(te_parser::state *s)
+    {
+    /* <expr>      =    <term> {(logic operations) <term>} */
+    // These are the lowest of operator precedence
+    // (once we have split tokens into arguments)
+    te_expr* ret = expr_level2(s);
+
+    while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
+        is_function2(s->m_value) &&
+        (get_function2(s->m_value) == _and ||
+         get_function2(s->m_value) == _or))
+        {
+        const te_fun2 t = get_function2(s->m_value);
+        next_token(s);
+        ret = new_expr(TE_PURE, t, { ret, expr_level2(s) });
+        ret->m_value = t;
+        }
+
+    return ret;
+    }
+
+//--------------------------------------------------
+te_expr* te_parser::expr_level2(te_parser::state *s)
+    {
+    /* <expr>      =    <term> {(comparison operators) <term>} */
+    // These are the lowest of operator precedence
+    te_expr* ret = expr_level3(s);
+
+    while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
+        is_function2(s->m_value) &&
+        (get_function2(s->m_value) == _equal ||
+         get_function2(s->m_value) == _not_equal ||
+         get_function2(s->m_value) == _less_than ||
+         get_function2(s->m_value) == _less_than_equal_to ||
+         get_function2(s->m_value) == _greater_than ||
+         get_function2(s->m_value) == _greater_than_equal_to))
+        {
+        const te_fun2 t = get_function2(s->m_value);
+        next_token(s);
+        ret = new_expr(TE_PURE, t, { ret, expr_level3(s) });
+        ret->m_value = t;
+        }
+
+    return ret;
+    }
+
+//--------------------------------------------------
+te_expr* te_parser::expr_level3(te_parser::state *s)
+    {
+    /* <expr>      =    <term> {("<<" | ">>") <term>} */
+    // Third from the lowest level of operator precendence
+    te_expr* ret = expr_level4(s);
+
+    while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
+        is_function2(s->m_value) &&
+        (get_function2(s->m_value) == _left_shift ||
+         get_function2(s->m_value) == _right_shift))
+        {
+        const te_fun2 t = get_function2(s->m_value);
+        next_token(s);
+        ret = new_expr(TE_PURE, t, { ret, expr_level4(s) });
+        ret->m_value = t;
+        }
+
+    return ret;
+    }
+
+//--------------------------------------------------
+te_expr* te_parser::expr_level4(te_parser::state *s)
+    {
+    /* <expr>      =    <term> {("+" | "-") <term>} */
+    // Fourth from the lowest level of operator precendence
+    te_expr* ret = term(s);
+
+    while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
+        is_function2(s->m_value) &&
+        (get_function2(s->m_value) == _add ||
+         get_function2(s->m_value) == _sub))
+        {
+        const te_fun2 t = get_function2(s->m_value);
+        next_token(s);
+        ret = new_expr(TE_PURE, t, { ret, term(s) });
+        ret->m_value = t;
+        }
+
+    return ret;
+    }
+
+//--------------------------------------------------
+te_expr* te_parser::term(te_parser::state *s)
+    {
+    /* <term>      =    <factor> {("*" | "/" | "%") <factor>} */
+    te_expr* ret = factor(s);
+    while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
+        is_function2(s->m_value) &&
+        (get_function2(s->m_value) == _mul ||
+         get_function2(s->m_value) == _divide ||
+         get_function2(s->m_value) == _modulus)) {
+        const te_fun2 t = get_function2(s->m_value);
+        next_token(s);
+        ret = new_expr(TE_PURE, t, { ret, factor(s) });
+        ret->m_value = t;
+    }
+
+    return ret;
+    }
 
 #ifdef TE_POW_FROM_RIGHT
 te_expr* te_parser::factor(te_parser::state *s) {
@@ -819,7 +991,8 @@ te_expr* te_parser::factor(te_parser::state *s) {
     return ret;
 }
 #else
-te_expr* te_parser::factor(te_parser::state *s) {
+te_expr* te_parser::factor(te_parser::state *s)
+    {
     /* <factor>    =    <power> {"^" <power>} */
     te_expr* ret = power(s);
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
@@ -832,66 +1005,33 @@ te_expr* te_parser::factor(te_parser::state *s) {
     }
 
     return ret;
-}
+    }
 #endif
 
 //--------------------------------------------------
-te_expr* te_parser::term(te_parser::state *s) {
-    /* <term>      =    <factor> {("*" | "/" | "%") <factor>} */
-    te_expr* ret = factor(s);
+te_expr* te_parser::power(te_parser::state *s)
+    {
+    /* <power>     =    {("-" | "+")} <base> */
+    int Sign{ 1 };
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-        (get_function2(s->m_value) == _mul || get_function2(s->m_value) == _divide ||
-         get_function2(s->m_value) == _modulus)) {
-        const te_fun2 t = get_function2(s->m_value);
-        next_token(s);
-        ret = new_expr(TE_PURE, t, { ret, factor(s) });
-        ret->m_value = t;
-    }
-
-    return ret;
-}
-
-//--------------------------------------------------
-te_expr* te_parser::expr(te_parser::state *s) {
-    /* <expr>      =    <term> {("+" | "-" | "&" | "|") <term>} */
-    te_expr* ret = term(s);
-
-    while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
-        is_function2(s->m_value) &&
-        (get_function2(s->m_value) == _add ||
-         get_function2(s->m_value) == _and ||
-         get_function2(s->m_value) == _or ||
-         get_function2(s->m_value) == _equal ||
-         get_function2(s->m_value) == _not_equal ||
-         get_function2(s->m_value) == _less_than ||
-         get_function2(s->m_value) == _less_than_equal_to ||
-         get_function2(s->m_value) == _greater_than ||
-         get_function2(s->m_value) == _greater_than_equal_to ||
-         get_function2(s->m_value) == _sub))
+           (get_function2(s->m_value) == _add || get_function2(s->m_value) == _sub))
         {
-        const te_fun2 t = get_function2(s->m_value);
+        if (get_function2(s->m_value) == _sub) Sign = -Sign;
         next_token(s);
-        ret = new_expr(TE_PURE, t, { ret, term(s) });
-        ret->m_value = t;
         }
 
-    return ret;
-}
+    te_expr* ret{ nullptr };
 
-//--------------------------------------------------
-te_expr* te_parser::list(te_parser::state *s) {
-    /* <list>      =    <expr> {"," <expr>} */
-    te_expr* ret = expr(s);
-
-    while (s->m_type == te_parser::state::token_type::TOK_SEP) {
-        next_token(s);
-        ret = new_expr(TE_PURE, variant_type(_comma), { ret, expr(s) });
-        ret->m_value = _comma;
+    if (Sign == 1) {
+        ret = base(s);
+    } else {
+        ret = new_expr(TE_PURE, variant_type(_negate), { base(s) });
+        ret->m_value = _negate;
     }
 
     return ret;
-}
+    }
 
 //--------------------------------------------------
 double te_parser::te_eval(const te_expr *n)

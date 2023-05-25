@@ -133,7 +133,7 @@ public:
     [[nodiscard]]
     constexpr char tolower(const char ch) const noexcept
         { return (ch >= 'A' && ch <= 'Z') ? (ch + 32) : ch; }
-     };
+    };
 
 /// @brief A compiled expression.
 /// @details Can also be an additional object that can be passed to
@@ -659,6 +659,12 @@ private:
     te_expr* term(state* s);
     [[nodiscard]]
     te_expr* expr(state* s);
+    [[nodiscard]]
+    te_expr* expr_level2(state* s);
+    [[nodiscard]]
+    te_expr* expr_level3(state* s);
+    [[nodiscard]]
+    te_expr* expr_level4(state* s);
     [[nodiscard]]
     te_expr* list(state* s);
 
