@@ -237,11 +237,11 @@ public:
     ///     followed by additional English letters, numbers, or underscores.
     /// @throws std::runtime_error Throws an exception if an illegal character is found
     ///     in the variable name.
-    void set_variables_and_functions(const std::set<te_variable>& vars)
+    void set_variables_and_functions(std::set<te_variable> vars)
         {
         for (const auto& var : vars)
             { validate_name(var); }
-        m_custom_funcs_and_vars = vars;
+        m_custom_funcs_and_vars = std::move(vars);
         }
     /// @brief Adds a custom variable or function.
     /// @param var The variable/function to add.
@@ -249,10 +249,10 @@ public:
     ///     (less sorts will need to be performed).
     /// @throws std::runtime_error Throws an exception if an illegal character is found
     ///     in the variable name.
-    void add_variable_or_function(const te_variable& var)
+    void add_variable_or_function(te_variable var)
         {
         validate_name(var);
-        m_custom_funcs_and_vars.insert(var);
+        m_custom_funcs_and_vars.insert(std::move(var));
         }
     /// @private
     [[nodiscard]]
