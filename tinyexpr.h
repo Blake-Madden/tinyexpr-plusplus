@@ -130,6 +130,8 @@ public:
         }
     // We can assume that we are only dealing with a-z, A-Z, 0-9, and _,
     // so use a simpler and faster tolower.
+    // Note that we just constexpr this, don't try to make it static.
+    // cppcheck-suppress functionStatic
     [[nodiscard]]
     constexpr char tolower(const char ch) const noexcept
         { return (ch >= 'A' && ch <= 'Z') ? (ch + 32) : ch; }
