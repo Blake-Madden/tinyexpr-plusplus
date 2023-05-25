@@ -120,16 +120,19 @@ public:
         const auto minStrLen = std::min(lhv.length(), rhv.length());
         for (size_t i = 0; i < minStrLen; ++i)
             {
-            /// @todo These should be 7-bit ASCII strings, so replace this with
-            ///     branchless version of tolower if possible.
-            const auto lhCh = std::tolower(static_cast<const unsigned char>(lhv[i]));
-            const auto rhCh = std::tolower(static_cast<const unsigned char>(rhv[i]));
+            const auto lhCh = tolower(lhv[i]);
+            const auto rhCh = tolower(rhv[i]);
             if (lhCh == rhCh)
                 { continue; }
             return (lhCh < rhCh);
             }
         return (lhv.length() < rhv.length());
         }
+    // We can assume that we are only dealing with a-z, A-Z, 0-9, and _,
+    // so use a simpler and faster tolower.
+    [[nodiscard]]
+    constexpr char tolower(const char ch) const noexcept
+        { return (ch >= 'A' && ch <= 'Z') ? (ch + 32) : ch; }
      };
 
 /// @brief A compiled expression.
