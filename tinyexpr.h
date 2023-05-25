@@ -358,7 +358,7 @@ private:
         if (!is_letter(var.m_name[0]))
             {
             throw std::runtime_error(
-                std::string("Variable name must begin with an English letter: ") + var.m_name.c_str());
+                std::string("Variable name must begin with an English letter: ") + var.m_name);
             }
         const auto varCharPos = std::find_if(var.m_name.cbegin(), var.m_name.cend(),
             [](const auto ch) noexcept
@@ -370,7 +370,7 @@ private:
         if (varCharPos != var.m_name.cend())
             {
             throw std::runtime_error(
-                std::string("Invalid character in variable name: ") + var.m_name.c_str());
+                std::string("Invalid character in variable name: ") + var.m_name);
             }
         }
     /// @returns An iterator to the custom variable or function with the given @c name,
