@@ -930,7 +930,7 @@ TEST_CASE("Closure", "[closure]")
         {
         extra = 0;
         answer = 58;
-        res = tep.evaluate("c7 (10, 20, 5, 2, 8, 9, 4)");
+        res = tep.evaluate("C7 (10, 20, 5, 2, 8, 9, 4)");
         CHECK(tep.success());
         CHECK(tep.evaluate() == answer + extra);
 
@@ -949,8 +949,8 @@ TEST_CASE("Constants", "[constants]")
     CHECK(tep.evaluate("SALARY") == 15.25);
 
     tep.set_constant("SALARY", 17.75);
-    CHECK(tep.evaluate("SALARY") == 17.75);
-    CHECK(tep.get_constant("SALARY") == 17.75);
+    CHECK(tep.evaluate("salary") == 17.75);
+    CHECK(tep.get_constant("salary") == 17.75);
     }
 
 TEST_CASE("Long names", "[longnames]")
@@ -960,7 +960,9 @@ TEST_CASE("Long names", "[longnames]")
         {
             { "AddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResult", AddEm }
         });
-    p.compile(("AddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResultAddTwoNumbersTogetherThroughASimpleMathematicalOperationUsingSimpleAdditionOfJustTwoRegularNumbersWhichYielsASumAsTheResult(1, 2)"));
+    p.compile(("ADDTWONUMBERSTOGETHERTHROUGHASIMPLEMATHEMATICALOPERATIONUSINGSIMPLEADDITIONOFJUSTTWOREGULARNUMBERSWHICHYIELSASUMASTHERESULTADDTWONUMBERSTOGETHERTHROUGHASIMPLEMATHEMATICALOPERATIONUSINGSIMPLEADDITIONOFJUSTTWOREGULARNUMBERSWHICHYIELSASUMASTHERESULTADDTWONUMBERSTOGETHERTHROUGHASIMPLEMATHEMATICALOPERATIONUSINGSIMPLEADDITIONOFJUSTTWOREGULARNUMBERSWHICHYIELSASUMASTHERESULTADDTWONUMBERSTOGETHERTHROUGHASIMPLEMATHEMATICALOPERATIONUSINGSIMPLEADDITIONOFJUSTTWOREGULARNUMBERSWHICHYIELSASUMASTHERESULT(1, 2)"));
+    CHECK(p.evaluate() == 3.0);
+    p.compile(("addtwonumberstogetherthroughasimplemathematicaloperationusingsimpleadditionofjusttworegularnumberswhichyielsasumastheresultaddtwonumberstogetherthroughasimplemathematicaloperationusingsimpleadditionofjusttworegularnumberswhichyielsasumastheresultaddtwonumberstogetherthroughasimplemathematicaloperationusingsimpleadditionofjusttworegularnumberswhichyielsasumastheresultaddtwonumberstogetherthroughasimplemathematicaloperationusingsimpleadditionofjusttworegularnumberswhichyielsasumastheresult(1, 2)"));
     CHECK(p.evaluate() == 3.0);
     }
 
@@ -974,7 +976,7 @@ TEST_CASE("Precedence", "[precedence]")
 TEST_CASE("Round", "[round]")
     {
     te_parser p;
-    p.compile(("round(1.5, 0)"));
+    p.compile(("ROUND(1.5, 0)"));
     CHECK(2 == p.evaluate());
 
     p.compile(("round(1.6, 0)"));
@@ -1072,7 +1074,7 @@ TEST_CASE("Statistics", "[stats]")
     {
     te_parser p;
 
-    p.compile(("SUM(1, 2, 3, 4)"));
+    p.compile(("sum(1, 2, 3, 4)"));
     CHECK(10 == p.evaluate());
     p.compile(("SUM(1.1, 2.7, 3, 4.9)"));
     CHECK_THAT(11.7, Catch::Matchers::WithinRel(p.evaluate()));
@@ -1133,7 +1135,7 @@ TEST_CASE("Round higher precision", "[round]")
     p.compile(("round(1.55, 1)"));
     CHECK_THAT(1.6, Catch::Matchers::WithinRel(p.evaluate()));
 
-    p.compile(("round(-1.55, 1)"));
+    p.compile(("ROUND(-1.55, 1)"));
     CHECK_THAT(-1.6, Catch::Matchers::WithinRel(p.evaluate()));
 
     p.compile(("round(3.1415678, 2)"));
@@ -1186,10 +1188,10 @@ TEST_CASE("Modulus", "[math]")
 
     p.compile(("MOD(5,2)"));
     CHECK(1 == p.evaluate());
-    CHECK(0 == p.evaluate("MOD(5,2.5)"));
+    CHECK(0 == p.evaluate("mod(5,2.5)"));
     CHECK(2 == p.evaluate("MOD(5,3)"));
-    CHECK(0 == p.evaluate("MOD(5,5)"));
-    CHECK(5 == p.evaluate("MOD(5,6)"));
+    CHECK(0 == p.evaluate("mod(5,5)"));
+    CHECK(5 == p.evaluate("MoD(5,6)"));
     }
 
 TEST_CASE("Is function used", "[functions]")
@@ -1514,11 +1516,36 @@ TEST_CASE("Random", "[random]")
     CHECK_NOTHROW(tep.evaluate("rand()"));
     }
 
-TEST_CASE("AvailableFunctions", "[available]")
+TEST_CASE("Available Functions", "[available]")
     {
     te_parser tep;
     // nothing to really test, just call it and make sur it doesn't crash
     CHECK_NOTHROW(tep.list_available_functions_and_variables());
+    }
+
+TEST_CASE("String comparison helper", "[stringcmp]")
+    {
+    te_string_less sl;
+
+    CHECK_FALSE(sl("", ""));
+    CHECK_FALSE(sl("a", "a"));
+    CHECK(sl("", "a"));
+    CHECK(sl("a", "b"));
+    CHECK(sl("abc", "abcd"));
+    CHECK_FALSE(sl("abcd", "abcd"));
+    CHECK_FALSE(sl("z", "abcd"));
+    CHECK(sl("abc", "z"));
+
+    CHECK_FALSE(sl("A", "a"));
+    CHECK_FALSE(sl("a", "A"));
+    CHECK(sl("A", "b"));
+    CHECK(sl("a", "B"));
+    CHECK(sl("Abc", "abcd"));
+    CHECK(sl("abc", "ABCD"));
+    CHECK_FALSE(sl("ABCD", "abcd"));
+    CHECK_FALSE(sl("abcd", "ABCD"));
+    CHECK_FALSE(sl("z", "ABCD"));
+    CHECK(sl("ABC", "z"));
     }
 
 TEST_CASE("Benchmarks", "[!benchmark]")

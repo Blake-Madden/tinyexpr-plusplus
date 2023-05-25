@@ -232,6 +232,26 @@ public:
         }
     };
 
+/// @private
+class te_string_less
+    {
+public:
+    [[nodiscard]]
+    bool operator()(const std::string& lhv, const std::string& rhv) const
+        {
+        const auto minStrLen = std::min(lhv.length(), rhv.length());
+        for (size_t i = 0; i < minStrLen; ++i)
+            {
+            const auto lhCh = std::tolower(static_cast<const unsigned char>(lhv[i]));
+            const auto rhCh = std::tolower(static_cast<const unsigned char>(rhv[i]));
+            if (lhCh == rhCh)
+                { continue; }
+            return (lhCh < rhCh);
+            }
+        return (lhv.length() < rhv.length());
+        }
+     };
+
 /// @brief A compiled expression.
 /// @details Can also be an additional object that can be passed to
 ///     te_confun0-te_confun7 functions via a te_variable.
@@ -262,11 +282,11 @@ class te_variable
     {
 public:
     /// @private
-    using name_type = std::basic_string<char, case_insensitive_char_traits>;
+    using name_type = std::string;
     /// @private
     [[nodiscard]]
     bool operator<(const te_variable& that) const
-        { return m_name < that.m_name; }
+        { return te_string_less{}(m_name, that.m_name); }
     /// @brief The name as it would appear in a formula.
     name_type m_name;
     /// @brief The double constant, double pointer, or function to bind the name to.
@@ -764,8 +784,8 @@ private:
 
     std::set<te_variable>::const_iterator m_currentVar;
     bool m_varFound{ false };
-    std::set<te_variable::name_type> m_usedFunctions;
-    std::set<te_variable::name_type> m_usedVars;
+    std::set<te_variable::name_type, te_string_less> m_usedFunctions;
+    std::set<te_variable::name_type, te_string_less> m_usedVars;
 
     static const std::set<te_variable> m_functions;
     std::set<te_variable> m_custom_funcs_and_vars;
