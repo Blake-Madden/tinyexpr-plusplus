@@ -1,6 +1,6 @@
 # Examples
 
-The following are full-program examples.
+The following are examples demonstrating how to use TinyExpr++.
 
 ## Example 1
 
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     }
 ```
 
-## Example 2
+## Example 2: Binding Custom Variables
 
 ```cpp
 #include "tinyexpr.h"
@@ -59,19 +59,17 @@ int main(int argc, char* argv[])
     }
 ```
 
-## Example 3
+## Example 3: Calling a C Function
 
 ```cpp
 #include "tinyexpr.h"
 #include <cstdio>
-
 
 /* An example of calling a C function. */
 double my_sum(double a, double b) {
     printf("Called C function with %f and %f.\n", a, b);
     return a + b;
 }
-
 
 int main(int argc, char *argv[])
     {
@@ -93,7 +91,7 @@ int main(int argc, char *argv[])
     }
 ```
 
-## Example 4
+## Example 4: Non-US Formatted Formulas
 
 ```cpp
 #include "tinyexpr.h"
@@ -130,4 +128,64 @@ int main(int argc, char *argv[])
 
     return 0;
     }
+```
+
+## Example 5: Binding to Custom Classes
+
+A class derived from `te_expr` can be bound to custom functions. This enables you to
+have full access to an object (via these functions) when parsing an expression.
+
+The following demonstrates creating a `te_expr`-derived class which contains an array of values:
+
+```cpp
+class te_expr_array : public te_expr
+    {
+public:
+    explicit te_expr_array(const variable_flags type) noexcept :
+        te_expr(type) {}
+    std::array<double, 5> m_data = { 5, 6, 7, 8, 9 };
+    };
+```
+
+Next, create two functions that can accept this object and perform
+actions on it. (Note that proper error handling is not included for brevity.):
+
+```cpp
+// Returns the value of a cell from the object's data.
+double cell(const te_expr* context, double a)
+    {
+    auto* c = dynamic_cast<const te_expr_array*>(context);
+    return static_cast<double>(c->m_data[static_cast<size_t>(a)]);
+    }
+
+// Returns the max value of the object's data.
+double cell_max(const te_expr* context)
+    {
+    auto* c = dynamic_cast<const te_expr_array*>(context);
+    return static_cast<double>(
+        *std::max_element(c->m_data.cbegin(), c->m_data.cend()));
+    }
+```
+
+Finally, create an instance of the class and connect the custom functions to it,
+while also adding them to the parser:
+
+```cpp
+te_expr_array teArray{ TE_DEFAULT };
+
+te_parser tep;
+tep.set_variables_and_functions(
+    {
+        {"cell", cell, TE_DEFAULT, &teArray},
+        {"cellmax", cell_max, TE_DEFAULT, &teArray}
+    });
+
+// change the object's data and evaluate their summation
+// (will be 30)
+teArray.m_data = { 6, 7, 8, 5, 4 };
+auto result = tep.evaluate("SUM(CELL 0, CELL 1, CELL 2, CELL 3, CELL 4)");
+
+// call the other function, getting the object's max value
+// (will be 8)
+res = tep.evaluate("CellMax()");
 ```
