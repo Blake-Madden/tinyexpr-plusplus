@@ -23,6 +23,10 @@ the standard C math functions and runtime binding of variables and user-defined 
 
 Note: for current users of TinyExpr++, please see the [compatibility advisory](CompatibilityAdvisory.md) for recent changes.
 
+## Embedded Programming
+
+For notes on embedded programming, please refer to the [embedded programming](Embedded.md) overview.
+
 ## Features
 
 - **C++17 with no dependencies**.
@@ -191,12 +195,11 @@ Give `set_variables_and_functions()` a list of constants, bound variables, and f
 
 `evaluate()` will then evaluate expressions using these variables and functions.
 
-
 **example usage:**
 
 ```cpp
 #include "tinyexpr.h"
-#include <cstdio>
+#include <iostream>
 
 double x{ 0 }, y{ 0 };
 // Store variable names and pointers.
@@ -206,7 +209,8 @@ tep.set_variables_and_functions({{"x", &x}, {"y", &y}});
 // Compile the expression with variables.
 auto result = tep.evaluate("sqrt(x^2+y^2)");
 
-if (tep.success()) {
+if (tep.success())
+    {
     x = 3; y = 4;
     // Will use the previously used expression, returns 5.
     const double h1 = tep.evaluate();
@@ -214,9 +218,12 @@ if (tep.success()) {
     x = 5; y = 12;
     // Returns 13.
     const double h2 = tep.evaluate();
-} else {
-    printf("Parse error at %d\n", tep.get_last_error_position());
-}
+    }
+else
+    {
+    std::cout << "Parse error at " <<
+        std::to_string(tep.get_last_error_position()) << "\n";
+    }
 ```
 
 ## Longer Example
@@ -263,7 +270,6 @@ int main(int argc, char *argv[])
     return 0;
     }
 ```
-
 
 This produces the output:
 
@@ -430,18 +436,18 @@ This produces the output:
 
 Refer to [Examples](Examples.md) for more examples.
 
-## How it works
+## How it Works
 
 `te_parser::evaluate()` uses a simple recursive descent parser to compile your
 expression into a syntax tree. For example, the expression `"sin x + 1/4"`
 parses as:
 
-![example syntax tree](doc/e1.png?raw=true)
+![example syntax tree](doc/e1.png)
 
 `te_parser::evaluate()` also automatically prunes constant branches. In this example,
 the compiled expression returned by `te_compile()` would become:
 
-![example syntax tree](doc/e2.png?raw=true)
+![example syntax tree](doc/e2.png)
 
 ## Speed
 
@@ -489,7 +495,7 @@ underscore. Constants can be integers, decimal numbers, or in scientific
 notation (e.g., `1e3` for `1000`). A leading zero is not required (e.g., `.5`
 for `0.5`)
 
-## Functions supported
+## Supported Functions
 
 TinyExpr++ supports addition (`+`), subtraction/negation (`-`), multiplication (`*`),
 division (`/`), exponentiation (`^`), modulus (`%`), and left/right shift (`<<`, `>>`)
@@ -512,7 +518,7 @@ Also, the following constants are available:
 
 - `pi`, `e`
 
-## Compile-time options
+## Compile-time Options
 
 By default, TinyExpr++ does exponentiation from left to right. For example:
 
@@ -545,5 +551,5 @@ command line (or in a Cmake configuration) as such:
   For example, `x+(1+5)` will evaluate the `(1+5)` expression at compile time and
   compile the entire expression as `x+6`, saving a runtime calculation. The
   parentheses are important, because TinyExpr++ will not change the order of
-  evaluation. If you instead compiled `x+1+5` TinyExpr++ will insist that `1` is
-  added to `x` first, and `5` is added the result second.
+  evaluation. If you instead compiled `x+1+5`, TinyExpr++ will insist that `1` is
+  added to `x` first, and `5` is added to the result second.
