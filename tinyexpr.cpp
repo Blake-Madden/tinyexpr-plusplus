@@ -1128,7 +1128,7 @@ te_expr* te_parser::te_compile(const char* expression, std::set<te_variable>& va
     else
         {
         optimize(root);
-        m_errorPos = -1;
+        m_errorPos = te_parser::npos;
         return root;
         }
     }
@@ -1138,7 +1138,7 @@ bool te_parser::compile(const char* expression)
     {
     assert(expression && "compile() should not be called with null!");
     // reset everything from previous call
-    m_errorPos = -1;
+    m_errorPos = te_parser::npos;
     m_result = std::numeric_limits<double>::quiet_NaN();
     m_parseSuccess = false;
     te_free(m_compiledExpression);

@@ -96,7 +96,7 @@ using variant_type = std::variant<double, const double*, // indices 0-1
     te_confun0, te_confun1, te_confun2, te_confun3, te_confun4, te_confun5, te_confun6, te_confun7>;
 
 /// @brief A variable's flags, effecting how it is evaluated.
-/// @note This is a bitmask, so flags can be OR'ed.
+/// @note This is a bitmask, so flags (TE_PURE and TE_VARIADIC) can be OR'ed.
 /// @internal Note that because this is a bitmask, don't declare it as an enum class,
 ///     just a C-style enum.
 enum variable_flags
@@ -195,6 +195,7 @@ public:
     /// @private
     ~te_parser()
         { te_free(m_compiledExpression); }
+    static constexpr int64_t npos = -1;
     /** @brief Parses the input @c expression.
         @param expression The formula to compile.
         @returns Whether the expression compiled or not. (This can be checked
@@ -236,7 +237,7 @@ public:
         { return m_parseSuccess; }
 
     /// @returns The zero-based index into the last parsed expression where the parse failed,
-    ///     or @c -1 if no error occurred.
+    ///     or te_parser::npos if no error occurred.
     /// @note Call success() to see if the last parse succeeded or not.
     [[nodiscard]]
     int64_t get_last_error_position() const noexcept
