@@ -130,10 +130,8 @@ public:
         }
     // We can assume that we are only dealing with a-z, A-Z, 0-9, and _,
     // so use a simpler and faster tolower.
-    // Note that we just constexpr this, don't try to make it static.
     [[nodiscard]]
-    // cppcheck-suppress functionStatic
-    constexpr char tolower(const char ch) const noexcept
+    constexpr static char tolower(const char ch) noexcept
         { return (ch >= 'A' && ch <= 'Z') ? (ch + 32) : ch; }
     };
 
@@ -202,38 +200,50 @@ public:
         @returns Whether the expression compiled or not. (This can be checked
             by calling success() afterwards as well.)
         @sa success().
-        @note Returns NaN if division or modulus by zero occurs.*/
+        @note Returns NaN if division or modulus by zero occurs.
+        @throws std::runtime_error Throws an exception in the case of arithmetic overflows
+            (e.g., `1 << 64` would cause an overflow).*/
     bool compile(const char* expression);
     /** @brief Evaluates expression passed to compile() previously and returns its result.
-        @returns The result, or NaN on error.*/
+        @returns The result, or NaN on error.
+        @throws std::runtime_error Throws an exception in the case of arithmetic overflows
+            (e.g., `1 << 64` would cause an overflow).*/
     [[nodiscard]]
     double evaluate();
     /** @brief Compiles and evaluates an expression and returns its result.
         @param expression The formula to compile and evaluate.
         @returns The result, or NaN on error.
-        @note Returns NaN if division or modulus by zero occurs.*/
+        @note Returns NaN if division or modulus by zero occurs.
+        @throws std::runtime_error Throws an exception in the case of arithmetic overflows
+            (e.g., `1 << 64` would cause an overflow).*/
     [[nodiscard]]
     double evaluate(const char* expression);
     /// @returns The last call to evaluate()'s result (which will be NaN on error).
     [[nodiscard]]
     double get_result() const noexcept
         { return m_result; }
+    /// @private
+    [[nodiscard]]
+    double get_result() const volatile noexcept
+        { return m_result; }
     /// @returns Whether the last call to compile() was successful.
     /// @sa get_last_error_position().
     [[nodiscard]]
     bool success() const noexcept
         { return m_parseSuccess; }
-    /// @brief Gets the compiled expression, which will the optimized version
-    ///     of the original expression.
-    /// @returns The compiled expression.
     [[nodiscard]]
-    const te_expr* get_compiled_expression() const noexcept
-        { return m_compiledExpression; }
+    bool success() const volatile noexcept
+        { return m_parseSuccess; }
+
     /// @returns The zero-based index into the last parsed expression where the parse failed,
     ///     or @c -1 if no error occurred.
     /// @note Call success() to see if the last parse succeeded or not.
     [[nodiscard]]
     int64_t get_last_error_position() const noexcept
+        { return m_errorPos; }
+    /// @private
+    [[nodiscard]]
+    int64_t get_last_error_position() const volatile noexcept
         { return m_errorPos; }
 
     /// @brief Sets the list of custom variables and functions.
@@ -272,9 +282,16 @@ public:
     [[nodiscard]]
     char get_decimal_separator() const noexcept
         { return m_decimalSeparator; }
+    /// @private
+    [[nodiscard]]
+    char get_decimal_separator() const volatile noexcept
+        { return m_decimalSeparator; }
     /// @brief Sets the decimal separator used for numbers.
     /// @param sep The decimal separator.
     void set_decimal_separator(const char sep) noexcept
+        { m_decimalSeparator = sep; }
+    /// @private
+    void set_decimal_separator(const char sep) volatile noexcept
         { m_decimalSeparator = sep; }
 
     /// @brief Sets a constant variable's value.
@@ -294,7 +311,8 @@ public:
             auto nh = get_variables_and_functions().extract(cvar);
             nh.value().m_value = value;
             get_variables_and_functions().insert(std::move(nh));
-            // if previously compiled, then re-compile since this constant would have been optimized
+            // if previously compiled, then re-compile since this
+            // constant would have been optimized
             if (m_expression.length())
                 { compile(m_expression.c_str()); }
             }
@@ -319,9 +337,16 @@ public:
     [[nodiscard]]
     char get_list_separator() const noexcept
         { return m_listSeparator; }
+    /// @private
+    [[nodiscard]]
+    char get_list_separator() const volatile noexcept
+        { return m_listSeparator; }
     /// @brief Sets the separator used between function arguments.
     /// @param sep The list separator.
     void set_list_separator(const char sep) noexcept
+        { m_listSeparator = sep; }
+    /// @private
+    void set_list_separator(const char sep) volatile noexcept
         { m_listSeparator = sep; }
 
     /// @returns @c true if @c name is a function that had been used in the last parsed formula.
@@ -352,11 +377,21 @@ public:
     static void te_print(const te_expr* n, int depth);
 #endif
 private:
+    /// @brief Gets the compiled expression, which will the optimized version
+    ///     of the original expression.
+    /// @returns The compiled expression.
+    [[nodiscard]]
+    const te_expr* get_compiled_expression() const noexcept
+        { return m_compiledExpression; }
+    /// @private
+    [[nodiscard]]
+    const te_expr* get_compiled_expression() const volatile noexcept
+        { return m_compiledExpression; }
     /// @brief Validates that a variable only contains legal characters
     ///     (and has a valid length).
     /// @param var The variable to validate.
     /// @throws std::runtime_error Throws an exception if an illegal character is found.
-    void validate_name(const te_variable& var)
+    void validate_name(const te_variable& var) const
         {
         if (var.m_name.empty())
             { throw std::runtime_error("Variable name is empty."); }
@@ -626,7 +661,7 @@ private:
         @returns null on error.*/
     [[nodiscard]]
     te_expr* te_compile(const char* expression,
-        std::set<te_variable>& variables);
+                        std::set<te_variable>& variables);
     /* Evaluates the expression. */
     [[nodiscard]]
     static double te_eval(const te_expr* n);
