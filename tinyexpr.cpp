@@ -47,18 +47,6 @@
  * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/* COMPILE TIME OPTIONS */
-
-/* Exponentiation associativity:
-For a^b^c = (a^b)^c and -a^b = (-a)^b do nothing.
-For a^b^c = a^(b^c) and -a^b = -(a^b) uncomment the next line.*/
-/* #define TE_POW_FROM_RIGHT */
-
-/* Logarithms
-For log = base 10 log do nothing
-For log = natural log uncomment the next line. */
-/* #define TE_NAT_LOG */
-
 #include "tinyexpr.h"
 
 // builtin functions
@@ -211,7 +199,7 @@ static double _modulus(double a, double b)
     }
 [[nodiscard]]
 static double _sum(double v1, double v2, double v3, double v4,
-                                 double v5, double v6, double v7) noexcept
+                   double v5, double v6, double v7) noexcept
     {
     return (std::isnan(v1) ? 0 : v1) +
         (std::isnan(v2) ? 0 : v2) +
@@ -223,7 +211,7 @@ static double _sum(double v1, double v2, double v3, double v4,
     }
 [[nodiscard]]
 static double _average(double v1, double v2, double v3, double v4,
-                                     double v5, double v6, double v7)
+                       double v5, double v6, double v7)
     {
     const auto validN = (std::isnan(v1) ? 0 : 1) +
         (std::isnan(v2) ? 0 : 1) +
@@ -263,7 +251,8 @@ static double _ncr(double n, double r) noexcept
     {
     if (n < 0.0 || r < 0.0 || n < r || std::isnan(n) || std::isnan(r))
         { return std::numeric_limits<double>::quiet_NaN(); }
-    if (n > ((std::numeric_limits<unsigned int>::max)()) || r > (std::numeric_limits<unsigned int>::max)())
+    if (n > ((std::numeric_limits<unsigned int>::max)()) || r >
+            (std::numeric_limits<unsigned int>::max)())
         { return std::numeric_limits<double>::infinity(); }
     const unsigned long int un{ static_cast<unsigned int>(n) };
     unsigned long int ur{ static_cast<unsigned int>(r) };
@@ -460,7 +449,9 @@ void te_parser::te_free_parameters(te_expr *n)
     if (is_closure(n->m_value))
         {
         // last param is the context object, we don't manage that here
-        for (auto param = n->m_parameters.begin(); param != n->m_parameters.end() - 1; ++param)
+        for (auto param = n->m_parameters.begin();
+             param != n->m_parameters.end() - 1;
+             ++param)
             {
             te_free(*param);
             *param = nullptr;
@@ -468,7 +459,9 @@ void te_parser::te_free_parameters(te_expr *n)
         }
     else if (is_function(n->m_value))
         {
-        for (auto param = n->m_parameters.begin(); param != n->m_parameters.end(); ++param)
+        for (auto param = n->m_parameters.begin();
+             param != n->m_parameters.end();
+             ++param)
             {
             te_free(*param);
             *param = nullptr;
@@ -486,7 +479,6 @@ void te_parser::te_free(te_expr *n)
 
 //--------------------------------------------------
 const std::set<te_variable> te_parser::m_functions = {
-    /* must be in alphabetical order */
     {"abs", static_cast<te_fun1>(_absolute_value), TE_PURE},
     {"acos", static_cast<te_fun1>(_acos), TE_PURE},
     // variadic, accepts 1-7 arguments
@@ -563,7 +555,8 @@ void te_parser::next_token(te_parser::state *s)
             }
 
         /* Try reading a number. */
-        if ((s->m_next[0] >= '0' && s->m_next[0] <= '9') || s->m_next[0] == get_decimal_separator())
+        if ((s->m_next[0] >= '0' && s->m_next[0] <= '9') ||
+            s->m_next[0] == get_decimal_separator())
             {
             char* nEnd{ nullptr };
             s->m_value = std::strtod(s->m_next, &nEnd);
@@ -599,7 +592,8 @@ void te_parser::next_token(te_parser::state *s)
                 else
                     {
                     // keep track of what's been used in the formula
-                    if (is_function(m_currentVar->m_value) || is_closure(m_currentVar->m_value))
+                    if (is_function(m_currentVar->m_value) ||
+                        is_closure(m_currentVar->m_value))
                         { m_usedFunctions.insert(m_currentVar->m_name); }
                     else
                         { m_usedVars.insert(m_currentVar->m_name); }
@@ -633,7 +627,8 @@ void te_parser::next_token(te_parser::state *s)
                 {
                 /* Look for an operator or special character. */
                 const auto tok = s->m_next++[0];
-                if (tok == '+') { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _add; }
+                if (tok == '+')
+                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _add; }
                 else if (tok == '-')
                     { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _sub; }
                 else if (tok == '*')
@@ -865,7 +860,7 @@ te_expr* te_parser::expr(te_parser::state *s)
 te_expr* te_parser::expr_level2(te_parser::state *s)
     {
     /* <expr>      =    <term> {(comparison operators) <term>} */
-    // These are the lowest of operator precedence
+    // Second from the lowest of operator precedence
     te_expr* ret = expr_level3(s);
 
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&

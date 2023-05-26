@@ -512,18 +512,17 @@ Also, the following constants are available:
 
 - `pi`, `e`
 
-
 ## Compile-time options
 
 By default, TinyExpr++ does exponentiation from left to right. For example:
 
 `a^b^c == (a^b)^c` and `-a^b == (-a)^b`
 
-This is by design; it's the way that spreadsheets do it (e.g., Excel, Google Sheets).
+This is by design; it's the way that spreadsheets do it
+(e.g., LibreOffice Calc, Excel, Google Sheets).
 
 If you would rather have exponentiation work from right to left, you need to
-define `TE_POW_FROM_RIGHT` when compiling. There is a
-commented-out define near the top of that file. With this option enabled, the
+define `TE_POW_FROM_RIGHT` when compiling. With `TE_POW_FROM_RIGHT` defined, the
 behavior is:
 
 `a^b^c == a^(b^c)` and `-a^b == -(a^b)`
@@ -532,6 +531,13 @@ That will match how many scripting languages do it (e.g., Python, Ruby).
 
 Also, if you'd like `log` to default to the natural log instead of `log10`,
 then you can define `TE_NAT_LOG`.
+
+Note that symbols can usually be defined by passing them to your compiler's
+command line (or in a Cmake configuration) as such:
+
+```cpp
+-DTE_POW_FROM_RIGHT
+```
 
 ## Hints
 
