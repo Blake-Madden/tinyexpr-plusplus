@@ -24,7 +24,7 @@
 
  /*
   * TINYEXPR++ - Tiny recursive descent parser and evaluation engine in C++
-  * Copyright (c) 2020-2022 Blake Madden
+  * Copyright (c) 2020-2023 Blake Madden
   *
   * C++ version of the TinyExpr library.
   *
@@ -478,35 +478,35 @@ TEST_CASE("Variables", "[variables]")
     tep.set_variables_and_functions({ {"x", &x}, {"y", &y}, {"te_st", &test} });
     [[maybe_unused]] auto exprRes = tep.evaluate("cos x + sin y");
     CHECK(tep.success());
-    CHECK(tep.get_last_error_position() == -1);
+    CHECK(tep.get_last_error_position() == te_parser::npos);
 
     exprRes = tep.evaluate("x+x+x-y");
     CHECK(tep.success());
-    CHECK(tep.get_last_error_position() == -1);
+    CHECK(tep.get_last_error_position() == te_parser::npos);
 
     exprRes = tep.evaluate("x*y^3");
     CHECK(tep.success());
-    CHECK(tep.get_last_error_position() == -1);
+    CHECK(tep.get_last_error_position() == te_parser::npos);
 
     exprRes = tep.evaluate("te_st+5");
     CHECK(tep.success());
-    CHECK(tep.get_last_error_position() == -1);
+    CHECK(tep.get_last_error_position() == te_parser::npos);
 
     exprRes = tep.evaluate("xx*y^3");
     CHECK_FALSE(tep.success());
-    CHECK(tep.get_last_error_position() != -1);
+    CHECK(tep.get_last_error_position() != te_parser::npos);
 
     exprRes = tep.evaluate("tes");
     CHECK_FALSE(tep.success());
-    CHECK(tep.get_last_error_position() != -1);
+    CHECK(tep.get_last_error_position() != te_parser::npos);
 
     exprRes = tep.evaluate("sinn x");
     CHECK_FALSE(tep.success());
-    CHECK(tep.get_last_error_position() != -1);
+    CHECK(tep.get_last_error_position() != te_parser::npos);
 
     exprRes = tep.evaluate("si x");
     CHECK_FALSE(tep.success());
-    CHECK(tep.get_last_error_position() != -1);
+    CHECK(tep.get_last_error_position() != te_parser::npos);
 
     for (y = 2; y < 3; ++y)
         {
