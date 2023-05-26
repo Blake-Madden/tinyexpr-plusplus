@@ -1686,6 +1686,32 @@ TEST_CASE("String comparison helper", "[stringcmp]")
         }
     }
 
+TEST_CASE("Volatile", "[volatile]")
+    {
+    te_parser tep;
+
+    volatile te_parser& vTep = tep;
+
+    const_cast<te_parser&>(vTep).set_variables_and_functions(
+        { {"STRESS_L", 10.1},
+          {"P_LEVEL", .5} });
+    const_cast<te_parser&>(vTep).compile(("STRESS_L*P_LEVEL"));
+    CHECK_THAT(5.05, Catch::Matchers::WithinRel(const_cast<te_parser&>(vTep).evaluate()));
+    CHECK_THAT(5.05, Catch::Matchers::WithinRel(const_cast<te_parser&>(vTep).evaluate("STRESS_L*P_LEVEL")));
+    const_cast<te_parser&>(vTep).set_constant("P_LEVEL", .9);
+    CHECK_THAT(9.09, Catch::Matchers::WithinRel(const_cast<te_parser&>(vTep).evaluate()));
+    const_cast<te_parser&>(vTep).compile(("IF(STRESS_L >= P_LEVEL, 1, 0)"));
+    CHECK(const_cast<te_parser&>(vTep).evaluate() == 1);
+    CHECK(vTep.get_result() == 1);
+    CHECK(vTep.success());
+    CHECK(const_cast<te_parser&>(vTep).get_variables_and_functions().size() == 2);
+    CHECK_FALSE(const_cast<te_parser&>(vTep).is_function_used("sum"));
+    CHECK(const_cast<te_parser&>(vTep).is_variable_used("P_LEVEL"));
+    // just make sure we can call these
+    vTep.set_list_separator(',');
+    vTep.set_decimal_separator('.');
+    }
+
 TEST_CASE("Benchmarks", "[!benchmark]")
     {
     double benchmarkVar{ 9 };
