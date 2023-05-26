@@ -110,7 +110,7 @@ The following are changes from the original TinyExpr C library:
 - Binary search is now used to look up custom variables and functions (small optimization).
 - You no longer need to specify the number of arguments for custom functions; it will deduce that for you.
 - The position of an error when evaluating an expression is now managed by the `te_parser` class and accessible via `get_last_error_position()`.
-- The position of aforementioned error is now 0-indexed (not 1-indexed); `-1` indicates that there was no error.
+- The position of aforementioned error is now 0-indexed (not 1-indexed); `te_parser::npos` indicates that there was no error.
 - Added `success()` function to indicate if the last parse succeeded or not.
 - Added `get_result()` function to get result from the last call to evaluate.
 - Now uses `std::numeric_limits` for math constants (instead of macro constants).
@@ -143,10 +143,13 @@ Here is a minimal example to evaluate an expression at runtime.
 
 ```cpp
 #include "tinyexpr.h"
+#include <iostream>
+
 te_parser tep;
 const char* c = "sqrt(5^2+7^2+11^2+(8-2)^2)";
 const double r = tep.evaluate("sqrt(5^2+7^2+11^2+(8-2)^2)");
-printf("The expression:\n\t%s\nevaluates to:\n\t%f\n", c, r);
+std::cout << "The expression:\n\t" <<
+    c << "\nevaluates to:\n\t" << r << "\n";
 // prints 15.198684
 ```
 
@@ -158,7 +161,7 @@ TinyExpr++'s `te_parser` class defines these functions:
 double evaluate(const char* expression);
 double get_result();
 bool success();
-int get_last_error_position();
+int64_t get_last_error_position();
 set_variables_and_functions(const std::set<te_variable>& vars);
 std::set<te_variable>& get_variables_and_functions();
 add_variable_or_function(const te_variable& var);
@@ -173,22 +176,25 @@ is a parse error, it returns NaN (which can be verified by using `std::isnan()`)
 
 `success()` can be called to see if the previous call `evaluate()` succeeded or not.
 
-If the parse failed, calling `get_last_error_position()` will return the 0-based index of where in the expression the parse failed.
+If the parse failed, calling `get_last_error_position()` will return the 0-based index of where in the
+expression the parse failed.
 
 `set_variables_and_functions()`, `get_variables_and_functions()`, and `add_variable_or_function()` are used
 to add custom variables and functions to the parser.
 
 `get_decimal_separator()` and `get_list_separator()` can be used to parse non-US formatted formulas.
 
-
 **example usage:**
 
 ```cpp
 te_parser tep;
 
-double a = tep.evaluate("(5+5)"); /* Returns 10. */
-double b = tep.evaluate("(5+5)"); /* Returns 10, error is set to -1 (i.e., no error). */
-double c = tep.evaluate("(5+5");  /* Returns NaN, error is set to 3. */
+// Returns 10.
+double a = tep.evaluate("(5+5)");
+// Returns 10, error is set to -1 (i.e., no error).
+double b = tep.evaluate("(5+5)");
+// Returns NaN, error is set to 3.
+double c = tep.evaluate("(5+5");
 ```
 
 Give `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas.
@@ -233,20 +239,22 @@ line. It also does error checking and binds the variables `x` and `y` to `3` and
 
 ```cpp
 #include "tinyexpr.h"
-#include <cstdio>
+#include <iostream>
+#include <iomanip>
 
 int main(int argc, char *argv[])
     {
-    if (argc < 2) {
-        printf("Usage: example2 \"expression\"\n");
-        return 0;
-    }
+    if (argc < 2)
+        {
+        std::cout << "Usage: example \"expression\"\n";
+        return EXIT_FAILURE;
+        }
 
     const char *expression = argv[1];
-    printf("Evaluating:\n\t%s\n", expression);
+    std::cout << "Evaluating:\n\t" << expression << "\n";
 
     /* This shows an example where the variables
-        * x and y are bound at eval-time. */
+       x and y are bound at eval-time. */
     double x{ 0 }, y{ 0 };
     // Store variable names and pointers.
     te_parser tep;
@@ -255,36 +263,40 @@ int main(int argc, char *argv[])
     /* This will compile the expression and check for errors. */
     auto result = tep.evaluate(expression);
 
-    if (tep.success()) {
+    if (tep.success())
+        {
         /* The variables can be changed here, and eval can be called as many
            times as you like. This is fairly efficient because the parsing has
            already been done. */
         x = 3; y = 4;
         const double r = tep.evaluate();
-        printf("Result:\n\t%f\n", r);
-    } else {
+        std::cout << "Result:\n\t" << r << "\n";
+        }
+    else
+        {
         /* Show the user where the error is at. */
-        printf("\t%*s^\nError near here",  tep.get_last_error_position(), "");
-    }
+        std::cout << "\t " << std::setfill(' ') <<
+            std::setw(tep.get_last_error_position()) << '^' <<
+            "\tError near here\n";
+        }
 
-    return 0;
+    return EXIT_SUCCESS;
     }
 ```
 
 This produces the output:
 
-    $ example2 "sqrt(x^2+y2)"
-        Evaluating:
-                sqrt(x^2+y2)
-                          ^
-        Error near here
+    $ "sqrt(x^2+y2)"
+       Evaluating:
+            sqrt(x^2+y2)
+                      ^
+       Error near here
 
-
-    $ example2 "sqrt(x^2+y^2)"
-        Evaluating:
-                sqrt(x^2+y^2)
-        Result:
-                5.000000
+    $ "sqrt(x^2+y^2)"
+      Evaluating:
+            sqrt(x^2+y^2)
+      Result:
+            5.000000
 
 ## Binding to Custom Functions
 
@@ -387,7 +399,8 @@ TinyExpr++ supports other locales and non-US formatted formulas. Here is an exam
 
 ```cpp
 #include "tinyexpr.h"
-#include <cstdio>
+#include <iostream>
+#include <iomanip>
 #include <locale>
 #include <clocale>
 
@@ -405,7 +418,7 @@ int main(int argc, char *argv[])
        and ";" as list argument separator.*/
 
     const char *expression = "pow(2,2; 2)"; // instead of "pow(2.2, 2)"
-    printf("Evaluating:\n\t%s\n", expression);
+    std::cout << "Evaluating:\n\t" << expression << "\n";
 
     te_parser tep;
     tep.set_decimal_separator(',');
@@ -414,22 +427,26 @@ int main(int argc, char *argv[])
     /* This will compile the expression and check for errors. */
     auto r = tep.evaluate(expression);
 
-    if (tep.success()) {
+    if (tep.success())
+        {
         const double r = tep.evaluate(expression);
-        printf("Result:\n\t%f\n", r);
-    } else {
+        std::cout << "Result:\n\t" << r << "\n";
+        }
+    else
+        {
         /* Show the user where the error is at. */
-        printf("\t%*s^\nError near here", tep.get_last_error_position(), "");
-    }
+        std::cout << "\t " << std::setfill(' ') <<
+            std::setw(tep.get_last_error_position()) << '^' <<
+            "\tError near here\n";
+        }
 
-    return 0;
+    return EXIT_SUCCESS;
     }
 ```
 
 This produces the output:
 
-    $ example4
-      Evaluating:
+    $ Evaluating:
         pow(2,2; 2)
       Result:
         4,840000

@@ -6,15 +6,16 @@ The following are examples demonstrating how to use TinyExpr++.
 
 ```cpp
 include "tinyexpr.h"
-#include <cstdio>
+#include <iostream>
 
 int main(int argc, char *argv[])
     {
     te_parser tep;
     const char *c = "sqrt(5^2+7^2+11^2+(8-2)^2)";
     double r = tep.evaluate(c);
-    printf("The expression:\n\t%s\nevaluates to:\n\t%f\n", c, r);
-    return 0;
+    std::cout << "The expression:\n\t" <<
+        c << "\nevaluates to:\n\t" << r << "\n";
+    return EXIT_SUCCESS;
     }
 ```
 
@@ -22,40 +23,46 @@ int main(int argc, char *argv[])
 
 ```cpp
 #include "tinyexpr.h"
-#include <cstdio>
+#include <iostream>
+#include <iomanip>
 
 int main(int argc, char* argv[])
     {
-    if (argc < 2) {
-        printf("Usage: example2 \"expression\"\n");
-        return 0;
-    }
+    if (argc < 2)
+        {
+        std::cout << "Usage: example \"expression\"\n";
+        return EXIT_SUCCESS;
+        }
 
     const char* expression = argv[1];
-    printf("Evaluating:\n\t%s\n", expression);
+    std::cout << "Evaluating:\n\t" << expression << "\n";
 
     /* This shows an example where the variables
-     * x and y are bound at eval-time. */
+       x and y are bound at eval-time. */
     double x{ 0 }, y{ 0 };
     // Store variable names and pointers.
     te_parser tep;
     tep.set_variables_and_functions({ {"x", &x}, {"y", &y} });
 
     /* This will compile the expression and check for errors. */
-    if (tep.compile(expression)) {
+    if (tep.compile(expression))
+        {
         /* The variables can be changed here, and eval can be called as many
          * times as you like. This is fairly efficient because the parsing has
          * already been done. */
         x = 3; y = 4;
         const double r = tep.evaluate();
-        printf("Result:\n\t%f\n", r);
-    }
-    else {
+        std::cout << "Result:\n\t" << r << "\n";
+        }
+    else
+        {
         /* Show the user where the error is at. */
-        printf("\t%*s^\nError near here", tep.get_last_error_position(), "");
-    }
+        std::cout << "\t " << std::setfill(' ') <<
+            std::setw(tep.get_last_error_position()) << '^' <<
+            "\tError near here\n";
+        }
 
-    return 0;
+    return EXIT_SUCCESS;
     }
 ```
 
@@ -63,31 +70,39 @@ int main(int argc, char* argv[])
 
 ```cpp
 #include "tinyexpr.h"
-#include <cstdio>
+#include <iostream>
+#include <iomanip>
 
 /* An example of calling a C function. */
-double my_sum(double a, double b) {
-    printf("Called C function with %f and %f.\n", a, b);
+double my_sum(double a, double b)
+    {
+    std::cout << "Called C function with " <<
+        a << " and " << b << ".\n";
     return a + b;
-}
+    }
 
 int main(int argc, char *argv[])
     {
     const char *expression = "mysum(5, 6)";
-    printf("Evaluating:\n\t%s\n", expression);
+    std::cout << "Evaluating:\n\t" << expression << "\n";
 
     te_parser tep;
     tep.set_variables_and_functions({{"mysum", my_sum}});
 
-    if (tep.compile(expression)) {
+    if (tep.compile(expression))
+        {
         const double r = tep.evaluate();
-        printf("Result:\n\t%f\n", r);
-    } else {
+        std::cout << "Result:\n\t" << r << "\n";
+        }
+    else
+        {
         /* Show the user where the error is at. */
-        printf("\t%*s^\nError near here", tep.get_last_error_position(), "");
-    }
+        std::cout << "\t " << std::setfill(' ') <<
+            std::setw(tep.get_last_error_position()) << '^' <<
+            "\tError near here\n";
+        }
 
-    return 0;
+    return EXIT_SUCCESS;
     }
 ```
 
@@ -95,7 +110,8 @@ int main(int argc, char *argv[])
 
 ```cpp
 #include "tinyexpr.h"
-#include <cstdio>
+#include <iostream>
+#include <iomanip>
 #include <locale>
 #include <clocale>
 
@@ -113,20 +129,26 @@ int main(int argc, char *argv[])
        and ";" as list argument separator.*/
 
     const char *expression = "pow(2,2; 2)"; // instead of "pow(2.2, 2)"
-    printf("Evaluating:\n\t%s\n", expression);
+    std::cout << "Evaluating:\n\t" << expression << "\n";
 
     te_parser tep;
     tep.set_decimal_separator(',');
     tep.set_list_separator(';');
 
-    if (tep.compile(expression)) {
-        const double r = tep.evaluate(); printf("Result:\n\t%f\n", r);
-    } else {
+    if (tep.compile(expression))
+        {
+        const double r = tep.evaluate();
+        std::cout << "Result:\n\t" << r << "\n";
+        }
+    else
+        {
         /* Show the user where the error is at. */
-        printf("\t%*s^\nError near here", tep.get_last_error_position(), "");
-    }
+        std::cout << "\t " << std::setfill(' ') <<
+            std::setw(tep.get_last_error_position()) << '^' <<
+            "\tError near here\n";
+        }
 
-    return 0;
+    return EXIT_SUCCESS;
     }
 ```
 
