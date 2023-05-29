@@ -1257,7 +1257,9 @@ bool te_parser::compile(const std::string_view expression)
     m_varFound = false;
     m_usedFunctions.clear();
     m_usedVars.clear();
-    if (!expression)
+    if (get_list_separator() == get_decimal_separator())
+        { throw std::runtime_error("List and decimal separators cannot be the same"); }
+    if (expression.empty())
         {
         m_expression.clear();
         return std::numeric_limits<double>::quiet_NaN();

@@ -289,8 +289,13 @@ public:
         { return m_decimalSeparator; }
     /// @brief Sets the decimal separator used for numbers.
     /// @param sep The decimal separator.
-    void set_decimal_separator(const char sep) noexcept
-        { m_decimalSeparator = sep; }
+    /// @throws std::runtime_error Throws an exception if an illegal character is used.
+    void set_decimal_separator(const char sep)
+        {
+        if (sep != ',' && sep != '.')
+            { throw std::runtime_error("Decimal separator must be either a '.' or ','."); }
+        m_decimalSeparator = sep;
+        }
     /// @private
     void set_decimal_separator(const char sep) volatile
         {
@@ -350,8 +355,13 @@ public:
         { return m_listSeparator; }
     /// @brief Sets the separator used between function arguments.
     /// @param sep The list separator.
-    void set_list_separator(const char sep) noexcept
-        { m_listSeparator = sep; }
+    /// @throws std::runtime_error Throws an exception if an illegal character is used.
+    void set_list_separator(const char sep)
+        {
+        if (sep != ',' && sep != ';')
+            { throw std::runtime_error("List separator must be either a ',' or ';'."); }
+        m_listSeparator = sep;
+        }
     /// @private
     void set_list_separator(const char sep) volatile
         {
