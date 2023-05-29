@@ -4,3 +4,5 @@
 /.vs
 /doc/html/
 CMakeSettings.json
+.Rproj.user
+*.tex

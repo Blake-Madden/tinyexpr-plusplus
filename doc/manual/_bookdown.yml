@@ -1,0 +1,5 @@
+delete_merged_file: true
+book_filename: TinyExpr++ Reference Manual
+language:
+  ui:
+    chapter_name: "Chapter "

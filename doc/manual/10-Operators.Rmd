@@ -1,0 +1,42 @@
+# Operators
+
+::: {.minipage data-latex="{\textwidth}"}
+| Operator | Description |
+| :-- | :-- |
+| \* | Multiplication. |
+| / | Division. |
+| % | Modulus: Divides two values and returns the remainder. |
+| + | Addition. |
+| \- | Subtraction. |
+| ^ | Exponentiation. The number in front of ^ is the base, the number after it is the power to raise it to. |
+| \= | Equals. |
+| < | Less than. |
+| \> | Greater than. |
+| <> | Not equal to. |
+| \>= | Greater than or equal to. |
+| <= | Less than or equal to. |
+| & | Logical conjunction. |
+| \| | Logical alternative. |
+| ( ) | Overrides the order of operations. |
+
+Table: Operators
+:::
+
+::: {.minipage data-latex="{\textwidth}"}
+For operators, the order of precedence is:
+
+| Operator | Description |
+| :-- | :-- |
+| ( ) | Instructions in parentheses are executed first. |
+| ^   | Exponentiation. |
+| \*, /, and % | Multiplication, division, and modulus. |
+| \+ and - | Addition and subtraction. |
+:::
+
+## Compatability Note
+
+The `%` character acts as a modulus operator in TinyExpr++, which is different from most
+spreadsheet programs. In programs such as LibreOffice Calc and Excel, the `%` is used
+to convert a number to a percentage. For example, this formula in Excel `=20%`
+would yield `0.20`. In TinyExpr++, however, `20%` will result in a syntax error as
+it is expecting it to be a binary operation that behaves like `MOD()`.

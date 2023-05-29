@@ -1,0 +1,15 @@
+--- 
+title: "TinyExpr++ Reference Manual"
+author: Blake Madden
+documentclass: book
+site: bookdown::bookdown_site
+lot: yes
+link-citations: yes
+---
+
+# About
+
+This is the reference manual for TinyExpr++, the C++ version of the TinyExpr formula parsing library.
+
+TinyExpr++ is a small parser and evaluation library for solving math expressions from C++.
+It's open-source, free, easy-to-use, and self-contained in a single source and header file pair.
