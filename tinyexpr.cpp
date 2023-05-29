@@ -1262,11 +1262,44 @@ bool te_parser::compile(const std::string_view expression)
     if (expression.empty())
         {
         m_expression.clear();
+        m_errorPos = 0;
         return std::numeric_limits<double>::quiet_NaN();
         }
     m_expression.assign(expression);
 
-    m_compiledExpression = te_compile(expression, get_variables_and_functions());
+    // remove multi-line comments
+    size_t commentStart{ 0 };
+    while (commentStart != std::string::npos)
+        {
+        commentStart = m_expression.find("/*", commentStart);
+        if (commentStart == std::string::npos)
+            { break; }
+        auto commentEnd = m_expression.find("*/", commentStart);
+        if (commentEnd == std::string::npos)
+            {
+            m_errorPos = commentStart;
+            return std::numeric_limits<double>::quiet_NaN();
+            }
+        m_expression.erase(commentStart, (commentEnd + 2) - commentStart);
+        }
+    // remove single-line comments
+    commentStart = 0;
+    while (commentStart != std::string::npos)
+        {
+        commentStart = m_expression.find("//", commentStart);
+        if (commentStart == std::string::npos)
+            { break; }
+        auto commentEnd = m_expression.find_first_of("\n\r", commentStart);
+        if (commentEnd == std::string::npos)
+            {
+            m_expression.erase(commentStart);
+            break;
+            }
+        else
+            { m_expression.erase(commentStart, commentEnd - commentStart); }
+        }
+
+    m_compiledExpression = te_compile(m_expression, get_variables_and_functions());
     m_parseSuccess = (m_compiledExpression != nullptr) ? true : false;
     return m_parseSuccess;
     }
