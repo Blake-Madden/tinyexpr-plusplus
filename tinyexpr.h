@@ -383,10 +383,11 @@ public:
     [[nodiscard]]
     std::string list_available_functions_and_variables();
 
-#ifndef NDEBUG
-    /* Prints debugging information on the syntax tree. */
-    static void te_print(const te_expr* n, int depth);
-#endif
+    /// @returns The last formula passed to the parser.
+    /// @note Comments will be stripped from the original expression.
+    [[nodiscard]]
+    const std::string& get_expression() const noexcept
+        { return m_expression; };
 private:
     /// @brief Gets the compiled expression, which will the optimized version
     ///     of the original expression.

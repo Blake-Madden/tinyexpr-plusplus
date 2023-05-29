@@ -1299,26 +1299,3 @@ std::string te_parser::list_available_functions_and_variables()
         { report.append(func.m_name).append("\n"); }
     return report;
     }
-
-//--------------------------------------------------
-#ifndef NDEBUG
-void te_parser::te_print(const te_expr *n, int depth)
-    {
-    printf("%*s", depth, "");
-
-    if (is_function(n->m_value) || is_closure(n->m_value))
-        {
-        int arity = get_arity(n->m_value);
-        printf("f%d", arity);
-        for (int i = 0; i < arity; i++)
-            { printf(" %p", static_cast<void*>(n->m_parameters[i])); }
-        printf("\n");
-        for (int i = 0; i < arity; i++)
-            { te_print(n->m_parameters[i], depth + 1); }
-        }
-    else if (is_constant(n->m_value))
-        { printf("%f\n", get_constant(n->m_value)); }
-    else if (is_variable(n->m_value))
-        { printf("bound %p\n", static_cast<const void*>(get_variable(n->m_value))); }
-    }
-#endif
