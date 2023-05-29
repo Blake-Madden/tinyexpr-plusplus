@@ -176,6 +176,10 @@ static double _atan2(double y, double x)
     { return std::atan2(static_cast<double>(y), (static_cast<double>(x))); }
 
 [[nodiscard]]
+static double _tgamma(double y)
+    { return std::tgamma(y); }
+
+[[nodiscard]]
 static double _random()
     {
     std::random_device rd;
@@ -270,6 +274,7 @@ static double _ncr(double n, double r) noexcept
 // Permutations (without repetition)
 [[nodiscard]]
 static double _npr(double n, double r) noexcept { return _ncr(n, r) * _fac(r); }
+
 [[nodiscard]]
 constexpr static double _add(double a, double b) noexcept { return a + b; }
 [[nodiscard]]
@@ -534,6 +539,7 @@ const std::set<te_variable> te_parser::m_functions = {
     {"sum", static_cast<te_fun7>(_sum), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
     {"tan", static_cast<te_fun1>(_tan), TE_PURE},
     {"tanh", static_cast<te_fun1>(_tanh), TE_PURE},
+    {"tgamma", static_cast<te_fun1>(_tgamma), TE_PURE},
     {"trunc", static_cast<te_fun1>(_trunc), TE_PURE}
 };
 
