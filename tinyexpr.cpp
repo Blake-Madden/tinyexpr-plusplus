@@ -232,7 +232,7 @@ static double _average(double v1, double v2, double v3, double v4,
 ///     negative decimal places (e.g., ROUND(21.5, -1) = 20). Be aware
 ///     of that if using this function outside of TinyExpr++.
 [[nodiscard]]
-static double _round(double val, double decimal_places) noexcept
+static double _round(double val, double decimal_places)
     {
     const bool useNegativeRound{ decimal_places < 0 };
     const size_t adjustedDecimalPlaces{
@@ -366,6 +366,26 @@ static double _right_shift(double a, double b)
             "Additive expression of right shift (>>) operation must be between 0-63.");
         }
     return static_cast<double>(static_cast<uint64_t>(a) >> static_cast<uint64_t>(b));
+    }
+
+/// @warning This emulates Excel, where a negative shift amount acts as a right shift.\n
+///     Be aware of this if using this function outside of TinyExpr++.
+//--------------------------------------------------
+[[nodiscard]]
+static double _left_shift_or_right(double a, double b)
+    {
+    return (b >= 0) ?
+        _left_shift(a, b) : _right_shift(a, std::abs(b));
+    }
+
+/// @warning This emulates Excel, where a negative shift amount acts as a right shift.\n
+///     Be aware of this if using this function outside of TinyExpr++.
+//--------------------------------------------------
+[[nodiscard]]
+static double _right_shift_or_left(double a, double b)
+    {
+    return (b >= 0) ?
+        _right_shift(a, b) : _left_shift(a, std::abs(b));
     }
 
 [[nodiscard]]
@@ -514,6 +534,8 @@ const std::set<te_variable> te_parser::m_functions = {
     {"atan", static_cast<te_fun1>(_atan), TE_PURE},
     {"atan2", static_cast<te_fun2>(_atan2), TE_PURE},
     {"average", static_cast<te_fun7>(_average), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"bitlshift", static_cast<te_fun2>(_left_shift_or_right), TE_PURE},
+    {"bitrshift", static_cast<te_fun2>(_right_shift_or_left), TE_PURE},
     {"ceil", static_cast<te_fun1>(_ceil), TE_PURE},
     {"clamp", static_cast<te_fun3>(
         [](const double num, const double start, const double end)
