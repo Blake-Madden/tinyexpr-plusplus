@@ -79,9 +79,9 @@ The following are changes from the original TinyExpr C library:
   - `and`: returns true (i.e., non-zero) if all conditions are true (accepts 1-7 arguments).
   - `average`: returns the mean for a range of values (accepts 1-7 arguments).
   - `bitlshift`: left shift operator.\n
-     Negative shift amout arguments (similar to **Excell**) is supported.
+     Negative shift amount arguments (similar to **Excel**) is supported.
   - `bitrshift`: right shift operator.\n
-     Negative shift amout arguments (similar to **Excell**) is supported.
+     Negative shift amount arguments (similar to **Excel**) is supported.
   - `cot`: returns the cotangent of an angle.
   - `combin`: alias for `ncr()`, like the **Excel** function.
   - `clamp`: constrains a value to a range.
@@ -100,7 +100,7 @@ The following are changes from the original TinyExpr C library:
      Note that this implementation uses the Mersenne Twister (`mt19937`) to generate random numbers.
   - `round`: returns a number, rounded to a given decimal point.
      (Decimal point is optional and defaults to `0`.)\n
-     Negative number-of-digits arguments (similar to **Excell**) is supported.
+     Negative number-of-digits arguments (similar to **Excel**) is supported.
   - `sign`: returns the sign of a number: `1` if positive, `-1` if negative, `0` if zero.
   - `sum`: returns the sum of a list of values (accepts 1-7 arguments).
   - `sqr`: returns a number squared.
