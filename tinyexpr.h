@@ -717,6 +717,9 @@ private:
     static const std::set<te_variable> m_functions;
     std::set<te_variable> m_custom_funcs_and_vars;
 
+    // just keeps track of built-in operators
+    static const std::set<std::string> m_operators;
+
     bool m_parseSuccess{ false };
     int64_t m_errorPos{ 0 };
     double m_result{ std::numeric_limits<double>::quiet_NaN() };
