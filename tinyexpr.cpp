@@ -246,17 +246,17 @@ static double _round(double val, double decimal_places)
 
     if (!useNegativeRound)
         {
-    if (val < 0)
-        {
-        return (decimalPostition == 0) ? std::ceil(val - 0.5f) :
+        if (val < 0)
+            {
+            return (decimalPostition == 0) ? std::ceil(val - 0.5f) :
                 std::ceil((val * decimalPostition) - 0.5f) / decimalPostition;
-        }
-    else
-        {
-        return (decimalPostition == 0) ? std::floor(val + 0.5f) :
+            }
+        else
+            {
+            return (decimalPostition == 0) ? std::floor(val + 0.5f) :
                 std::floor((val * decimalPostition) + 0.5f) / decimalPostition;
+            }
         }
-    }
     else
         {
         // ROUND(21.5, -1) = 20
@@ -453,6 +453,15 @@ static double _or_variadic(double v1, double v2, double v3, double v4,
 [[nodiscard]]
 constexpr static double _if(double a, double b, double c) noexcept
     { return (a != 0.0) ? b : c; }
+[[nodiscard]]
+constexpr static double _false_value() noexcept
+    { return 0; }
+[[nodiscard]]
+constexpr static double _true_value() noexcept
+    { return 1; }
+[[nodiscard]]
+constexpr static double _nan_value() noexcept
+    { return std::numeric_limits<double>::quiet_NaN(); }
 // cotangent
 [[nodiscard]]
 static double _cot(double a) noexcept
@@ -594,6 +603,7 @@ const std::set<te_variable> te_parser::m_functions = {
     {"exp", static_cast<te_fun1>(_exp), TE_PURE},
     {"fac", static_cast<te_fun1>(_fac), TE_PURE},
     {"fact", static_cast<te_fun1>(_fac), TE_PURE},
+    {"false", static_cast<te_fun0>(_false_value), TE_PURE},
     {"floor", static_cast<te_fun1>(_floor), TE_PURE},
     {"if", static_cast<te_fun3>(_if), TE_PURE},
     {"ln", static_cast<te_fun1>(_log), TE_PURE},
@@ -606,6 +616,7 @@ const std::set<te_variable> te_parser::m_functions = {
     {"max", static_cast<te_fun7>(_max), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
     {"min", static_cast<te_fun7>(_min), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
     {"mod", static_cast<te_fun2>(_modulus), TE_PURE},
+    {"nan", static_cast<te_fun0>(_nan_value), TE_PURE},
     {"ncr", static_cast<te_fun2>(_ncr), TE_PURE},
     {"not", static_cast<te_fun1>(_not), TE_PURE},
     {"npr", static_cast<te_fun2>(_npr), TE_PURE},
@@ -625,6 +636,7 @@ const std::set<te_variable> te_parser::m_functions = {
     {"tan", static_cast<te_fun1>(_tan), TE_PURE},
     {"tanh", static_cast<te_fun1>(_tanh), TE_PURE},
     {"tgamma", static_cast<te_fun1>(_tgamma), TE_PURE},
+    {"true", static_cast<te_fun0>(_true_value), TE_PURE},
     {"trunc", static_cast<te_fun1>(_trunc), TE_PURE}
 };
 
