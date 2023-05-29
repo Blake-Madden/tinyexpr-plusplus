@@ -293,6 +293,10 @@ TEST_CASE("Main tests", "[main]")
     CHECK_THAT(tep.evaluate("atan2(3+3,(4*2))"), Catch::Matchers::WithinRel(0.6435, 0.0001));
     CHECK_THAT(tep.evaluate("atan2((3+3),4*2)"), Catch::Matchers::WithinRel(0.6435, 0.0001));
     CHECK_THAT(tep.evaluate("atan2((3+3),(4*2))"), Catch::Matchers::WithinRel(0.6435, 0.0001));
+    CHECK_THAT(tep.evaluate("tgamma (0.500000)"), Catch::Matchers::WithinRel(1.772454, 0.0001));
+    CHECK_THAT(tep.evaluate("tgamma (10)"), Catch::Matchers::WithinRel(362880, 0.0001));
+    CHECK_THAT(tep.evaluate("tgamma (1)"), Catch::Matchers::WithinRel(1, 0.0001));
+    CHECK(std::isnan(tep.evaluate("tgamma (-1)")));
     CHECK(tep.evaluate("max(9, 7)") == 9);
     CHECK(tep.evaluate("min(9, 7)") == 7);
     CHECK(tep.evaluate("mod(12, 10)") == 2);
@@ -301,6 +305,12 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("sign(0)") == 0);
     CHECK(tep.evaluate("trunc(9.57878423)") == 9);
     CHECK(tep.evaluate("trunc(9.3)") == 9);
+
+    CHECK(tep.evaluate("2**4") == 16);
+    CHECK(tep.evaluate("1+2**4") == 17);
+    CHECK(tep.evaluate("1+2^4") == 17);
+    CHECK(tep.evaluate("(1+2)**4") == 81);
+    CHECK(tep.evaluate("(1+2)^4") == 81);
 
     SECTION("variadic functions")
         {
@@ -371,6 +381,11 @@ TEST_CASE("Optimize", "[optimize]")
     CHECK_FALSE(tep.success());
     CHECK(tep.get_last_error_position() == 0);
 
+    res = tep.evaluate(std::string{});
+    CHECK(std::isnan(res));
+    CHECK_FALSE(tep.success());
+    CHECK(tep.get_last_error_position() == 0);
+
     res = tep.evaluate("1+");
     CHECK(std::isnan(res));
     CHECK_FALSE(tep.success());
@@ -385,11 +400,6 @@ TEST_CASE("Optimize", "[optimize]")
     CHECK(std::isnan(res));
     CHECK_FALSE(tep.success());
     CHECK(tep.get_last_error_position() == 1);
-
-    res = tep.evaluate("1**1");
-    CHECK(std::isnan(res));
-    CHECK_FALSE(tep.success());
-    CHECK(tep.get_last_error_position() == 2);
 
     res = tep.evaluate("1*2(+4");
     CHECK(std::isnan(res));
@@ -421,10 +431,10 @@ TEST_CASE("Optimize", "[optimize]")
     CHECK_FALSE(tep.success());
     CHECK(tep.get_last_error_position() == 2);
 
-    res = tep.evaluate("1**5");
+    res = tep.evaluate("1***5");
     CHECK(std::isnan(res));
     CHECK_FALSE(tep.success());
-    CHECK(tep.get_last_error_position() == 2);
+    CHECK(tep.get_last_error_position() == 3);
     
     res = tep.evaluate("sin(cos5");
     CHECK(std::isnan(res));
@@ -574,7 +584,7 @@ TEST_CASE("Dynamic", "[dynamic]")
     CHECK(tep.evaluate("sum7(2,3,4,5,6,7,8)") == 35);
     }
 
-TEST_CASE("NaN", "[nan]")
+TEST_CASE("Inf", "[inf]")
     {
     te_parser tep;
 
@@ -589,7 +599,7 @@ TEST_CASE("NaN", "[nan]")
     CHECK(std::isinf(tep.evaluate("log(0)")));
     }
 
-TEST_CASE("Inf", "[inf]")
+TEST_CASE("NaN", "[nan]")
     {
     te_parser tep;
 
@@ -600,6 +610,13 @@ TEST_CASE("Inf", "[inf]")
     CHECK(std::isnan(tep.evaluate("npr(2, 4)")));
     CHECK(std::isnan(tep.evaluate("npr(-2, 4)")));
     CHECK(std::isnan(tep.evaluate("npr(2, -4)")));
+
+    CHECK(tep.evaluate("NAN()"));
+    CHECK(tep.success());
+    CHECK(tep.evaluate("NAN"));
+    CHECK(tep.success());
+    CHECK(tep.evaluate("npr(NAN,90)"));
+    CHECK(tep.success());
     }
 
 TEST_CASE("Zeros", "[zeros]")
@@ -968,9 +985,28 @@ TEST_CASE("Long names", "[longnames]")
 
 TEST_CASE("Precedence", "[precedence]")
     {
-    te_parser p;
-    p.compile("5+2-1*31/2-20+21%2*2");
-    CHECK_THAT(-26.5, Catch::Matchers::WithinRel(p.evaluate()));
+    te_parser tep;
+
+    CHECK_THAT(-26.5, // "5+2-1*31/2-20+MOD(21,2)*2" in Excel
+        Catch::Matchers::WithinRel(tep.evaluate("5+2-1*31/2-20+21%2*2")));
+    CHECK_THAT(-26.5,
+        Catch::Matchers::WithinRel(tep.evaluate("5+2-1*31/2-20+MOD(21,2)*2")));
+    CHECK_THAT(-12.75,
+        Catch::Matchers::WithinRel(tep.evaluate("5+2^3-1*31/2^2-20+MOD(21,2)*2")));
+    CHECK_THAT(-12.75,
+        Catch::Matchers::WithinRel(tep.evaluate("5+2^3-1*31/2^2-20+ 21% 2*2")));
+    // The precedence that C++ compiler use for << and >>
+    // Excel doesn't have operators for these, although there are
+    // related functions like BITLSHIFT().
+    CHECK_THAT((1 << 1 + 2 * 2),
+        Catch::Matchers::WithinRel(
+            tep.evaluate("(1 << 1 + 2 * 2)")));
+    CHECK_THAT((32 >> 1 + 2 * 2),
+        Catch::Matchers::WithinRel(
+            tep.evaluate("(32 >> 1 + 2 * 2)")));
+    CHECK_THAT(27, // this is what Excel does
+               Catch::Matchers::WithinRel(
+                   tep.evaluate("5 ^ 2 + 2")));
     }
 
 TEST_CASE("Round", "[round]")
@@ -1030,6 +1066,13 @@ TEST_CASE("Logical operators", "[logic]")
     CHECK(1 == p.evaluate());
     p.compile(("5<>5"));
     CHECK(0 == p.evaluate());
+    CHECK_FALSE(p.evaluate("5!=5"));
+    CHECK(p.evaluate("5 != 5.1"));
+
+    CHECK(p.evaluate("5 == 5"));
+    CHECK_FALSE(p.evaluate("5 == 5.1"));
+    CHECK_FALSE(p.evaluate("5.1 == 5"));
+
     p.compile(("5.1 <>5"));
     CHECK(1 == p.evaluate());
     // less than
@@ -1142,6 +1185,11 @@ TEST_CASE("Round higher precision", "[round]")
     {
     te_parser p;
 
+    CHECK_THAT(23.78, Catch::Matchers::WithinRel(p.evaluate("round(23.7825, 2)")));
+
+    p.compile(("ROUND(-1.475, 2)"));
+    CHECK_THAT(-1.48, Catch::Matchers::WithinRel(p.evaluate()));
+
     p.compile(("round(1.55, 1)"));
     CHECK_THAT(1.6, Catch::Matchers::WithinRel(p.evaluate()));
 
@@ -1164,10 +1212,45 @@ TEST_CASE("Round higher precision", "[round]")
     CHECK_THAT(3.141568, Catch::Matchers::WithinRel(p.evaluate()));
 
     p.compile(("round(3.14156785, 7)"));
-    CHECK_THAT(3.141568, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.1415679, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(3.141567854, 8)"));
+    CHECK_THAT(3.14156785, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(3.1415678546, 9)"));
+    CHECK_THAT(3.141567855, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(3.14156785467, 10)"));
+    CHECK_THAT(3.1415678547, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(3.141567854672, 11)"));
+    CHECK_THAT(3.14156785467, Catch::Matchers::WithinRel(p.evaluate()));
+
+    p.compile(("round(3.1415678546727, 12)"));
+    CHECK_THAT(3.141567854673, Catch::Matchers::WithinRel(p.evaluate()));
 
     p.compile(("round(-3.1415678, 6)"));
     CHECK_THAT(-3.141568, Catch::Matchers::WithinRel(p.evaluate()));
+    }
+
+TEST_CASE("Round negative", "[round]")
+    {
+    // https://support.microsoft.com/en-us/office/round-function-c018c5d8-40fb-4053-90b1-b3e7f61a213c
+    te_parser p;
+
+    CHECK(p.evaluate("ROUND(21.5, -1)") == 20);
+    CHECK(p.evaluate("ROUND(21, -1)") == 20);
+    CHECK(p.evaluate("ROUND(25.5, -1)") == 30);
+    CHECK(p.evaluate("ROUND(-50.55,-2)") == -100);
+    CHECK(p.evaluate("ROUND(626.3,-3)") == 1000);
+    CHECK(p.evaluate("ROUND(6626.3,-4)") == 10000);
+    // verified in Excel 2016
+    CHECK(p.evaluate("ROUND(626.3,-4)") == 0);
+    CHECK(p.evaluate("ROUND(626.3,-10)") == 0);
+    // Excel politely returns zero, but we return NaN since
+    // this is a ridiculous number of digits to request
+    CHECK(std::isnan(p.evaluate("ROUND(22, -100000)")));
+    CHECK(std::isnan(p.evaluate("ROUND(22, 100000)")));
     }
 
 TEST_CASE("Math operators", "[math]")
@@ -1398,6 +1481,19 @@ TEST_CASE("Logical functions", "[logic]")
     {
     te_parser p;
 
+    SECTION("TRUE/FALSE")
+        {
+        CHECK(p.evaluate("true"));
+        CHECK(p.evaluate("TRUE"));
+        CHECK(p.evaluate("TRUE()"));
+        CHECK(p.evaluate("IF(TRUE(), TRUE, FALSE)"));
+        CHECK(p.evaluate("IF(5 > 4, TRUE, FALSE)"));
+        CHECK_FALSE(p.evaluate("IF(5 < 4, TRUE, FALSE)"));
+        CHECK_FALSE(p.evaluate("false"));
+        CHECK_FALSE(p.evaluate("FALSE"));
+        CHECK_FALSE(p.evaluate("FALSE()"));
+        }
+
     SECTION("AND")
         {
         p.compile(("AND(1)"));
@@ -1547,6 +1643,24 @@ TEST_CASE("Shift operators", "[shift]")
         CHECK(tep.evaluate((std::string("2 << ") + std::to_string(i)).c_str()) == ((uint64_t)2 << i));
         CHECK(tep.evaluate((std::string("2 >> ") + std::to_string(i)).c_str()) == ((uint64_t)2 >> i));
         }
+    SECTION("BITLSHIFT")
+        {
+        CHECK(tep.evaluate("BITLSHIFT(2,25)") == 67108864);
+        CHECK(tep.evaluate("BITLSHIFT(0,25)") == 0);
+        CHECK(tep.evaluate("BITLSHIFT(5, 8)") == 1280);
+        CHECK(tep.evaluate("BITLSHIFT(5, 0)") == 5);
+        // negative turns it into a right shift
+        CHECK(tep.evaluate("BITLSHIFT(500, -2)") == 125);
+        }
+    SECTION("BITRSHIFT")
+        {
+        CHECK(tep.evaluate("BITRSHIFT(13,2)") == 3);
+        CHECK(tep.evaluate("BITRSHIFT(10,0)") == 10);
+        CHECK(tep.evaluate("BITRSHIFT(1024,4)") == 64);
+        CHECK(tep.evaluate("BITRSHIFT(500, 2)") == 125);
+        // negative turns it into a left shift
+        CHECK(tep.evaluate("BITRSHIFT(2, -4)") == 32);
+        }
     SECTION("Left")
         {
         CHECK(tep.evaluate("0 << 4") == ((uint64_t)0 << 4));
@@ -1563,7 +1677,8 @@ TEST_CASE("Shift operators", "[shift]")
         // You may get a warning like such:
         // warning C4554: '<<': check operator precedence for possible error; use parentheses to clarify precedence
         // Good advice, but in this case we do follow the order of precedence where << and >> are the lowest
-        // of precedence amongst the operators (the compiler should do the same).
+        // of precedence amongst the operators and that's what we are testing
+        // (the compiler will do the same).
         CHECK(tep.evaluate("(3 + 2 << 4 - 1)") == (3 + (uint64_t)2 << 4 - 1));
         CHECK(tep.evaluate("(3 + 2 << 4 - 1)") == ((uint64_t)5 << 3));
         CHECK(tep.evaluate("(3 + 2 << 2 * 2)") == (3 + (uint64_t)2 << 2 * 2));
@@ -1710,6 +1825,63 @@ TEST_CASE("Volatile", "[volatile]")
     // just make sure we can call these
     vTep.set_list_separator(',');
     vTep.set_decimal_separator('.');
+    }
+
+TEST_CASE("Bad separators", "[separators]")
+    {
+    te_parser tep;
+
+    // these are acceptable
+    tep.set_list_separator(',');
+    tep.set_list_separator(';');
+    tep.set_decimal_separator('.');
+    tep.set_decimal_separator(',');
+
+    CHECK_THROWS(tep.set_list_separator(' '));
+    CHECK_THROWS(tep.set_decimal_separator('#'));
+
+    // will cause an error when we actually try to use this
+    tep.set_list_separator(',');
+    tep.set_decimal_separator(',');
+    CHECK_THROWS(tep.evaluate("2.2 + 5.9"));
+    }
+
+TEST_CASE("Comments", "[comments]")
+    {
+    te_parser tep;
+
+    SECTION("Multiline")
+        {
+        tep.compile(("COMBIN(15/*The first argument*/, 3)"));
+        CHECK(tep.get_expression() == "COMBIN(15, 3)");
+        CHECK(455 == tep.evaluate());
+        CHECK(2'730 == tep.evaluate("/*Permutation*//*Another comment*/PERMUT(15, \n/*Seccond argument*/3)/*End of the formula*/"));
+        CHECK(tep.get_expression() == "PERMUT(15, \n3)");
+
+        tep.set_constant("SALARY", 15.25);
+        CHECK(2'730 == tep.evaluate());
+        CHECK(tep.evaluate("SALARY/*Income*/") == 15.25);
+        CHECK(tep.get_expression() == "SALARY");
+        CHECK(std::isnan(tep.evaluate("SALARY/*Income/")));
+        CHECK(tep.get_last_error_position() == 6);
+        }
+
+    SECTION("Single line")
+        {
+        tep.compile((
+R"(//Combination
+COMBIN(15,
+//The first argument
+3)
+//End of formula)"));
+        CHECK(455 == tep.evaluate());
+        CHECK(tep.get_expression() ==
+R"(
+COMBIN(15,
+
+3)
+)");
+        }
     }
 
 TEST_CASE("Benchmarks", "[!benchmark]")
