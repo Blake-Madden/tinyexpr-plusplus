@@ -227,28 +227,50 @@ static double _average(double v1, double v2, double v3, double v4,
     const auto total = _sum(v1, v2, v3, v4, v5, v6, v7);
     return _divide(total, validN);
     }
+
+/// @warning This version of round emulates Excel behavior of supporting
+///     negative decimal places (e.g., ROUND(21.5, -1) = 20). Be aware
+///     of that if using this function outside of TinyExpr++.
 [[nodiscard]]
 static double _round(double val, double decimal_places) noexcept
     {
-    const size_t decimalPlaces{ std::isnan(decimal_places) ?
-        0 : static_cast<size_t>(decimal_places) };
-    const size_t decimalPostition = (decimalPlaces == 0) ? 0 :
-        (decimalPlaces == 1) ? 10 : (decimalPlaces == 2) ? 100 :
-        (decimalPlaces == 3) ? 1'000 : (decimalPlaces == 4) ? 10'000 :
-        (decimalPlaces == 5) ? 100'000 : (decimalPlaces >= 6) ? 1'000'000 :
-        10;
+    const bool useNegativeRound{ decimal_places < 0 };
+    const size_t adjustedDecimalPlaces{
+        std::isnan(decimal_places) ?
+        0 : static_cast<size_t>(std::abs(decimal_places)) };
 
+    const auto decimalPostition = std::pow(10, adjustedDecimalPlaces);
+    if (std::isnan(decimalPostition) ||
+        std::isinf(decimalPostition))
+        { return std::numeric_limits<double>::quiet_NaN(); }
+
+    if (!useNegativeRound)
+        {
     if (val < 0)
         {
         return (decimalPostition == 0) ? std::ceil(val - 0.5f) :
-            std::ceil((val * decimalPostition) - 0.5f)/decimalPostition;
+                std::ceil((val * decimalPostition) - 0.5f) / decimalPostition;
         }
     else
         {
         return (decimalPostition == 0) ? std::floor(val + 0.5f) :
-            std::floor((val * decimalPostition) + 0.5f)/decimalPostition;
+                std::floor((val * decimalPostition) + 0.5f) / decimalPostition;
         }
     }
+    else
+        {
+        // ROUND(21.5, -1) = 20
+        if (val < 0)
+            {
+            return std::ceil((val / decimalPostition) - 0.5f) * decimalPostition;
+            }
+        else
+            {
+            return std::floor((val / decimalPostition) + 0.5f) * decimalPostition;
+            }
+        }
+    }
+
 // Combinations (without repetition)
 [[nodiscard]]
 static double _ncr(double n, double r) noexcept
