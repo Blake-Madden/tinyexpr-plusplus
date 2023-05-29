@@ -204,7 +204,7 @@ public:
         @note Returns NaN if division or modulus by zero occurs.
         @throws std::runtime_error Throws an exception in the case of arithmetic overflows
             (e.g., `1 << 64` would cause an overflow).*/
-    bool compile(const char* expression);
+    bool compile(const std::string_view expression);
     /** @brief Evaluates expression passed to compile() previously and returns its result.
         @returns The result, or NaN on error.
         @throws std::runtime_error Throws an exception in the case of arithmetic overflows
@@ -218,7 +218,7 @@ public:
         @throws std::runtime_error Throws an exception in the case of arithmetic overflows
             (e.g., `1 << 64` would cause an overflow).*/
     [[nodiscard]]
-    double evaluate(const char* expression);
+    double evaluate(const std::string_view expression);
     /// @returns The last call to evaluate()'s result (which will be NaN on error).
     [[nodiscard]]
     double get_result() const noexcept
@@ -292,8 +292,12 @@ public:
     void set_decimal_separator(const char sep) noexcept
         { m_decimalSeparator = sep; }
     /// @private
-    void set_decimal_separator(const char sep) volatile noexcept
-        { m_decimalSeparator = sep; }
+    void set_decimal_separator(const char sep) volatile
+        {
+        if (sep != ',' && sep != '.')
+            { throw std::runtime_error("Decimal separator must be either a '.' or ','."); }
+        m_decimalSeparator = sep;
+        }
 
     /// @brief Sets a constant variable's value.
     /// @param name The name of the (constant) variable.
@@ -302,11 +306,13 @@ public:
     ///     then this will add it.\n
     ///     If a variable with the provided name is found but is not a constant,
     ///     then this will be ignored.
-    void set_constant(const char* name, const double value)
+    void set_constant(const std::string_view name, const double value)
         {
         auto cvar = find_variable_or_function(name);
         if (cvar == get_variables_and_functions().end())
-            { add_variable_or_function({ name, value }); }
+            {
+            add_variable_or_function({ te_variable::name_type{ name}, value });
+            }
         else if (is_constant(cvar->m_value))
             {
             auto nh = get_variables_and_functions().extract(cvar);
@@ -315,14 +321,14 @@ public:
             // if previously compiled, then re-compile since this
             // constant would have been optimized
             if (m_expression.length())
-                { compile(m_expression.c_str()); }
+                { compile(m_expression); }
             }
         }
     /// @brief Retrieves a constant variable's value.
     /// @param name The name of the (constant) variable.
     /// @returns The value of the constant variable if found, NaN otherwise.
     [[nodiscard]]
-    double get_constant(const char* name) const
+    double get_constant(const std::string_view name) const
         {
         auto cvar = find_variable_or_function(name);
         if (cvar == get_variables_and_functions().cend() || !is_constant(cvar->m_value))
@@ -347,14 +353,18 @@ public:
     void set_list_separator(const char sep) noexcept
         { m_listSeparator = sep; }
     /// @private
-    void set_list_separator(const char sep) volatile noexcept
-        { m_listSeparator = sep; }
+    void set_list_separator(const char sep) volatile
+        {
+        if (sep != ',' && sep != ';')
+            { throw std::runtime_error("List separator must be either a ',' or ';'."); }
+        m_listSeparator = sep;
+        }
 
     /// @returns @c true if @c name is a function that had been used in the last parsed formula.
     /// @param name The name of the function.
     /// @sa compile() and evaluate().
     [[nodiscard]]
-    bool is_function_used(const char* name) const
+    bool is_function_used(const std::string_view name) const
         {
         return m_usedFunctions.find(
             te_variable::name_type{ name }) != m_usedFunctions.cend();
@@ -363,7 +373,7 @@ public:
     /// @param name The name of the variable.
     /// @sa compile() and evaluate().
     [[nodiscard]]
-    bool is_variable_used(const char* name) const
+    bool is_variable_used(const std::string_view name) const
         {
         return m_usedVars.find(
             te_variable::name_type{ name }) != m_usedVars.cend();
@@ -418,9 +428,10 @@ private:
     ///     or end of get_variables_and_functions() if not found.
     /// @param name The name of the function or variable to search for.
     [[nodiscard]]
-    std::set<te_variable>::iterator find_variable_or_function(const char* name)
+    std::set<te_variable>::iterator find_variable_or_function(const std::string_view name)
         {
-        if (!name) return m_custom_funcs_and_vars.end();
+        if (name.empty())
+            { return m_custom_funcs_and_vars.end(); }
 
         return m_custom_funcs_and_vars.find(
             te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
@@ -430,9 +441,10 @@ private:
     ///     or end of get_variables_and_functions() if not found.
     /// @param name The name of the function or variable to search for.
     [[nodiscard]]
-    std::set<te_variable>::const_iterator find_variable_or_function(const char* name) const
+    std::set<te_variable>::const_iterator find_variable_or_function(const std::string_view name) const
         {
-        if (!name) return m_custom_funcs_and_vars.cend();
+        if (name.empty())
+            { return m_custom_funcs_and_vars.cend(); }
 
         return m_custom_funcs_and_vars.find(
             te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
@@ -661,7 +673,7 @@ private:
             variables to add to the parser.
         @returns null on error.*/
     [[nodiscard]]
-    te_expr* te_compile(const char* expression,
+    te_expr* te_compile(const std::string_view expression,
                         std::set<te_variable>& variables);
     /* Evaluates the expression. */
     [[nodiscard]]
@@ -672,18 +684,17 @@ private:
     static void te_free_parameters(te_expr* n);
     static void optimize(te_expr* n);
     [[nodiscard]]
-    static auto find_builtin(const char* name, const size_t len)
+    static auto find_builtin(const std::string_view name)
         {
         return m_functions.find(
-            te_variable{ te_variable::name_type{ name, len }, 0.0, TE_DEFAULT, nullptr });
+            te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
         }
 
     [[nodiscard]]
-    static auto find_lookup(state* s,
-                            const char* name, const size_t len)
+    static auto find_lookup(state* s, const std::string_view name)
         {
         return s->m_lookup.find(
-            te_variable{ te_variable::name_type{ name, len }, 0.0, TE_DEFAULT, nullptr });
+            te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
         }
 
     void next_token(state* s);

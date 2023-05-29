@@ -666,12 +666,14 @@ void te_parser::next_token(te_parser::state *s)
                     { s->m_next++; }
 
                 m_varFound = false;
-                m_currentVar = find_lookup(s, start, s->m_next - start);
+                m_currentVar = find_lookup(s,
+                    { start, static_cast<std::string::size_type>(s->m_next - start) });
                 if (m_currentVar != s->m_lookup.cend())
                     { m_varFound = true; }
                 else
                     {
-                    m_currentVar = find_builtin(start, s->m_next - start);
+                    m_currentVar = find_builtin(
+                        { start, static_cast<std::string::size_type>(s->m_next - start) });
                     if (m_currentVar != m_functions.cend())
                         { m_varFound = true; }
                     }
@@ -1220,9 +1222,9 @@ void te_parser::optimize(te_expr *n)
     }
 
 //--------------------------------------------------
-te_expr* te_parser::te_compile(const char* expression, std::set<te_variable>& variables)
+te_expr* te_parser::te_compile(const std::string_view expression, std::set<te_variable>& variables)
     {
-    state s(expression, TE_DEFAULT, variables);
+    state s(expression.data(), TE_DEFAULT, variables);
 
     next_token(&s);
     te_expr* root = list(&s);
@@ -1243,9 +1245,8 @@ te_expr* te_parser::te_compile(const char* expression, std::set<te_variable>& va
     }
 
 //--------------------------------------------------
-bool te_parser::compile(const char* expression)
+bool te_parser::compile(const std::string_view expression)
     {
-    assert(expression && "compile() should not be called with null!");
     // reset everything from previous call
     m_errorPos = te_parser::npos;
     m_result = std::numeric_limits<double>::quiet_NaN();
@@ -1278,7 +1279,7 @@ double te_parser::evaluate()
     }
 
 //--------------------------------------------------
-double te_parser::evaluate(const char* expression)
+double te_parser::evaluate(const std::string_view expression)
     {
     if (compile(expression))
         { return evaluate(); }
@@ -1292,10 +1293,10 @@ std::string te_parser::list_available_functions_and_variables()
     {
     std::string report = "Built-in Functions:\n";
     for (const auto& func : m_functions)
-        { report.append(func.m_name.c_str()).append("\n"); }
+        { report.append(func.m_name).append("\n"); }
     report.append("\nCustom Functions & Variables:\n");
     for (const auto& func : get_variables_and_functions())
-        { report.append(func.m_name.c_str()).append("\n"); }
+        { report.append(func.m_name).append("\n"); }
     return report;
     }
 
