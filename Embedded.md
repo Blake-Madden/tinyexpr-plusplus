@@ -82,6 +82,9 @@ which do not follow the proper naming convention.
 (Function and variable names must only contain the characters
 `a`-`z`, `A`-`Z`, `0`-`9`, and `_`, and cannot begin with a number.)
 
+Finally, specifying an illegal character for a list or decimal separator
+can also throw.
+
 The following functions in `te_parser` can throw and should be wrapped
 in `try`/`catch` blocks:
 
@@ -89,6 +92,8 @@ in `try`/`catch` blocks:
 - `evaluate()`
 - `set_variables_and_functions()`
 - `add_variable_or_function()`
+- `set_decimal_separator()`
+- `set_list_separator()`
 
 The caught `std::runtime_error` exception will provide a description
 of the error in its `what()` method.
