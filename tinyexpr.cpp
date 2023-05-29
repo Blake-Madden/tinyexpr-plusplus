@@ -718,10 +718,22 @@ void te_parser::next_token(te_parser::state *s)
                     ++s->m_next;
                     }
                 // logical operators
+                else if (tok == '=' && s->m_next[0] == '=')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_equal);
+                    ++s->m_next;
+                    }
                 else if (tok == '=')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
                     s->m_value = static_cast<te_fun2>(_equal);
+                    }
+                else if (tok == '!' && s->m_next[0] == '=')
+                    {
+                    s->m_type = te_parser::state::token_type::TOK_INFIX;
+                    s->m_value = static_cast<te_fun2>(_not_equal);
+                    ++s->m_next;
                     }
                 else if (tok == '<' && s->m_next[0] == '>')
                     {
