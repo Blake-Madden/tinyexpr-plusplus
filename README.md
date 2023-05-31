@@ -66,7 +66,7 @@ The following are changes from the original TinyExpr C library:
   and then use a custom class as an argument to the various function types that accept a `te_expr*` parameter. The function that you connect can then `dynamic_cast<>`
   this argument and use its custom fields, thus greatly enhancing the functionality for these types of functions.
   (See below for example.)
-- Added exception support, where exceptions are thrown for situations like arithmetic overflows. Calls to `compile` and `evaluate` should be wrapped in `try`...`catch` blocks.
+- Added exception support, where exceptions are thrown for situations like providing invalid separators. Calls to `compile` and `evaluate` should be wrapped in `try`...`catch` blocks.
 - Memory management is handled by the `te_parser` class (you no longer need to call `te_free`). Also, replaced `malloc/free` with `new/delete`.
 - Stricter type safety; uses `std::variant` (instead of unions) that support `double`, `const double*`,
   and 16 specific function signatures (that will work with lambdas or function pointers).
@@ -132,6 +132,7 @@ The following are changes from the original TinyExpr C library:
 - Binary search (i.e., `std::set`) is now used to look up custom variables and functions (small optimization).
 - You no longer need to specify the number of arguments for custom functions; it will deduce that for you.
 - The position of an error when evaluating an expression is now managed by the `te_parser` class and accessible via `get_last_error_position()`.
+- Some parsing errors can provide error messages available via `get_last_error_message()`.
 - The position of aforementioned error is now 0-indexed (not 1-indexed); `te_parser::npos` indicates that there was no error.
 - Added `success()` function to indicate if the last parse succeeded or not.
 - Added `get_result()` function to get result from the last call to `evaluate` or `compile`.
@@ -188,6 +189,7 @@ double evaluate(const std::string_view expression);
 double get_result();
 bool success();
 int64_t get_last_error_position();
+std::string get_last_error_message();
 set_variables_and_functions(const std::set<te_variable>& vars);
 std::set<te_variable>& get_variables_and_functions();
 add_variable_or_function(const te_variable& var);
@@ -205,7 +207,7 @@ is a parse error, then it returns NaN (which can be verified by using `std::isna
 `success()` can be called to see if the previous call `evaluate()` succeeded or not.
 
 If the parse failed, calling `get_last_error_position()` will return the 0-based index of where in the
-expression the parse failed.
+expression the parse failed. For some errors, `get_last_error_message()` will return a more detailed message.
 
 `set_variables_and_functions()`, `get_variables_and_functions()`, and `add_variable_or_function()` are used
 to add custom variables and functions to the parser.
