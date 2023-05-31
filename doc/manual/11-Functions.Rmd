@@ -5,9 +5,9 @@
 | :-- | :-- |
 | ABS(Number) | Absolute value of **Number**. |
 | ACOS(Number) | Returns the arccosine, or inverse cosine, of **Number**. The arccosine is the angle whose cosine is number. The returned angle is given in radians in the range 0 (zero) to PI. |
-| ASIN(Number) | |
-| ATAN(Number) | Arc tangent of **Number**. |
-| ATAN2(Number) | |
+| ASIN(Number) | Returns the arcsine, or inverse sine function, of **Number**, where -1 <= **Number** <= 1. The arcsine is the angle whose sine is **Number**. The returned angle is given in radians where -pi/2 <= angle <= pi/2. |
+| ATAN(x) | Returns the principal value of the arc tangent of **x**, expressed in radians.. |
+| ATAN2(y, x) | Returns the principal value of the arc tangent of **y**,**x**, expressed in radians. |
 | BITLSHIFT ||
 | BITRSHIFT ||
 | CEIL(Number) | Smallest integer not less than **Number**.<br>\linebreak CEIL(-3.2) = -3<br>\linebreak CEIL(3.2) = 4 |
@@ -21,7 +21,7 @@
 | FACT(Number) | Returns the factorial of **Number**. The factorial of **Number** is equal to 1\*2\*3\*...\* **Number** |
 | FLOOR(Number) | Returns the largest integer not greater than **Number**.<br>\linebreak FLOOR(-3.2) = -4<br>\linebreak FLOOR(3.2) = 3 |
 | LN(Number) | Natural logarithm of **Number** (base Euler). |
-| LOG(Number) | Natural logarithm of **Number** (base Euler). |
+| LOG(Number) | Common logarithm of **Number** (base 10). |
 | LOG10(Number) | Common logarithm of **Number** (base 10). |
 | MIN(value1, value2, ...) | Returns the lowest value from a specified range of values. |
 | MAX(value1, value2, ...) | Returns the highest value from a specified range of values. |
