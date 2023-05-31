@@ -463,6 +463,11 @@ TEST_CASE("Combinatorics", "[combinatorics]")
     CHECK(tep.evaluate("fac(3)") == 6);
     CHECK(tep.evaluate("fac(4.8)") == 24);
     CHECK(tep.evaluate("fac(10)") == 3'628'800);
+    CHECK(tep.evaluate("FACT(5)") == 120);
+    CHECK(tep.evaluate("FACT(1.9)") == 1);
+    CHECK(tep.evaluate("FACT(0)") == 1);
+    CHECK(tep.evaluate("FACT(1)") == 1);
+    CHECK(std::isnan(tep.evaluate("FACT(-1)")));
 
     CHECK(tep.evaluate("ncr(0,0)") == 1);
     CHECK(tep.evaluate("ncr(10,1)") == 10);
@@ -1658,22 +1663,28 @@ TEST_CASE("Shift operators", "[shift]")
         CHECK(tep.evaluate("BITRSHIFT(10,0)") == 10);
         CHECK(tep.evaluate("BITRSHIFT(1024,4)") == 64);
         CHECK(tep.evaluate("BITRSHIFT(500, 2)") == 125);
+        CHECK(tep.get_last_error_message().empty());
         // negative turns it into a left shift
         CHECK(tep.evaluate("BITRSHIFT(2, -4)") == 32);
         }
     SECTION("Left")
         {
+        CHECK_FALSE(tep.compile("1 << 64"));
+        CHECK(std::isnan(tep.evaluate()));
+        CHECK(tep.get_last_error_message() == "Additive expression of left shift (<<) operation must be between 0-63.");
         CHECK(tep.evaluate("0 << 4") == ((uint64_t)0 << 4));
-        CHECK_THROWS(tep.evaluate("1 << 64"));
-        CHECK_THROWS(tep.evaluate("1 << -5"));
+        CHECK(std::isnan(tep.evaluate("1 << 64")));
+        CHECK(std::isnan(tep.evaluate("1 << -5")));
+        CHECK(tep.get_last_error_message() == "Additive expression of left shift (<<) operation must be between 0-63.");
         CHECK(tep.evaluate("31 << 59") == ((uint64_t)31 << 59));
         // overflow
-        CHECK_THROWS(tep.evaluate("32 << 59"));
-        CHECK_THROWS(tep.evaluate("2 << 63"));
-        CHECK_THROWS(tep.evaluate("-1 << 2"));
+        CHECK(std::isnan(tep.evaluate("32 << 59")));
+        CHECK(tep.get_last_error_message() == "Overflow in left shift (<<) operation; base number is too large.");
+        CHECK(std::isnan(tep.evaluate("2 << 63")));
+        CHECK(std::isnan(tep.evaluate("-1 << 2")));
         CHECK(tep.evaluate("1.0 << 4.0") == ((uint64_t)1 << 4));
-        CHECK_THROWS(tep.evaluate("1.01 << 2"));
-        CHECK_THROWS(tep.evaluate("1 << 2.001"));
+        CHECK(std::isnan(tep.evaluate("1.01 << 2")));
+        CHECK(std::isnan(tep.evaluate("1 << 2.001")));
         // You may get a warning like such:
         // warning C4554: '<<': check operator precedence for possible error; use parentheses to clarify precedence
         // Good advice, but in this case we do follow the order of precedence where << and >> are the lowest
@@ -1682,24 +1693,40 @@ TEST_CASE("Shift operators", "[shift]")
         CHECK(tep.evaluate("(3 + 2 << 4 - 1)") == (3 + (uint64_t)2 << 4 - 1));
         CHECK(tep.evaluate("(3 + 2 << 4 - 1)") == ((uint64_t)5 << 3));
         CHECK(tep.evaluate("(3 + 2 << 2 * 2)") == (3 + (uint64_t)2 << 2 * 2));
+        // error state is reset
+        CHECK(tep.compile("1 << 10"));
+        CHECK(tep.evaluate() == 1 << 10);
+        CHECK(tep.get_last_error_message().empty());
         }
     SECTION("Right")
         {
         CHECK(tep.evaluate("0 >> 4") == ((uint64_t)0 >> 4));
-        CHECK_THROWS(tep.evaluate("1 >> 64"));
-        CHECK_THROWS(tep.evaluate("1 >> -5"));
+        CHECK(std::isnan(tep.evaluate("1 >> 64")));
+        CHECK(std::isnan(tep.get_result()));
+        CHECK(std::isnan(tep.evaluate("1 >> -5")));
+        CHECK(tep.get_last_error_message() == "Additive expression of right shift (>>) operation must be between 0-63.");
+        CHECK(std::isnan(tep.get_result()));
         CHECK(tep.evaluate("32 >> 4") == ((uint64_t)32 >> 4));
         CHECK(tep.evaluate("32 >> 5") == ((uint64_t)32 >> 5));
         // (32 / 64) = 0.5, which is floored to zero
         CHECK(tep.evaluate("32 >> 6") == ((uint64_t)32 >> 6));
-        CHECK_THROWS(tep.evaluate("-1 >> 2"));
+        CHECK(std::isnan(tep.evaluate("-1 >> 2")));
+        CHECK(std::isnan(tep.get_result()));
         CHECK(tep.evaluate("1.0 >> 4.0") == ((uint64_t)1 >> 4));
-        CHECK_THROWS(tep.evaluate("1.01 >> 2"));
-        CHECK_THROWS(tep.evaluate("1 >> 2.001"));
+        CHECK(std::isnan(tep.evaluate("1.01 >> 2")));
+        CHECK(tep.get_last_error_message() == "Left side of right shift (>>) operation must be an integer.");
+        CHECK(std::isnan(tep.get_result()));
+        CHECK(std::isnan(tep.evaluate("1 >> 2.001")));
+        CHECK(std::isnan(tep.get_result()));
 
         CHECK(tep.evaluate("(3 + 2 >> 4 - 1)") == (3 + (uint64_t)2 >> 4 - 1));
         CHECK(tep.evaluate("(3 + 2 >> 4 - 1)") == ((uint64_t)5 >> 3));
         CHECK(tep.evaluate("(3 + 2 >> 2 * 2)") == (3 + (uint64_t)2 >> 2 * 2));
+
+        // error state is reset
+        CHECK(tep.compile("1 << 10"));
+        CHECK(tep.evaluate() == 1 << 10);
+        CHECK(tep.get_last_error_message().empty());
         }
     }
 

@@ -247,6 +247,11 @@ public:
     int64_t get_last_error_position() const volatile noexcept
         { return m_errorPos; }
 
+    /// @returns Any error message from the last parse.
+    [[nodiscard]]
+    const std::string& get_last_error_message() const noexcept
+        { return m_lastErrorMessage; }
+
     /// @brief Sets the list of custom variables and functions.
     /// @param vars The list of variables and functions.
     /// @note Valid variable and function names must begin with a letter from a-z (A-Z),
@@ -744,6 +749,7 @@ private:
 
     bool m_parseSuccess{ false };
     int64_t m_errorPos{ 0 };
+    std::string m_lastErrorMessage;
     double m_result{ std::numeric_limits<double>::quiet_NaN() };
     char m_decimalSeparator{ '.' };
     char m_listSeparator{ ',' };

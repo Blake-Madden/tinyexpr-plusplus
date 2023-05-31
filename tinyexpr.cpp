@@ -1261,6 +1261,7 @@ bool te_parser::compile(const std::string_view expression)
     {
     // reset everything from previous call
     m_errorPos = te_parser::npos;
+    m_lastErrorMessage.clear();
     m_result = std::numeric_limits<double>::quiet_NaN();
     m_parseSuccess = false;
     te_free(m_compiledExpression);
@@ -1275,7 +1276,7 @@ bool te_parser::compile(const std::string_view expression)
         {
         m_expression.clear();
         m_errorPos = 0;
-        return std::numeric_limits<double>::quiet_NaN();
+        return false;
         }
     m_expression.assign(expression);
 
@@ -1310,9 +1311,18 @@ bool te_parser::compile(const std::string_view expression)
         else
             { m_expression.erase(commentStart, commentEnd - commentStart); }
         }
-
-    m_compiledExpression = te_compile(m_expression, get_variables_and_functions());
-    m_parseSuccess = (m_compiledExpression != nullptr) ? true : false;
+    
+    try
+        {
+        m_compiledExpression = te_compile(m_expression, get_variables_and_functions());
+        m_parseSuccess = (m_compiledExpression != nullptr) ? true : false;
+        }
+    catch (const std::exception& expt)
+        {
+        m_parseSuccess = false;
+        m_result = std::numeric_limits<double>::quiet_NaN();
+        m_lastErrorMessage = expt.what();
+        }
     return m_parseSuccess;
     }
 
