@@ -1,41 +1,45 @@
 # Functions
 
-::: {.minipage data-latex="{\textwidth}"}
+::: {}
 | Function | Description |
 | :-- | :-- |
-| AND(value1,value2,...) | Returns true if all conditions are true. |
-| IF(condition,value_if_true,value_if_false) | If *condition* is true (non-zero), then *value\_if\_true* is returned; otherwise, *value\_if\_false* is returned. |
-| NOT(value) | Returns the logical negation of *value.* |
-| OR(value1,value2,...) | Returns true if any condition is true. |
-
-Table: Logic Functions
-:::
-
-::: {.minipage data-latex="{\textwidth}"}
-| Function | Description |
-| :-- | :-- |
-| ABS(x) | Absolute value of *x*. |
-| ATAN(x) | Arc tangent of *x*. |
-| CEIL(x) | Smallest integer not less than *x*. CEIL(-3.2) = -3, CEIL(3.2) = 4. |
-| CLAMP(x,start,end) | Constrains *x* within the range of *start* and *end*. |
-| COS(x) | Cosine of the angle *x* in radians. |
-| COSH(x) | Hyperbolic cosine of *x*. |
-| COT(x) | Cotangent of *x*. |
-| EXP(x) | Euler to the power of *x*. |
-| FLOOR(x) | Returns the largest integer not greater than *x*. FLOOR(-3.2) = -4, FLOOR(3.2) = 3. |
-| LN(x) | Natural logarithm of *x* (base Euler). |
-| LOG(x) | Common logarithm of *x* (base 10). |
-| MAX(value,value2,...) | Returns the highest value from a specified range of values. |
-| MIN(value,value2,...) | Returns the lowest value from a specified range of values. |
-| POWER(base,exponent) | Raises *base* to any power. For fractional exponents, *base* must be greater than 0. |
+| ABS(Number) | Absolute value of **Number**. |
+| ACOS(Number) | Returns the arccosine, or inverse cosine, of **Number**. The arccosine is the angle whose cosine is number. The returned angle is given in radians in the range 0 (zero) to PI. |
+| ASIN(Number) | |
+| ATAN(Number) | Arc tangent of **Number**. |
+| ATAN2(Number) | |
+| BITLSHIFT ||
+| BITRSHIFT ||
+| CEIL(Number) | Smallest integer not less than **Number**.<br>\linebreak CEIL(-3.2) = -3<br>\linebreak CEIL(3.2) = 4 |
+| CLAMP(Number, start, end) | Constrains **Number** within the range of **start** and **end**. |
+| COMBIN(Number, Number\_chosen) | Returns the number of combinations for **Number** of items. This will determine the total possible number of groups (**Number\_chosen**) for **Number** of items. |
+| COS(Number) | Cosine of the angle **Number** in radians. |
+| COSH(Number) | Hyperbolic cosine of **Number**. |
+| COT(Number) | Cotangent of **Number**. |
+| EXP(Number) | Euler to the power of **Number**. |
+| FAC(Number) | Returns the factorial of **Number**. The factorial of **Number** is equal to 1\*2\*3\*...\* **Number** |
+| FACT(Number) | Returns the factorial of **Number**. The factorial of **Number** is equal to 1\*2\*3\*...\* **Number** |
+| FLOOR(Number) | Returns the largest integer not greater than **Number**.<br>\linebreak FLOOR(-3.2) = -4<br>\linebreak FLOOR(3.2) = 3 |
+| LN(Number) | Natural logarithm of **Number** (base Euler). |
+| LOG(Number) | Natural logarithm of **Number** (base Euler). |
+| LOG10(Number) | Common logarithm of **Number** (base 10). |
+| MIN(value1, value2, ...) | Returns the lowest value from a specified range of values. |
+| MAX(value1, value2, ...) | Returns the highest value from a specified range of values. |
+| MOD(Number, Divisor) | Returns the remainder after **Number** is divided by **Divisor**. The result has the same sign as divisor. |
+| NCR() ||
+| NPR() ||
+| PERMUT() ||
+| POW(base, exponent) | Raises **base** to any power. For fractional exponents, **base** must be greater than 0. |
+| POWER(base, exponent) | Raises **base** to any power. For fractional exponents, **base** must be greater than 0. |
 | RAND() | Generates a random floating point number within the range of 0 and 1. |
-| ROUND(number, num_digits) | *Number* rounded to *num_digits* decimal places.<br>\linebreak(*num_digits* is optional and defaults to zero.)<br>\linebreak ROUND(-11.6, 0) = 12<br>\linebreak ROUND(-11.6) = 12<br>\linebreak ROUND(1.5, 0) = 2<br>\linebreak ROUND(1.55, 1) = 1.6<br>\linebreak ROUND(3.1415, 3) = 3.142 |
-| SIGN(x) | Sign of *x*. *x*<0 returns -1, *x*=0 returns 0, and *x*>0 returns 1). |
-| SIN(x) | Sine of the angle *x* in radians. |
-| SINH(x) | Hyperbolic sine of *x*. |
-| SQRT(x) | Square root of *x*. |
-| TAN(x) | Tangent of *x*. |
-| TRUNC(x) | Discards the fractional part of a number (e.g., TRUNC(-3.2) is -3, TRUNC(3.2) is 3). |
+| ROUND(Number, num\_digits) | **Number** rounded to **num\_digits** decimal places.<br>\linebreak If **num\_digits** is negative, then **Number** is rounded to the left of the decimal point.<br>\linebreak(**num_digits** is optional and defaults to zero.)<br>\linebreak ROUND(-11.6, 0) = 12<br>\linebreak ROUND(-11.6) = 12<br>\linebreak ROUND(1.5, 0) = 2<br>\linebreak ROUND(1.55, 1) = 1.6<br>\linebreak ROUND(3.1415, 3) = 3.142<br>\linebreak ROUND(-50.55,-2) |
+| SIGN(Number) | Returns the sign of **Number**. Returns 1 if **Number** is positive, zero (0) if **Number** is 0, and -1 if **Number** is negative. |
+| SIN(Number) | Sine of the angle **Number** in radians. |
+| SINH(Number) | Hyperbolic sine of **Number**. |
+| SQRT(Number) | Square root of **Number**. |
+| TAN(Number) | Tangent of **Number**. |
+| TGAMMA(Number) | Returns the gamma function of **Number**. |
+| TRUNC(Number) | Discards the fractional part of **Number**.<br>\linebreak TRUNC(-3.2) = -3<br>\linebreak TRUNC(3.2) = 3 |
 
 Table: Math Functions
 :::
@@ -43,8 +47,19 @@ Table: Math Functions
 ::: {.minipage data-latex="{\textwidth}"}
 | Function | Description |
 | :-- | :-- |
-| AVGERAGE(value1,value2,...) | Returns the average of a specified range of values. |
-| SUM(value1,value2,...) | Returns the sum of a specified range of values. |
+| AVGERAGE(value1, value2,...) | Returns the average of a specified range of values. |
+| SUM(value1, value2,...) | Returns the sum of a specified range of values. |
 
 Table: Statistical Functions
+:::
+
+::: {.minipage data-latex="{\textwidth}"}
+| Function | Description |
+| :-- | :-- |
+| AND(value1, value2, ...) | Returns true if all conditions are true. |
+| IF(condition, value\_if\_true, value\_if\_false) | If **condition** is true (non-zero), then **value\_if\_true** is returned; otherwise, **value\_if\_false** is returned. |
+| NOT(value) | Returns the logical negation of **value.** |
+| OR(value1, value2, ...) | Returns true if any condition is true. |
+
+Table: Logic Functions
 :::
