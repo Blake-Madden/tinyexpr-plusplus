@@ -75,7 +75,8 @@ constexpr static double _and(double a, double b) noexcept
 constexpr static double _or(double a, double b) noexcept
     { return (a || b) ? 1 : 0; }
 [[nodiscard]]
-constexpr static double _not(double a) noexcept { return !a; }
+constexpr static double _not(double a) noexcept
+    { return !a; }
 [[nodiscard]]
 constexpr static double _pi() noexcept
     { return 3.14159265358979323846; }
@@ -165,7 +166,15 @@ static double _acos(double x)
 
 [[nodiscard]]
 static double _asin(double x)
-    { return std::asin(static_cast<double>(x)); }
+    {
+    if (std::isfinite(x) &&
+        (x < -1.0 || x > 1.0))
+        {
+        throw std::runtime_error(
+            "Argument passed to ASIN must be between -1 and 1.");
+        }
+    return std::asin(static_cast<double>(x));
+    }
 
 [[nodiscard]]
 static double _atan(double x)
@@ -191,19 +200,19 @@ static double _random()
 constexpr static double _divide(double a, double b)
     {
     if (b == 0)
-        { return std::numeric_limits<double>::quiet_NaN(); }
+        { throw std::runtime_error("Division by zero."); }
     return a / b;
     }
 [[nodiscard]]
 static double _modulus(double a, double b)
     {
     if (b == 0)
-        { return std::numeric_limits<double>::quiet_NaN(); }
+        { throw std::runtime_error("Modulus by zero."); }
     return std::fmod(a,b);
     }
 [[nodiscard]]
 static double _sum(double v1, double v2, double v3, double v4,
-                   double v5, double v6, double v7) noexcept
+                   double v5, double v6, double v7)
     {
     return (std::isnan(v1) ? 0 : v1) +
         (std::isnan(v2) ? 0 : v2) +
@@ -240,8 +249,7 @@ static double _round(double val, double decimal_places)
         0 : static_cast<size_t>(std::abs(decimal_places)) };
 
     const auto decimalPostition = std::pow(10, adjustedDecimalPlaces);
-    if (std::isnan(decimalPostition) ||
-        std::isinf(decimalPostition))
+    if (!std::isfinite(decimalPostition))
         { return std::numeric_limits<double>::quiet_NaN(); }
 
     if (!useNegativeRound)
@@ -481,20 +489,18 @@ constexpr static double _comma([[maybe_unused]] double a, double b) noexcept
     { return b; }
 
 //--------------------------------------------------
-te_expr* te_parser::new_expr(const variable_flags type, const variant_type& value,
+te_expr* te_parser::new_expr(const variable_flags type, variant_type value,
                              const std::initializer_list<te_expr*> parameters)
     {
     const auto arity = get_arity(value);
-    te_expr* ret = new te_expr;
+    te_expr* ret = new te_expr{ type, std::move(value)};
     ret->m_parameters.resize(
         std::max<size_t>(
-            std::max<size_t>(parameters.size(), arity) + (is_closure(value) ? 1 : 0),
+            std::max<size_t>(parameters.size(), arity) + (is_closure(ret->m_value) ? 1 : 0),
             1)
         );
     if (parameters.size())
         { std::copy(parameters.begin(), parameters.end(), ret->m_parameters.begin()); }
-    ret->m_type = type;
-    ret->m_value = double{ 0.0 };
     return ret;
     }
 
@@ -855,13 +861,11 @@ te_expr* te_parser::base(te_parser::state *s)
     else if (s->m_type == te_parser::state::token_type::TOK_NUMBER)
         {
         ret = new_expr(TE_DEFAULT, s->m_value, {});
-        ret->m_value = s->m_value;
         next_token(s);
         }
     else if (s->m_type == te_parser::state::token_type::TOK_VARIABLE)
         {
         ret = new_expr(TE_DEFAULT, s->m_value, {});
-        ret->m_value = s->m_value;
         next_token(s);
         }
     else if (s->m_type == te_parser::state::token_type::TOK_NULL ||
@@ -878,7 +882,6 @@ te_expr* te_parser::base(te_parser::state *s)
     else if (is_function0(s->m_value) || is_closure0(s->m_value))
         {
         ret = new_expr(s->m_varType, s->m_value, {});
-        ret->m_value = s->m_value;
         if (is_closure(s->m_value)) ret->m_parameters[0] = s->context;
         next_token(s);
         if (s->m_type == te_parser::state::token_type::TOK_OPEN)
@@ -893,7 +896,6 @@ te_expr* te_parser::base(te_parser::state *s)
     else if (is_function1(s->m_value) || is_closure1(s->m_value))
         {
         ret = new_expr(s->m_varType, s->m_value, { nullptr });
-        ret->m_value = s->m_value;
         if (is_closure(s->m_value)) ret->m_parameters[1] = s->context;
         next_token(s);
         ret->m_parameters[0] = power(s);
@@ -908,7 +910,6 @@ te_expr* te_parser::base(te_parser::state *s)
         const int arity = get_arity(s->m_value);
 
         ret = new_expr(s->m_varType, s->m_value, {});
-        ret->m_value = s->m_value;
         if (is_closure(s->m_value)) ret->m_parameters[arity] = s->context;
         next_token(s);
 
@@ -951,7 +952,6 @@ te_expr* te_parser::list(te_parser::state *s)
     while (s->m_type == te_parser::state::token_type::TOK_SEP) {
         next_token(s);
         ret = new_expr(TE_PURE, variant_type(_comma), { ret, expr(s) });
-        ret->m_value = _comma;
     }
 
     return ret;
@@ -973,7 +973,6 @@ te_expr* te_parser::expr(te_parser::state *s)
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
         ret = new_expr(TE_PURE, t, { ret, expr_level2(s) });
-        ret->m_value = t;
         }
 
     return ret;
@@ -998,7 +997,6 @@ te_expr* te_parser::expr_level2(te_parser::state *s)
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
         ret = new_expr(TE_PURE, t, { ret, expr_level3(s) });
-        ret->m_value = t;
         }
 
     return ret;
@@ -1019,7 +1017,6 @@ te_expr* te_parser::expr_level3(te_parser::state *s)
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
         ret = new_expr(TE_PURE, t, { ret, expr_level4(s) });
-        ret->m_value = t;
         }
 
     return ret;
@@ -1040,7 +1037,6 @@ te_expr* te_parser::expr_level4(te_parser::state *s)
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
         ret = new_expr(TE_PURE, t, { ret, term(s) });
-        ret->m_value = t;
         }
 
     return ret;
@@ -1059,7 +1055,6 @@ te_expr* te_parser::term(te_parser::state *s)
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
         ret = new_expr(TE_PURE, t, { ret, factor(s) });
-        ret->m_value = t;
     }
 
     return ret;
@@ -1091,19 +1086,16 @@ te_expr* te_parser::factor(te_parser::state *s) {
         if (insertion) {
             /* Make exponentiation go right-to-left. */
             te_expr* insert = new_expr(TE_PURE, t, { insertion->m_parameters[1], power(s) });
-            insert->m_value = t;
             insertion->m_parameters[1] = insert;
             insertion = insert;
         } else {
             ret = new_expr(TE_PURE, t, { ret, power(s) });
-            ret->m_value = t;
             insertion = ret;
         }
     }
 
     if (neg) {
         ret = new_expr(TE_PURE, variant_type(_negate), { ret });
-        ret->m_value = _negate;
     }
 
     return ret;
@@ -1119,7 +1111,6 @@ te_expr* te_parser::factor(te_parser::state *s)
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
         ret = new_expr(TE_PURE, t, { ret, power(s) });
-        ret->m_value = t;
     }
 
     return ret;
@@ -1133,7 +1124,8 @@ te_expr* te_parser::power(te_parser::state *s)
     int Sign{ 1 };
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-           (get_function2(s->m_value) == _add || get_function2(s->m_value) == _sub))
+           (get_function2(s->m_value) == _add ||
+            get_function2(s->m_value) == _sub))
         {
         if (get_function2(s->m_value) == _sub) Sign = -Sign;
         next_token(s);
@@ -1145,7 +1137,6 @@ te_expr* te_parser::power(te_parser::state *s)
         ret = base(s);
     } else {
         ret = new_expr(TE_PURE, variant_type(_negate), { base(s) });
-        ret->m_value = _negate;
     }
 
     return ret;
@@ -1329,9 +1320,18 @@ bool te_parser::compile(const std::string_view expression)
 //--------------------------------------------------
 double te_parser::evaluate()
     {
-    m_result = (m_compiledExpression) ?
-        te_eval(m_compiledExpression) :
-        std::numeric_limits<double>::quiet_NaN();
+    try
+        {
+        m_result = (m_compiledExpression) ?
+            te_eval(m_compiledExpression) :
+            std::numeric_limits<double>::quiet_NaN();
+        }
+    catch (const std::exception& expt)
+        {
+        m_parseSuccess = false;
+        m_result = std::numeric_limits<double>::quiet_NaN();
+        m_lastErrorMessage = expt.what();
+        }
     return m_result;
     }
 

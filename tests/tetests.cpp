@@ -227,6 +227,17 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("(3/2*4)") == 3.0 / 2.0 * 4.0);
     CHECK(tep.evaluate("3*(2/4)") == 3.0 * (2.0 / 4.0));
 
+    // check ranges
+    CHECK(std::isnan(tep.evaluate("asin(1.01)")));
+    CHECK(std::isnan(tep.evaluate("asin(-1.01)")));
+    CHECK(tep.get_last_error_message() == "Argument passed to ASIN must be between -1 and 1.");
+    CHECK(tep.evaluate("asin(1)") == std::asin(1.0));
+    CHECK(tep.get_last_error_message().empty());
+    CHECK(tep.success());
+    CHECK(tep.evaluate("asin(-1)") == std::asin(-1.0));
+    CHECK(tep.get_last_error_message().empty());
+    CHECK(tep.success());
+
     CHECK_THAT(tep.evaluate("asin sin .5"), Catch::Matchers::WithinRel(0.5, 0.00001));
     CHECK_THAT(tep.evaluate("sin asin .5"), Catch::Matchers::WithinRel(0.5, 0.00001));
     CHECK_THAT(tep.evaluate("ln exp .5"), Catch::Matchers::WithinRel(0.5, 0.00001));
@@ -642,7 +653,7 @@ TEST_CASE("Functions", "[functions]")
     te_parser tep;
     tep.set_variables_and_functions({ {"x", &x}, {"y", &y} });
 
-    for (x = -5; x < 5; x += 0.2)
+    for (x = -5; x < 5; x += 0.1)
         {
         CHECK_THAT(tep.evaluate("abs x"), Catch::Matchers::WithinRel(fabs(x)));
         if (!std::isnan(acos(x)))
@@ -1278,6 +1289,9 @@ TEST_CASE("Division", "[math]")
 
     p.compile("4/2.2");
     CHECK_THAT(1.81818, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK(std::isnan(p.evaluate("5 / 0")));
+    CHECK_FALSE(p.success());
+    CHECK(p.get_last_error_message() == "Division by zero.");
     }
 
 TEST_CASE("Modulus", "[math]")
@@ -1290,6 +1304,10 @@ TEST_CASE("Modulus", "[math]")
     CHECK(2 == p.evaluate("MOD(5,3)"));
     CHECK(0 == p.evaluate("mod(5,5)"));
     CHECK(5 == p.evaluate("MoD(5,6)"));
+
+    CHECK(std::isnan(p.evaluate("5 % 0")));
+    CHECK_FALSE(p.success());
+    CHECK(p.get_last_error_message() == "Modulus by zero.");
     }
 
 TEST_CASE("Is function used", "[functions]")
