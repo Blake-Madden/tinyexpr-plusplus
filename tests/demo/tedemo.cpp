@@ -1,6 +1,6 @@
 // This is mostly used as a CMake project used for code analysis.
 
-#include "../../tinyexpr.h"
+#include "tinyexpr.h"
 #include <iostream>
 
 int main(int argc, char *argv[])
