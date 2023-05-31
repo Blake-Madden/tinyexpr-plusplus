@@ -11,7 +11,7 @@ on: [push]
 
 env:
   # Path to the CMake build directory.
-  build: '${{ github.workspace }}build'
+  build: '${{ github.workspace }}'
   config: 'Debug'
   
 permissions:
