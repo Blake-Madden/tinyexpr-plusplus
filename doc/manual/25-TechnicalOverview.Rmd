@@ -1,0 +1,58 @@
+# How it Works
+
+`te_parser::evaluate()` uses a simple recursive descent parser to compile your
+expression into a syntax tree. For example, the expression `"sin x + 1/4"`
+parses as:
+
+![example syntax tree](e1.png)
+
+`te_parser::evaluate()` also automatically prunes constant branches. In this example,
+the compiled expression returned by `te_compile()` would become:
+
+![example syntax tree](e2.png)
+
+## Speed
+
+TinyExpr++ is fairly fast compared to C when the expression is short, when the
+expression does hard calculations (e.g., exponentiation), and when some of the
+work can be simplified by `evaluate()`. TinyExpr++ is slow compared to C when the
+expression is long and involves only basic arithmetic.
+
+Here is some example performance numbers:
+
+| Expression | evaluate time | native C time | slowdown  |
+| :------------- |-------------:| -----:|----:|
+| sqrt(a^1.5+a^2.5) | 16,363 ms | 13,193 ms | 24.03% slower |
+| a+5 | 3,051 ms | 1,255 ms | 143.11% slower |
+| a+(5*2) | 1,754 ms | 524 ms | 234.73% slower |
+| (a+5)*2 | 3,225 ms | 518 ms | 522.59% slower |
+| (1/(a+1)+2/(a+2)+3/(a+3)) | 12,754 ms | 680 ms | 1,775.59%  slower |
+
+Note that TinyExpr++ is slower compared to TinyExpr because of additional type safety checks.
+
+## Grammar
+
+TinyExpr++ parses the following grammar (from lowest-to-highest operator precedence):
+
+    <list>      =    <expr> {(",", ";" [dependent on locale]) <expr>}
+    <expr>      =    <term> {("&" | "|") <term>}
+    <expr>      =    <term> {("<>" | "!=" | "=" | "<") | "<=") | ">" | ">=") <term>}
+    <expr>      =    <term> {("<<" | ">>") <term>}
+    <expr>      =    <term> {("+" | "-") <term>}
+    <term>      =    <factor> {("*" | "/" | "%") <factor>}
+    <factor>    =    <power> {("^" | "**") <power>}
+    <power>     =    {("-" | "+")} <base>
+    <base>      =    <constant>
+                   | <variable>
+                   | <function-0> {"(" ")"}
+                   | <function-1> <power>
+                   | <function-X> "(" <expr> {"," <expr>} ")"
+                   | "(" <list> ")"
+
+In addition, whitespace between tokens is ignored.
+
+Valid variable names consist of a lower-case letter followed by any combination
+of: lower-case letters `a` through `z`, the digits `0` through `9`, and
+underscore. Constants can be integers, decimal numbers, or in scientific
+notation (e.g., `1e3` for `1000`). A leading zero is not required (e.g., `.5`
+for `0.5`)

@@ -5,11 +5,34 @@ documentclass: book
 site: bookdown::bookdown_site
 lot: yes
 link-citations: yes
+output:
+  bookdown::pdf_book:
+    template: "latex/default.tex"
+    includes:
+      in_header: "latex/preamble.tex"
 ---
 
-# About
+# Overview
 
 This is the reference manual for TinyExpr++, the C++ version of the TinyExpr formula parsing library.
 
 TinyExpr++ is a small parser and evaluation library for solving math expressions from C++.
 It's open-source, free, easy-to-use, and self-contained in a single source and header file pair.
+
+## Features
+
+- **C++17 with no dependencies**.
+- Single source file and header file.
+- Simple and fast.
+- Implements standard operator precedence.
+- Implements logical and comparison operators.
+- Exposes standard C math functions (`sin`, `sqrt`, `ln`, etc.), as well as some Excel-like functions (e.g., `AVERAGE()` and `IF()`).
+- Can add custom functions and variables easily.
+- Can bind constants at eval-time.
+- Supports variadic functions (taking between 1-7 arguments).
+- Case insensitive.
+- Supports non-US formulas (e.g., `pow(2,2; 2)` instead of `pow(2.2, 2)`).
+- Supports C and C++ style comments.
+- Released under the zlib license - free for nearly any use.
+- Easy to use and integrate with your code.
+- Thread-safe, parser is in a self-contained object.

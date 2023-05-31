@@ -1,0 +1,57 @@
+# Non-US Formatted Formulas
+
+TinyExpr++ supports other locales and non-US formatted formulas. Here is an example:
+
+```cpp
+#include "tinyexpr.h"
+#include <iostream>
+#include <iomanip>
+#include <locale>
+#include <clocale>
+
+int main(int argc, char *argv[])
+    {
+    /* Set locale to German.
+       This string is platform dependent. The following works on Windows,
+       consult your platform's documentation for more details.*/
+    setlocale(LC_ALL, "de-DE");
+    std::locale::global(std::locale("de-DE"));
+
+    /* After setting your locale to German, functions like strtod() will fail
+       with values like "3.14" because it expects "3,14" instead.
+       To fix this, we will tell the parser to use "," as the decimal separator
+       and ";" as list argument separator.*/
+
+    const char *expression = "pow(2,2; 2)"; // instead of "pow(2.2, 2)"
+    std::cout << "Evaluating:\n\t" << expression << "\n";
+
+    te_parser tep;
+    tep.set_decimal_separator(',');
+    tep.set_list_separator(';');
+
+    /* This will compile the expression and check for errors. */
+    auto r = tep.evaluate(expression);
+
+    if (tep.success())
+        {
+        const double r = tep.evaluate(expression);
+        std::cout << "Result:\n\t" << r << "\n";
+        }
+    else
+        {
+        /* Show the user where the error is at. */
+        std::cout << "\t " << std::setfill(' ') <<
+            std::setw(tep.get_last_error_position()) << '^' <<
+            "\tError near here\n";
+        }
+
+    return EXIT_SUCCESS;
+    }
+```
+
+This produces the output:
+
+    $ Evaluating:
+        pow(2,2; 2)
+      Result:
+        4,840000

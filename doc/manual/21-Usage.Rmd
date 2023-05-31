@@ -1,0 +1,82 @@
+# Usage
+
+TinyExpr++'s `te_parser` class defines these functions:
+
+```cpp
+double evaluate(const std::string_view expression);
+double get_result();
+bool success();
+int64_t get_last_error_position();
+td::string get_last_error_message();
+set_variables_and_functions(const std::set<te_variable>& vars);
+std::set<te_variable>& get_variables_and_functions();
+add_variable_or_function(const te_variable& var);
+get_decimal_separator();
+set_decimal_separator();
+get_list_separator();
+set_list_separator();
+```
+
+`evaluate()` takes an expression and immediately returns the result of it. If there
+is a parse error, then it returns NaN (which can be verified by using `std::isnan()`).
+
+`get_result()` can be called anytime afterwards to retrieve the result from `evaluate()`.
+
+`success()` can be called to see if the previous call `evaluate()` succeeded or not.
+
+If the parse failed, calling `get_last_error_position()` will return the 0-based index of where in the
+expression the parse failed. or some errors, `get_last_error_message()` will return a more detailed message.
+
+`set_variables_and_functions()`, `get_variables_and_functions()`, and `add_variable_or_function()` are used
+to add custom variables and functions to the parser.
+
+`get_decimal_separator()`/`set_decimal_separator()` and
+`get_list_separator()`/`set_list_separator()` can be used to parse non-US formatted formulas.
+
+**example usage:**
+
+```cpp
+te_parser tep;
+
+// Returns 10.
+double a = tep.evaluate("(5+5)");
+// Returns 10, error position is set to te_parser::npos (i.e., no error).
+double b = tep.evaluate("(5+5)");
+// Returns NaN, error position is set to 3.
+double c = tep.evaluate("(5+5");
+```
+
+Give `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas.
+
+`evaluate()` will then evaluate expressions using these variables and functions.
+
+**example usage:**
+
+```cpp
+#include "tinyexpr.h"
+#include <iostream>
+
+double x{ 0 }, y{ 0 };
+// Store variable names and pointers.
+te_parser tep;
+tep.set_variables_and_functions({{"x", &x}, {"y", &y}});
+
+// Compile the expression with variables.
+auto result = tep.evaluate("sqrt(x^2+y^2)");
+
+if (tep.success())
+    {
+    x = 3; y = 4;
+    // Will use the previously used expression, returns 5.
+    const double h1 = tep.evaluate();
+
+    x = 5; y = 12;
+    // Returns 13.
+    const double h2 = tep.evaluate();
+    }
+else
+    {
+    std::cout << "Parse error at " <<
+        std::to_string(tep.get_last_error_position()) << "\n";
+    }
+```

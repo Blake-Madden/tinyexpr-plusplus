@@ -1,0 +1,12 @@
+# (PART) Developer Guide {-}
+
+# Building
+
+TinyExpr++ is self-contained in two files: `tinyexpr.cpp` and `tinyexpr.h`. To use
+TinyExpr++, simply add those two files to your project.
+
+The documentation can be built using the following:
+
+```
+doxygen doc/Doxyfile
+```

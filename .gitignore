@@ -5,4 +5,7 @@
 /doc/html/
 CMakeSettings.json
 .Rproj.user
-*.tex
+/doc/manual/_book/TinyExpr++-Reference-Manual.tex
+/tests/demo/out/
+/tests/demo/bin
+/tests/demo/.vs
