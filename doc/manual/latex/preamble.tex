@@ -1,0 +1,240 @@
+% LaTeX packages that we will need
+
+% TOC
+% make the space for numbers wide enough so that the section names
+% don't overlap the numbers.
+\makeatletter
+\renewcommand{\l@section}{\@dottedtocline{1}{1.5em}{3em}}
+\renewcommand{\l@subsection}{\@dottedtocline{2}{4.0em}{3.6em}}
+\renewcommand{\l@subsubsection}{\@dottedtocline{3}{7.4em}{4.5em}}
+\renewcommand{\l@figure}{\@dottedtocline{1}{0em}{3em}}
+\let\l@table\l@figure
+\makeatother
+
+% index
+\usepackage{imakeidx}
+\makeindex[intoc=true,columnseprule=true,
+           options= -s latex/indexstyles.ist]
+\newcommand{\ii}[1]{{\it #1}}
+\newcommand{\nn}[1]{#1n}
+
+% to create a "see also" that appears at the bottom of the
+% subentries and with no page number, do the following:
+% \index{Main entry!zzzzz@\igobble|seealso{Other item}}
+\def\igobble#1{}
+
+\usepackage{changepage}
+\usepackage{mdframed}
+\usepackage{bbding}
+\usepackage{amsthm}
+\usepackage{xeCJK}
+\usepackage[defaultlines=4,all]{nowidow}
+\usepackage{menukeys}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{wrapfig}
+\usepackage{url}
+
+% table packages
+\usepackage{booktabs}
+\usepackage{longtable,tabu}
+\usepackage{makecell}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage{colortbl}
+\usepackage{float}
+
+\usepackage{fontawesome5}
+\usepackage{fontspec}
+\usepackage{tikz}
+\usepackage{ragged2e}
+% MLA requirements
+\usepackage[letterpaper, margin=1in]{geometry}
+
+% make the page headers fancy
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LO]{\nouppercase{\leftmark}}
+\fancyhead[RE]{\nouppercase{\rightmark}}
+\fancyhead[LE,RO]{\thepage}
+
+% for adding a cover page
+\usepackage{pdfpages}
+
+% https://tex.stackexchange.com/questions/16964/block-quote-with-big-quotation-marks
+\usetikzlibrary{backgrounds}
+\makeatletter
+
+\tikzset{%
+  fancy quotes/.style={
+    text width=\fq@width pt,
+    align=justify,
+    inner sep=1em,
+    anchor=north west,
+    minimum width=\linewidth,
+  },
+  fancy quotes width/.initial={.8\linewidth},
+  fancy quotes marks/.style={
+    scale=8,
+    text=white,
+    inner sep=0pt,
+  },
+  fancy quotes opening/.style={
+    fancy quotes marks,
+  },
+  fancy quotes closing/.style={
+    fancy quotes marks,
+  },
+  fancy quotes background/.style={
+    show background rectangle,
+    inner frame xsep=0pt,
+    background rectangle/.style={
+      fill=gray!25,
+      rounded corners,
+    },
+  }
+}
+
+\newenvironment{fancyquotes}[1][]{%
+\noindent
+\tikzpicture[fancy quotes background]
+\node[fancy quotes opening,anchor=north west] (fq@ul) at (0,0) {``};
+\tikz@scan@one@point\pgfutil@firstofone(fq@ul.east)
+\pgfmathsetmacro{\fq@width}{\linewidth - 2*\pgf@x}
+\node[fancy quotes,#1] (fq@txt) at (fq@ul.north west) \bgroup}
+{\egroup;
+\node[overlay,fancy quotes closing,anchor=east] at (fq@txt.south east) {''};
+\endtikzpicture}
+
+\makeatother
+
+\makeatletter
+\def\thm@space@setup{%
+  \thm@preskip=8pt plus 2pt minus 4pt
+  \thm@postskip=\thm@preskip
+}
+\makeatother
+\raggedbottom
+
+%% Provides Creative Commons Icons
+\usepackage{ccicons}
+% in case we need CJK fonts
+\setCJKmonofont{SimSun}
+\setCJKmainfont{SimSun}
+\setCJKsansfont{SimSun}
+
+% Float features
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% don't float anything
+\floatplacement{table}{H}
+\floatplacement{figure}{H}
+
+% helps reduce images from floating also
+\renewcommand{\topfraction}{.85}
+\renewcommand{\bottomfraction}{.7}
+\renewcommand{\textfraction}{.15}
+\renewcommand{\floatpagefraction}{.66}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{4}
+
+% the warning, note, and tip color boxes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% colors that can be used
+\definecolor{lightgray}{RGB}{215,215,215}
+\definecolor{ultralightgray}{RGB}{241,241,241}
+\definecolor{lightyellow}{RGB}{252,248,227}
+\definecolor{lightpink}{RGB}{255,207,219}
+\definecolor{lightblue}{RGB}{232,244,248}
+\definecolor{mediumblue}{RGB}{28,77,93}
+
+% Tip box
+\newenvironment{tipsection}
+    {
+    \begin{tcolorbox}[colframe=lightgray,colback=lightyellow,arc=3mm]
+    \faLightbulb[regular] \textbf{Tip} \newline
+    }
+    {
+    \end{tcolorbox}
+    }
+
+% Note box
+\newenvironment{notesection}
+    {
+    \begin{tcolorbox}[colframe=mediumblue,colback=lightblue,coltext=mediumblue,arc=3mm]
+    \faEdit[regular] \textbf{Note} \newline
+    }
+    {
+    \end{tcolorbox}
+    }
+
+% Warning box
+\newenvironment{warningsection}
+    {
+    \begin{tcolorbox}[colframe=lightgray,colback=lightpink,arc=3mm]
+    \faExclamationTriangle[solid] \textbf{{Warning} } \newline
+    }
+    {
+    \end{tcolorbox}
+    }
+
+% A light gray box for related program options (e.g., a radio button group, a combobox and its values, etc.).
+\newenvironment{optionssection}
+    {
+    \begin{tcolorbox}[colframe=lightgray,colback=ultralightgray,sharp corners=all,parbox=false]
+    }
+    {
+    \end{tcolorbox}
+    }
+
+% Title to add at the top of an optionssection.
+\newenvironment{optionssectiontitle}
+    {
+    \begin{tcolorbox}[colframe=lightgray,colback=lightgray]
+    \bfseries
+    }
+    {
+    \end{tcolorbox}
+    }
+
+%% theming
+\newenvironment{darkmode}
+  {
+  \begin{mdframed}[backgroundcolor=black]
+  \color{white}
+  }
+  {
+  \end{mdframed}
+  }
+
+% psuedo glossary features
+\newenvironment{glsentry}
+  {
+  \begin{minipage}{\textwidth}
+  }
+  {
+  \end{minipage}
+  }
+
+\newenvironment{glsterm}
+  {
+  \bfseries
+  }
+  {
+  }
+
+\newenvironment{glsdef}
+  {
+  \noindent
+  \flushleft
+  \begin{adjustwidth}{2cm}{}
+  }
+  {
+  \end{adjustwidth}
+  }
