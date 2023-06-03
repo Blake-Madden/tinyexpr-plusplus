@@ -489,22 +489,6 @@ constexpr static double _comma([[maybe_unused]] double a, double b) noexcept
     { return b; }
 
 //--------------------------------------------------
-te_expr* te_parser::new_expr(const variable_flags type, variant_type value,
-                             const std::initializer_list<te_expr*> parameters)
-    {
-    const auto arity = get_arity(value);
-    te_expr* ret = new te_expr{ type, std::move(value)};
-    ret->m_parameters.resize(
-        std::max<size_t>(
-            std::max<size_t>(parameters.size(), arity) + (is_closure(ret->m_value) ? 1 : 0),
-            1)
-        );
-    if (parameters.size())
-        { std::copy(parameters.begin(), parameters.end(), ret->m_parameters.begin()); }
-    return ret;
-    }
-
-//--------------------------------------------------
 void te_parser::te_free_parameters(te_expr *n)
     {
     if (!n) return;
@@ -521,22 +505,12 @@ void te_parser::te_free_parameters(te_expr *n)
         }
     else if (is_function(n->m_value))
         {
-        for (auto param = n->m_parameters.begin();
-             param != n->m_parameters.end();
-             ++param)
+        for (auto param : n->m_parameters)
             {
-            te_free(*param);
-            *param = nullptr;
+            te_free(param);
+            param = nullptr;
             }
         }
-    }
-
-//--------------------------------------------------
-void te_parser::te_free(te_expr *n)
-    {
-    if (!n) return;
-    te_free_parameters(n);
-    delete n;
     }
 
 //--------------------------------------------------
@@ -860,12 +834,12 @@ te_expr* te_parser::base(te_parser::state *s)
         }
     else if (s->m_type == te_parser::state::token_type::TOK_NUMBER)
         {
-        ret = new_expr(TE_DEFAULT, s->m_value, {});
+        ret = new_expr(TE_DEFAULT, s->m_value);
         next_token(s);
         }
     else if (s->m_type == te_parser::state::token_type::TOK_VARIABLE)
         {
-        ret = new_expr(TE_DEFAULT, s->m_value, {});
+        ret = new_expr(TE_DEFAULT, s->m_value);
         next_token(s);
         }
     else if (s->m_type == te_parser::state::token_type::TOK_NULL ||
@@ -875,9 +849,8 @@ te_expr* te_parser::base(te_parser::state *s)
         s->m_type == te_parser::state::token_type::TOK_CLOSE ||
         s->m_type == te_parser::state::token_type::TOK_INFIX)
         {
-        ret = new_expr(TE_DEFAULT, variant_type(static_cast<double>(0.0)), {});
+        ret = new_expr(TE_DEFAULT, variant_type{ std::numeric_limits<double>::quiet_NaN() });
         s->m_type = te_parser::state::token_type::TOK_ERROR;
-        ret->m_value = std::numeric_limits<double>::quiet_NaN();
         }
     else if (is_function0(s->m_value) || is_closure0(s->m_value))
         {
@@ -895,8 +868,9 @@ te_expr* te_parser::base(te_parser::state *s)
         }
     else if (is_function1(s->m_value) || is_closure1(s->m_value))
         {
-        ret = new_expr(s->m_varType, s->m_value, { nullptr });
-        if (is_closure(s->m_value)) ret->m_parameters[1] = s->context;
+        ret = new_expr(s->m_varType, s->m_value);
+        if (is_closure(s->m_value))
+            { ret->m_parameters[1] = s->context; }
         next_token(s);
         ret->m_parameters[0] = power(s);
         }
@@ -909,7 +883,7 @@ te_expr* te_parser::base(te_parser::state *s)
         {
         const int arity = get_arity(s->m_value);
 
-        ret = new_expr(s->m_varType, s->m_value, {});
+        ret = new_expr(s->m_varType, s->m_value);
         if (is_closure(s->m_value)) ret->m_parameters[arity] = s->context;
         next_token(s);
 
@@ -1148,7 +1122,7 @@ double te_parser::te_eval(const te_expr *n)
     if (!n) return std::numeric_limits<double>::quiet_NaN();
 
     // cppcheck-suppress unreadVariable
-    const auto M = [&n = std::as_const(n)](const size_t e) noexcept
+    const auto M = [&n = std::as_const(n)](const size_t e)
         {
         return (e < n->m_parameters.size()) ? te_eval(n->m_parameters[e]) :
             std::numeric_limits<double>::quiet_NaN();

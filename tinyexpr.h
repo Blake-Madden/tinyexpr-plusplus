@@ -678,8 +678,27 @@ private:
         std::set<te_variable>& m_lookup;
         };
     [[nodiscard]]
-    static te_expr* new_expr(const variable_flags type,
-        variant_type value, const std::initializer_list<te_expr*> parameters);
+    static inline te_expr* new_expr(const variable_flags type,
+        variant_type value, const std::initializer_list<te_expr*>& parameters)
+        {
+        const auto arity = get_arity(value);
+        te_expr* ret = new te_expr{ type, std::move(value) };
+        ret->m_parameters.resize(
+            std::max<size_t>(
+                std::max<size_t>(parameters.size(), arity) + (is_closure(ret->m_value) ? 1 : 0),
+                0)
+            );
+        if (parameters.size())
+            { std::copy(parameters.begin(), parameters.end(), ret->m_parameters.begin()); }
+        return ret;
+        }
+    [[nodiscard]]
+    static inline te_expr* new_expr(const variable_flags type, variant_type value)
+            {
+        te_expr* ret = new te_expr{ type, std::move(value) };
+        ret->m_parameters.resize(get_arity(value) + (is_closure(ret->m_value) ? 1 : 0));
+        return ret;
+        }
     [[nodiscard]]
     static constexpr bool is_letter(const char c) noexcept
         { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
@@ -696,7 +715,12 @@ private:
     static double te_eval(const te_expr* n);
     /* Frees the expression. */
     /* This is safe to call on null pointers. */
-    static void te_free(te_expr* n);
+    static inline void te_free(te_expr* n)
+        {
+        if (!n) return;
+        te_free_parameters(n);
+        delete n;
+        }
     static void te_free_parameters(te_expr* n);
     static void optimize(te_expr* n);
     [[nodiscard]]
