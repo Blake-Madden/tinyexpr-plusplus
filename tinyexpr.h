@@ -696,7 +696,8 @@ private:
     static inline te_expr* new_expr(const variable_flags type, variant_type value)
         {
         te_expr* ret = new te_expr{ type, std::move(value) };
-        ret->m_parameters.resize(get_arity(value) + (is_closure(ret->m_value) ? 1 : 0));
+        ret->m_parameters.resize(static_cast<size_t>(get_arity(ret->m_value)) +
+            (is_closure(ret->m_value) ? 1 : 0));
         return ret;
         }
     [[nodiscard]]
