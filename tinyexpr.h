@@ -512,7 +512,7 @@ private:
     constexpr static bool is_function0(const variant_type& var) noexcept
         { return var.index() == 2; }
     [[nodiscard]]
-    constexpr static const te_fun0& get_function0(const variant_type& var)
+    constexpr static te_fun0 get_function0(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun0>(var));
         return std::get<2>(var);
@@ -521,7 +521,7 @@ private:
     constexpr static bool is_function1(const variant_type& var) noexcept
         { return var.index() == 3; }
     [[nodiscard]]
-    constexpr static const te_fun1& get_function1(const variant_type& var)
+    constexpr static te_fun1 get_function1(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun1>(var));
         return std::get<3>(var);
@@ -530,7 +530,7 @@ private:
     constexpr static bool is_function2(const variant_type& var) noexcept
         { return var.index() == 4; }
     [[nodiscard]]
-    constexpr static const te_fun2& get_function2(const variant_type& var)
+    constexpr static te_fun2 get_function2(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun2>(var));
         return std::get<4>(var);
@@ -539,7 +539,7 @@ private:
     constexpr static bool is_function3(const variant_type& var) noexcept
         { return var.index() == 5; }
     [[nodiscard]]
-    constexpr static const te_fun3& get_function3(const variant_type& var)
+    constexpr static te_fun3 get_function3(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun3>(var));
         return std::get<5>(var);
@@ -548,7 +548,7 @@ private:
     constexpr static bool is_function4(const variant_type& var) noexcept
         { return var.index() == 6; }
     [[nodiscard]]
-    constexpr static const te_fun4& get_function4(const variant_type& var)
+    constexpr static te_fun4 get_function4(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun4>(var));
         return std::get<6>(var);
@@ -557,7 +557,7 @@ private:
     constexpr static bool is_function5(const variant_type& var) noexcept
         { return var.index() == 7; }
     [[nodiscard]]
-    constexpr static const te_fun5& get_function5(const variant_type& var)
+    constexpr static te_fun5 get_function5(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun5>(var));
         return std::get<7>(var);
@@ -566,7 +566,7 @@ private:
     constexpr static bool is_function6(const variant_type& var) noexcept
         { return var.index() == 8; }
     [[nodiscard]]
-    constexpr static const te_fun6& get_function6(const variant_type& var)
+    constexpr static te_fun6 get_function6(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun6>(var));
         return std::get<8>(var);
@@ -575,7 +575,7 @@ private:
     constexpr static bool is_function7(const variant_type& var) noexcept
         { return var.index() == 9; }
     [[nodiscard]]
-    constexpr static const te_fun7& get_function7(const variant_type& var)
+    constexpr static te_fun7 get_function7(const variant_type& var)
         {
         assert(std::holds_alternative<te_fun7>(var));
         return std::get<9>(var);
@@ -587,7 +587,7 @@ private:
     constexpr static bool is_closure0(const variant_type& var) noexcept
         { return var.index() == 10; }
     [[nodiscard]]
-    constexpr static const te_confun0& get_closure0(const variant_type& var)
+    constexpr static te_confun0 get_closure0(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun0>(var));
         return std::get<10>(var);
@@ -596,7 +596,7 @@ private:
     constexpr static bool is_closure1(const variant_type& var) noexcept
         { return var.index() == 11; }
     [[nodiscard]]
-    constexpr static const te_confun1& get_closure1(const variant_type& var)
+    constexpr static te_confun1 get_closure1(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun1>(var));
         return std::get<11>(var);
@@ -605,7 +605,7 @@ private:
     constexpr static bool is_closure2(const variant_type& var) noexcept
         { return var.index() == 12; }
     [[nodiscard]]
-    constexpr static const te_confun2& get_closure2(const variant_type& var)
+    constexpr static te_confun2 get_closure2(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun2>(var));
         return std::get<12>(var);
@@ -614,7 +614,7 @@ private:
     constexpr static bool is_closure3(const variant_type& var) noexcept
         { return var.index() == 13; }
     [[nodiscard]]
-    constexpr static const te_confun3& get_closure3(const variant_type& var)
+    constexpr static te_confun3 get_closure3(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun3>(var));
         return std::get<13>(var);
@@ -623,7 +623,7 @@ private:
     constexpr static bool is_closure4(const variant_type& var) noexcept
         { return var.index() == 14; }
     [[nodiscard]]
-    constexpr static const te_confun4& get_closure4(const variant_type& var)
+    constexpr static te_confun4 get_closure4(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun4>(var));
         return std::get<14>(var);
@@ -632,7 +632,7 @@ private:
     constexpr static bool is_closure5(const variant_type& var) noexcept
         { return var.index() == 15; }
     [[nodiscard]]
-    constexpr static const te_confun5& get_closure5(const variant_type& var)
+    constexpr static te_confun5 get_closure5(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun5>(var));
         return std::get<15>(var);
@@ -641,7 +641,7 @@ private:
     constexpr static bool is_closure6(const variant_type& var) noexcept
         { return var.index() == 16; }
     [[nodiscard]]
-    constexpr static const te_confun6& get_closure6(const variant_type& var)
+    constexpr static te_confun6 get_closure6(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun6>(var));
         return std::get<16>(var);
@@ -650,7 +650,7 @@ private:
     constexpr static bool is_closure7(const variant_type& var) noexcept
         { return var.index() == 17; }
     [[nodiscard]]
-    constexpr static const te_confun7& get_closure7(const variant_type& var)
+    constexpr static te_confun7 get_closure7(const variant_type& var)
         {
         assert(std::holds_alternative<te_confun7>(var));
         return std::get<17>(var);
