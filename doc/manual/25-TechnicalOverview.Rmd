@@ -18,15 +18,15 @@ expression does hard calculations (e.g., exponentiation), and when some of the
 work can be simplified by `evaluate()`. TinyExpr++ is slow compared to C when the
 expression is long and involves only basic arithmetic.
 
-Here is some example performance numbers:
+Here are some example benchmarks:
 
 | Expression | evaluate time | native C time | slowdown  |
 | :------------- |-------------:| -----:|----:|
-| sqrt(a^1.5+a^2.5) | 16,363 ms | 13,193 ms | 24.03% slower |
-| a+5 | 3,051 ms | 1,255 ms | 143.11% slower |
-| a+(5*2) | 1,754 ms | 524 ms | 234.73% slower |
-| (a+5)*2 | 3,225 ms | 518 ms | 522.59% slower |
-| (1/(a+1)+2/(a+2)+3/(a+3)) | 12,754 ms | 680 ms | 1,775.59%  slower |
+| sqrt(a^1.5+a^2.5) | 1,707 ns | 58.25 ns | 29% slower |
+| a+5 | 535 ns | 0.67 ns | 798% slower |
+| a+(5*2) | 0.73 ns | 969 ns | 1,327% slower |
+| (a+5)*2 | 0.66 ns | 980 ns | 1,484% slower |
+| (1/(a+1)+2/(a+2)+3/(a+3)) | 3,388 ns | 3.941 ns | 859%  slower |
 
 Note that TinyExpr++ is slower compared to TinyExpr because of additional type safety checks.
 
