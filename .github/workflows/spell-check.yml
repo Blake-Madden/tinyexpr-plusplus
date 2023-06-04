@@ -15,7 +15,7 @@ jobs:
           pip install codespell
       - name: Run codespell
         run: |
-          codespell src/ *.md
+          codespell src/ *.md *.rmd
           rc=$?
           if [ $rc != 0 ]; then
           cat <<EOF
