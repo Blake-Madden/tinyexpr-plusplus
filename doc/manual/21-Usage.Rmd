@@ -7,7 +7,7 @@ double evaluate(const std::string_view expression);
 double get_result();
 bool success();
 int64_t get_last_error_position();
-td::string get_last_error_message();
+std::string get_last_error_message();
 set_variables_and_functions(const std::set<te_variable>& vars);
 std::set<te_variable>& get_variables_and_functions();
 add_variable_or_function(const te_variable& var);
@@ -17,15 +17,10 @@ get_list_separator();
 set_list_separator();
 ```
 
-`evaluate()` takes an expression and immediately returns the result of it. If there
-is a parse error, then it returns NaN (which can be verified by using `std::isnan()`).
+`evaluate()` takes an expression and immediately returns the result. If there
+is a parse error, then it returns NaN (which can be verified by using `std::isnan()`). (`success()` will also return false.)
 
 `get_result()` can be called anytime afterwards to retrieve the result from `evaluate()`.
-
-`success()` can be called to see if the previous call `evaluate()` succeeded or not.
-
-If the parse failed, calling `get_last_error_position()` will return the 0-based index of where in the
-expression the parse failed. or some errors, `get_last_error_message()` will return a more detailed message.
 
 `set_variables_and_functions()`, `get_variables_and_functions()`, and `add_variable_or_function()` are used
 to add custom variables and functions to the parser.
@@ -33,24 +28,48 @@ to add custom variables and functions to the parser.
 `get_decimal_separator()`/`set_decimal_separator()` and
 `get_list_separator()`/`set_list_separator()` can be used to parse non-US formatted formulas.
 
-**example usage:**
+Example:
 
 ```cpp
 te_parser tep;
 
-// Returns 10.
-double a = tep.evaluate("(5+5)");
 // Returns 10, error position is set to te_parser::npos (i.e., no error).
-double b = tep.evaluate("(5+5)");
+double result = tep.evaluate("(5+5)");
 // Returns NaN, error position is set to 3.
-double c = tep.evaluate("(5+5");
+double result2 = tep.evaluate("(5+5");
 ```
 
-Give `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas.
+You can also provide `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas.
 
 `evaluate()` will then evaluate expressions using these variables and functions.
 
-**example usage:**
+## Error Handling
+
+TinyExpr++ will throw exceptions when:
+
+- An illegal character is specified in a custom function or variable name.
+- An illegal character is provided as a list or decimal separator.
+- The same character was provided as both the list and decimal separator.
+
+It is recommended to wrap the following functions in `try`/`catch` blocks to handle
+these exceptions:
+
+- `compile()`
+- `evaluate()`
+- `set_variables_and_functions()`
+- `add_variable_or_function()`
+- `set_decimal_separator()`
+- `set_list_separator()`
+
+Syntax and calculation errors are trapped within calls to `compile()` and `evaluate()`. Error information can be retrieved afterwards by calling the following:
+
+- `success()`: returns whether the last parse was successful or not.
+- `get_last_error_position()`: returns the 0-based index of where in the
+expression the parse failed (useful for syntax errors).
+If there was no parse error, then this will return `te_parser::npos`.
+- `get_last_error_message()`: returns a more detailed message for some calculation errors (e.g., division by zero).
+
+Example:
 
 ```cpp
 #include "tinyexpr.h"
