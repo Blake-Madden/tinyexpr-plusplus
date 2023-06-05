@@ -1,5 +1,7 @@
 # Compile-time Options
 
+## `TE_POW_FROM_RIGHT`
+
 By default, TinyExpr++ does exponentiation from left to right. For example:
 
 `a^b^c == (a^b)^c` and `-a^b == (-a)^b`
@@ -15,12 +17,10 @@ behavior is:
 
 That will match how many scripting languages do it (e.g., Python, Ruby).
 
+## `TE_NAT_LOG`
+
 Also, if you'd like `log` to default to the natural log instead of `log10`,
-then you can define `TE_NAT_LOG`.
+then define `TE_NAT_LOG`.
 
-Note that symbols can usually be defined by passing them to your compiler's
-command line (or in a Cmake configuration) as such:
-
-```cpp
--DTE_POW_FROM_RIGHT
-```
+Note that symbols can be defined by passing them to your compiler's
+command line (or in a Cmake configuration) as such: `-DTE_POW_FROM_RIGHT`

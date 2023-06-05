@@ -66,14 +66,14 @@ int main(int argc, char* argv[])
     }
 ```
 
-## Example 3: Calling a C Function
+## Example 3: Calling a Free Function
 
 ```cpp
 #include "tinyexpr.h"
 #include <iostream>
 #include <iomanip>
 
-/* An example of calling a C function. */
+/* An example of calling a free function. */
 double my_sum(double a, double b)
     {
     std::cout << "Called C function with " <<
@@ -170,7 +170,7 @@ public:
 ```
 
 Next, create two functions that can accept this object and perform
-actions on it. (Note that proper error handling is not included for brevity.):
+actions on it. (Note that proper error handling is not shown for brevity.):
 
 ```cpp
 // Returns the value of a cell from the object's data.
