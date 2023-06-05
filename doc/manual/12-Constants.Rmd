@@ -1,24 +1,32 @@
 # Constants
 
-The following mathematical constants are available:
+The following mathematical and logical constants are available:
 
 ::: {.minipage data-latex="{\textwidth}"}
 | Constant | Value |
-| :------------- |:------------:|
-| `E` | Euler's number (2.71828182845904523536) |
+| :------------- |:------------ |
+| E | Euler's number (2.71828182845904523536) |
 | NAN | NaN (Not-a-Number) |
-| `PI` | pi (3.14159265358979323846) |
+| PI | pi (3.14159265358979323846) |
 
 Table: Math Constants
 :::
 
-The following logical constants are available:
-
 ::: {.minipage data-latex="{\textwidth}"}
 | Constant | Value |
-| :------------- |:------------:|
-| `TRUE` | 1 |
-| `FALSE` | 0 |
+| :------------- |:------------ |
+| TRUE | 1 |
+| FALSE | 0 |
 
 Table: Logical Constants
+:::
+
+The following number formats are supported:
+
+::: {.minipage data-latex="{\textwidth}"}
+| Format | Example |
+| :------------- |:------------ |
+| Scientific notation | 1e3 for 1000 |
+
+Table: Number Formats
 :::
