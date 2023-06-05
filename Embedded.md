@@ -72,15 +72,15 @@ Note that it is required to make the initial declaration of your
 
 TinyExpr++ requires exception handling, although it does attempt to
 minimize the use of exceptions (e.g., `noexcept` is used extensively).
-For issues such as division by zero,
-the parser will silently return NaN (not a number) as the result.
-For arithmetic overflows, however, an exception will be thrown to signal
-these less-obvious error conditions.
+Syntax errors will be reported without the use of exceptions;
+issues such as division by zero or arithmetic overflows, however,
+will internally use exceptions. The parser will trap these
+exceptions and return NaN (not a number) as the result.
 
 Exceptions can also be thrown when defining custom functions or variables
 which do not follow the proper naming convention.
 (Function and variable names must only contain the characters
-`a`-`z`, `A`-`Z`, `0`-`9`, and `_`, and cannot begin with a number.)
+`a`-`z`, `A`-`Z`, `0`-`9`, and `_`, and must begin with a letter.)
 
 Finally, specifying an illegal character for a list or decimal separator
 can also throw.
