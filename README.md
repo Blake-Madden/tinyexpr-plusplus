@@ -44,7 +44,7 @@ For notes on embedded programming, please refer to the [embedded programming](Em
 - Supports C and C++ style comments.
 - Released under the zlib license - free for nearly any use.
 - Easy to use and integrate with your code.
-- Thread-safe, parser is in a self-contained object.
+- Thread-safe; parser is in a self-contained object.
 
 ## Changes from TinyExpr
 
@@ -216,17 +216,15 @@ to add custom variables and functions to the parser.
 `get_decimal_separator()`/`set_decimal_separator()` and
 `get_list_separator()`/`set_list_separator()` can be used to parse non-US formatted formulas.
 
-**example usage:**
+Example usage:
 
 ```cpp
 te_parser tep;
 
-// Returns 10.
-double a = tep.evaluate("(5+5)");
 // Returns 10, error position is set to te_parser::npos (i.e., no error).
-double b = tep.evaluate("(5+5)");
+double result = tep.evaluate("(5+5)");
 // Returns NaN, error position is set to 3.
-double c = tep.evaluate("(5+5");
+double result2 = tep.evaluate("(5+5");
 ```
 
 Give `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas.
@@ -498,16 +496,16 @@ the compiled expression returned by `te_compile()` would become:
 
 ![example syntax tree](doc/e2.png)
 
-## Speed
+## Performance
 
-TinyExpr++ is fairly fast compared to C when the expression is short, when the
+TinyExpr++ is fairly fast compared to compiled C when the expression is short, when the
 expression does hard calculations (e.g., exponentiation), and when some of the
 work can be simplified by `evaluate()`. TinyExpr++ is slow compared to C when the
 expression is long and involves only basic arithmetic.
 
 Here are some example benchmarks:
 
-| Expression | evaluate time | native C time | slowdown  |
+| Expression | TinyExpr++ | Native C | Comparison  |
 | :------------- |-------------:| -----:|----:|
 | sqrt(a^1.5+a^2.5) | 1,707 ns | 58.25 ns | 29% slower |
 | a+5 | 535 ns | 0.67 ns | 798% slower |
@@ -538,11 +536,11 @@ TinyExpr++ parses the following grammar (from lowest-to-highest operator precede
 
 In addition, whitespace between tokens is ignored.
 
-Valid variable names consist of a lower-case letter followed by any combination
-of: lower-case letters `a` through `z`, the digits `0` through `9`, and
+Valid variable names consist of a letter followed by any combination
+of: letters `a` through `z` or `A` through `Z`, the digits `0` through `9`, and
 underscore. Constants can be integers, decimal numbers, or in scientific
 notation (e.g., `1e3` for `1000`). A leading zero is not required (e.g., `.5`
-for `0.5`)
+for `0.5`).
 
 ## Supported Functions
 
@@ -551,21 +549,8 @@ division (`/`), exponentiation (`^`), modulus (`%`), and left/right shift (`<<`,
 with the normal operator precedence (the one exception being that exponentiation is evaluated
 left-to-right, but this can be changed - see below).
 
-The following C math functions are also supported:
-
-- `abs` (calls to `fabs()`), `acos`, `asin`, `atan`, `atan2`, `ceil`, `cos`, `cosh`, `exp`, `floor`, 
-`ln` (calls to `log()`), `log` (calls to `log10()` by default, see below), `log10`, `pow`,
-`sin`, `sinh`, `sqrt`, `tan`, `tanh`, `tgamma`
-
-The following functions are also built-in and provided by TinyExpr++:
-
-- `fac` (factorials e.g., `fac 5` == 120)
-- `ncr` (combinations e.g., `ncr(6,2)` == 15)
-- `npr` (permutations e.g., `npr(6,2)` == 30)
-
-Also, the following constants are available:
-
-- `pi`, `e`, `true`, `false`
+Please refer to the [TinyExpr++ Reference Manual](doc/manual/_book/TinyExpr++-Reference-Manual.pdf)
+for a full list of available functions.
 
 ## Compile-time Options
 
@@ -585,14 +570,10 @@ behavior is:
 That will match how many scripting languages do it (e.g., Python, Ruby).
 
 Also, if you'd like `log` to default to the natural log instead of `log10`,
-then you can define `TE_NAT_LOG`.
+then define `TE_NAT_LOG`.
 
-Note that symbols can usually be defined by passing them to your compiler's
-command line (or in a Cmake configuration) as such:
-
-```cpp
--DTE_POW_FROM_RIGHT
-```
+Note that symbols can be defined by passing them to your compiler's
+command line (or in a Cmake configuration) as such: `-DTE_POW_FROM_RIGHT`
 
 ## Hints
 
