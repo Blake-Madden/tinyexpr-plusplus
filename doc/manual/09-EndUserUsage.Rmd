@@ -1,0 +1,28 @@
+# (PART) User Guide {-}
+
+# Usage
+
+TinyExpr++ is a formula-solving library which accepts math and logic expressions such as:
+
+```cpp
+ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2
+```
+
+Applications using TinyExpr++ may provide context-specific variables
+that you can use in your expressions. For example, in a spreadsheet application, values representing cells such as `C1` and `D2` may be available. This would enable the use of expressions such as:
+
+```cpp
+SUM(C1, C2, C3, D1, D2, D3)
+```
+
+As another example, in a statistical program, the values `N_OBS` and
+`P_LEVEL` may be available. This would make an expression such as this possible:
+
+```cpp
+IF(AND(P_LEVEL < .05, N_OBS >= 30),
+   P_LEVEL,
+   NAN)
+```
+
+Please consult your application's documentation for which custom
+variables and functions it may provide for its formulas.
