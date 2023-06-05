@@ -5,24 +5,22 @@ date: 2023
 documentclass: book
 site: bookdown::bookdown_site
 lot: yes
-link-citations: yes
-output:
-  bookdown::pdf_book:
-    template: "latex/default.tex"
-    includes:
-      in_header: "latex/preamble.tex"
+bibliography: cites.bib
+biblio-style: mla
+biblio-title: References
+link-citations: true
 ---
 
 # Overview
 
-This is the reference manual for TinyExpr++, the C++ version of the TinyExpr formula parsing library.
+This is the reference manual for TinyExpr++, the C++ version of the TinyExpr (\cite{TinyExpr}) formula parsing library.
 
 TinyExpr++ is a small parser and evaluation library for solving math expressions from C++.
 It's open-source, free, easy-to-use, and self-contained in a single source and header file pair.
 
 ## Features
 
-- **C++17 with no dependencies**.
+- C++17 with no dependencies.
 - Single source file and header file.
 - Simple and fast.
 - Implements standard operator precedence.
@@ -36,4 +34,4 @@ It's open-source, free, easy-to-use, and self-contained in a single source and h
 - Supports C and C++ style comments.
 - Released under the zlib license - free for nearly any use.
 - Easy to use and integrate with your code.
-- Thread-safe, parser is in a self-contained object.
+- Thread-safe; parser is in a self-contained object.
