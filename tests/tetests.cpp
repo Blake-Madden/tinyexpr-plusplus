@@ -1394,7 +1394,7 @@ TEST_CASE("Custom test", "[functions]")
 TEST_CASE("Complex", "[functions]")
     {
     te_parser tep;
-    tep.set_variables_and_functions({ {"N_OBS", 29},
+    tep.set_variables_and_functions({ {"N_OBS", 29.0},
             {"P_LEVEL", .049} });
 
     [[maybe_unused]] auto res = tep.evaluate(R"(
