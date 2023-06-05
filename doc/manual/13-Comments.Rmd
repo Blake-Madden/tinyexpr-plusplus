@@ -1,0 +1,24 @@
+# Comments
+
+Comments can be embedded within an expression to clarify its intent.
+C/C++ style comments are supported, which provide:
+
+- multi-line comments (text within a pair of `/*` and `*/`).
+- single line comments (everything after a `//` until the end of the current line).
+
+For example, assuming that the variables `P_LEVEL` and `N_OBS` have been
+defined within the parser, an expression such as this could be used:
+
+```cpp
+/* Returns the p-level of a study if:
+   p-level < 5% AND
+   number of observations was at least 30.
+   Otherwise, NaN is returned. */
+
+IF(// Review the results from the analysis
+   AND(P_LEVEL < .05, N_OBS >= 30),
+   // ...and return the p-level if we should accpet it
+   P_LEVEL,
+   // or NaN if not
+   NAN)
+```
