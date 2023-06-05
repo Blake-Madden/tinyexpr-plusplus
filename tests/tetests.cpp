@@ -1398,9 +1398,24 @@ TEST_CASE("Permutation & Combination", "[math]")
     // COMB
     p.compile(("COMBIN(15, 3)"));
     CHECK(455 == p.evaluate());
+    CHECK(p.evaluate("COMBIN(8,2)") == 28);
+    CHECK(p.evaluate("NCR(8,2)") == 28);
+
+    CHECK(std::isnan(p.evaluate("COMBIN(-1, 3)")));
+    CHECK(std::isnan(p.evaluate("COMBIN(8, -1)")));
+    CHECK(std::isnan(p.evaluate("COMBIN(2, 3)")));
     // PERMUT
     p.compile(("PERMUT(15, 3)"));
     CHECK(2'730 == p.evaluate());
+    CHECK(p.evaluate("PERMUT(15, 0)") == 1);
+    CHECK(p.evaluate("PERMUT(3,2)") == 6);
+    CHECK(p.evaluate("PERMUT(100,3)") == 970200);
+
+    CHECK(std::isnan(p.evaluate("PERMUT(0, 3)")));
+    CHECK(std::isnan(p.evaluate("PERMUT(-1, 3)")));
+    
+    CHECK(std::isnan(p.evaluate("PERMUT(15, -1)")));
+    CHECK(std::isnan(p.evaluate("PERMUT(5, 6)")));
     }
 
 TEST_CASE("Additional math functions", "[math]")
