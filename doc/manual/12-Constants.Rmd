@@ -3,7 +3,7 @@
 The following mathematical constants are available:
 
 ::: {.minipage data-latex="{\textwidth}"}
-| Constant | Description |
+| Constant | Value |
 | :------------- |:------------:|
 | `E` | Euler's number (2.71828182845904523536) |
 | NAN | NaN (Not-a-Number) |
@@ -15,7 +15,7 @@ Table: Math Constants
 The following logical constants are available:
 
 ::: {.minipage data-latex="{\textwidth}"}
-| Constant | Description |
+| Constant | Value |
 | :------------- |:------------:|
 | `TRUE` | 1 |
 | `FALSE` | 0 |

@@ -1,6 +1,7 @@
 --- 
 title: "TinyExpr++ Reference Manual"
 author: Blake Madden
+date: 2023
 documentclass: book
 site: bookdown::bookdown_site
 lot: yes

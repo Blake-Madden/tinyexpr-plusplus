@@ -8,11 +8,11 @@
 | ASIN(Number) | Returns the arcsine, or inverse sine function, of **Number**, where -1 <= **Number** <= 1. The arcsine is the angle whose sine is **Number**. The returned angle is given in radians where -pi/2 <= angle <= pi/2. |
 | ATAN(x) | Returns the principal value of the arc tangent of **x**, expressed in radians.. |
 | ATAN2(y, x) | Returns the principal value of the arc tangent of **y**,**x**, expressed in radians. |
-| BITLSHIFT ||
-| BITRSHIFT ||
+| BITLSHIFT(Number, Shift_amount) | Returns **Number** left shifted by the specified number (**Shift_amount**) of bits. |
+| BITRSHIFT(Number, Shift_amount) |Returns **Number** right shifted by the specified number (**Shift_amount**) of bits. |
 | CEIL(Number) | Smallest integer not less than **Number**.<br>\linebreak CEIL(-3.2) = -3<br>\linebreak CEIL(3.2) = 4 |
-| CLAMP(Number, start, end) | Constrains **Number** within the range of **start** and **end**. |
-| COMBIN(Number, Number\_chosen) | Returns the number of combinations for **Number** of items. This will determine the total possible number of groups (**Number\_chosen**) for **Number** of items. |
+| CLAMP(Number, Start, End) | Constrains **Number** within the range of **Start** and **End**. |
+| COMBIN(Number, Number_chosen) | Returns the number of combinations for a given number (**Number_chosen**) of items from **Number** of items. Note that for combinatinos, order of items is not important. |
 | COS(Number) | Cosine of the angle **Number** in radians. |
 | COSH(Number) | Hyperbolic cosine of **Number**. |
 | COT(Number) | Cotangent of **Number**. |
@@ -26,13 +26,13 @@
 | MIN(value1, value2, ...) | Returns the lowest value from a specified range of values. |
 | MAX(value1, value2, ...) | Returns the highest value from a specified range of values. |
 | MOD(Number, Divisor) | Returns the remainder after **Number** is divided by **Divisor**. The result has the same sign as divisor. |
-| NCR() ||
-| NPR() ||
-| PERMUT() ||
-| POW(base, exponent) | Raises **base** to any power. For fractional exponents, **base** must be greater than 0. |
-| POWER(base, exponent) | Raises **base** to any power. For fractional exponents, **base** must be greater than 0. |
+| NCR(Number, Number_chosen) | This is an alias for COMBIN(). |
+| NPR(Number, Number_chosen) | This is an alias for PERMUT(). |
+| PERMUT(Number, Number_chosen) | Returns the number of permutations for a given number (**Number_chosen**) of items that can be selected **Number** of items. A permutation is any set of items where order is important. (This differs from combinations, where order is not important). |
+| POW(Base, Exponent) | Raises **Base** to any power. For fractional exponents, **Base** must be greater than 0. |
+| POWER(Base, Exponent) | Raises **Base** to any power. For fractional exponents, **Base** must be greater than 0. |
 | RAND() | Generates a random floating point number within the range of 0 and 1. |
-| ROUND(Number, num\_digits) | **Number** rounded to **num\_digits** decimal places.<br>\linebreak If **num\_digits** is negative, then **Number** is rounded to the left of the decimal point.<br>\linebreak(**num_digits** is optional and defaults to zero.)<br>\linebreak ROUND(-11.6, 0) = 12<br>\linebreak ROUND(-11.6) = 12<br>\linebreak ROUND(1.5, 0) = 2<br>\linebreak ROUND(1.55, 1) = 1.6<br>\linebreak ROUND(3.1415, 3) = 3.142<br>\linebreak ROUND(-50.55,-2) |
+| ROUND(Number, Num_digits) | **Number** rounded to **Num_digits** decimal places.<br>\linebreak If **Num_digits** is negative, then **Number** is rounded to the left of the decimal point.<br>\linebreak(**Num_digits** is optional and defaults to zero.)<br>\linebreak ROUND(-11.6, 0) = 12<br>\linebreak ROUND(-11.6) = 12<br>\linebreak ROUND(1.5, 0) = 2<br>\linebreak ROUND(1.55, 1) = 1.6<br>\linebreak ROUND(3.1415, 3) = 3.142<br>\linebreak ROUND(-50.55, -2) |
 | SIGN(Number) | Returns the sign of **Number**. Returns 1 if **Number** is positive, zero (0) if **Number** is 0, and -1 if **Number** is negative. |
 | SIN(Number) | Sine of the angle **Number** in radians. |
 | SINH(Number) | Hyperbolic sine of **Number**. |
@@ -47,8 +47,8 @@ Table: Math Functions
 ::: {.minipage data-latex="{\textwidth}"}
 | Function | Description |
 | :-- | :-- |
-| AVGERAGE(value1, value2,...) | Returns the average of a specified range of values. |
-| SUM(value1, value2,...) | Returns the sum of a specified range of values. |
+| AVGERAGE(Value1, Value2,...) | Returns the average of a specified range of values. |
+| SUM(Value1, Value2,...) | Returns the sum of a specified range of values. |
 
 Table: Statistical Functions
 :::
@@ -56,10 +56,10 @@ Table: Statistical Functions
 ::: {.minipage data-latex="{\textwidth}"}
 | Function | Description |
 | :-- | :-- |
-| AND(value1, value2, ...) | Returns true if all conditions are true. |
-| IF(condition, value\_if\_true, value\_if\_false) | If **condition** is true (non-zero), then **value\_if\_true** is returned; otherwise, **value\_if\_false** is returned. |
-| NOT(value) | Returns the logical negation of **value.** |
-| OR(value1, value2, ...) | Returns true if any condition is true. |
+| AND(Value1, Value2, ...) | Returns true if all conditions are true. |
+| IF(condition, Value_if_true, Value_if_false) | If **condition** is true (non-zero), then **Value_if_true** is returned; otherwise, **Value_if_false** is returned. |
+| NOT(Value) | Returns the logical negation of **Value.** |
+| OR(Value1, Value2, ...) | Returns true if any condition is true. |
 
 Table: Logic Functions
 :::
