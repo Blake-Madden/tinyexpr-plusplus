@@ -1391,6 +1391,80 @@ TEST_CASE("Custom test", "[functions]")
         }
     }
 
+TEST_CASE("Complex", "[functions]")
+    {
+    te_parser tep;
+    tep.set_variables_and_functions({ {"N_OBS", 29},
+            {"P_LEVEL", .049} });
+
+    [[maybe_unused]] auto res = tep.evaluate(R"(
+IF(AND(P_LEVEL < .05, N_OBS >= 30),
+P_LEVEL,
+NAN)
+)");
+    // successful parse, result was explicilty set to NaN by us
+    CHECK(tep.success());
+    CHECK(std::isnan(tep.get_result()));
+
+    // we have enough observations now
+    tep.set_constant("N_OBS", 31);
+    CHECK_THAT(.049, Catch::Matchers::WithinRel(tep.evaluate()));
+
+    // try it with some comments
+    res = tep.evaluate(R"(
+/* Returns the p-level of a study if:
+   p-level < 5% AND
+   number of observations in the study was at least 30.
+   Otherwise, NaN is returned. */
+IF(
+// Review the results from the analysis
+AND(P_LEVEL < .05, N_OBS >= 30),
+// ...and return the p-level if we should use it
+P_LEVEL,
+// or NaN if not
+NAN)
+)");
+    CHECK(tep.success());
+    CHECK_THAT(.049, Catch::Matchers::WithinRel(tep.evaluate()));
+
+    // same, but with & operator
+    res = tep.evaluate(R"(
+IF(P_LEVEL < .05 & N_OBS >= 30,
+P_LEVEL,
+NAN)
+)");
+    tep.set_constant("N_OBS", 31);
+    CHECK_THAT(.049, Catch::Matchers::WithinRel(tep.evaluate()));
+
+    tep.set_constant("P_LEVEL", .06);
+    res = tep.evaluate(R"(
+IF(P_LEVEL < .05 & N_OBS >= 30,
+P_LEVEL,
+NAN)
+)");
+    // successful parse, result p-level was too high
+    CHECK(tep.success());
+    CHECK(std::isnan(tep.get_result()));
+
+    // OR will make it work now
+    res = tep.evaluate(R"(
+IF(P_LEVEL < .05 | N_OBS >= 30,
+P_LEVEL,
+NAN)
+)");
+    CHECK_THAT(.06, Catch::Matchers::WithinRel(tep.evaluate()));
+
+    res = tep.evaluate(R"(
+IF(OR(P_LEVEL < .05, N_OBS >= 30),
+P_LEVEL,
+NAN)
+)");
+    CHECK_THAT(.06, Catch::Matchers::WithinRel(tep.evaluate()));
+
+    // complicated formula
+    CHECK_THAT(4.5, Catch::Matchers::WithinRel(tep.evaluate("ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2")));
+    }
+
 TEST_CASE("Permutation & Combination", "[math]")
     {
     te_parser p;
