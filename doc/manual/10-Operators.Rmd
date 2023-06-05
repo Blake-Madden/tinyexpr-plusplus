@@ -1,6 +1,6 @@
-# (PART) User Guide {-}
-
 # Operators
+
+The following operators are supported within math expressions:
 
 ::: {.minipage data-latex="{\textwidth}"}
 | Operator | Description |
@@ -15,6 +15,7 @@
 | < | Less than. |
 | \> | Greater than. |
 | <> | Not equal to. |
+| \!= | Not equal to. |
 | \>= | Greater than or equal to. |
 | <= | Less than or equal to. |
 | & | Logical conjunction. |
