@@ -10,3 +10,4 @@ CMakeSettings.json
 /tests/demo/bin
 /tests/demo/.vs
 doc/manual/_bookdown_files/TinyExpr++-Reference-Manual_files/
+doc/manual/.Rhistory
