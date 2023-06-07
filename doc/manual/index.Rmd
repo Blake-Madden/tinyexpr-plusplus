@@ -13,11 +13,19 @@ nocite: '@*'
 csl: modern-language-association.csl
 ---
 
+```{r, include=FALSE}
+library(DiagrammeR)
+library(webshot)
+# Run this if diagrams do not appear in PDF
+# or you get an error about HTML in your PDF.
+# webshot::install_phantomjs()
+```
+
 # Overview
 
-This is the reference manual for TinyExpr++, the C++ version of the TinyExpr [@TinyExpr] formula parsing library.
+This is the reference manual for *TinyExpr++*, the C++ version of the *TinyExpr* [@TinyExpr] formula parsing library. (This manual includes documentation from *TinyExpr* by Lewis Van Winkle.)
 
-TinyExpr++ is a small parser and evaluation library for solving math expressions from C++.
+*TinyExpr++* is a small parser and evaluation library for solving math expressions from C++.
 It's open-source, free, easy-to-use, and self-contained in a single source and header file pair.
 
 ## Features
@@ -32,8 +40,8 @@ It's open-source, free, easy-to-use, and self-contained in a single source and h
 - Can bind constants at eval-time.
 - Supports variadic functions (taking between 1-7 arguments).
 - Case insensitive.
-- Supports non-US formulas (e.g., `pow(2,2; 2)` instead of `pow(2.2, 2)`).
-- Supports C and C++ style comments.
+- Supports non-US formulas (e.g., `POW(2,2; 2)` instead of `POW(2.2, 2)`).
+- Supports C and C++ style comments within math expressions.
 - Released under the zlib license - free for nearly any use.
 - Easy to use and integrate with your code.
 - Thread-safe; parser is in a self-contained object.
