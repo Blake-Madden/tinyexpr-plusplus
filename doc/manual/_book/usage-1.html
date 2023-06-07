@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 8 Usage | TinyExpr++ Reference Manual</title>
+  <meta name="description" content="Chapter 8 Usage | TinyExpr++ Reference Manual" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 8 Usage | TinyExpr++ Reference Manual" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 8 Usage | TinyExpr++ Reference Manual" />
+  
+  
+  
+
+<meta name="author" content="Blake Madden" />
+
+
+<meta name="date" content="2023-01-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="building.html"/>
+<link rel="next" href="examples.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.10/grViz.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">TinyExpr++ Reference Manual</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Overview</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#features"><i class="fa fa-check"></i><b>1.1</b> Features</a></li>
+</ul></li>
+<li class="part"><span><b>I User Guide</b></span></li>
+<li class="chapter" data-level="2" data-path="usage.html"><a href="usage.html"><i class="fa fa-check"></i><b>2</b> Usage</a></li>
+<li class="chapter" data-level="3" data-path="operators.html"><a href="operators.html"><i class="fa fa-check"></i><b>3</b> Operators</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="operators.html"><a href="operators.html#compatability-note"><i class="fa fa-check"></i><b>3.1</b> Compatability Note</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>4</b> Functions</a></li>
+<li class="chapter" data-level="5" data-path="constants.html"><a href="constants.html"><i class="fa fa-check"></i><b>5</b> Constants</a></li>
+<li class="chapter" data-level="6" data-path="comments.html"><a href="comments.html"><i class="fa fa-check"></i><b>6</b> Comments</a></li>
+<li class="part"><span><b>II Developer Guide</b></span></li>
+<li class="chapter" data-level="7" data-path="building.html"><a href="building.html"><i class="fa fa-check"></i><b>7</b> Building</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="building.html"><a href="building.html#requirements"><i class="fa fa-check"></i><b>7.1</b> Requirements</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="usage-1.html"><a href="usage-1.html"><i class="fa fa-check"></i><b>8</b> Usage</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="usage-1.html"><a href="usage-1.html#error-handling"><i class="fa fa-check"></i><b>8.1</b> Error Handling</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9</b> Examples</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="examples.html"><a href="examples.html#example-1"><i class="fa fa-check"></i><b>9.1</b> Example 1</a></li>
+<li class="chapter" data-level="9.2" data-path="examples.html"><a href="examples.html#example-2-binding-custom-variables"><i class="fa fa-check"></i><b>9.2</b> Example 2: Binding Custom Variables</a></li>
+<li class="chapter" data-level="9.3" data-path="examples.html"><a href="examples.html#example-3-calling-a-free-function"><i class="fa fa-check"></i><b>9.3</b> Example 3: Calling a Free Function</a></li>
+<li class="chapter" data-level="9.4" data-path="examples.html"><a href="examples.html#example-4-non-us-formatted-formulas"><i class="fa fa-check"></i><b>9.4</b> Example 4: Non-US Formatted Formulas</a></li>
+<li class="chapter" data-level="9.5" data-path="examples.html"><a href="examples.html#example-5-binding-to-custom-classes"><i class="fa fa-check"></i><b>9.5</b> Example 5: Binding to Custom Classes</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="custom-extensions.html"><a href="custom-extensions.html"><i class="fa fa-check"></i><b>10</b> Custom Extensions</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-functions"><i class="fa fa-check"></i><b>10.1</b> Binding to Custom Functions</a></li>
+<li class="chapter" data-level="10.2" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-classes"><i class="fa fa-check"></i><b>10.2</b> Binding to Custom Classes</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="non-us-formatted-formulas.html"><a href="non-us-formatted-formulas.html"><i class="fa fa-check"></i><b>11</b> Non-US Formatted Formulas</a></li>
+<li class="chapter" data-level="12" data-path="how-it-works.html"><a href="how-it-works.html"><i class="fa fa-check"></i><b>12</b> How it Works</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="how-it-works.html"><a href="how-it-works.html#grammar"><i class="fa fa-check"></i><b>12.1</b> Grammar</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="compile-time-options.html"><a href="compile-time-options.html"><i class="fa fa-check"></i><b>13</b> Compile-time Options</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="compile-time-options.html"><a href="compile-time-options.html#te_pow_from_right"><i class="fa fa-check"></i><b>13.1</b> <code>TE_POW_FROM_RIGHT</code></a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="embedded-programming.html"><a href="embedded-programming.html"><i class="fa fa-check"></i><b>14</b> Embedded Programming</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="embedded-programming.html"><a href="embedded-programming.html#performance"><i class="fa fa-check"></i><b>14.1</b> Performance</a></li>
+<li class="chapter" data-level="14.2" data-path="embedded-programming.html"><a href="embedded-programming.html#volatility"><i class="fa fa-check"></i><b>14.2</b> Volatility</a></li>
+<li class="chapter" data-level="14.3" data-path="embedded-programming.html"><a href="embedded-programming.html#exception-handling"><i class="fa fa-check"></i><b>14.3</b> Exception Handling</a></li>
+<li class="chapter" data-level="14.4" data-path="embedded-programming.html"><a href="embedded-programming.html#virtual-functions"><i class="fa fa-check"></i><b>14.4</b> Virtual Functions</a></li>
+</ul></li>
+<li class="part"><span><b>III Appendix</b></span></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">TinyExpr++ Reference Manual</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="usage-1" class="section level1 hasAnchor" number="8">
+<h1><span class="header-section-number">Chapter 8</span> Usage<a href="usage-1.html#usage-1" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><em>TinyExpr++</em>’s <code>te_parser</code> class defines these functions:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="usage-1.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> evaluate<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string_view<span class="op"> </span>expression<span class="op">);</span></span>
+<span id="cb6-2"><a href="usage-1.html#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> get_result<span class="op">();</span></span>
+<span id="cb6-3"><a href="usage-1.html#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> success<span class="op">();</span></span>
+<span id="cb6-4"><a href="usage-1.html#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int64_t</span> get_last_error_position<span class="op">();</span></span>
+<span id="cb6-5"><a href="usage-1.html#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string<span class="op"> </span>get_last_error_message<span class="op">();</span></span>
+<span id="cb6-6"><a href="usage-1.html#cb6-6" aria-hidden="true" tabindex="-1"></a>set_variables_and_functions<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>set<span class="op">&lt;</span>te_variable<span class="op">&gt;&amp;</span> vars<span class="op">);</span></span>
+<span id="cb6-7"><a href="usage-1.html#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>set<span class="op">&lt;</span>te_variable<span class="op">&gt;&amp;</span> get_variables_and_functions<span class="op">();</span></span>
+<span id="cb6-8"><a href="usage-1.html#cb6-8" aria-hidden="true" tabindex="-1"></a>add_variable_or_function<span class="op">(</span><span class="at">const</span> te_variable<span class="op">&amp;</span> var<span class="op">);</span></span>
+<span id="cb6-9"><a href="usage-1.html#cb6-9" aria-hidden="true" tabindex="-1"></a>get_decimal_separator<span class="op">();</span></span>
+<span id="cb6-10"><a href="usage-1.html#cb6-10" aria-hidden="true" tabindex="-1"></a>set_decimal_separator<span class="op">();</span></span>
+<span id="cb6-11"><a href="usage-1.html#cb6-11" aria-hidden="true" tabindex="-1"></a>get_list_separator<span class="op">();</span></span>
+<span id="cb6-12"><a href="usage-1.html#cb6-12" aria-hidden="true" tabindex="-1"></a>set_list_separator<span class="op">();</span></span></code></pre></div>
+<p><code>evaluate()</code> takes an expression and immediately returns the result. If there
+is a parse error, then it returns NaN (which can be verified by using <code>std::isnan()</code>). (<code>success()</code> will also return false.)</p>
+<p><code>get_result()</code> can be called anytime afterwards to retrieve the result from <code>evaluate()</code>.</p>
+<p><code>set_variables_and_functions()</code>, <code>get_variables_and_functions()</code>, and <code>add_variable_or_function()</code> are used
+to add custom variables and functions to the parser.</p>
+<p><code>get_decimal_separator()</code>/<code>set_decimal_separator()</code> and
+<code>get_list_separator()</code>/<code>set_list_separator()</code> can be used to parse non-US formatted formulas.</p>
+<p>Example:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="usage-1.html#cb7-1" aria-hidden="true" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb7-2"><a href="usage-1.html#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="usage-1.html#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Returns 10, error position is set to te_parser::npos (i.e., no error).</span></span>
+<span id="cb7-4"><a href="usage-1.html#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;(5+5)&quot;</span><span class="op">);</span></span>
+<span id="cb7-5"><a href="usage-1.html#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Returns NaN, error position is set to 3.</span></span>
+<span id="cb7-6"><a href="usage-1.html#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> result2 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;(5+5&quot;</span><span class="op">);</span></span></code></pre></div>
+<p>You can also provide <code>set_variables_and_functions()</code> a list of constants, bound variables, and function pointers/lambdas. <code>evaluate()</code> will then evaluate expressions using these variables and functions.</p>
+<div id="error-handling" class="section level2 hasAnchor" number="8.1">
+<h2><span class="header-section-number">8.1</span> Error Handling<a href="usage-1.html#error-handling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><em>TinyExpr++</em> will throw exceptions when:</p>
+<ul>
+<li>An illegal character is specified in a custom function or variable name.</li>
+<li>An illegal character is provided as a list or decimal separator.</li>
+<li>The same character is provided as both the list and decimal separator.</li>
+</ul>
+<p>It is recommended to wrap the following functions in <code>try</code>/<code>catch</code> blocks to handle
+these exceptions:</p>
+<ul>
+<li><code>compile()</code></li>
+<li><code>evaluate()</code></li>
+<li><code>set_variables_and_functions()</code></li>
+<li><code>add_variable_or_function()</code></li>
+<li><code>set_decimal_separator()</code></li>
+<li><code>set_list_separator()</code></li>
+</ul>
+<p>Syntax and calculation errors are trapped within calls to <code>compile()</code> and <code>evaluate()</code>. Error information can be retrieved afterwards by calling the following:</p>
+<ul>
+<li><code>success()</code>: returns whether the last parse was successful or not.</li>
+<li><code>get_last_error_position()</code>: returns the 0-based index of where in the
+expression the parse failed (useful for syntax errors).
+If there was no parse error, then this will return <code>te_parser::npos</code>.</li>
+<li><code>get_last_error_message()</code>: returns a more detailed message for some calculation errors (e.g., division by zero).</li>
+</ul>
+<p>Example:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="usage-1.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;tinyexpr.h&quot;</span></span>
+<span id="cb8-2"><a href="usage-1.html#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb8-3"><a href="usage-1.html#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="usage-1.html#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> x<span class="op">{</span> <span class="dv">0</span> <span class="op">},</span> y<span class="op">{</span> <span class="dv">0</span> <span class="op">};</span></span>
+<span id="cb8-5"><a href="usage-1.html#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Store variable names and pointers.</span></span>
+<span id="cb8-6"><a href="usage-1.html#cb8-6" aria-hidden="true" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb8-7"><a href="usage-1.html#cb8-7" aria-hidden="true" tabindex="-1"></a>tep<span class="op">.</span>set_variables_and_functions<span class="op">({{</span><span class="st">&quot;x&quot;</span><span class="op">,</span> <span class="op">&amp;</span>x<span class="op">},</span> <span class="op">{</span><span class="st">&quot;y&quot;</span><span class="op">,</span> <span class="op">&amp;</span>y<span class="op">}});</span></span>
+<span id="cb8-8"><a href="usage-1.html#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="usage-1.html#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Compile the expression with variables.</span></span>
+<span id="cb8-10"><a href="usage-1.html#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;sqrt(x^2+y^2)&quot;</span><span class="op">);</span></span>
+<span id="cb8-11"><a href="usage-1.html#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="usage-1.html#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>tep<span class="op">.</span>success<span class="op">())</span></span>
+<span id="cb8-13"><a href="usage-1.html#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb8-14"><a href="usage-1.html#cb8-14" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="dv">3</span><span class="op">;</span> y <span class="op">=</span> <span class="dv">4</span><span class="op">;</span></span>
+<span id="cb8-15"><a href="usage-1.html#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Will use the previously used expression, returns 5.</span></span>
+<span id="cb8-16"><a href="usage-1.html#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">double</span> h1 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">();</span></span>
+<span id="cb8-17"><a href="usage-1.html#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="usage-1.html#cb8-18" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="dv">5</span><span class="op">;</span> y <span class="op">=</span> <span class="dv">12</span><span class="op">;</span></span>
+<span id="cb8-19"><a href="usage-1.html#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Returns 13.</span></span>
+<span id="cb8-20"><a href="usage-1.html#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">double</span> h2 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">();</span></span>
+<span id="cb8-21"><a href="usage-1.html#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-22"><a href="usage-1.html#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb8-23"><a href="usage-1.html#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb8-24"><a href="usage-1.html#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;Parse error at &quot;</span> <span class="op">&lt;&lt;</span></span>
+<span id="cb8-25"><a href="usage-1.html#cb8-25" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>to_string<span class="op">(</span>tep<span class="op">.</span>get_last_error_position<span class="op">())</span> <span class="op">&lt;&lt;</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">;</span></span>
+<span id="cb8-26"><a href="usage-1.html#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="building.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="examples.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
