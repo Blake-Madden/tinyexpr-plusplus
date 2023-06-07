@@ -8,6 +8,9 @@ recursive-descent parser and evaluation engine for math expressions.
 In addition to math operators and precedence, TinyExpr++ also supports
 the standard C math functions and runtime binding of variables and user-defined functions.
 
+Please refer to the [TinyExpr++ Reference Manual](doc/manual/_book/TinyExpr++-Reference-Manual.pdf)
+for a full list of features.
+
 [![unit-tests](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/unit-tests.yml)
 [![macOS Build & Unit Tests](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/macos-unit-tests.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/macos-unit-tests.yml)
 [![Windows Build & Unit Tests](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/msw-unit-tests.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/msw-unit-tests.yml)
