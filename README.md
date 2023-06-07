@@ -40,8 +40,8 @@ For notes on embedded programming, please refer to the [embedded programming](Em
 - Can bind constants at eval-time.
 - Supports variadic functions (taking between 1-7 arguments).
 - Case insensitive.
-- Supports non-US formulas (e.g., `pow(2,2; 2)` instead of `pow(2.2, 2)`).
-- Supports C and C++ style comments.
+- Supports non-US formulas (e.g., `POW(2,2; 2)` instead of `POW(2.2, 2)`).
+- Supports C and C++ style comments within math expressions.
 - Released under the zlib license - free for nearly any use.
 - Easy to use and integrate with your code.
 - Thread-safe; parser is in a self-contained object.
@@ -568,9 +568,6 @@ behavior is:
 `a^b^c == a^(b^c)` and `-a^b == -(a^b)`
 
 That will match how many scripting languages do it (e.g., Python, Ruby).
-
-Also, if you'd like `log` to default to the natural log instead of `log10`,
-then define `TE_NAT_LOG`.
 
 Note that symbols can be defined by passing them to your compiler's
 command line (or in a Cmake configuration) as such: `-DTE_POW_FROM_RIGHT`

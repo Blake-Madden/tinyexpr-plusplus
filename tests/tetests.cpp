@@ -260,14 +260,12 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("log10 1.0e3") == 3);
     CHECK(tep.evaluate("10^5*5e-5") == 5);
 
-#ifdef TE_NAT_LOG
-    CHECK_THAT(tep.evaluate("log 1000"), Catch::Matchers::WithinRel(6.9078, 0.00001)));
-    CHECK(tep.evaluate("log e") == 1);
-    CHECK(tep.evaluate("log (e^10)") == 10);
-#else
-    CHECK(tep.evaluate("log 1000") == 3);
-#endif
-
+    CHECK_THAT(tep.evaluate("ln 1000"), Catch::Matchers::WithinRel(6.9078, 0.00001));
+    CHECK(tep.evaluate("ln e") == 1);
+    CHECK(tep.evaluate("ln(exp(3))") == 3);
+    CHECK_THAT(tep.evaluate("ln(2.7182818)"), Catch::Matchers::WithinRel(1.0, 0.00001));
+    CHECK_THAT(tep.evaluate("ln(86)"), Catch::Matchers::WithinRel(4.454373, 0.00001));
+    CHECK(tep.evaluate("ln (e^10)") == 10);
     CHECK(tep.evaluate("ln (e^10)") == 10);
     CHECK(tep.evaluate("100^.5+1") == 11);
     CHECK(tep.evaluate("100 ^.5+1") == 11);
@@ -284,6 +282,9 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("sqrt 100 + 7") == 17);
     CHECK(tep.evaluate("sqrt 100 * 7") == 70);
     CHECK(tep.evaluate("sqrt (100 * 100)") == 100);
+    CHECK(tep.evaluate("sqrt(9)") == 3);
+    CHECK(std::isnan(tep.evaluate("sqrt(-9)")));
+    CHECK(tep.get_last_error_message() == "Negative value passed to SQRT.");
 
     CHECK(tep.evaluate("1,2") == 2);
     CHECK(tep.evaluate("1,2+1") == 3);
@@ -294,6 +295,8 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("-(1,(2,3))") == -3);
 
     CHECK(tep.evaluate("2^2") == 4);
+    CHECK(tep.evaluate("2**2") == 4);
+    CHECK(tep.evaluate("2 ** 2") == 4);
     CHECK(tep.evaluate("pow(2,2)") == 4);
 
     CHECK_THAT(tep.evaluate("atan2(1,1)"), Catch::Matchers::WithinRel(0.7854, 0.0001));
@@ -612,7 +615,7 @@ TEST_CASE("Inf", "[inf]")
     CHECK(std::isinf(tep.evaluate("npr(3,2)*ncr(300000,100)")));
     CHECK(std::isinf(tep.evaluate("npr(100,90)")));
     CHECK(std::isinf(tep.evaluate("npr(30,25)")));
-    CHECK(std::isinf(tep.evaluate("log(0)")));
+    CHECK(std::isinf(tep.evaluate("log10(0)")));
     }
 
 TEST_CASE("NaN", "[nan]")
@@ -1317,9 +1320,9 @@ TEST_CASE("Is function used", "[functions]")
     p.set_variables_and_functions({
         { "MULT", __mult }
         });
-    p.compile(("log(5)+sin(atan(6))-MULT(2,30,4,5)+1"));
+    p.compile(("log10(5)+sin(atan(6))-MULT(2,30,4,5)+1"));
     CHECK(p.is_function_used(("MULT")));
-    CHECK(p.is_function_used(("Log")));
+    CHECK(p.is_function_used(("Log10")));
     CHECK(p.is_function_used(("sIn")));
     CHECK(p.is_function_used(("atAn")));
     CHECK(p.is_function_used(("MuLT")));
@@ -1461,8 +1464,15 @@ NAN)
 )");
     CHECK_THAT(.06, Catch::Matchers::WithinRel(tep.evaluate()));
 
+    res = tep.evaluate(R"(/*Nothing but comments*/)");
+    // no expression
+    CHECK(std::isnan(tep.get_result()));
+
     // complicated formula
     CHECK_THAT(4.5, Catch::Matchers::WithinRel(tep.evaluate("ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2")));
+
+    // make it look like an Excel function
+    CHECK_THAT(4.5, Catch::Matchers::WithinRel(tep.evaluate("=ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2")));
     }
 
 TEST_CASE("Permutation & Combination", "[math]")
@@ -1532,10 +1542,10 @@ TEST_CASE("Additional math functions", "[math]")
     p.compile(("TRUNC(3.2)"));
     CHECK_THAT(3, Catch::Matchers::WithinRel(p.evaluate()));
 
-    p.compile(("LOG(10)"));
+    p.compile(("LOG10(10)"));
     CHECK_THAT(1, Catch::Matchers::WithinRel(p.evaluate()));
 
-    p.compile(("LOG(100)"));
+    p.compile(("LOG10(100)"));
     CHECK_THAT(2, Catch::Matchers::WithinRel(p.evaluate()));
 
     p.compile(("LN(10)"));

@@ -19,6 +19,7 @@ The previously deprecated functions:
 - `add_var()`
 - `get_vars()`
 - `find_variable()`
+- `log()`
 
 have been removed. Use the following instead:
 
@@ -26,3 +27,8 @@ have been removed. Use the following instead:
 - `add_variable_or_function()`
 - `get_variables_and_functions()`
 - `find_variable_or_function()`
+- Use 'ln()' or `log10()` explicitly
+
+## Removed Compile-Time Options
+
+`TE_NAT_LOG` has been removed. Use 'ln()' or `log10()` explicitly.

@@ -138,7 +138,13 @@ static double _sinh(double x)
 
 [[nodiscard]]
 static double _sqrt(double x)
-    { return std::sqrt(static_cast<double>(x)); }
+    {
+    if (x < 0)
+        {
+        throw std::runtime_error("Negative value passed to SQRT.");
+        }
+    return std::sqrt(static_cast<double>(x));
+    }
 
 [[nodiscard]]
 static double _floor(double x)
@@ -587,11 +593,6 @@ const std::set<te_variable> te_parser::m_functions = {
     {"floor", static_cast<te_fun1>(_floor), TE_PURE},
     {"if", static_cast<te_fun3>(_if), TE_PURE},
     {"ln", static_cast<te_fun1>(_log), TE_PURE},
-#ifdef TE_NAT_LOG
-    {"log", static_cast<te_fun1>(_log), TE_PURE},
-#else
-    {"log", static_cast<te_fun1>(_log10), TE_PURE},
-#endif
     {"log10", static_cast<te_fun1>(_log10), TE_PURE},
     {"max", static_cast<te_fun7>(_max), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
     {"min", static_cast<te_fun7>(_min), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
@@ -1244,6 +1245,11 @@ bool te_parser::compile(const std::string_view expression)
         return false;
         }
     m_expression.assign(expression);
+
+    // In case the expression was a spreadsheet formula like "=SUM(...)",
+    // remove the '=' in front.
+    if (m_expression.length() && m_expression.front() == '=')
+        { m_expression.erase(0, 1); }
 
     // remove multi-line comments
     size_t commentStart{ 0 };
