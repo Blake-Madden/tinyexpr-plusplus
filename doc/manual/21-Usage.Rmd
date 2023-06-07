@@ -1,6 +1,6 @@
 # Usage
 
-TinyExpr++'s `te_parser` class defines these functions:
+*TinyExpr++*'s `te_parser` class defines these functions:
 
 ```cpp
 double evaluate(const std::string_view expression);
@@ -39,17 +39,15 @@ double result = tep.evaluate("(5+5)");
 double result2 = tep.evaluate("(5+5");
 ```
 
-You can also provide `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas.
-
-`evaluate()` will then evaluate expressions using these variables and functions.
+You can also provide `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas. `evaluate()` will then evaluate expressions using these variables and functions.
 
 ## Error Handling
 
-TinyExpr++ will throw exceptions when:
+*TinyExpr++* will throw exceptions when:
 
 - An illegal character is specified in a custom function or variable name.
 - An illegal character is provided as a list or decimal separator.
-- The same character was provided as both the list and decimal separator.
+- The same character is provided as both the list and decimal separator.
 
 It is recommended to wrap the following functions in `try`/`catch` blocks to handle
 these exceptions:

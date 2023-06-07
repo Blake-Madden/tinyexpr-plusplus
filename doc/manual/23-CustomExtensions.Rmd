@@ -2,7 +2,7 @@
 
 ## Binding to Custom Functions
 
-TinyExpr++ can also call custom functions. Here is a short example:
+*TinyExpr++() can also call custom functions. Here is a short example:
 
 ```cpp
 double my_sum(double a, double b)

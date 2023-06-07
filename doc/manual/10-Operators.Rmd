@@ -18,9 +18,9 @@ The following operators are supported within math expressions:
 | \!= | Not equal to. |
 | \>= | Greater than or equal to. |
 | <= | Less than or equal to. |
-| & | Logical conjunction. |
-| \| | Logical alternative. |
-| ( ) | Overrides the order of operations. |
+| & | Logical conjunction (AND). |
+| \| | Logical alternative (OR). |
+| ( ) | Groups sub-expressions, overriding the order of operations. |
 
 Table: Operators
 :::
@@ -38,8 +38,8 @@ For operators, the order of precedence is:
 
 ## Compatability Note
 
-The `%` character acts as a modulus operator in TinyExpr++, which is different from most
-spreadsheet programs. In programs such as LibreOffice Calc and Excel, `%` is used
+The `%` character acts as a modulus operator in *TinyExpr++*, which is different from most
+spreadsheet programs. In programs such as *LibreOffice Calc* and *Excel*, `%` is used
 to convert a number to a percentage. For example, `=20%` would yield `0.20` in Excel.
-In TinyExpr++, however, `20%` will result in a syntax error as
+In *TinyExpr++*, however, `20%` will result in a syntax error as
 it is expecting a binary (modulus) operation.

@@ -1,6 +1,6 @@
 # Examples
 
-The following are examples demonstrating how to use TinyExpr++.
+The following are examples demonstrating how to use *TinyExpr++*.
 
 ## Example 1
 
@@ -48,8 +48,8 @@ int main(int argc, char* argv[])
     if (tep.compile(expression))
         {
         /* The variables can be changed here, and eval can be called as many
-         * times as you like. This is fairly efficient because the parsing has
-         * already been done. */
+           times as you like. This is fairly efficient because the parsing has
+           already been done. */
         x = 3; y = 4;
         const double r = tep.evaluate();
         std::cout << "Result:\n\t" << r << "\n";
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
        To fix this, we will tell the parser to use "," as the decimal separator
        and ";" as list argument separator.*/
 
-    const char *expression = "pow(2,2; 2)"; // instead of "pow(2.2, 2)"
+    const char *expression = "pow(2,2; 2)"; // Instead of "pow(2.2, 2)"
     std::cout << "Evaluating:\n\t" << expression << "\n";
 
     te_parser tep;
@@ -202,12 +202,12 @@ tep.set_variables_and_functions(
         {"cellmax", cell_max, TE_DEFAULT, &teArray}
     });
 
-// change the object's data and evaluate their summation
-// (will be 30)
+// Change the object's data and evaluate their summation
+// (will be 30).
 teArray.m_data = { 6, 7, 8, 5, 4 };
 auto result = tep.evaluate("SUM(CELL 0, CELL 1, CELL 2, CELL 3, CELL 4)");
 
-// call the other function, getting the object's max value
-// (will be 8)
+// Call the other function, getting the object's max value
+// (will be 8).
 res = tep.evaluate("CellMax()");
 ```

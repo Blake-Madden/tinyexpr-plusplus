@@ -47,7 +47,7 @@ DiagrammeR::grViz("digraph {
 
 ## Grammar
 
-TinyExpr++ parses the following grammar (from lowest-to-highest operator precedence):
+*TinyExpr++* parses the following grammar (from lowest-to-highest operator precedence):
 
     <list>      =    <expr> {(",", ";" [dependent on locale]) <expr>}
     <expr>      =    <term> {("&" | "|") <term>}

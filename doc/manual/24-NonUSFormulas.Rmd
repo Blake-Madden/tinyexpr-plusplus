@@ -1,6 +1,6 @@
 # Non-US Formatted Formulas
 
-TinyExpr++ supports other locales and non-US formatted formulas. Here is an example:
+*TinyExpr++* supports other locales and non-US formatted formulas. Here is an example:
 
 ```cpp
 #include "tinyexpr.h"

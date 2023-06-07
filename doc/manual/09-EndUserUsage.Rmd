@@ -2,13 +2,13 @@
 
 # Usage
 
-TinyExpr++ is a formula-solving library which accepts math and logic expressions such as:
+*TinyExpr++* is a formula-solving library which accepts math and logic expressions such as:
 
 ```cpp
 ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2
 ```
 
-Applications using TinyExpr++ may provide context-specific variables
+Applications using *TinyExpr++* may provide context-specific variables
 that you can use in your expressions. For example, in a spreadsheet application, values representing cells such as `C1` and `D2` may be available. This would enable the use of expressions such as:
 
 ```cpp

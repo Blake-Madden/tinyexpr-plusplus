@@ -2,8 +2,8 @@
 
 # Building
 
-TinyExpr++ is self-contained in two files: `tinyexpr.cpp` and `tinyexpr.h`. To use
-TinyExpr++, simply add those two files to your project.
+*TinyExpr++* is self-contained in two files: `tinyexpr.cpp` and `tinyexpr.h`. To use
+*TinyExpr++*, add those two files to your project.
 
 The API documentation can be built using the following:
 
@@ -13,6 +13,6 @@ doxygen doc/Doxyfile
 
 ## Requirements
 
-TinyExpr++ must be compiled as C++17.
+*TinyExpr++* must be compiled as C++17.
 
-MSVC, GCC, and clang compilers are supported.
+MSVC, GCC, and Clang compilers are supported.

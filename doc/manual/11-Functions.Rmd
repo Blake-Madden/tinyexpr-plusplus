@@ -23,7 +23,6 @@ The following built-in functions are available:
 | FACT(Number) | Alias for FAC() |
 | FLOOR(Number) | Returns the largest integer not greater than **Number**.<br>\linebreak FLOOR(-3.2) = -4<br>\linebreak FLOOR(3.2) = 3 |
 | LN(Number) | Natural logarithm of **Number** (base Euler). |
-| LOG(Number) | Common logarithm of **Number** (base 10). |
 | LOG10(Number) | Common logarithm of **Number** (base 10). |
 | MIN(Value1, Value2, ...) | Returns the lowest value from a specified range of values. |
 | MAX(Value1, Value2, ...) | Returns the highest value from a specified range of values. |
