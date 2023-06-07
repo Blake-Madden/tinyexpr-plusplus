@@ -4,12 +4,46 @@
 expression into a syntax tree. For example, the expression `"sin x + 1/4"`
 parses as:
 
-![example syntax tree](e1.png)
+```{r, echo=FALSE, dev = c('pdf', 'png')}
+DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = oval]        
+  node1 [label = '+']
+  node2 [label = 'sin']
+  node3 [label =  '÷', style=filled, fillcolor = '#add8e6']
+  node4 [label = 'x']
+  node5 [label = '1', style=filled, fillcolor = '#add8e6']
+  node6 [label = '4', style=filled, fillcolor = '#add8e6']
+  
+  # edge definitions with the node IDs
+  node1 -> node2 -> node4
+  node1 -> node3
+  node3 -> node5
+  node3 -> node6
+  }",
+  height = 500)
+```
 
 `te_parser::evaluate()` also automatically prunes constant branches. In this example,
-the compiled expression returned by `te_compile()` would become:
+the compiled expression returned by `compile()` would become:
 
-![example syntax tree](e2.png)
+```{r, echo=FALSE, dev = c('pdf', 'png')}
+DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = oval]        
+  node1 [label = '+']
+  node2 [label = 'sin']
+  node3 [label =  '0.25', style=filled, fillcolor = '#add8e6']
+  node4 [label = 'x']
+
+  # edge definitions with the node IDs
+  node1 -> node2 -> node4
+  node1 -> node3
+  }",
+  height = 500)
+```
 
 ## Grammar
 
