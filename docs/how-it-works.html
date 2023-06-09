@@ -244,12 +244,12 @@ div.csl-indent {
 <p><code>te_parser::evaluate()</code> uses a simple recursive descent parser to compile your
 expression into a syntax tree. For example, the expression <code>"sin x + 1/4"</code>
 parses as:</p>
-<div id="htmlwidget-b32d0f8a31f56293d3d2" style="width:672px;height:500px;" class="grViz html-widget "></div>
-<script type="application/json" data-for="htmlwidget-b32d0f8a31f56293d3d2">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"÷\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n  node5 [label = \"1\", style=filled, fillcolor = \"#add8e6\"]\n  node6 [label = \"4\", style=filled, fillcolor = \"#add8e6\"]\n  \n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  node3 -> node5\n  node3 -> node6\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-fff5d9ac845cae692aeb" style="width:672px;height:500px;" class="grViz html-widget "></div>
+<script type="application/json" data-for="htmlwidget-fff5d9ac845cae692aeb">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"÷\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n  node5 [label = \"1\", style=filled, fillcolor = \"#add8e6\"]\n  node6 [label = \"4\", style=filled, fillcolor = \"#add8e6\"]\n  \n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  node3 -> node5\n  node3 -> node6\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <p><code>te_parser::evaluate()</code> also automatically prunes constant branches. In this example,
 the compiled expression returned by <code>compile()</code> would become:</p>
-<div id="htmlwidget-b7f74d64068186ea8b7e" style="width:672px;height:500px;" class="grViz html-widget "></div>
-<script type="application/json" data-for="htmlwidget-b7f74d64068186ea8b7e">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"0.25\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n\n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-efed3d1020a6004ea44d" style="width:672px;height:500px;" class="grViz html-widget "></div>
+<script type="application/json" data-for="htmlwidget-efed3d1020a6004ea44d">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"0.25\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n\n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <div id="grammar" class="section level2 hasAnchor" number="12.1">
 <h2><span class="header-section-number">12.1</span> Grammar<a href="how-it-works.html#grammar" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p><em>TinyExpr++</em> parses the following grammar (from lowest-to-highest operator precedence):</p>
@@ -314,8 +314,11 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": null,
-"search": null,
+"download": ["TinyExpr++ReferenceManual.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
 "toc": {
 "collapse": "subsection"
 }
@@ -323,6 +326,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

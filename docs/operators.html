@@ -281,42 +281,46 @@ div.csl-indent {
 <td align="left">Exponentiation. The number in front of ^ is the base, the number after it is the power to raise it to.</td>
 </tr>
 <tr class="odd">
+<td align="left">**</td>
+<td align="left">Exponentiation. (This is an alias for ^)</td>
+</tr>
+<tr class="even">
 <td align="left">=</td>
 <td align="left">Equals.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">&lt;</td>
 <td align="left">Less than.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">&gt;</td>
 <td align="left">Greater than.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">&lt;&gt;</td>
 <td align="left">Not equal to.</td>
 </tr>
-<tr class="odd">
-<td align="left">!=</td>
-<td align="left">Not equal to.</td>
-</tr>
 <tr class="even">
+<td align="left">!=</td>
+<td align="left">Not equal to. (This is an alias for &lt;&gt;)</td>
+</tr>
+<tr class="odd">
 <td align="left">&gt;=</td>
 <td align="left">Greater than or equal to.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">&lt;=</td>
 <td align="left">Less than or equal to.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">&amp;</td>
 <td align="left">Logical conjunction (AND).</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">|</td>
 <td align="left">Logical alternative (OR).</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">( )</td>
 <td align="left">Groups sub-expressions, overriding the order of operations.</td>
 </tr>
@@ -352,6 +356,15 @@ div.csl-indent {
 </tbody>
 </table>
 </div>
+<p>For example, the following:</p>
+<p><span class="math display">\[
+5+5+5/2
+\]</span></p>
+<p>Will yield <code>12.5</code>. <code>5/2</code> is executed first, then added to the other fives. However, by using parentheses:</p>
+<p><span class="math display">\[
+(5+5+5)/2
+\]</span></p>
+<p>You can override it so that the additions happen first (resulting in <code>15</code>), followed by the division (finally yielding <code>7.5</code>). Likewise, <code>(2+5)^2</code> will yield <code>49</code> (<code>7</code> squared), while <code>2+5^2</code> will yield <code>27</code> (<code>5</code> squared, plus <code>2</code>).</p>
 <div id="compatability-note" class="section level2 hasAnchor" number="3.1">
 <h2><span class="header-section-number">3.1</span> Compatability Note<a href="operators.html#compatability-note" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The <code>%</code> character acts as a modulus operator in <em>TinyExpr++</em>, which is different from most
@@ -400,8 +413,11 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": null,
-"search": null,
+"download": ["TinyExpr++ReferenceManual.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
 "toc": {
 "collapse": "subsection"
 }
@@ -409,6 +425,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
