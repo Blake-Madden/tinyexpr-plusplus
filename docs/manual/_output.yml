@@ -6,6 +6,9 @@ bookdown::gitbook:
         <li><a href="./">TinyExpr++ Reference Manual</a></li>
       after: |
         <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+    download: null
+    sharing: null
+    search: null
 bookdown::pdf_book:
   template: "latex/default.tex"
   includes:

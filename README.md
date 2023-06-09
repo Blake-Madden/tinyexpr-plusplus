@@ -8,7 +8,7 @@ recursive-descent parser and evaluation engine for math expressions.
 In addition to math operators and precedence, TinyExpr++ also supports
 the standard C math functions and runtime binding of variables and user-defined functions.
 
-Please refer to the [TinyExpr++ Reference Manual](docs/manual/_book/TinyExpr++-Reference-Manual.pdf)
+Please refer to the [TinyExpr++ Reference Manual](docs/TinyExpr++-Reference-Manual.pdf)
 for a full list of features.
 
 [![unit-tests](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/unit-tests.yml)
@@ -552,7 +552,7 @@ division (`/`), exponentiation (`^`), modulus (`%`), and left/right shift (`<<`,
 with the normal operator precedence (the one exception being that exponentiation is evaluated
 left-to-right, but this can be changed - see below).
 
-Please refer to the [TinyExpr++ Reference Manual](docs/manual/_book/TinyExpr++-Reference-Manual.pdf)
+Please refer to the [TinyExpr++ Reference Manual](docs/TinyExpr++-Reference-Manual.pdf)
 for a full list of available functions.
 
 ## Compile-time Options

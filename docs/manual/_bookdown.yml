@@ -3,3 +3,4 @@ book_filename: TinyExpr++ Reference Manual
 language:
   ui:
     chapter_name: "Chapter "
+output_dir: ".."
