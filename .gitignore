@@ -9,5 +9,5 @@ CMakeSettings.json
 /tests/demo/out/
 /tests/demo/bin
 /tests/demo/.vs
-docs/manual/_bookdown_files/TinyExpr++-Reference-Manual_files/
 .Rhistory
+docs/manual/_bookdown_files/TinyExpr++ReferenceManual_files/
