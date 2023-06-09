@@ -11,11 +11,12 @@ The following operators are supported within math expressions:
 | + | Addition. |
 | \- | Subtraction. |
 | ^ | Exponentiation. The number in front of ^ is the base, the number after it is the power to raise it to. |
+| ** | Exponentiation. (This is an alias for ^) |
 | \= | Equals. |
 | < | Less than. |
 | \> | Greater than. |
 | <> | Not equal to. |
-| \!= | Not equal to. |
+| \!= | Not equal to. (This is an alias for <>) |
 | \>= | Greater than or equal to. |
 | <= | Less than or equal to. |
 | & | Logical conjunction (AND). |
@@ -35,6 +36,20 @@ For operators, the order of precedence is:
 | \*, /, and % | Multiplication, division, and modulus. |
 | \+ and - | Addition and subtraction. |
 :::
+
+For example, the following:
+
+$$
+5+5+5/2
+$$
+
+Will yield `12.5`. `5/2` is executed first, then added to the other fives. However, by using parentheses:
+
+$$
+(5+5+5)/2
+$$
+
+You can override it so that the additions happen first (resulting in `15`), followed by the division (finally yielding `7.5`). Likewise, `(2+5)^2` will yield `49` (`7` squared), while `2+5^2` will yield `27` (`5` squared, plus `2`).
 
 ## Compatability Note
 
