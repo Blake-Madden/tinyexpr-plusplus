@@ -1,4 +1,4 @@
-<img alt="TinyExpr logo" src="doc/tinyexpr_logo.png" align="right"/>
+<img alt="TinyExpr logo" src="docs/tinyexpr_logo.png" align="right"/>
 
 # TinyExpr++
 
@@ -8,7 +8,7 @@ recursive-descent parser and evaluation engine for math expressions.
 In addition to math operators and precedence, TinyExpr++ also supports
 the standard C math functions and runtime binding of variables and user-defined functions.
 
-Please refer to the [TinyExpr++ Reference Manual](doc/manual/_book/TinyExpr++-Reference-Manual.pdf)
+Please refer to the [TinyExpr++ Reference Manual](docs/manual/_book/TinyExpr++-Reference-Manual.pdf)
 for a full list of features.
 
 [![unit-tests](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/unit-tests.yml)
@@ -162,7 +162,7 @@ TinyExpr++, simply add those two files to your project.
 The documentation can be built using the following:
 
 ```
-doxygen doc/Doxyfile
+doxygen docs/Doxyfile
 ```
 
 ## Short Example
@@ -492,12 +492,12 @@ Refer to [Examples](Examples.md) for more examples.
 expression into a syntax tree. For example, the expression `"sin x + 1/4"`
 parses as:
 
-![example syntax tree](doc/e1.png)
+![example syntax tree](docs/e1.png)
 
 `te_parser::evaluate()` also automatically prunes constant branches. In this example,
 the compiled expression returned by `te_compile()` would become:
 
-![example syntax tree](doc/e2.png)
+![example syntax tree](docs/e2.png)
 
 ## Performance
 
@@ -552,7 +552,7 @@ division (`/`), exponentiation (`^`), modulus (`%`), and left/right shift (`<<`,
 with the normal operator precedence (the one exception being that exponentiation is evaluated
 left-to-right, but this can be changed - see below).
 
-Please refer to the [TinyExpr++ Reference Manual](doc/manual/_book/TinyExpr++-Reference-Manual.pdf)
+Please refer to the [TinyExpr++ Reference Manual](docs/manual/_book/TinyExpr++-Reference-Manual.pdf)
 for a full list of available functions.
 
 ## Compile-time Options

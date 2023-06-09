@@ -2,12 +2,12 @@
 /tests/bin/
 /tests/out/
 /.vs
-/doc/html/
+/docs/html/
 CMakeSettings.json
 .Rproj.user
-/doc/manual/_book/TinyExpr++-Reference-Manual.tex
+*.tex
 /tests/demo/out/
 /tests/demo/bin
 /tests/demo/.vs
-doc/manual/_bookdown_files/TinyExpr++-Reference-Manual_files/
-doc/manual/.Rhistory
+docs/manual/_bookdown_files/TinyExpr++-Reference-Manual_files/
+.Rhistory
