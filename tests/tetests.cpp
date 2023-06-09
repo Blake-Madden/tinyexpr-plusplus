@@ -1140,6 +1140,11 @@ TEST_CASE("Logical operators", "[logic]")
     CHECK(p.evaluate("1 - 1 | 2*4 - 2") == 1);
 
     CHECK(p.evaluate("1 - 1 < 1 & 2") == 1);
+    // examples from manual
+    CHECK_THAT(12.5, Catch::Matchers::WithinRel(p.evaluate("5+5+5/2")));
+    CHECK_THAT(7.5, Catch::Matchers::WithinRel(p.evaluate("(5+5+5)/2")));
+    CHECK_THAT(49, Catch::Matchers::WithinRel(p.evaluate("(2+5)^2")));
+    CHECK_THAT(27, Catch::Matchers::WithinRel(p.evaluate("2+5^2")));
     }
 
 TEST_CASE("Statistics", "[stats]")
