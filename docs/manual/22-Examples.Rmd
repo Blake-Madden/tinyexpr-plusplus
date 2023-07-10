@@ -19,6 +19,8 @@ int main(int argc, char *argv[])
     }
 ```
 
+\newpage
+
 ## Example 2: Binding Custom Variables
 
 ```cpp
@@ -66,6 +68,8 @@ int main(int argc, char* argv[])
     }
 ```
 
+\newpage
+
 ## Example 3: Calling a Free Function
 
 ```cpp
@@ -105,6 +109,8 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
     }
 ```
+
+\newpage
 
 ## Example 4: Non-US Formatted Formulas
 
@@ -152,6 +158,8 @@ int main(int argc, char *argv[])
     }
 ```
 
+\newpage
+
 ## Example 5: Binding to Custom Classes
 
 A class derived from `te_expr` can be bound to custom functions. This enables you to
@@ -192,6 +200,7 @@ double cell_max(const te_expr* context)
 Finally, create an instance of the class and connect the custom functions to it,
 while also adding them to the parser:
 
+::: {.minipage data-latex="{\textwidth}"}
 ```cpp
 te_expr_array teArray{ TE_DEFAULT };
 
@@ -211,3 +220,4 @@ auto result = tep.evaluate("SUM(CELL 0, CELL 1, CELL 2, CELL 3, CELL 4)");
 // (will be 8).
 res = tep.evaluate("CellMax()");
 ```
+:::
