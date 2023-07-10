@@ -6,7 +6,7 @@
   `std::vector<te_variable>`. Prefer calling this function with an initializer list
    (see [Example 2](Examples.md)) or use `std::set<te_variable>`.
 - `ROUND` now supports number-of-digits arguments higher than `6`.
-- `ROUND` now supports negative number-of-digits arguments, similar to **Excel**.\n
+- `ROUND` now supports negative number-of-digits arguments, similar to **Excel**.
    For example, `ROUND(-50.55,-2)` will yield `-100`.
 - `set_decimal_separator()` now only accepts `.` or `,`; will throw otherwise.
 - `set_list_separator()` now only accepts `,` or `;`; will throw otherwise.
