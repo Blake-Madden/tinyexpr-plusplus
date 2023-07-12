@@ -132,7 +132,7 @@ public:
     // so use a simpler and faster tolower.
     [[nodiscard]]
     constexpr static char tolower(const char ch) noexcept
-        { return (ch >= 'A' && ch <= 'Z') ? (ch + 32) : ch; }
+        { return ch + (32 * (ch >= 'A' && ch <= 'Z')); }
     };
 
 /// @brief A compiled expression.
