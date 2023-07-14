@@ -5,42 +5,42 @@ The following built-in functions are available:
 ::: {}
 | Function | Description |
 | :-- | :-- |
-| ABS(Number) | Absolute value of **Number**. |
-| ACOS(Number) | Returns the arccosine, or inverse cosine, of **Number**. The arccosine is the angle whose cosine is number. The returned angle is given in radians in the range 0 (zero) to PI. |
-| ASIN(Number) | Returns the arcsine, or inverse sine function, of **Number**, where -1 <= **Number** <= 1. The arcsine is the angle whose sine is **Number**. The returned angle is given in radians where -pi/2 <= angle <= pi/2. |
-| ATAN(x) | Returns the principal value of the arc tangent of **x**, expressed in radians.. |
-| ATAN2(y, x) | Returns the principal value of the arc tangent of **y**,**x**, expressed in radians. |
-| BITLSHIFT(Number, ShiftAmount) | Returns **Number** left shifted by the specified number (**ShiftAmount**) of bits. |
-| BITRSHIFT(Number, ShiftAmount) |Returns **Number** right shifted by the specified number (**ShiftAmount**) of bits. |
-| CEIL(Number) | Smallest integer not less than **Number**.<br>\linebreak CEIL(-3.2) = -3<br>\linebreak CEIL(3.2) = 4 |
-| CLAMP(Number, Start, End) | Constrains **Number** within the range of **Start** and **End**. |
-| COMBIN(Number, NumberChosen) | Returns the number of combinations for a given number (**NumberChosen**) of items from **Number** of items. Note that for combinations, order of items is not important. |
-| COS(Number) | Cosine of the angle **Number** in radians. |
-| COSH(Number) | Hyperbolic cosine of **Number**. |
-| COT(Number) | Cotangent of **Number**. |
-| EXP(Number) | Euler to the power of **Number**. |
-| FAC(Number) | Returns the factorial of **Number**. The factorial of **Number** is equal to 1\*2\*3\*...\* **Number** |
-| FACT(Number) | Alias for FAC() |
-| FLOOR(Number) | Returns the largest integer not greater than **Number**.<br>\linebreak FLOOR(-3.2) = -4<br>\linebreak FLOOR(3.2) = 3 |
-| LN(Number) | Natural logarithm of **Number** (base Euler). |
-| LOG10(Number) | Common logarithm of **Number** (base 10). |
+| ABS(Number) | Absolute value of *Number*. |
+| ACOS(Number) | Returns the arccosine, or inverse cosine, of *Number*. The arccosine is the angle whose cosine is number. The returned angle is given in radians in the range `0` (zero) to `PI`. |
+| ASIN(Number) | Returns the arcsine, or inverse sine function, of *Number*, where -1 <= *Number* <= 1. The arcsine is the angle whose sine is *Number*. The returned angle is given in radians where -pi/2 <= angle <= pi/2. |
+| ATAN(x) | Returns the principal value of the arc tangent of *x*, expressed in radians.. |
+| ATAN2(y, x) | Returns the principal value of the arc tangent of *y*,*x*, expressed in radians. |
+| BITLSHIFT(Number, ShiftAmount) | Returns *Number* left shifted by the specified number (*ShiftAmount*) of bits. |
+| BITRSHIFT(Number, ShiftAmount) |Returns *Number* right shifted by the specified number (*ShiftAmount*) of bits. |
+| CEIL(Number) | Smallest integer not less than *Number*.<br>\linebreak `CEIL(-3.2)` = -3<br>\linebreak `CEIL(3.2)` = 4 |
+| CLAMP(Number, Start, End) | Constrains *Number* within the range of *Start* and *End*. |
+| COMBIN(Number, NumberChosen) | Returns the number of combinations for a given number (*NumberChosen*) of items from *Number* of items. Note that for combinations, order of items is not important. |
+| COS(Number) | Cosine of the angle *Number* in radians. |
+| COSH(Number) | Hyperbolic cosine of *Number*. |
+| COT(Number) | Cotangent of *Number*. |
+| EXP(Number) | Euler to the power of *Number*. |
+| FAC(Number) | Returns the factorial of *Number*. The factorial of *Number* is equal to 1\*2\*3\*...\* *Number* |
+| FACT(Number) | Alias for `FAC()` |
+| FLOOR(Number) | Returns the largest integer not greater than *Number*.<br>\linebreak `FLOOR(-3.2)` = -4<br>\linebreak `FLOOR(3.2)` = 3 |
+| LN(Number) | Natural logarithm of *Number* (base Euler). |
+| LOG10(Number) | Common logarithm of *Number* (base 10). |
 | MIN(Value1, Value2, ...) | Returns the lowest value from a specified range of values. |
 | MAX(Value1, Value2, ...) | Returns the highest value from a specified range of values. |
-| MOD(Number, Divisor) | Returns the remainder after **Number** is divided by **Divisor**. The result has the same sign as divisor. |
-| NCR(Number, NumberChosen) | Alias for COMBIN(). |
-| NPR(Number, NumberChosen) | Alias for PERMUT(). |
-| PERMUT(Number, NumberChosen) | Returns the number of permutations for a given number (**NumberChosen**) of items that can be selected **Number** of items. A permutation is any set of items where order is important. (This differs from combinations, where order is not important). |
-| POW(Base, Exponent) | Raises **Base** to any power. For fractional exponents, **Base** must be greater than 0. |
-| POWER(Base, Exponent) | Alias for POW(). |
-| RAND() | Generates a random floating point number within the range of 0 and 1. |
-| ROUND(Number, NumDigits) | **Number** rounded to **NumDigits** decimal places.<br>\linebreak If **NumDigits** is negative, then **Number** is rounded to the left of the decimal point.<br>\linebreak(**NumDigits** is optional and defaults to zero.)<br>\linebreak ROUND(-11.6, 0) = 12<br>\linebreak ROUND(-11.6) = 12<br>\linebreak ROUND(1.5, 0) = 2<br>\linebreak ROUND(1.55, 1) = 1.6<br>\linebreak ROUND(3.1415, 3) = 3.142<br>\linebreak ROUND(-50.55, -2) = -100 |
-| SIGN(Number) | Returns the sign of **Number**. Returns 1 if **Number** is positive, zero (0) if **Number** is 0, and -1 if **Number** is negative. |
-| SIN(Number) | Sine of the angle **Number** in radians. |
-| SINH(Number) | Hyperbolic sine of **Number**. |
-| SQRT(Number) | Square root of **Number**. |
-| TAN(Number) | Tangent of **Number**. |
-| TGAMMA(Number) | Returns the gamma function of **Number**. |
-| TRUNC(Number) | Discards the fractional part of **Number**.<br>\linebreak TRUNC(-3.2) = -3<br>\linebreak TRUNC(3.2) = 3 |
+| MOD(Number, Divisor) | Returns the remainder after *Number* is divided by *Divisor*. The result has the same sign as divisor. |
+| NCR(Number, NumberChosen) | Alias for `COMBIN()`. |
+| NPR(Number, NumberChosen) | Alias for `PERMUT()`. |
+| PERMUT(Number, NumberChosen) | Returns the number of permutations for a given number (*NumberChosen*) of items that can be selected *Number* of items. A permutation is any set of items where order is important. (This differs from combinations, where order is not important). |
+| POW(Base, Exponent) | Raises *Base* to any power. For fractional exponents, *Base* must be greater than 0. |
+| POWER(Base, Exponent) | Alias for `POW()`. |
+| RAND() | Generates a random floating point number within the range of `0` and `1`. |
+| ROUND(Number, NumDigits) | *Number* rounded to *NumDigits* decimal places.<br>\linebreak If *NumDigits* is negative, then *Number* is rounded to the left of the decimal point.<br>\linebreak(*NumDigits* is optional and defaults to zero.)<br>\linebreak `ROUND(-11.6, 0)` = 12<br>\linebreak `ROUND(-11.6)` = 12<br>\linebreak `ROUND(1.5, 0)` = 2<br>\linebreak `ROUND(1.55, 1)` = 1.6<br>\linebreak `ROUND(3.1415, 3)` = 3.142<br>\linebreak `ROUND(-50.55, -2)` = -100 |
+| SIGN(Number) | Returns the sign of *Number*. Returns `1` if *Number* is positive, zero (`0`) if *Number* is `0`, and `-1` if *Number* is negative. |
+| SIN(Number) | Sine of the angle *Number* in radians. |
+| SINH(Number) | Hyperbolic sine of *Number*. |
+| SQRT(Number) | Square root of *Number*. |
+| TAN(Number) | Tangent of *Number*. |
+| TGAMMA(Number) | Returns the gamma function of *Number*. |
+| TRUNC(Number) | Discards the fractional part of *Number*.<br>\linebreak `TRUNC(-3.2)` = -3<br>\linebreak `TRUNC(3.2)` = 3 |
 
 Table: Math Functions
 :::
@@ -58,8 +58,8 @@ Table: Statistical Functions
 | Function | Description |
 | :-- | :-- |
 | AND(Value1, Value2, ...) | Returns true if all conditions are true. |
-| IF(Condition, ValueIfTrue, ValueIfFalse) | If **Condition** is true (non-zero), then **ValueIfTrue** is returned; otherwise, **ValueIfFalse** is returned. |
-| NOT(Value) | Returns the logical negation of **Value.** |
+| IF(Condition, ValueIfTrue, ValueIfFalse) | If *Condition* is true (non-zero), then *ValueIfTrue* is returned; otherwise, *ValueIfFalse* is returned. |
+| NOT(Value) | Returns the logical negation of *Value.* |
 | OR(Value1, Value2, ...) | Returns true if any condition is true. |
 
 Table: Logic Functions
