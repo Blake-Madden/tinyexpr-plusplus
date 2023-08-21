@@ -66,6 +66,7 @@
 #include <stdexcept>
 #include <cctype>
 #include <set>
+#include <utility>
 
 class te_expr;
 
