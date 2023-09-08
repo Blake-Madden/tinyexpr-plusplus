@@ -102,7 +102,7 @@ exceptions and return NaN (not a number) as the result.
 Exceptions can also be thrown when defining custom functions or variables
 which do not follow the proper naming convention.
 (Function and variable names must only contain the characters
-`a`-`z`, `A`-`Z`, `0`-`9`, and `_`, and must begin with a letter.)
+`a`-`z`, `A`-`Z`, `0`-`9`, `.`, and `_`, and must begin with a letter.)
 
 Finally, specifying an illegal character for a list or decimal separator
 will also throw.
