@@ -38,7 +38,7 @@ For notes on embedded programming, please refer to the [embedded programming](Em
 - Simple and fast.
 - Implements standard operator precedence.
 - Implements logical and comparison operators.
-- Exposes standard C math functions (`sin`, `sqrt`, `ln`, etc.), as well as some Excel-like functions (e.g., `AVERAGE()` and `IF()`).
+- Exposes standard C math functions (`sin`, `sqrt`, `ln`, etc.), as well as some *Excel*-like functions (e.g., `AVERAGE()` and `IF()`).
 - Can add custom functions and variables easily.
 - Can bind constants at eval-time.
 - Supports variadic functions (taking between 1-7 arguments).
@@ -77,19 +77,20 @@ The following are changes from the original TinyExpr C library:
   Also uses `std::initializer` lists (instead of various pointer operations).
 - Separate enums are now used between `te_expr` and `state`'s types and are more strongly typed.
 - Added support for C and C++ style comments (`//` and `/**/`).
-- `compile()` and `evaluate()` now accept `std::string_view`s, meaning that these functions can accept either `char*` and `std::string` arguments.
+- `compile()` and `evaluate()` now accept `std::string_view`s, meaning that these functions can accept either `char*` or `std::string` arguments.
 - Added support for `volatile` (refer to [embedded programming](Embedded.md) for details).
+- Custom functions and variables can now contain periods in their names.
 - Added new built-in functions:
   - `and`: returns true (i.e., non-zero) if all conditions are true (accepts 1-7 arguments).
   - `average`: returns the mean for a range of values (accepts 1-7 arguments).
   - `bitlshift`: left shift operator.\n
-     Negative shift amount arguments (similar to **Excel**) is supported.
+     Negative shift amount arguments (similar to *Excel*) is supported.
   - `bitrshift`: right shift operator.\n
-     Negative shift amount arguments (similar to **Excel**) is supported.
+     Negative shift amount arguments (similar to *Excel*) is supported.
   - `cot`: returns the cotangent of an angle.
-  - `combin`: alias for `ncr()`, like the **Excel** function.
+  - `combin`: alias for `ncr()`, like the *Excel* function.
   - `clamp`: constrains a value to a range.
-  - `fact`: alias for `fac()`, like the **Excel** function.
+  - `fact`: alias for `fac()`, like the *Excel* function.
   - `false`: returns `false` (i.e., `0`) in a boolean expression.
   - `if`: if a value is true (i.e., non-zero), then returns the second argument; otherwise, returns the third argument.
   - `max`: returns the maximum of a range of values (accepts 1-7 arguments).
@@ -98,13 +99,13 @@ The following are changes from the original TinyExpr C library:
   - `nan`: returns `NaN` (i.e., Not-a-Number) in a boolean expression.
   - `or`: returns true (i.e., non-zero) if any condition is true (accepts 1-7 arguments).
   - `not`: returns logical negation of value.
-  - `permut`: alias for `npr()`, like the **Excel** function.
-  - `power`: alias for `pow()`, like the **Excel** function.
+  - `permut`: alias for `npr()`, like the *Excel* function.
+  - `power`: alias for `pow()`, like the *Excel* function.
   - `rand`: returns random number between `0` and `1`.\n
      Note that this implementation uses the Mersenne Twister (`mt19937`) to generate random numbers.
   - `round`: returns a number, rounded to a given decimal point.
      (Decimal point is optional and defaults to `0`.)\n
-     Negative number-of-digits arguments (similar to **Excel**) is supported.
+     Negative number-of-digits arguments (similar to *Excel*) is supported.
   - `sign`: returns the sign of a number: `1` if positive, `-1` if negative, `0` if zero.
   - `sum`: returns the sum of a list of values (accepts 1-7 arguments).
   - `sqr`: returns a number squared.
@@ -125,7 +126,7 @@ The following are changes from the original TinyExpr C library:
   - `<<`   left shift operator.
   - `>>`   right shift operator.
   - `**`   exponentiation (alias for `^`).
-- `round` now supports negative number of digit arguments, similar to **Excel**.
+- `round` now supports negative number of digit arguments, similar to *Excel*.
   For example, `ROUND(-50.55,-2)` will yield `-100`.
 - Custom variables and functions are now stored in a `std::set`
   (which can be easily accessed and updated via the new `get_variables_and_functions()/set_variables_and_functions()` functions).
@@ -540,8 +541,8 @@ TinyExpr++ parses the following grammar (from lowest-to-highest operator precede
 In addition, whitespace between tokens is ignored.
 
 Valid variable names consist of a letter followed by any combination
-of: letters `a` through `z` or `A` through `Z`, the digits `0` through `9`, and
-underscore. Constants can be integers, decimal numbers, or in scientific
+of: letters `a` through `z` or `A` through `Z`, the digits `0` through `9`, periods, and
+underscores. Constants can be integers, decimal numbers, or in scientific
 notation (e.g., `1e3` for `1000`). A leading zero is not required (e.g., `.5`
 for `0.5`).
 
@@ -562,7 +563,7 @@ By default, TinyExpr++ does exponentiation from left to right. For example:
 `a^b^c == (a^b)^c` and `-a^b == (-a)^b`
 
 This is by design; it's the way that spreadsheets do it
-(e.g., LibreOffice Calc, Excel, Google Sheets).
+(e.g., *LibreOffice Calc*, *Excel*, *Google Sheets*).
 
 If you would rather have exponentiation work from right to left, you need to
 define `TE_POW_FROM_RIGHT` when compiling. With `TE_POW_FROM_RIGHT` defined, the
