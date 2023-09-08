@@ -1,6 +1,6 @@
 # Compile-time Options
 
-## `TE_POW_FROM_RIGHT`
+## `TE_POW_FROM_RIGHT` {-}
 
 By default, *TinyExpr++* does exponentiation from left to right. For example:
 

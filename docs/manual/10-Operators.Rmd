@@ -51,7 +51,7 @@ $$
 
 You can override it so that the additions happen first (resulting in `15`), followed by the division (finally yielding `7.5`). Likewise, `(2+5)^2` will yield `49` (`7` squared), while `2+5^2` will yield `27` (`5` squared, plus `2`).
 
-## Compatability Note
+## Compatability Note {-}
 
 The `%` character acts as a modulus operator in *TinyExpr++*, which is different from most
 spreadsheet programs. In programs such as *LibreOffice Calc* and *Excel*, `%` is used

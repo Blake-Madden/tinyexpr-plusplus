@@ -2,7 +2,7 @@
 
 The following are examples demonstrating how to use *TinyExpr++*.
 
-## Example 1
+## Example 1 {-}
 
 ```cpp
 include "tinyexpr.h"
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
 \newpage
 
-## Example 2: Binding Custom Variables
+## Example 2: Binding Custom Variables {-}
 
 ```cpp
 #include "tinyexpr.h"
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
 
 \newpage
 
-## Example 3: Calling a Free Function
+## Example 3: Calling a Free Function {-}
 
 ```cpp
 #include "tinyexpr.h"
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 
 \newpage
 
-## Example 4: Non-US Formatted Formulas
+## Example 4: Non-US Formatted Formulas {-}
 
 ```cpp
 #include "tinyexpr.h"

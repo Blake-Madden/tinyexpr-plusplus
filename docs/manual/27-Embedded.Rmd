@@ -3,7 +3,7 @@
 The following section discusses topics related to using *TinyExpr++* in an
 embedded environment.
 
-## Performance
+## Performance {-}
 
 *TinyExpr++* is fairly fast compared to compiled C when the expression is short, when the
 expression does hard calculations (e.g., exponentiation), and when some of the
@@ -22,7 +22,7 @@ Here are some example benchmarks:
 
 Note that *TinyExpr++* is slower compared to *TinyExpr* because of additional type safety checks (e.g., the use of `std::variant` instead of unions).
 
-## Volatility
+## Volatility {-}
 
 If needing to use a `te_parser` object as `volatile`
 (e.g., accessing it in a system interrupt), then you will need
@@ -90,7 +90,7 @@ Note that it is required to make the initial declaration of your
 `te_parser` non-`volatile`; otherwise, the `const_cast<>` to the
 `volatile` reference will cause undefined behavior.
 
-## Exception Handling
+## Exception Handling {-}
 
 *TinyExpr++* requires exception handling, although it does attempt to
 minimize the use of exceptions (e.g., `noexcept` is used extensively).
@@ -120,7 +120,7 @@ in `try`/`catch` blocks:
 The caught `std::runtime_error` exception will provide a description
 of the error in its `what()` method.
 
-## Virtual Functions
+## Virtual Functions {-}
 
 *TinyExpr++* does not use virtual functions or derived classes,
 unless you create a custom class derived from `te_expr` yourself

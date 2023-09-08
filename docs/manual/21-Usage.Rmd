@@ -41,7 +41,7 @@ double result2 = tep.evaluate("(5+5");
 
 You can also provide `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas. `evaluate()` will then evaluate expressions using these variables and functions.
 
-## Error Handling
+## Error Handling {-}
 
 *TinyExpr++* will throw exceptions when:
 

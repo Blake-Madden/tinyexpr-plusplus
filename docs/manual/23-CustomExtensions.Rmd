@@ -1,8 +1,8 @@
 # Custom Extensions
 
-## Binding to Custom Functions
+## Binding to Custom Functions {-}
 
-*TinyExpr++() can also call custom functions. Here is a short example:
+*TinyExpr++* can also call custom functions. Here is a short example:
 
 ```cpp
 double my_sum(double a, double b)
@@ -35,7 +35,7 @@ const double r = tep.evaluate("mysum(5, 6)");
 // will be 11
 ```
 
-## Binding to Custom Classes
+## Binding to Custom Classes {-}
 
 A class derived from `te_expr` can be bound to custom functions. This enables you to
 have full access to an object (via these functions) when parsing an expression.

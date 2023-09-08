@@ -45,7 +45,7 @@ DiagrammeR::grViz("digraph {
   height = 500)
 ```
 
-## Grammar
+## Grammar {-}
 
 *TinyExpr++* parses the following grammar (from lowest-to-highest operator precedence):
 

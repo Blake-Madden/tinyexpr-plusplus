@@ -11,7 +11,7 @@ The API documentation can be built using the following:
 doxygen docs/Doxyfile
 ```
 
-## Requirements
+## Requirements {-}
 
 *TinyExpr++* must be compiled as C++17.
 
