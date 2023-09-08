@@ -263,7 +263,7 @@ public:
         {
         for (const auto& var : vars)
             { validate_name(var); }
-        m_custom_funcs_and_vars = std::move(vars);
+        m_customFuncsAndVars = std::move(vars);
         }
     /// @brief Adds a custom variable or function.
     /// @param var The variable/function to add.
@@ -274,16 +274,16 @@ public:
     void add_variable_or_function(te_variable var)
         {
         validate_name(var);
-        m_custom_funcs_and_vars.insert(std::move(var));
+        m_customFuncsAndVars.insert(std::move(var));
         }
     /// @private
     [[nodiscard]]
     const std::set<te_variable>& get_variables_and_functions() const noexcept
-        { return m_custom_funcs_and_vars; }
+        { return m_customFuncsAndVars; }
     /// @returns The list of custom variables and functions.
     [[nodiscard]]
     std::set<te_variable>& get_variables_and_functions() noexcept
-        { return m_custom_funcs_and_vars; }
+        { return m_customFuncsAndVars; }
 
     /// @returns The decimal separator used for numbers.
     [[nodiscard]]
@@ -455,9 +455,9 @@ private:
     std::set<te_variable>::iterator find_variable_or_function(const std::string_view name)
         {
         if (name.empty())
-            { return m_custom_funcs_and_vars.end(); }
+            { return m_customFuncsAndVars.end(); }
 
-        return m_custom_funcs_and_vars.find(
+        return m_customFuncsAndVars.find(
             te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
         }
 
@@ -468,9 +468,9 @@ private:
     std::set<te_variable>::const_iterator find_variable_or_function(const std::string_view name) const
         {
         if (name.empty())
-            { return m_custom_funcs_and_vars.cend(); }
+            { return m_customFuncsAndVars.cend(); }
 
-        return m_custom_funcs_and_vars.find(
+        return m_customFuncsAndVars.find(
             te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
         }
 
