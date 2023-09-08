@@ -1,0 +1,9 @@
+headings_flag 1
+
+heading_prefix "\\par\\penalty-50\\textbf{"
+heading_suffix "}\\\\\*\~\\\\\*"
+symhead_positive "Symbols"
+symhead_negative "symbols"
+numhead_positive "Numbers"
+numhead_negative "numbers"
+delim_0 ",\~"
