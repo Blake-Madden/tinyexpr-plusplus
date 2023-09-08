@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 
 \newpage
 
-## Example 5: Binding to Custom Classes
+## Example 5: Binding to Custom Classes {#example-5 .unnumbered}
 
 A class derived from `te_expr` can be bound to custom functions. This enables you to
 have full access to an object (via these functions) when parsing an expression.

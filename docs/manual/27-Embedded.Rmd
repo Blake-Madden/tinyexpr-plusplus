@@ -7,7 +7,7 @@ embedded environment.
 
 *TinyExpr++* is fairly fast compared to compiled C when the expression is short, when the
 expression does hard calculations (e.g., exponentiation), and when some of the
-work can be simplified by `evaluate()`. *TinyExpr++* is slow compared to C when the
+work can be simplified by `evaluate()`. *TinyExpr++* is slower compared to C when the
 expression is long and involves only basic arithmetic.
 
 Here are some example benchmarks:
@@ -124,6 +124,6 @@ of the error in its `what()` method.
 
 *TinyExpr++* does not use virtual functions or derived classes,
 unless you create a custom class derived from `te_expr` yourself
-(refer to [Example 5](Examples.md)).
+(refer to [Example 5](#example-5)).
 (`te_expr` defines a virtual destructor that may be implicitly optimized to
 `final` if no derived classes are defined.)
