@@ -129,8 +129,8 @@ public:
             }
         return (lhv.length() < rhv.length());
         }
-    // We can assume that we are only dealing with a-z, A-Z, 0-9, and _,
-    // so use a simpler and faster tolower.
+    // We can assume that we are only dealing with a-z, A-Z, 0-9, ., or _,
+    // so use a branchless tolower.
     [[nodiscard]]
     constexpr static char tolower(const char ch) noexcept
         { return ch + (32 * (ch >= 'A' && ch <= 'Z')); }
@@ -256,7 +256,7 @@ public:
     /// @brief Sets the list of custom variables and functions.
     /// @param vars The list of variables and functions.
     /// @note Valid variable and function names must begin with a letter from a-z (A-Z),
-    ///     followed by additional English letters, numbers, or underscores.
+    ///     followed by additional English letters, numbers, periods, or underscores.
     /// @throws std::runtime_error Throws an exception if an illegal character is found
     ///     in the variable name.
     void set_variables_and_functions(std::set<te_variable> vars)
@@ -431,15 +431,22 @@ private:
         const auto varCharPos = std::find_if(var.m_name.cbegin(), var.m_name.cend(),
             [](const auto ch) noexcept
                 {
-                return !(is_letter(ch) ||
-                    (ch >= '0' && ch <= '9') ||
-                    (ch == '_'));
+                return !is_name_char_valid(ch);
                 });
         if (varCharPos != var.m_name.cend())
             {
             throw std::runtime_error(
                 std::string("Invalid character in variable name: ") + var.m_name);
             }
+        }
+    /// @returns @c true if character is valid for a function or variable name.
+    /// @param ch The character to review.
+    [[nodiscard]]
+    static constexpr bool is_name_char_valid(const char ch) noexcept
+        {
+        return (is_letter(ch) ||
+            (ch >= '0' && ch <= '9') ||
+            (ch == '_') || (ch == '.'));
         }
     /// @returns An iterator to the custom variable or function with the given @c name,
     ///     or end of get_variables_and_functions() if not found.
@@ -702,8 +709,8 @@ private:
         return ret;
         }
     [[nodiscard]]
-    static constexpr bool is_letter(const char c) noexcept
-        { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
+    static constexpr bool is_letter(const char ch) noexcept
+        { return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'); }
     /** @brief Parses the input expression and binds variables.
         @param expression The formula to parse.
         @param variables The collection of custom functions and

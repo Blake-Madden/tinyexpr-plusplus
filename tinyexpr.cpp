@@ -653,9 +653,7 @@ void te_parser::next_token(te_parser::state *s)
             if (is_letter(s->m_next[0]))
                 {
                 const char* start = s->m_next;
-                while (is_letter(s->m_next[0]) ||
-                       (s->m_next[0] >= '0' && s->m_next[0] <= '9') ||
-                       (s->m_next[0] == '_'))
+                while (is_name_char_valid(s->m_next[0]))
                     { s->m_next++; }
 
                 m_varFound = false;

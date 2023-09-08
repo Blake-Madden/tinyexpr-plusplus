@@ -1399,6 +1399,50 @@ TEST_CASE("Custom test", "[functions]")
         }
     }
 
+TEST_CASE("Funcs and vars with period", "[functions]")
+    {
+    te_parser p;
+
+    SECTION("Custom test unknown parameters")
+        {
+        p.set_variables_and_functions({ { "MATH.MULT", __mult} });
+        p.compile(("math.MULT(2,30,4,5)+1"));
+        CHECK(1201 == p.evaluate());
+        }
+    SECTION("0 Parameters")
+        {
+        p.set_variables_and_functions({ {"MATH.Return5", return5} });
+        p.compile(("math.Return5()"));
+        CHECK_THAT(5, Catch::Matchers::WithinRel(p.evaluate()));
+        }
+    SECTION("2 Parameters")
+        {
+        p.set_variables_and_functions({ { "MATH.AddEm", AddEm} });
+        p.compile(("math.ADDEM(2.1, 86.8)"));
+        CHECK_THAT(88.9, Catch::Matchers::WithinRel(p.evaluate()));
+        }
+    SECTION("Custom variables")
+        {
+        p.set_variables_and_functions({ {"STATS.STRESS_L", 10.1},
+            {"stats.REGRESSION.P_LEVEL", .5} });
+        p.compile(("statS.STRESS_L*StAts.REGRESSION.P_LEVEL"));
+        CHECK_THAT(5.05, Catch::Matchers::WithinRel(p.evaluate()));
+        p.set_constant("statS.REGRESSION.P_LEVEL", .9);
+        CHECK_THAT(9.09, Catch::Matchers::WithinRel(p.evaluate()));
+        p.compile(("IF(StAts.STRESS_L >= Stats.REGRESSION.P_LEVEL, 1, 0)"));
+        CHECK(1 == p.evaluate());
+        // comma (instead of period) will cause a syntax error
+        CHECK(std::isnan(p.evaluate(("STATS,STRESS_L*STATS.REGRESSION.P_LEVEL"))));
+        CHECK(p.get_last_error_position() == 4);
+        // incomplete scope on P_LEVEL
+        CHECK(std::isnan(p.evaluate(("STATS.STRESS_L*STATS.P_LEVEL"))));
+        CHECK(p.get_last_error_position() == 27);
+        // stray space
+        CHECK(std::isnan(p.evaluate(("STATS.STRESS_L*STATS. REGRESSION.P_LEVEL"))));
+        CHECK(p.get_last_error_position() == 20);
+        }
+    }
+
 TEST_CASE("Complex", "[functions]")
     {
     te_parser tep;
@@ -1937,6 +1981,7 @@ TEST_CASE("String comparison helper", "[stringcmp]")
         CHECK(sl.tolower('z') == 'z');
 
         CHECK(sl.tolower('_') == '_');
+        CHECK(sl.tolower('.') == '.');
         CHECK(sl.tolower('0') == '0');
         CHECK(sl.tolower('1') == '1');
         CHECK(sl.tolower('2') == '2');

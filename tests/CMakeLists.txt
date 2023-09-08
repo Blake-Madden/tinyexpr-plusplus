@@ -3,15 +3,15 @@
 # Purpose:     Unit test runner for tinyexpr++
 # Author:      Blake Madden
 # Created:     2022-10-29
-# Copyright:   (c) 2022 Blake Madden
+# Copyright:   (c) 2023 Blake Madden
 # Licence:     3-Clause BSD licence
 #############################################################################
-
-PROJECT(TETestRunner)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED True)
+
+PROJECT(TETestRunner)
 
 # https://github.com/bilke/cmake-modules/blob/master/CodeCoverage.cmake
 IF(CMAKE_COMPILER_IS_GNUCXX)
