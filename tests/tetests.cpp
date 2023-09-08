@@ -139,7 +139,7 @@ inline double __mult(const double a, const double b, const double c, const doubl
 class te_expr_array : public te_expr
     {
 public:
-    explicit te_expr_array(const variable_flags type) noexcept :
+    explicit te_expr_array(const te_variable_flags type) noexcept :
         te_expr(type) {}
     std::array<double, 5> m_data = { 5, 6, 7, 8, 9 };
     };

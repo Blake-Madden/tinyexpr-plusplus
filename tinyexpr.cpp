@@ -565,11 +565,11 @@ const std::set<te_variable> te_parser::m_functions = {
     {"abs", static_cast<te_fun1>(_absolute_value), TE_PURE},
     {"acos", static_cast<te_fun1>(_acos), TE_PURE},
     // variadic, accepts 1-7 arguments
-    {"and", static_cast<te_fun7>(_and_variadic), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"and", static_cast<te_fun7>(_and_variadic), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
     {"asin", static_cast<te_fun1>(_asin), TE_PURE},
     {"atan", static_cast<te_fun1>(_atan), TE_PURE},
     {"atan2", static_cast<te_fun2>(_atan2), TE_PURE},
-    {"average", static_cast<te_fun7>(_average), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"average", static_cast<te_fun7>(_average), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
     {"bitlshift", static_cast<te_fun2>(_left_shift_or_right), TE_PURE},
     {"bitrshift", static_cast<te_fun2>(_right_shift_or_left), TE_PURE},
     {"ceil", static_cast<te_fun1>(_ceil), TE_PURE},
@@ -594,26 +594,26 @@ const std::set<te_variable> te_parser::m_functions = {
     {"if", static_cast<te_fun3>(_if), TE_PURE},
     {"ln", static_cast<te_fun1>(_log), TE_PURE},
     {"log10", static_cast<te_fun1>(_log10), TE_PURE},
-    {"max", static_cast<te_fun7>(_max), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"min", static_cast<te_fun7>(_min), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"max", static_cast<te_fun7>(_max), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"min", static_cast<te_fun7>(_min), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
     {"mod", static_cast<te_fun2>(_modulus), TE_PURE},
     {"nan", static_cast<te_fun0>(_nan_value), TE_PURE},
     {"ncr", static_cast<te_fun2>(_ncr), TE_PURE},
     {"not", static_cast<te_fun1>(_not), TE_PURE},
     {"npr", static_cast<te_fun2>(_npr), TE_PURE},
-    {"or", static_cast<te_fun7>(_or_variadic), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"or", static_cast<te_fun7>(_or_variadic), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
     {"permut", static_cast<te_fun2>(_npr), TE_PURE},
     {"pi", static_cast<te_fun0>(_pi), TE_PURE},
     {"pow", static_cast<te_fun2>(_pow), TE_PURE},
     {"power",/* Excel alias*/ static_cast<te_fun2>(_pow), TE_PURE},
     {"rand", static_cast<te_fun0>(_random), TE_PURE},
-    {"round", static_cast<te_fun2>(_round), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"round", static_cast<te_fun2>(_round), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
     {"sign", static_cast<te_fun1>(_sign), TE_PURE},
     {"sin", static_cast<te_fun1>(_sin), TE_PURE},
     {"sinh", static_cast<te_fun1>(_sinh), TE_PURE},
     {"sqr", static_cast<te_fun1>(_sqr), TE_PURE},
     {"sqrt", static_cast<te_fun1>(_sqrt), TE_PURE},
-    {"sum", static_cast<te_fun7>(_sum), static_cast<variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"sum", static_cast<te_fun7>(_sum), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
     {"tan", static_cast<te_fun1>(_tan), TE_PURE},
     {"tanh", static_cast<te_fun1>(_tanh), TE_PURE},
     {"tgamma", static_cast<te_fun1>(_tgamma), TE_PURE},
@@ -848,7 +848,7 @@ te_expr* te_parser::base(te_parser::state *s)
         s->m_type == te_parser::state::token_type::TOK_CLOSE ||
         s->m_type == te_parser::state::token_type::TOK_INFIX)
         {
-        ret = new_expr(TE_DEFAULT, variant_type{ std::numeric_limits<double>::quiet_NaN() });
+        ret = new_expr(TE_DEFAULT, te_variant_type{ std::numeric_limits<double>::quiet_NaN() });
         s->m_type = te_parser::state::token_type::TOK_ERROR;
         }
     else if (is_function0(s->m_value) || is_closure0(s->m_value))
@@ -924,7 +924,7 @@ te_expr* te_parser::list(te_parser::state *s)
 
     while (s->m_type == te_parser::state::token_type::TOK_SEP) {
         next_token(s);
-        ret = new_expr(TE_PURE, variant_type(_comma), { ret, expr(s) });
+        ret = new_expr(TE_PURE, te_variant_type(_comma), { ret, expr(s) });
     }
 
     return ret;
@@ -1068,7 +1068,7 @@ te_expr* te_parser::factor(te_parser::state *s) {
     }
 
     if (neg) {
-        ret = new_expr(TE_PURE, variant_type(_negate), { ret });
+        ret = new_expr(TE_PURE, te_variant_type(_negate), { ret });
     }
 
     return ret;
@@ -1109,7 +1109,7 @@ te_expr* te_parser::power(te_parser::state *s)
     if (Sign == 1) {
         ret = base(s);
     } else {
-        ret = new_expr(TE_PURE, variant_type(_negate), { base(s) });
+        ret = new_expr(TE_PURE, te_variant_type(_negate), { base(s) });
     }
 
     return ret;

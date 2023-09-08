@@ -90,7 +90,7 @@ using te_confun6 = double (*)(const te_expr*, double, double, double, double, do
 using te_confun7 = double (*)(const te_expr*, double, double, double, double, double, double, double);
 
 // do not change the ordering of these, the indices are used to determine the value type of a te_variable
-using variant_type = std::variant<double, const double*, // indices 0-1
+using te_variant_type = std::variant<double, const double*, // indices 0-1
     // indices 2-9
     te_fun0, te_fun1, te_fun2, te_fun3, te_fun4, te_fun5, te_fun6, te_fun7,
     // indices 10-17
@@ -100,7 +100,7 @@ using variant_type = std::variant<double, const double*, // indices 0-1
 /// @note This is a bitmask, so flags (TE_PURE and TE_VARIADIC) can be OR'ed.
 /// @internal Note that because this is a bitmask, don't declare it as an enum class,
 ///     just a C-style enum.
-enum variable_flags
+enum te_variable_flags
     {
     /// @brief Don't do anything special when evaluating.
     TE_DEFAULT = 0,
@@ -142,9 +142,9 @@ public:
 class te_expr
     {
 public:
-    te_expr(const variable_flags type, const variant_type& value) noexcept :
+    te_expr(const te_variable_flags type, const te_variant_type& value) noexcept :
         m_type(type), m_value(value) {}
-    explicit te_expr(const variable_flags type) noexcept : m_type(type) {}
+    explicit te_expr(const te_variable_flags type) noexcept : m_type(type) {}
     /// @private
     te_expr() noexcept {};
     /// @private
@@ -154,9 +154,9 @@ public:
     /// @private
     virtual ~te_expr() {}
     /// @brief The type that m_value represents.
-    variable_flags m_type{ TE_DEFAULT };
+    te_variable_flags m_type{ TE_DEFAULT };
     /// @brief The double constant, double pointer, or function to bind to.
-    variant_type m_value{ 0.0 };
+    te_variant_type m_value{ 0.0 };
     /// @brief Additional parameters.
     std::vector<te_expr*> m_parameters{ nullptr };
     };
@@ -174,9 +174,9 @@ public:
     /// @brief The name as it would appear in a formula.
     name_type m_name;
     /// @brief The double constant, double pointer, or function to bind the name to.
-    variant_type m_value;
+    te_variant_type m_value;
     /// @brief The type that m_value represents.
-    variable_flags m_type{ TE_DEFAULT };
+    te_variable_flags m_type{ TE_DEFAULT };
     /// If @c m_value is a function pointer of type `te_confun0`-`te_confun7`, then
     /// this is passed to that function when called. This is useful for passing
     /// an object which manages additional data to your functions.
@@ -475,14 +475,14 @@ private:
         }
 
     [[nodiscard]]
-    constexpr static auto is_pure(const variable_flags type)
+    constexpr static auto is_pure(const te_variable_flags type)
         { return (((type)&TE_PURE) != 0); }
     [[nodiscard]]
-    constexpr static auto is_variadic(const variable_flags type)
+    constexpr static auto is_variadic(const te_variable_flags type)
         { return (((type)&TE_VARIADIC) != 0); }
     /// @returns Number of parameters that a function/variable takes.
     [[nodiscard]]
-    inline static auto get_arity(const variant_type& var) noexcept
+    inline static auto get_arity(const te_variant_type& var) noexcept
         {
         return (var.index() == 0 || var.index() == 1) ? 0 :
             (is_function0(var) || is_closure0(var)) ? 0 :
@@ -496,169 +496,169 @@ private:
             0;
         }
     [[nodiscard]]
-    constexpr static bool is_constant(const variant_type& var) noexcept
+    constexpr static bool is_constant(const te_variant_type& var) noexcept
         { return var.index() == 0; }
     [[nodiscard]]
-    constexpr static double get_constant(const variant_type& var)
+    constexpr static double get_constant(const te_variant_type& var)
         {
         assert(std::holds_alternative<double>(var));
         return std::get<0>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_variable(const variant_type& var) noexcept
+    constexpr static bool is_variable(const te_variant_type& var) noexcept
         { return var.index() == 1; }
     [[nodiscard]]
-    constexpr static const double* get_variable(const variant_type& var)
+    constexpr static const double* get_variable(const te_variant_type& var)
         {
         assert(std::holds_alternative<const double*>(var));
         return std::get<1>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_function(const variant_type& var) noexcept
+    constexpr static bool is_function(const te_variant_type& var) noexcept
         { return (var.index() >= 2 && var.index() <= 9); }
     [[nodiscard]]
-    constexpr static bool is_function0(const variant_type& var) noexcept
+    constexpr static bool is_function0(const te_variant_type& var) noexcept
         { return var.index() == 2; }
     [[nodiscard]]
-    constexpr static te_fun0 get_function0(const variant_type& var)
+    constexpr static te_fun0 get_function0(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_fun0>(var));
         return std::get<2>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_function1(const variant_type& var) noexcept
+    constexpr static bool is_function1(const te_variant_type& var) noexcept
         { return var.index() == 3; }
     [[nodiscard]]
-    constexpr static te_fun1 get_function1(const variant_type& var)
+    constexpr static te_fun1 get_function1(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_fun1>(var));
         return std::get<3>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_function2(const variant_type& var) noexcept
+    constexpr static bool is_function2(const te_variant_type& var) noexcept
         { return var.index() == 4; }
     [[nodiscard]]
-    constexpr static te_fun2 get_function2(const variant_type& var)
+    constexpr static te_fun2 get_function2(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_fun2>(var));
         return std::get<4>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_function3(const variant_type& var) noexcept
+    constexpr static bool is_function3(const te_variant_type& var) noexcept
         { return var.index() == 5; }
     [[nodiscard]]
-    constexpr static te_fun3 get_function3(const variant_type& var)
+    constexpr static te_fun3 get_function3(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_fun3>(var));
         return std::get<5>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_function4(const variant_type& var) noexcept
+    constexpr static bool is_function4(const te_variant_type& var) noexcept
         { return var.index() == 6; }
     [[nodiscard]]
-    constexpr static te_fun4 get_function4(const variant_type& var)
+    constexpr static te_fun4 get_function4(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_fun4>(var));
         return std::get<6>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_function5(const variant_type& var) noexcept
+    constexpr static bool is_function5(const te_variant_type& var) noexcept
         { return var.index() == 7; }
     [[nodiscard]]
-    constexpr static te_fun5 get_function5(const variant_type& var)
+    constexpr static te_fun5 get_function5(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_fun5>(var));
         return std::get<7>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_function6(const variant_type& var) noexcept
+    constexpr static bool is_function6(const te_variant_type& var) noexcept
         { return var.index() == 8; }
     [[nodiscard]]
-    constexpr static te_fun6 get_function6(const variant_type& var)
+    constexpr static te_fun6 get_function6(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_fun6>(var));
         return std::get<8>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_function7(const variant_type& var) noexcept
+    constexpr static bool is_function7(const te_variant_type& var) noexcept
         { return var.index() == 9; }
     [[nodiscard]]
-    constexpr static te_fun7 get_function7(const variant_type& var)
+    constexpr static te_fun7 get_function7(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_fun7>(var));
         return std::get<9>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_closure(const variant_type& var) noexcept
+    constexpr static bool is_closure(const te_variant_type& var) noexcept
         { return (var.index() >= 10 && var.index() <= 17); }
     [[nodiscard]]
-    constexpr static bool is_closure0(const variant_type& var) noexcept
+    constexpr static bool is_closure0(const te_variant_type& var) noexcept
         { return var.index() == 10; }
     [[nodiscard]]
-    constexpr static te_confun0 get_closure0(const variant_type& var)
+    constexpr static te_confun0 get_closure0(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_confun0>(var));
         return std::get<10>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_closure1(const variant_type& var) noexcept
+    constexpr static bool is_closure1(const te_variant_type& var) noexcept
         { return var.index() == 11; }
     [[nodiscard]]
-    constexpr static te_confun1 get_closure1(const variant_type& var)
+    constexpr static te_confun1 get_closure1(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_confun1>(var));
         return std::get<11>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_closure2(const variant_type& var) noexcept
+    constexpr static bool is_closure2(const te_variant_type& var) noexcept
         { return var.index() == 12; }
     [[nodiscard]]
-    constexpr static te_confun2 get_closure2(const variant_type& var)
+    constexpr static te_confun2 get_closure2(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_confun2>(var));
         return std::get<12>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_closure3(const variant_type& var) noexcept
+    constexpr static bool is_closure3(const te_variant_type& var) noexcept
         { return var.index() == 13; }
     [[nodiscard]]
-    constexpr static te_confun3 get_closure3(const variant_type& var)
+    constexpr static te_confun3 get_closure3(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_confun3>(var));
         return std::get<13>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_closure4(const variant_type& var) noexcept
+    constexpr static bool is_closure4(const te_variant_type& var) noexcept
         { return var.index() == 14; }
     [[nodiscard]]
-    constexpr static te_confun4 get_closure4(const variant_type& var)
+    constexpr static te_confun4 get_closure4(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_confun4>(var));
         return std::get<14>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_closure5(const variant_type& var) noexcept
+    constexpr static bool is_closure5(const te_variant_type& var) noexcept
         { return var.index() == 15; }
     [[nodiscard]]
-    constexpr static te_confun5 get_closure5(const variant_type& var)
+    constexpr static te_confun5 get_closure5(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_confun5>(var));
         return std::get<15>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_closure6(const variant_type& var) noexcept
+    constexpr static bool is_closure6(const te_variant_type& var) noexcept
         { return var.index() == 16; }
     [[nodiscard]]
-    constexpr static te_confun6 get_closure6(const variant_type& var)
+    constexpr static te_confun6 get_closure6(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_confun6>(var));
         return std::get<16>(var);
         }
     [[nodiscard]]
-    constexpr static bool is_closure7(const variant_type& var) noexcept
+    constexpr static bool is_closure7(const te_variant_type& var) noexcept
         { return var.index() == 17; }
     [[nodiscard]]
-    constexpr static te_confun7 get_closure7(const variant_type& var)
+    constexpr static te_confun7 get_closure7(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_confun7>(var));
         return std::get<17>(var);
@@ -671,7 +671,7 @@ private:
             TOK_NULL, TOK_ERROR, TOK_END, TOK_SEP, TOK_OPEN,
             TOK_CLOSE, TOK_NUMBER, TOK_VARIABLE, TOK_FUNCTION, TOK_INFIX
             };
-        state(const char* expression, variable_flags varType,
+        state(const char* expression, te_variable_flags varType,
             std::set<te_variable>& vars) :
             m_start(expression), m_next(expression),
             m_varType(varType), m_lookup(vars)
@@ -679,15 +679,15 @@ private:
         const char* m_start{ nullptr };
         const char* m_next{ nullptr };
         token_type m_type{ token_type::TOK_NULL };
-        variable_flags m_varType{ TE_DEFAULT };
-        variant_type m_value;
+        te_variable_flags m_varType{ TE_DEFAULT };
+        te_variant_type m_value;
         te_expr* context{ nullptr };
 
         std::set<te_variable>& m_lookup;
         };
     [[nodiscard]]
-    static inline te_expr* new_expr(const variable_flags type,
-        variant_type value, const std::initializer_list<te_expr*>& parameters)
+    static inline te_expr* new_expr(const te_variable_flags type,
+        te_variant_type value, const std::initializer_list<te_expr*>& parameters)
         {
         te_expr* ret = new te_expr{ type, std::move(value) };
         ret->m_parameters.resize(
@@ -701,7 +701,7 @@ private:
         return ret;
         }
     [[nodiscard]]
-    static inline te_expr* new_expr(const variable_flags type, variant_type value)
+    static inline te_expr* new_expr(const te_variable_flags type, te_variant_type value)
         {
         te_expr* ret = new te_expr{ type, std::move(value) };
         ret->m_parameters.resize(static_cast<size_t>(get_arity(ret->m_value)) +
