@@ -29,6 +29,10 @@ have been removed. Use the following instead:
 - `find_variable_or_function()`
 - Use `ln()` or `log10()` explicitly
 
+## Renamed Data Types
+
+- `variable_flags` has been renamed to `te_variable_flags`.
+
 ## Removed Compile-Time Options
 
 `TE_NAT_LOG` has been removed. Use `ln()` or `log10()` explicitly.
