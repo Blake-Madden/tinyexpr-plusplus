@@ -70,6 +70,9 @@
 
 class te_expr;
 
+/// @brief NaN (not-a-number) constant to indicate an invalid value.
+static constexpr double te_nan = std::numeric_limits<double>::quiet_NaN();
+
 // regular functions
 using te_fun0 = double (*)();
 using te_fun1 = double (*)(double);
@@ -88,6 +91,13 @@ using te_confun4 = double (*)(const te_expr*, double, double, double, double);
 using te_confun5 = double (*)(const te_expr*, double, double, double, double, double);
 using te_confun6 = double (*)(const te_expr*, double, double, double, double, double, double);
 using te_confun7 = double (*)(const te_expr*, double, double, double, double, double, double, double);
+
+// functions for unknown symbol resolution
+using te_usr_noop = void (*)();
+using te_usr_fun0 = double (*)(std::string_view);
+using te_usr_fun1 = double (*)(std::string_view, std::string&);
+
+using te_usr_variant_type = std::variant<te_usr_noop, te_usr_fun0, te_usr_fun1>;
 
 // do not change the ordering of these, the indices are used to determine the value type of a te_variable
 using te_variant_type = std::variant<double, const double*, // indices 0-1
@@ -258,7 +268,7 @@ public:
     /// @note Valid variable and function names must begin with a letter from a-z (A-Z),
     ///     followed by additional English letters, numbers, periods, or underscores.
     /// @throws std::runtime_error Throws an exception if an illegal character is found
-    ///     in the variable name.
+    ///     in any variable name.
     void set_variables_and_functions(std::set<te_variable> vars)
         {
         for (const auto& var : vars)
@@ -276,6 +286,10 @@ public:
         validate_name(var);
         m_customFuncsAndVars.insert(std::move(var));
         }
+    /** @brief Sets a custom function to resolve unknown symbols in an expression.
+        @param usr The function to use to resolve unknown symbols.*/
+    void set_unknown_symbol_resolver(te_usr_variant_type usr)
+        { m_unknownSymbolResolve = usr; }
     /// @private
     [[nodiscard]]
     const std::set<te_variable>& get_variables_and_functions() const noexcept
@@ -775,7 +789,9 @@ private:
     std::set<te_variable::name_type, te_string_less> m_usedVars;
 
     static const std::set<te_variable> m_functions;
-    std::set<te_variable> m_custom_funcs_and_vars;
+    std::set<te_variable> m_customFuncsAndVars;
+
+    te_usr_variant_type m_unknownSymbolResolve{ te_usr_noop{} };
 
     // just keeps track of built-in operators
     static const std::set<std::string> m_operators;

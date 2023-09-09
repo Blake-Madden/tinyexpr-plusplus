@@ -47,6 +47,7 @@
 
 #include "../tinyexpr.h"
 #include <array>
+#include <regex>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <catch2/benchmark/catch_benchmark_all.hpp>
@@ -1894,6 +1895,172 @@ TEST_CASE("Shift operators", "[shift]")
         CHECK(tep.evaluate() == 1 << 10);
         CHECK(tep.get_last_error_message().empty());
         }
+    }
+
+double ResolveResolutionSymbols(std::string_view str)
+    {
+    return (str == "RES" || str == "RESOLUTION") ?
+        96 : te_nan;
+    }
+
+TEST_CASE("Unknown symbol resolve funct pointer", "[usr]")
+    {
+    te_parser tep;
+    tep.set_unknown_symbol_resolver(ResolveResolutionSymbols);
+
+    CHECK(tep.evaluate("RES * 3") == 3 * 96);
+    // case sensitive, won't recognize it
+    CHECK(std::isnan(tep.evaluate("resolution * 5")));
+    CHECK(tep.evaluate("RESOLUTION * 3") == 3 * 96);
+    // is in the parser now and can be recognized case sensitively
+    CHECK(tep.evaluate("resolution * 5") == 480);
+    }
+
+TEST_CASE("Unknown symbol resolve 1 param", "[usr]")
+    {
+    te_parser tep;
+    tep.set_unknown_symbol_resolver(
+        [](std::string_view str) -> double
+        {
+        if (std::strncmp(str.data(), "STRESS_LOW", str.length()) == 0)
+            { return 2; }
+        else if (std::strncmp(str.data(), "STRESS_HIGH", str.length()) == 0)
+            { return 8; }
+        else
+            { return te_nan; }
+        });
+
+    CHECK(tep.evaluate("STRESS_LOW * 5") == 10);
+    CHECK(tep.evaluate("STRESS_HIGH * 5") == 40);
+    // STRESS_LOW will be in the parser now, won't need to be resolved
+    CHECK(tep.evaluate("STRESS_LOW * 1") == 2);
+    tep.set_constant("STRESS_LOW", 1);
+    CHECK(tep.evaluate("STRESS_LOW * 1") == 1); // change it outside of the resolver
+    // won't be resolved
+    CHECK(std::isnan(tep.evaluate("STRESS_UNK * 5")));
+    CHECK(tep.get_last_error_position() == 9);
+    }
+
+TEST_CASE("Unknown symbol resolve 2 param", "[usr]")
+    {
+    te_parser tep;
+    tep.set_unknown_symbol_resolver(
+        [](std::string_view str, std::string& message) -> double
+        {
+        if (std::strncmp(str.data(), "STRESS_LOW", str.length()) == 0)
+            {
+            message = "STRESS constant being set.";
+            return 2;
+            }
+        else if (std::strncmp(str.data(), "STRESS_HIGH", str.length()) == 0)
+            {
+            message = "STRESS constant being set.";
+            return 8;
+            }
+        else
+            {
+            message = "Unknown stress level!";
+            return te_nan;
+            }
+        });
+
+    CHECK(tep.evaluate("STRESS_LOW * 5") == 10);
+    CHECK(tep.get_last_error_message() == "STRESS constant being set.");
+    CHECK(tep.evaluate("STRESS_HIGH * 5") == 40);
+    // STRESS_LOW will be in the parser now, won't need to be resolved
+    CHECK(tep.evaluate("STRESS_LOW * 1") == 2);
+    tep.set_constant("STRESS_LOW", 1);
+    CHECK(tep.evaluate("STRESS_LOW * 1") == 1); // change it outside of the resolver
+    // won't be resolved
+    CHECK(std::isnan(tep.evaluate("STRESS_UNK * 5")));
+    CHECK(tep.get_last_error_position() == 9);
+    CHECK(tep.get_last_error_message() == "Unknown stress level!");
+    }
+
+TEST_CASE("Unknown symbol resolve disable", "[usr]")
+    {
+    te_parser tep;
+    tep.set_unknown_symbol_resolver(
+        [](std::string_view str, std::string& message) -> double
+        {
+        if (std::strncmp(str.data(), "STRESS_LOW", str.length()) == 0)
+            {
+            message = "STRESS constant being set.";
+            return 2;
+            }
+        else if (std::strncmp(str.data(), "STRESS_HIGH", str.length()) == 0)
+            {
+            message = "STRESS constant being set.";
+            return 8;
+            }
+        else
+            {
+            message = "Unknown stress level!";
+            return te_nan;
+            }
+        });
+
+    CHECK(tep.evaluate("STRESS_LOW * 5") == 10);
+    tep.set_unknown_symbol_resolver(te_usr_noop{});
+    // user-defined USR has been swapped out with a no-op, so
+    // STRESS_HIGH won't be resolved
+    CHECK(std::isnan(tep.evaluate("STRESS_HIGH * 5")));
+    CHECK(tep.get_last_error_position() == 10);
+    }
+
+TEST_CASE("Unknown symbol resolve throws", "[usr]")
+    {
+    te_parser tep;
+    tep.set_unknown_symbol_resolver(
+        [](std::string_view str) -> double
+        {
+        if (std::strncmp(str.data(), "STRESS_LOW", str.length()) == 0)
+            { return 2; }
+        else if (std::strncmp(str.data(), "STRESS_HIGH", str.length()) == 0)
+            { return 8; }
+        else
+            { throw std::runtime_error("Unknown stress level!"); }
+        });
+
+    // won't be resolved
+    CHECK(std::isnan(tep.evaluate("STRESS_UNK * 5")));
+    CHECK(tep.get_last_error_position() == 9);
+    CHECK(tep.get_last_error_message() == "Unknown stress level!");
+    }
+
+TEST_CASE("Unknown symbol resolve dynamic", "[usr]")
+    {
+    te_parser tep;
+
+    // Create a handler for undefined tokens that will recognize
+    // dynamic strings like "FY2004" or "FY1997" and convert them to 2004 and 1997.
+    tep.set_unknown_symbol_resolver(
+        // Handler should except a string (which will be the unrecognized token)
+        // and return a double.
+        [](std::string_view str) -> double
+        {
+        const std::regex re{ "FY([0-9]{4})",
+            std::regex_constants::icase | std::regex_constants::ECMAScript };
+        std::smatch matches;
+        std::string var{ str };
+        if (std::regex_search(var.cbegin(), var.cend(), matches, re))
+            {
+            // Unrecognized token is something like "FY1982," so extract "1982"
+            // from that and return 1982 as a number. At this point, the variable
+            // "FY1982" will added to the parser and set to 1982. All future
+            // evaluations will see this as 1982 (unless set_constant() is called
+            // to change it).
+            if (matches.size() > 1)
+                { return std::atol(matches[1].str().c_str()); }
+            else
+                { return te_nan; }
+            }
+        // Can't resolve what this token is, so return NaN.
+        else
+            { return te_nan; }
+        });
+
+    CHECK(tep.evaluate("-(FY1999-FY2009)") == 10);
     }
 
 TEST_CASE("String comparison helper", "[stringcmp]")

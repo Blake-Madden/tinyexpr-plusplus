@@ -657,16 +657,55 @@ void te_parser::next_token(te_parser::state *s)
                     { s->m_next++; }
 
                 m_varFound = false;
-                m_currentVar = find_lookup(s,
-                    { start, static_cast<std::string::size_type>(s->m_next - start) });
+                const std::string_view currentVarToken
+                    { start, static_cast<std::string::size_type>(s->m_next - start) };
+                m_currentVar = find_lookup(s, currentVarToken);
                 if (m_currentVar != s->m_lookup.cend())
                     { m_varFound = true; }
                 else
                     {
-                    m_currentVar = find_builtin(
-                        { start, static_cast<std::string::size_type>(s->m_next - start) });
+                    m_currentVar = find_builtin(currentVarToken);
                     if (m_currentVar != m_functions.cend())
                         { m_varFound = true; }
+                    // if unknown symbol resolve is not a no-op, then try using it
+                    // to see what this variable is
+                    else if (m_unknownSymbolResolve.index() != 0)
+                        {
+                        try
+                            {
+                            // "double usr(string_view)" resolver
+                            if (m_unknownSymbolResolve.index() == 1)
+                                {
+                                const auto retUsrVal = std::get<1>(m_unknownSymbolResolve)(currentVarToken);
+                                if (!std::isnan(retUsrVal))
+                                    {
+                                    add_variable_or_function({ te_variable::name_type{ currentVarToken }, retUsrVal });
+                                    m_currentVar = find_lookup(s, currentVarToken);
+                                    assert(m_currentVar != s->m_lookup.cend() &&
+                                        "Internal error in parser using unknown symbol resolver.");
+                                    if (m_currentVar != s->m_lookup.cend())
+                                        { m_varFound = true; }
+                                    }
+                                }
+                            // "double usr(string_view, string&)" resolver
+                            else if (m_unknownSymbolResolve.index() == 2)
+                                {
+                                const auto retUsrVal =
+                                    std::get<2>(m_unknownSymbolResolve)(currentVarToken, m_lastErrorMessage);
+                                if (!std::isnan(retUsrVal))
+                                    {
+                                    add_variable_or_function({ te_variable::name_type{ currentVarToken }, retUsrVal });
+                                    m_currentVar = find_lookup(s, currentVarToken);
+                                    assert(m_currentVar != s->m_lookup.cend() &&
+                                        "Internal error in parser using unknown symbol resolver.");
+                                    if (m_currentVar != s->m_lookup.cend())
+                                        { m_varFound = true; }
+                                    }
+                                }
+                            }
+                        catch (const std::exception& exp)
+                            { m_lastErrorMessage = exp.what(); }
+                        }
                     }
 
                 if (!m_varFound)

@@ -1,0 +1,127 @@
+# Handling Unknown Variables
+
+Although it is possible to add [custom variables](#custom-extensions) to the parser, there may be times when you can't
+anticipate the exact variable names that a user will enter. For example, a user could enter
+variables representing fiscal years in the format of `FY[year]`. From there, they would like to perform operation
+such as getting the range between them. In this situation, their expression may be something like this:
+
+```
+ABS(FY1999 - FY2009)
+```
+
+Here, one could expect the variables `FY1999` and `FY2009` to be treated as `1999` and `2009`, respectively.
+By subtracting them (and then taking the absolute value of the result), this should yield `10`. The problem
+is that you would need to set up custom variables prior for `FY1999` and `FY2009`.
+Even worse, to handle any additional years the user may enter, you would need to create custom
+variables for every year possible.
+
+Rather than doing that, you can allow the parser to not recognize these variables as usual.
+At this point, it will fall back to a user-defined function that you provide to resolve it.
+This is called an "unknown symbol resolver" (USR), and this function will:
+
+- Receive a `std::string_view` of the symbol (i.e., variable name) that the parser failed to recognize
+- Determine how to resolve the name
+  - If it can resolve it, return a numeric value for the symbol
+  - Otherwise, either return `te_nan` (i.e., NaN) or throw an exception
+  
+When your function resolves a symbol, then its name and numeric value will be added to the parser.
+Any future evaluations will recognize this name and return the value you previously resolved it to.
+
+::: {.tipsection data-latex=""}
+To change the value for a variable that was resolved previously, use `te_parser::set_constant()`.
+:::
+
+This function is set up in the parser by passing it to `te_parser::set_unknown_symbol_resolver()` and can
+take one of the following signatures:
+
+::: {.minipage data-latex="{\textwidth}"}
+```
+    double callback(std::string_view);
+    double callback(std::string_view, std::string&);
+```
+:::
+
+The first version will accept the unknown symbol and either return a resolved value or `te_nan`.
+The second version is the same, except that it also accepts a string reference to write a custom message
+to. (This message can later be retrieved by calling `te_parser::get_last_error_message()`.)
+
+::: {.notesection data-latex=""}
+If your USR throws a `std::runtime_exception` with an error message in it, then that message
+will also be available through `te_parser::get_last_error_message()`.
+:::
+
+::: {.minipage data-latex="{\textwidth}"}
+`te_parser::set_unknown_symbol_resolver()` can accept either a function pointer or a lambda. 
+Here is a simple example using a function:
+
+```cpp
+double ResolveResolutionSymbols(std::string_view str)
+    {
+    // Note that this is case sensitive for brevity.
+    return (str == "RES" || str == "RESOLUTION") ?
+        96 : te_nan;
+    }
+```
+:::
+
+::: {.minipage data-latex="{\textwidth}"}
+This can be connected as such:
+
+```cpp
+te_parser tep;
+tep.set_unknown_symbol_resolver(ResolveResolutionSymbols);
+
+// Will resolve to 288, and "RESOLUTION" will be added as a
+// variable to the parser with a value of 96.
+// Also, beccause TinyExpr++ is case insensitive,
+// "resolution" will also be seen as 96 once "RESOLUTION"
+// was resolved.
+tep.evaluate("RESOLUTION * 3");
+```
+:::
+
+::: {.warningsection data-latex=""}
+Although TinyExpr++ is case insensitive, it is your USR's responsibility to process
+case-insensitively when resolving names. Once a name has been resolved, then the parser
+will recognize it case-insensitively in future evaluations.
+:::
+
+::: {.minipage data-latex="{\textwidth}"}
+The following is an example using a lambda and demonstrates
+the fiscal-year-variables scenario mentioned earlier:
+
+```cpp
+te_parser tep;
+
+// Create a handler for undefined tokens that will recognize
+// dynamic strings like "FY2004" or "FY1997" and convert them to 2004 and 1997.
+tep.set_unknown_symbol_resolver(
+    // Handler should except a string (which will be the unrecognized token)
+    // and return a double.
+    [](std::string_view str) -> double
+    {
+    const std::regex re{ "FY([0-9]{4})",
+        std::regex_constants::icase | std::regex_constants::ECMAScript };
+    std::smatch matches;
+    std::string var{ str };
+    if (std::regex_search(var.cbegin(), var.cend(), matches, re))
+        {
+        // Unrecognized token is something like "FY1982," so extract "1982"
+        // from that and return 1982 as a number. At this point, the variable
+        // "FY1982" will added to the parser and set to 1982. All future
+        // evaluations will see this as 1982 (unless set_constant() is called
+        // to change it).
+        if (matches.size() > 1)
+            { return std::atol(matches[1].str().c_str()); }
+        else
+            { return te_nan; }
+        }
+    // Can't resolve what this token is, so return NaN.
+    else
+        { return te_nan; }
+    });
+
+// Calculate the range between to fiscal years (will be 10):  
+tep.evaluate("ABS(FY1999-FY2009)")
+```
+:::
