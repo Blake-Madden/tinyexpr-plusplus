@@ -17,7 +17,7 @@ defined within the parser, an expression such as this could be used:
 
 IF(// Review the results from the analysis
    AND(P_LEVEL < .05, N_OBS >= 30),
-   // ...and return the p-level if we should accept it
+   // ...and return the p-level if acceptable
    P_LEVEL,
    // or NaN if not
    NAN)
