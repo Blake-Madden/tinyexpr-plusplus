@@ -199,6 +199,7 @@ std::string get_last_error_message();
 set_variables_and_functions(const std::set<te_variable>& vars);
 std::set<te_variable>& get_variables_and_functions();
 add_variable_or_function(const te_variable& var);
+set_unknown_symbol_resolver(te_usr_variant_type usr);
 get_decimal_separator();
 set_decimal_separator();
 get_list_separator();
@@ -217,6 +218,8 @@ expression the parse failed. For some errors, `get_last_error_message()` will re
 
 `set_variables_and_functions()`, `get_variables_and_functions()`, and `add_variable_or_function()` are used
 to add custom variables and functions to the parser.
+
+`set_unknown_symbol_resolver()` is used to provide a custom function to resolve unknown symbols in an expression.
 
 `get_decimal_separator()`/`set_decimal_separator()` and
 `get_list_separator()`/`set_list_separator()` can be used to parse non-US formatted formulas.
