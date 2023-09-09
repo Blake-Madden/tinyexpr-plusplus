@@ -22,7 +22,7 @@ This is called an "unknown symbol resolver" (USR), and this function will:
 - Receive a `std::string_view` of the symbol (i.e., variable name) that the parser failed to recognize
 - Determine how to resolve the name
   - If it can resolve it, return a numeric value for the symbol
-  - Otherwise, either return `te_nan` (i.e., NaN) or throw an exception
+  - Otherwise, either return `te_parser::te_nan` (i.e., NaN) or throw an exception
   
 When your function resolves a symbol, then its name and numeric value will be added to the parser.
 Any future evaluations will recognize this name and return the value you previously resolved it to.
@@ -41,7 +41,7 @@ take one of the following signatures:
 ```
 :::
 
-The first version will accept the unknown symbol and either return a resolved value or `te_nan`.
+The first version will accept the unknown symbol and either return a resolved value or `te_parser::te_nan`.
 The second version is the same, except that it also accepts a string reference to write a custom message
 to. (This message can later be retrieved by calling `te_parser::get_last_error_message()`.)
 
@@ -59,7 +59,7 @@ double ResolveResolutionSymbols(std::string_view str)
     {
     // Note that this is case sensitive for brevity.
     return (str == "RES" || str == "RESOLUTION") ?
-        96 : te_nan;
+        96 : te_parser::te_nan;
     }
 ```
 :::
@@ -114,11 +114,11 @@ tep.set_unknown_symbol_resolver(
         if (matches.size() > 1)
             { return std::atol(matches[1].str().c_str()); }
         else
-            { return te_nan; }
+            { return te_parser::te_nan; }
         }
     // Can't resolve what this token is, so return NaN.
     else
-        { return te_nan; }
+        { return te_parser::te_nan; }
     });
 
 // Calculate the range between to fiscal years (will be 10):  

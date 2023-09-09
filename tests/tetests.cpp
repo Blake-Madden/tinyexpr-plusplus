@@ -1900,7 +1900,7 @@ TEST_CASE("Shift operators", "[shift]")
 double ResolveResolutionSymbols(std::string_view str)
     {
     return (str == "RES" || str == "RESOLUTION") ?
-        96 : te_nan;
+        96 : te_parser::te_nan;
     }
 
 TEST_CASE("Unknown symbol resolve funct pointer", "[usr]")
@@ -1927,7 +1927,7 @@ TEST_CASE("Unknown symbol resolve 1 param", "[usr]")
         else if (std::strncmp(str.data(), "STRESS_HIGH", str.length()) == 0)
             { return 8; }
         else
-            { return te_nan; }
+            { return te_parser::te_nan; }
         });
 
     CHECK(tep.evaluate("STRESS_LOW * 5") == 10);
@@ -1960,7 +1960,7 @@ TEST_CASE("Unknown symbol resolve 2 param", "[usr]")
         else
             {
             message = "Unknown stress level!";
-            return te_nan;
+            return te_parser::te_nan;
             }
         });
 
@@ -1996,7 +1996,7 @@ TEST_CASE("Unknown symbol resolve disable", "[usr]")
         else
             {
             message = "Unknown stress level!";
-            return te_nan;
+            return te_parser::te_nan;
             }
         });
 
@@ -2053,11 +2053,11 @@ TEST_CASE("Unknown symbol resolve dynamic", "[usr]")
             if (matches.size() > 1)
                 { return std::atol(matches[1].str().c_str()); }
             else
-                { return te_nan; }
+                { return te_parser::te_nan; }
             }
         // Can't resolve what this token is, so return NaN.
         else
-            { return te_nan; }
+            { return te_parser::te_nan; }
         });
 
     CHECK(tep.evaluate("-(FY1999-FY2009)") == 10);

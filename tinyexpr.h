@@ -70,9 +70,6 @@
 
 class te_expr;
 
-/// @brief NaN (not-a-number) constant to indicate an invalid value.
-static constexpr double te_nan = std::numeric_limits<double>::quiet_NaN();
-
 // regular functions
 using te_fun0 = double (*)();
 using te_fun1 = double (*)(double);
@@ -206,6 +203,10 @@ public:
     /// @private
     ~te_parser()
         { te_free(m_compiledExpression); }
+    /// @brief NaN (not-a-number) constant to indicate an invalid value.
+    static constexpr double te_nan = std::numeric_limits<double>::quiet_NaN();
+    /// @brief No position, which is what get_last_error_position() returns
+    ///     when there was no parsing error.
     static constexpr int64_t npos = -1;
     /** @brief Parses the input @c expression.
         @param expression The formula to compile.
