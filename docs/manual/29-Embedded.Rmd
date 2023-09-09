@@ -1,7 +1,7 @@
 # Embedded Programming
 
 The following section discusses topics related to using *TinyExpr++* in an
-embedded environment.
+embedded environment\index{embedded systems}.
 
 ## Performance {-}
 

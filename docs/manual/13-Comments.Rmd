@@ -1,6 +1,6 @@
 # Comments
 
-Comments can be embedded within an expression to clarify its intent.
+Comments\index{comments} can be embedded within an expression to clarify its intent.
 C/C++ style comments are supported, which provide:
 
 - multi-line comments (text within a pair of `/*` and `*/`).

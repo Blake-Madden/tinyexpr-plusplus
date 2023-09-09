@@ -13,6 +13,6 @@ doxygen docs/Doxyfile
 
 ## Requirements {-}
 
-*TinyExpr++* must be compiled as C++17.
+*TinyExpr++* must be compiled as C++17.\index{compiling!requirements}
 
 MSVC, GCC, and Clang compilers are supported.

@@ -10,7 +10,7 @@ This is by design; it's the way that spreadsheets do it
 (e.g., *LibreOffice Calc*, *Excel*, *Google Sheets*).
 
 If you would rather have exponentiation work from right to left, you need to
-define `TE_POW_FROM_RIGHT` when compiling. With `TE_POW_FROM_RIGHT` defined, the
+define `TE_POW_FROM_RIGHT`\index{compiling!options} when compiling. With `TE_POW_FROM_RIGHT` defined, the
 behavior is:
 
 `a^b^c == a^(b^c)` and `-a^b == -(a^b)`
