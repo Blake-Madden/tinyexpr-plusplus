@@ -1,4 +1,4 @@
-# Handling Unknown Variables
+# Handling Unknown Variables {#usr}
 
 Although it is possible to add [custom variables](#custom-extensions) to the parser, there may be times when you can't
 anticipate the exact variable names that a user will enter. For example, a user could enter
