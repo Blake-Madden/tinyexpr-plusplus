@@ -1,5 +1,6 @@
 --- 
-title: "TinyExpr++ Reference Manual"
+title: "TinyExpr++"
+subtitle: "User Reference & Programming Manual"
 author: Blake Madden
 date: 2023
 documentclass: book

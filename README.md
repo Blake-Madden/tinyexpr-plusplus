@@ -1,6 +1,8 @@
-<img alt="TinyExpr logo" src="docs/tinyexpr_logo.png" width="350" align="right"/>
+<img alt="TinyExpr logo" src="docs/tinyexpr_logo.png" width="200" align="left"/>
 
 # TinyExpr++
+
+<a href="docs/TinyExpr++ReferenceManual.pdf"><img alt="Manual" src="docs/manual/images/cover.png" width="200" align="right"/></a>
 
 TinyExpr++ is the C++ version of the [TinyExpr](https://github.com/codeplea/tinyexpr) library, which is a small
 recursive-descent parser and evaluation engine for math expressions.
@@ -25,7 +27,7 @@ for a full list of features.
 
 ## Compatibility Advisory
 
-Note: for current users of TinyExpr++, please see the [compatibility advisory](CompatibilityAdvisory.md) for recent changes.
+Note: for current users of *TinyExpr++*, please see the [compatibility advisory](CompatibilityAdvisory.md) for recent changes.
 
 ## Embedded Programming
 
