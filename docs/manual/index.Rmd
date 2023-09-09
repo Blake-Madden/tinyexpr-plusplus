@@ -34,7 +34,7 @@ library(webshot)
 ![](images/cover.png){width=48%}
 :::
 
-This book is a guide to using the *TinyExpr++* libraray, a C++ formula parsing and evaluation system.
+This book is a guide to using the *TinyExpr++* library, a C++ formula parsing and evaluation system.
 
 ![](images/CC_BY-NC-ND.png)
 
