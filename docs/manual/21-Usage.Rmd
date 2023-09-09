@@ -67,6 +67,7 @@ expression the parse failed (useful for syntax errors).
 If there was no parse error, then this will return `te_parser::npos`.
 - `get_last_error_message()`: returns a more detailed message for some calculation errors (e.g., division by zero).
 
+::: {.minipage data-latex="{\textwidth}"}
 Example:
 
 ```cpp
@@ -97,3 +98,8 @@ else
         std::to_string(tep.get_last_error_position()) << "\n";
     }
 ```
+:::
+
+Along with positional and message information, the return value of a parse can also indicate failure.
+When an evaluation fails, the parser will return NaN (i.e., `std::numeric_limits<double>::quiet_NaN()`) as the result.
+NaN values can be verified using the standard function `std::isnan()`.

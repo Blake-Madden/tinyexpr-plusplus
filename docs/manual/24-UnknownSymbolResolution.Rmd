@@ -125,3 +125,6 @@ tep.set_unknown_symbol_resolver(
 tep.evaluate("ABS(FY1999-FY2009)")
 ```
 :::
+
+By default, the parser's USR is a no-op and will not process anything. If you had provided a USR but then
+need to turn off this feature, then pass a no-op lambda (e.g., `[]{}`) or no-op object (`te_usr_noop{}`) to `set_unknown_symbol_resolver()`.
