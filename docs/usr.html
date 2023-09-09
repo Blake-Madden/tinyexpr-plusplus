@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 14 Compile-time Options | TinyExpr++</title>
-  <meta name="description" content="Chapter 14 Compile-time Options | TinyExpr++" />
+  <title>Chapter 11 Handling Unknown Variables | TinyExpr++</title>
+  <meta name="description" content="Chapter 11 Handling Unknown Variables | TinyExpr++" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 14 Compile-time Options | TinyExpr++" />
+  <meta property="og:title" content="Chapter 11 Handling Unknown Variables | TinyExpr++" />
   <meta property="og:type" content="book" />
   <meta property="og:image" content="/images/cover.png" />
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 14 Compile-time Options | TinyExpr++" />
+  <meta name="twitter:title" content="Chapter 11 Handling Unknown Variables | TinyExpr++" />
   
   
   <meta name="twitter:image" content="/images/cover.png" />
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="how-it-works.html"/>
-<link rel="next" href="embedded-programming.html"/>
+<link rel="prev" href="custom-extensions.html"/>
+<link rel="next" href="non-us-formatted-formulas.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -241,31 +241,121 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="compile-time-options" class="section level1 hasAnchor" number="14">
-<h1><span class="header-section-number">Chapter 14</span> Compile-time Options<a href="compile-time-options.html#compile-time-options" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="te_pow_from_right" class="section level2 unnumbered hasAnchor">
-<h2><code>TE_POW_FROM_RIGHT</code><a href="compile-time-options.html#te_pow_from_right" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>By default, <em>TinyExpr++</em> does exponentiation from left to right. For example:</p>
-<p><code>a^b^c == (a^b)^c</code> and <code>-a^b == (-a)^b</code></p>
-<p>This is by design; it’s the way that spreadsheets do it
-(e.g., <em>LibreOffice Calc</em>, <em>Excel</em>, <em>Google Sheets</em>).</p>
-<p>If you would rather have exponentiation work from right to left, you need to
-define <code>TE_POW_FROM_RIGHT</code> when compiling. With <code>TE_POW_FROM_RIGHT</code> defined, the
-behavior is:</p>
-<p><code>a^b^c == a^(b^c)</code> and <code>-a^b == -(a^b)</code></p>
-<p>That will match how many scripting languages do it (e.g., Python, Ruby).</p>
-<p>Note that symbols can be defined by passing them to your compiler’s
-command line (or in a Cmake configuration) as such: <code>-DTE_POW_FROM_RIGHT</code></p>
-
+<div id="usr" class="section level1 hasAnchor" number="11">
+<h1><span class="header-section-number">Chapter 11</span> Handling Unknown Variables<a href="usr.html#usr" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Although it is possible to add <a href="custom-extensions.html#custom-extensions">custom variables</a> to the parser, there may be times when you can’t
+anticipate the exact variable names that a user will enter. For example, a user could enter
+variables representing fiscal years in the format of <code>FY[year]</code>. From there, they would like to perform operation
+such as getting the range between them. In this situation, their expression may be something like this:</p>
+<pre><code>ABS(FY1999 - FY2009)</code></pre>
+<p>Here, one could expect the variables <code>FY1999</code> and <code>FY2009</code> to be treated as <code>1999</code> and <code>2009</code>, respectively.
+By subtracting them (and then taking the absolute value of the result), this should yield <code>10</code>. The problem
+is that you would need to set up custom variables prior for <code>FY1999</code> and <code>FY2009</code>.
+Even worse, to handle any additional years the user may enter, you would need to create custom
+variables for every year possible.</p>
+<p>Rather than doing that, you can allow the parser to not recognize these variables as usual.
+At this point, it will fall back to a user-defined function that you provide to resolve it.
+This is called an “unknown symbol resolver” (USR), and this function will:</p>
+<ul>
+<li>Receive a <code>std::string_view</code> of the symbol (i.e., variable name) that the parser failed to recognize</li>
+<li>Determine how to resolve the name
+<ul>
+<li>If it can resolve it, return a numeric value for the symbol</li>
+<li>Otherwise, either return <code>te_parser::te_nan</code> (i.e., NaN) or throw an exception</li>
+</ul></li>
+</ul>
+<p>When your function resolves a symbol, then its name and numeric value will be added to the parser.
+Any future evaluations will recognize this name and return the value you previously resolved it to.</p>
+<div class="tipsection">
+<p>To change the value for a variable that was resolved previously, use <code>te_parser::set_constant()</code>.</p>
 </div>
+<p>This function is set up in the parser by passing it to <code>te_parser::set_unknown_symbol_resolver()</code> and can
+take one of the following signatures:</p>
+<div class="minipage">
+<pre><code>    double callback(std::string_view);
+    double callback(std::string_view, std::string&amp;);</code></pre>
+</div>
+<p>The first version will accept the unknown symbol and either return a resolved value or <code>te_parser::te_nan</code>.
+The second version is the same, except that it also accepts a string reference to write a custom message
+to. (This message can later be retrieved by calling <code>te_parser::get_last_error_message()</code>.)</p>
+<div class="notesection">
+<p>If your USR throws a <code>std::runtime_exception</code> with an error message in it, then that message
+will also be available through <code>te_parser::get_last_error_message()</code>.</p>
+</div>
+<div class="minipage">
+<p><code>te_parser::set_unknown_symbol_resolver()</code> can accept either a function pointer or a lambda.
+Here is a simple example using a function:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="usr.html#cb23-1" tabindex="-1"></a><span class="dt">double</span> ResolveResolutionSymbols<span class="op">(</span><span class="bu">std::</span>string_view<span class="op"> </span>str<span class="op">)</span></span>
+<span id="cb23-2"><a href="usr.html#cb23-2" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb23-3"><a href="usr.html#cb23-3" tabindex="-1"></a>    <span class="co">// Note that this is case sensitive for brevity.</span></span>
+<span id="cb23-4"><a href="usr.html#cb23-4" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>str <span class="op">==</span> <span class="st">&quot;RES&quot;</span> <span class="op">||</span> str <span class="op">==</span> <span class="st">&quot;RESOLUTION&quot;</span><span class="op">)</span> <span class="op">?</span></span>
+<span id="cb23-5"><a href="usr.html#cb23-5" tabindex="-1"></a>        <span class="dv">96</span> <span class="op">:</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span></span>
+<span id="cb23-6"><a href="usr.html#cb23-6" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+</div>
+<div class="minipage">
+<p>This can be connected as such:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb24-1"><a href="usr.html#cb24-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb24-2"><a href="usr.html#cb24-2" tabindex="-1"></a>tep<span class="op">.</span>set_unknown_symbol_resolver<span class="op">(</span>ResolveResolutionSymbols<span class="op">);</span></span>
+<span id="cb24-3"><a href="usr.html#cb24-3" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="usr.html#cb24-4" tabindex="-1"></a><span class="co">// Will resolve to 288, and &quot;RESOLUTION&quot; will be added as a</span></span>
+<span id="cb24-5"><a href="usr.html#cb24-5" tabindex="-1"></a><span class="co">// variable to the parser with a value of 96.</span></span>
+<span id="cb24-6"><a href="usr.html#cb24-6" tabindex="-1"></a><span class="co">// Also, beccause TinyExpr++ is case insensitive,</span></span>
+<span id="cb24-7"><a href="usr.html#cb24-7" tabindex="-1"></a><span class="co">// &quot;resolution&quot; will also be seen as 96 once &quot;RESOLUTION&quot;</span></span>
+<span id="cb24-8"><a href="usr.html#cb24-8" tabindex="-1"></a><span class="co">// was resolved.</span></span>
+<span id="cb24-9"><a href="usr.html#cb24-9" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;RESOLUTION * 3&quot;</span><span class="op">);</span></span></code></pre></div>
+</div>
+<div class="warningsection">
+<p>Although TinyExpr++ is case insensitive, it is your USR’s responsibility to process
+case-insensitively when resolving names. Once a name has been resolved, then the parser
+will recognize it case-insensitively in future evaluations.</p>
+</div>
+<div class="minipage">
+<p>The following is an example using a lambda and demonstrates
+the fiscal-year-variables scenario mentioned earlier:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb25-1"><a href="usr.html#cb25-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb25-2"><a href="usr.html#cb25-2" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="usr.html#cb25-3" tabindex="-1"></a><span class="co">// Create a handler for undefined tokens that will recognize</span></span>
+<span id="cb25-4"><a href="usr.html#cb25-4" tabindex="-1"></a><span class="co">// dynamic strings like &quot;FY2004&quot; or &quot;FY1997&quot; and convert them to 2004 and 1997.</span></span>
+<span id="cb25-5"><a href="usr.html#cb25-5" tabindex="-1"></a>tep<span class="op">.</span>set_unknown_symbol_resolver<span class="op">(</span></span>
+<span id="cb25-6"><a href="usr.html#cb25-6" tabindex="-1"></a>    <span class="co">// Handler should except a string (which will be the unrecognized token)</span></span>
+<span id="cb25-7"><a href="usr.html#cb25-7" tabindex="-1"></a>    <span class="co">// and return a double.</span></span>
+<span id="cb25-8"><a href="usr.html#cb25-8" tabindex="-1"></a>    <span class="op">[](</span><span class="bu">std::</span>string_view<span class="op"> </span>str<span class="op">)</span> <span class="op">-&gt;</span> <span class="dt">double</span></span>
+<span id="cb25-9"><a href="usr.html#cb25-9" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb25-10"><a href="usr.html#cb25-10" tabindex="-1"></a>    <span class="at">const</span> <span class="bu">std::</span>regex<span class="op"> </span>re<span class="op">{</span> <span class="st">&quot;FY([0-9]</span><span class="sc">{4}</span><span class="st">)&quot;</span><span class="op">,</span></span>
+<span id="cb25-11"><a href="usr.html#cb25-11" tabindex="-1"></a>        <span class="bu">std::</span>regex_constants<span class="bu">::</span>icase<span class="op"> |</span> <span class="bu">std::</span>regex_constants<span class="bu">::</span>ECMAScript<span class="op"> };</span></span>
+<span id="cb25-12"><a href="usr.html#cb25-12" tabindex="-1"></a>    <span class="bu">std::</span>smatch<span class="op"> </span>matches<span class="op">;</span></span>
+<span id="cb25-13"><a href="usr.html#cb25-13" tabindex="-1"></a>    <span class="bu">std::</span>string<span class="op"> </span>var<span class="op">{</span> str <span class="op">};</span></span>
+<span id="cb25-14"><a href="usr.html#cb25-14" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span><span class="bu">std::</span>regex_search<span class="op">(</span>var<span class="op">.</span>cbegin<span class="op">(),</span> var<span class="op">.</span>cend<span class="op">(),</span> matches<span class="op">,</span> re<span class="op">))</span></span>
+<span id="cb25-15"><a href="usr.html#cb25-15" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb25-16"><a href="usr.html#cb25-16" tabindex="-1"></a>        <span class="co">// Unrecognized token is something like &quot;FY1982,&quot; so extract &quot;1982&quot;</span></span>
+<span id="cb25-17"><a href="usr.html#cb25-17" tabindex="-1"></a>        <span class="co">// from that and return 1982 as a number. At this point, the variable</span></span>
+<span id="cb25-18"><a href="usr.html#cb25-18" tabindex="-1"></a>        <span class="co">// &quot;FY1982&quot; will added to the parser and set to 1982. All future</span></span>
+<span id="cb25-19"><a href="usr.html#cb25-19" tabindex="-1"></a>        <span class="co">// evaluations will see this as 1982 (unless set_constant() is called</span></span>
+<span id="cb25-20"><a href="usr.html#cb25-20" tabindex="-1"></a>        <span class="co">// to change it).</span></span>
+<span id="cb25-21"><a href="usr.html#cb25-21" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>matches<span class="op">.</span>size<span class="op">()</span> <span class="op">&gt;</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb25-22"><a href="usr.html#cb25-22" tabindex="-1"></a>            <span class="op">{</span> <span class="cf">return</span> <span class="bu">std::</span>atol<span class="op">(</span>matches<span class="op">[</span><span class="dv">1</span><span class="op">].</span>str<span class="op">().</span>c_str<span class="op">());</span> <span class="op">}</span></span>
+<span id="cb25-23"><a href="usr.html#cb25-23" tabindex="-1"></a>        <span class="cf">else</span></span>
+<span id="cb25-24"><a href="usr.html#cb25-24" tabindex="-1"></a>            <span class="op">{</span> <span class="cf">return</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb25-25"><a href="usr.html#cb25-25" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb25-26"><a href="usr.html#cb25-26" tabindex="-1"></a>    <span class="co">// Can&#39;t resolve what this token is, so return NaN.</span></span>
+<span id="cb25-27"><a href="usr.html#cb25-27" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb25-28"><a href="usr.html#cb25-28" tabindex="-1"></a>        <span class="op">{</span> <span class="cf">return</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb25-29"><a href="usr.html#cb25-29" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="cb25-30"><a href="usr.html#cb25-30" tabindex="-1"></a></span>
+<span id="cb25-31"><a href="usr.html#cb25-31" tabindex="-1"></a><span class="co">// Calculate the range between to fiscal years (will be 10):  </span></span>
+<span id="cb25-32"><a href="usr.html#cb25-32" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;ABS(FY1999-FY2009)&quot;</span><span class="op">)</span></span></code></pre></div>
+</div>
+<p>By default, the parser’s USR is a no-op and will not process anything. If you had provided a USR but then
+need to turn off this feature, then pass a no-op lambda (e.g., <code>[]{}</code>) or no-op object (<code>te_usr_noop{}</code>) to <code>set_unknown_symbol_resolver()</code>.</p>
+
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="how-it-works.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="embedded-programming.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="custom-extensions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="non-us-formatted-formulas.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

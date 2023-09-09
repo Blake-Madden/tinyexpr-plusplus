@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 14 Compile-time Options | TinyExpr++</title>
-  <meta name="description" content="Chapter 14 Compile-time Options | TinyExpr++" />
+  <title>Chapter 1 Overview | TinyExpr++</title>
+  <meta name="description" content="Chapter 1 Overview | TinyExpr++" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 14 Compile-time Options | TinyExpr++" />
+  <meta property="og:title" content="Chapter 1 Overview | TinyExpr++" />
   <meta property="og:type" content="book" />
   <meta property="og:image" content="/images/cover.png" />
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 14 Compile-time Options | TinyExpr++" />
+  <meta name="twitter:title" content="Chapter 1 Overview | TinyExpr++" />
   
   
   <meta name="twitter:image" content="/images/cover.png" />
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="how-it-works.html"/>
-<link rel="next" href="embedded-programming.html"/>
+<link rel="prev" href="index.html"/>
+<link rel="next" href="usage.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -241,22 +241,41 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="compile-time-options" class="section level1 hasAnchor" number="14">
-<h1><span class="header-section-number">Chapter 14</span> Compile-time Options<a href="compile-time-options.html#compile-time-options" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="te_pow_from_right" class="section level2 unnumbered hasAnchor">
-<h2><code>TE_POW_FROM_RIGHT</code><a href="compile-time-options.html#te_pow_from_right" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>By default, <em>TinyExpr++</em> does exponentiation from left to right. For example:</p>
-<p><code>a^b^c == (a^b)^c</code> and <code>-a^b == (-a)^b</code></p>
-<p>This is by design; it’s the way that spreadsheets do it
-(e.g., <em>LibreOffice Calc</em>, <em>Excel</em>, <em>Google Sheets</em>).</p>
-<p>If you would rather have exponentiation work from right to left, you need to
-define <code>TE_POW_FROM_RIGHT</code> when compiling. With <code>TE_POW_FROM_RIGHT</code> defined, the
-behavior is:</p>
-<p><code>a^b^c == a^(b^c)</code> and <code>-a^b == -(a^b)</code></p>
-<p>That will match how many scripting languages do it (e.g., Python, Ruby).</p>
-<p>Note that symbols can be defined by passing them to your compiler’s
-command line (or in a Cmake configuration) as such: <code>-DTE_POW_FROM_RIGHT</code></p>
+<div id="overview" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Overview<a href="overview.html#overview" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>This is the programming manual for <em>TinyExpr++</em>, the C++ version of the <em>TinyExpr</em> <span class="citation">(<a href="#ref-TinyExpr">Winkle</a>)</span> formula parsing library. (This manual includes documentation from <em>TinyExpr</em> by Lewis Van Winkle.)</p>
+<p><em>TinyExpr++</em> is a small parser and evaluation library for solving math expressions from C++.
+It’s open-source, free, easy-to-use, and self-contained in a single source and header file pair.</p>
+<div id="features" class="section level2 unnumbered hasAnchor">
+<h2>Features<a href="overview.html#features" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ul>
+<li>C++17 with no dependencies.</li>
+<li>Single source file and header file.</li>
+<li>Simple and fast.</li>
+<li>Implements standard operator precedence.</li>
+<li>Implements logical and comparison operators.</li>
+<li>Exposes standard C math functions (<code>sin</code>, <code>sqrt</code>, <code>ln</code>, etc.), as well as some <em>Excel</em>-like functions (e.g., <code>AVERAGE()</code> and <code>IF()</code>).</li>
+<li>Can add custom functions and variables easily.</li>
+<li>Can add a custom handler to resolve unknown variables.</li>
+<li>Can bind constants at eval-time.</li>
+<li>Supports variadic functions (taking between 1-7 arguments).</li>
+<li>Case insensitive.</li>
+<li>Supports non-US formulas (e.g., <code>POW(2,2; 2)</code> instead of <code>POW(2.2, 2)</code>).</li>
+<li>Supports C and C++ style comments within math expressions.</li>
+<li>Released under the zlib license - free for nearly any use.</li>
+<li>Easy to use and integrate with your code.</li>
+<li>Thread-safe; parser is in a self-contained object.</li>
+</ul>
 
+</div>
+</div>
+
+
+
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-TinyExpr" class="csl-entry">
+Winkle, Lewis Van. <em>C Math Evaluation Library: TinyExpr</em>. 2016, <a href="https://codeplea.com/tinyexpr">https://codeplea.com/tinyexpr</a>.
 </div>
 </div>
             </section>
@@ -264,8 +283,8 @@ command line (or in a Cmake configuration) as such: <code>-DTE_POW_FROM_RIGHT</c
           </div>
         </div>
       </div>
-<a href="how-it-works.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="embedded-programming.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="usage.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
