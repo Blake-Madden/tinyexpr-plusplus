@@ -287,6 +287,14 @@ public:
         validate_name(var);
         m_customFuncsAndVars.insert(std::move(var));
         }
+    /// @brief Removes a custom variable or function.
+    /// @param var The variable/function to remove (by name).
+    void remove_variable_or_function(te_variable::name_type var)
+        {
+        auto foundVar = m_customFuncsAndVars.find(te_variable{ std::move(var) });
+        if (foundVar != m_customFuncsAndVars.cend())
+            { m_customFuncsAndVars.erase(foundVar); }
+        }
     /** @brief Sets a custom function to resolve unknown symbols in an expression.
         @param usr The function to use to resolve unknown symbols.*/
     void set_unknown_symbol_resolver(te_usr_variant_type usr)

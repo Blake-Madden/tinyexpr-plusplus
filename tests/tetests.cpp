@@ -1337,6 +1337,33 @@ TEST_CASE("Is function used", "[functions]")
     CHECK_FALSE(p.is_function_used(("si")));
     }
 
+TEST_CASE("Remove custom var", "[functions]")
+    {
+    te_parser p;
+
+    p.set_variables_and_functions({
+        {"STRESS_L", 10.1},
+        {"P_LEVEL", .5},
+        {"z", .75} });
+    p.compile(("z + STRESS_L + P_LEVEL"));
+    CHECK(p.is_variable_used(("Z")));
+    CHECK(p.is_variable_used(("STRESs_L")));
+    CHECK(p.is_variable_used(("P_LEVEL")));
+    CHECK(p.success());
+    p.remove_variable_or_function("stress_l");
+    p.compile(("z + P_LEVEL"));
+    CHECK(p.success());
+    CHECK_FALSE(p.compile(("z + STRESS_L + P_LEVEL")));
+
+    p.remove_variable_or_function("p_level");
+    p.compile(("z"));
+    CHECK(p.success());
+    CHECK_FALSE(p.compile(("z + P_LEVEL")));
+
+    p.remove_variable_or_function("z");
+    CHECK_FALSE(p.compile(("z")));
+    }
+
 TEST_CASE("Is variable used", "[functions]")
     {
     te_parser p;
@@ -1386,6 +1413,12 @@ TEST_CASE("Custom test", "[functions]")
         p.set_variables_and_functions({ {"AddEm3", AddEm3} });
         p.compile(("ADDEM3(2.1, 86.8, 2)"));
         CHECK_THAT(90.9, Catch::Matchers::WithinRel(p.evaluate()));
+        p.remove_variable_or_function("Bogus"); // nothing should happen
+        p.compile(("ADDEM3(2.1, 86.8, 2)"));
+        CHECK_THAT(90.9, Catch::Matchers::WithinRel(p.evaluate()));
+        // remove function
+        p.remove_variable_or_function("addem3");
+        CHECK_FALSE(p.compile(("ADDEM3(2.1, 86.8, 2)")));
         }
     SECTION("Custom variables")
         {

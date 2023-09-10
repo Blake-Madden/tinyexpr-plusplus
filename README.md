@@ -83,6 +83,7 @@ The following are changes from the original TinyExpr C library:
 - Added support for `volatile` (refer to [embedded programming](Embedded.md) for details).
 - Custom functions and variables can now contain periods in their names.
 - Custom functions and variables can now start with an underscore.
+- Custom functions and variables can now be removed.
 - Added support for custom handlers to resolve unknown variables.
 - Added new built-in functions:
   - `and`: returns true (i.e., non-zero) if all conditions are true (accepts 1-7 arguments).
