@@ -142,7 +142,6 @@ For example, say that an end user will enter variables that start "STRESS", but 
 Additionally, you want to increase the values of these variables with every evaluation. The following demonstrates this:
 
 ```cpp
-```
 te_parser tep;
 
 tep.set_unknown_symbol_resolver(
@@ -157,12 +156,13 @@ tep.set_unknown_symbol_resolver(
     // purge resolved varialbes after each evaluation
     false);
 
-// Initial resolution of STRESS will be 3.
+// Initial resolution of STRESS_LEVEL will be 3.
 tep.evaluate("STRESS_LEVEL");
-// Because "STRESS_LEVEL" wasn't kept as a variable (with a value of 3)
+// Because STRESS_LEVEL wasn't kept as a variable (with a value of 3)
 // in the parser, then subsequent evaluations will require
 // resolving it again:
 tep.evaluate("STRESS_LEVEL"); // Will be 4.
 tep.evaluate("STRESS_LEVEL"); // 5
 tep.evaluate("STRESS_LEVEL"); // 6
+```
 :::
