@@ -1444,6 +1444,50 @@ TEST_CASE("Funcs and vars with period", "[functions]")
         }
     }
 
+TEST_CASE("Funcs and vars start with underscore", "[functions]")
+    {
+    te_parser p;
+
+    SECTION("Custom test unknown parameters")
+        {
+        p.set_variables_and_functions({ { "__MATH.MULT", __mult} });
+        p.compile(("__math.MULT(2,30,4,5)+1"));
+        CHECK(1201 == p.evaluate());
+        }
+    SECTION("0 Parameters")
+        {
+        p.set_variables_and_functions({ {"_MATH.Return5", return5} });
+        p.compile(("_math.Return5()"));
+        CHECK_THAT(5, Catch::Matchers::WithinRel(p.evaluate()));
+        }
+    SECTION("2 Parameters")
+        {
+        p.set_variables_and_functions({ { "_MATH.AddEm", AddEm} });
+        p.compile(("_math.ADDEM(2.1, 86.8)"));
+        CHECK_THAT(88.9, Catch::Matchers::WithinRel(p.evaluate()));
+        }
+    SECTION("Custom variables")
+        {
+        p.set_variables_and_functions({ {"_STATS.STRESS_L", 10.1},
+            {"_stats.REGRESSION.P_LEVEL", .5} });
+        p.compile(("_statS.STRESS_L*_StAts.REGRESSION.P_LEVEL"));
+        CHECK_THAT(5.05, Catch::Matchers::WithinRel(p.evaluate()));
+        p.set_constant("_statS.REGRESSION.P_LEVEL", .9);
+        CHECK_THAT(9.09, Catch::Matchers::WithinRel(p.evaluate()));
+        p.compile(("IF(_StAts.STRESS_L >= _Stats.REGRESSION.P_LEVEL, 1, 0)"));
+        CHECK(1 == p.evaluate());
+        // comma (instead of period) will cause a syntax error
+        CHECK(std::isnan(p.evaluate(("_STATS,STRESS_L*_STATS.REGRESSION.P_LEVEL"))));
+        CHECK(p.get_last_error_position() == 5);
+        // incomplete scope on P_LEVEL
+        CHECK(std::isnan(p.evaluate(("_STATS.STRESS_L*_STATS.P_LEVEL"))));
+        CHECK(p.get_last_error_position() == 29);
+        // stray space
+        CHECK(std::isnan(p.evaluate(("_STATS.STRESS_L*_STATS. REGRESSION.P_LEVEL"))));
+        CHECK(p.get_last_error_position() == 22);
+        }
+    }
+
 TEST_CASE("Complex", "[functions]")
     {
     te_parser tep;
@@ -1752,7 +1796,7 @@ TEST_CASE("Validate variables", "[names]")
     CHECK_THROWS(tep.set_variables_and_functions({ { "", 5.0 } }));
     CHECK_THROWS(tep.set_variables_and_functions({ { "Var WithSpace", 5.0 } }));
     CHECK_THROWS(tep.set_variables_and_functions({ { "Varÿ", 5.0 } }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "_Var", 5.0 } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Var,", 5.0 } }));
     CHECK_THROWS(tep.set_variables_and_functions({ { "Var$", 5.0 } }));
     CHECK_THROWS(tep.set_variables_and_functions({ { "Var ", 5.0 } }));
 

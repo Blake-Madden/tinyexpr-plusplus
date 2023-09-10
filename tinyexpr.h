@@ -438,10 +438,11 @@ private:
         {
         if (var.m_name.empty())
             { throw std::runtime_error("Variable name is empty."); }
-        if (!is_letter(var.m_name[0]))
+        if (!is_letter(var.m_name[0]) &&
+            var.m_name[0] != '_')
             {
             throw std::runtime_error(
-                std::string("Variable name must begin with an English letter: ") + var.m_name);
+                std::string("Variable name must begin with a letter from a-z or _: ") + var.m_name);
             }
         const auto varCharPos = std::find_if(var.m_name.cbegin(), var.m_name.cend(),
             [](const auto ch) noexcept

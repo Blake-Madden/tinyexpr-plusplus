@@ -650,7 +650,7 @@ void te_parser::next_token(te_parser::state *s)
         else
             {
             /* Look for a variable or builtin function call. */
-            if (is_letter(s->m_next[0]))
+            if (is_letter(s->m_next[0]) || s->m_next[0] == '_')
                 {
                 const char* start = s->m_next;
                 while (is_name_char_valid(s->m_next[0]))

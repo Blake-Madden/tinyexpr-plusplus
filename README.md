@@ -82,6 +82,7 @@ The following are changes from the original TinyExpr C library:
 - `compile()` and `evaluate()` now accept `std::string_view`s, meaning that these functions can accept either `char*` or `std::string` arguments.
 - Added support for `volatile` (refer to [embedded programming](Embedded.md) for details).
 - Custom functions and variables can now contain periods in their names.
+- Custom functions and variables can now start with an underscore.
 - Added support for custom handlers to resolve unknown variables.
 - Added new built-in functions:
   - `and`: returns true (i.e., non-zero) if all conditions are true (accepts 1-7 arguments).
