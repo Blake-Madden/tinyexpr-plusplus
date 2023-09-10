@@ -128,3 +128,41 @@ tep.evaluate("ABS(FY1999-FY2009)")
 
 By default, the parser's USR is a no-op and will not process anything. If you had provided a USR but then
 need to turn off this feature, then pass a no-op lambda (e.g., `[]{}`) or no-op object (`te_usr_noop{}`) to `set_unknown_symbol_resolver()`.
+
+Also, once a variable has been resolved by your USR, it will be added as a custom variable with the resolved value assigned to it.
+With subsequent evaluations, the previously unrecognized symbols you resolved will be remembered.
+This means that it will not to be resolved again and will result in the value that your USR returned from before.
+
+If you prefer to not have resolved symbols added to the parser, then pass `false` to the second parameter to `set_unknown_symbol_resolver()`.
+This will force the same unknown symbols to be resolved again with every evaluation.
+This can be useful for when your USR's symbol resolutions are dynamic and may change with each call.
+
+::: {.minipage data-latex="{\textwidth}"}
+For example, say that an end user will enter variables that start “STRESS”, but you are uncertain what the full name will be.
+Additionally, you want to increase the values of these variables with every evaluation. The following demonstrates this:
+
+```cpp
+```
+te_parser tep;
+
+tep.set_unknown_symbol_resolver(
+    [](std::string_view str) -> double
+    {
+    static double stressLevel{ 3 };
+    if (std::strncmp(str.data(), "STRESS", 6) == 0)
+        { return stressLevel++; }
+    else
+        { return te_parser::te_nan; }
+    },
+    // purge resolved varialbes after each evaluation
+    false);
+
+// Initial resolution of STRESS will be 3.
+tep.evaluate("STRESS_LEVEL");
+// Because "STRESS_LEVEL" wasn't kept as a variable (with a value of 3)
+// in the parser, then subsequent evaluations will require
+// resolving it again:
+tep.evaluate("STRESS_LEVEL"); // Will be 4.
+tep.evaluate("STRESS_LEVEL"); // 5
+tep.evaluate("STRESS_LEVEL"); // 6
+:::

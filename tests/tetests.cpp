@@ -1980,7 +1980,7 @@ double ResolveResolutionSymbols(std::string_view str)
         96 : te_parser::te_nan;
     }
 
-TEST_CASE("Unknown symbol resolve funct pointer", "[usr]")
+TEST_CASE("Unknown symbol resolve funct pointer keep resolved", "[usr]")
     {
     te_parser tep;
     tep.set_unknown_symbol_resolver(ResolveResolutionSymbols);
@@ -1991,6 +1991,42 @@ TEST_CASE("Unknown symbol resolve funct pointer", "[usr]")
     CHECK(tep.evaluate("RESOLUTION * 3") == 3 * 96);
     // is in the parser now and can be recognized case sensitively
     CHECK(tep.evaluate("resolution * 5") == 480);
+    }
+
+TEST_CASE("Unknown symbol resolve funct pointer purge resolved", "[usr]")
+    {
+    te_parser tep;
+    tep.set_unknown_symbol_resolver(ResolveResolutionSymbols, false);
+
+    CHECK(tep.evaluate("RES * 3") == 3 * 96);
+    // case sensitive, won't recognize it
+    CHECK(std::isnan(tep.evaluate("resolution * 5")));
+    CHECK(tep.evaluate("RESOLUTION * 3") == 3 * 96);
+    // not in the parser, so case sensitive look up will fail
+    CHECK(std::isnan(tep.evaluate("resolution * 5")));
+    }
+
+TEST_CASE("Unknown symbol resolve 1 param purged", "[usr]")
+    {
+    te_parser tep;
+    tep.set_unknown_symbol_resolver(
+        [](std::string_view str) -> double
+        {
+        static double stressLevel{ 3 };
+        if (std::strncmp(str.data(), "STRESS", 6) == 0)
+            { return stressLevel++; }
+        else
+            { return te_parser::te_nan; }
+        },
+        // purge resolved varialbes after each evaluation
+        false);
+
+    CHECK(tep.evaluate("STRESS_LEVEL") == 3);
+    CHECK(tep.evaluate("STRESS_LEVEL") == 4);
+    CHECK(tep.evaluate("STRESS_LEVEL") == 5);
+    CHECK(tep.evaluate("STRESS_LEVEL") == 6);
+    CHECK(tep.compile("STRESS_LEVEL"));
+    CHECK(tep.evaluate() == 7);
     }
 
 TEST_CASE("Unknown symbol resolve 1 param", "[usr]")

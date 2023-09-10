@@ -684,7 +684,10 @@ void te_parser::next_token(te_parser::state *s)
                                     assert(m_currentVar != s->m_lookup.cend() &&
                                         "Internal error in parser using unknown symbol resolver.");
                                     if (m_currentVar != s->m_lookup.cend())
-                                        { m_varFound = true; }
+                                        {
+                                        resolvedVariables.insert(te_variable::name_type{ currentVarToken });
+                                        m_varFound = true;
+                                        }
                                     }
                                 }
                             // "double usr(string_view, string&)" resolver
@@ -699,7 +702,10 @@ void te_parser::next_token(te_parser::state *s)
                                     assert(m_currentVar != s->m_lookup.cend() &&
                                         "Internal error in parser using unknown symbol resolver.");
                                     if (m_currentVar != s->m_lookup.cend())
-                                        { m_varFound = true; }
+                                        {
+                                        resolvedVariables.insert(te_variable::name_type{ currentVarToken });
+                                        m_varFound = true;
+                                        }
                                     }
                                 }
                             }
@@ -1273,6 +1279,7 @@ bool te_parser::compile(const std::string_view expression)
     m_varFound = false;
     m_usedFunctions.clear();
     m_usedVars.clear();
+    resolvedVariables.clear();
     if (get_list_separator() == get_decimal_separator())
         { throw std::runtime_error("List and decimal separators cannot be the same"); }
     if (expression.empty())
@@ -1348,6 +1355,12 @@ double te_parser::evaluate()
         m_parseSuccess = false;
         m_result = std::numeric_limits<double>::quiet_NaN();
         m_lastErrorMessage = expt.what();
+        }
+
+    if (!m_keepResolvedVarialbes && resolvedVariables.size())
+        {
+        for (const auto& resolvedVar : resolvedVariables)
+            { remove_variable_or_function(resolvedVar); }
         }
     return m_result;
     }

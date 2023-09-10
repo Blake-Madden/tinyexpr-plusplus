@@ -296,9 +296,18 @@ public:
             { m_customFuncsAndVars.erase(foundVar); }
         }
     /** @brief Sets a custom function to resolve unknown symbols in an expression.
-        @param usr The function to use to resolve unknown symbols.*/
-    void set_unknown_symbol_resolver(te_usr_variant_type usr)
-        { m_unknownSymbolResolve = usr; }
+        @param usr The function to use to resolve unknown symbols.
+        @param keepResolvedVariables @c true to cache any resolved variables into the parser.
+            This means that they will not need to be resolved again on subsequent calls to evaluate().\n
+            Pass @c false to this if you wish to re-resolve any previously resolved variables on
+            later evaluations. This can be useful for when a resolved variable's value is volatile
+            and needs to be re-resolved on every use.*/
+    void set_unknown_symbol_resolver(te_usr_variant_type usr,
+        const bool keepResolvedVariables = true)
+        {
+        m_unknownSymbolResolve = usr;
+        m_keepResolvedVarialbes = keepResolvedVariables;
+        }
     /// @private
     [[nodiscard]]
     const std::set<te_variable>& get_variables_and_functions() const noexcept
@@ -802,6 +811,8 @@ private:
     std::set<te_variable> m_customFuncsAndVars;
 
     te_usr_variant_type m_unknownSymbolResolve{ te_usr_noop{} };
+    std::set<te_variable::name_type> resolvedVariables;
+    bool m_keepResolvedVarialbes{ true };
 
     // just keeps track of built-in operators
     static const std::set<std::string> m_operators;
