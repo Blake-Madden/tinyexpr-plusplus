@@ -42,7 +42,7 @@ The following built-in functions are available:
 | TGAMMA(Number) | Returns the gamma function of *Number*. |
 | TRUNC(Number) | Discards the fractional part of *Number*.<br>\linebreak `TRUNC(-3.2)` = -3<br>\linebreak `TRUNC(3.2)` = 3 |
 
-Table: Math Functions
+Table: Math Functions\index{functions!math}
 :::
 
 ::: {.minipage data-latex="{\textwidth}"}
@@ -51,7 +51,7 @@ Table: Math Functions
 | AVGERAGE(Value1, Value2,...) | Returns the mean of a specified range of values. |
 | SUM(Value1, Value2,...) | Returns the sum of a specified range of values. |
 
-Table: Statistical Functions
+Table: Statistical Functions\index{functions!statistical}
 :::
 
 ::: {.minipage data-latex="{\textwidth}"}
@@ -62,5 +62,5 @@ Table: Statistical Functions
 | NOT(Value) | Returns the logical negation of *Value.* |
 | OR(Value1, Value2, ...) | Returns true if any condition is true. |
 
-Table: Logic Functions
+Table: Logic Functions\index{functions!logical}
 :::

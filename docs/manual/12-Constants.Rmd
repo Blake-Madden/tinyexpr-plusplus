@@ -1,6 +1,6 @@
 # Constants
 
-The following mathematical and logical constants are available:
+The following mathematical and logical constants\index{constants} are available:
 
 ::: {.minipage data-latex="{\textwidth}"}
 | Constant | Value |
@@ -26,7 +26,7 @@ The following number formats are supported:
 ::: {.minipage data-latex="{\textwidth}"}
 | Format | Example |
 | :------------- |:------------ |
-| Scientific notation | `1e3` for `1000` |
+| Scientific notation\index{scientific notation} | `1e3` for `1000` |
 
 Table: Number Formats
 :::

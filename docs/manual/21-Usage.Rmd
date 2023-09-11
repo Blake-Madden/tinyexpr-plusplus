@@ -47,7 +47,7 @@ You can also provide `set_variables_and_functions()` a list of constants, bound 
 
 ## Error Handling {-}
 
-*TinyExpr++* will throw exceptions when:
+*TinyExpr++* will throw exceptions\index{exceptions} when:
 
 - An illegal character is specified in a custom function or variable name.
 - An illegal character is provided as a list or decimal separator.

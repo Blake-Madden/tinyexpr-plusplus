@@ -1,7 +1,7 @@
 # Handling Unknown Variables {#usr}
 
 Although it is possible to add [custom variables](#custom-extensions) to the parser, there may be times when you can't
-anticipate the exact variable names that a user will enter. For example, a user could enter
+anticipate the exact variable\index{variables!unknown|see{unknown symbols}} names that a user will enter. For example, a user could enter
 variables representing fiscal years in the format of `FY[year]`. From there, they would like to perform operation
 such as getting the range between them. In this situation, their expression may be something like this:
 
@@ -17,7 +17,7 @@ variables for every year possible.
 
 Rather than doing that, you can allow the parser to not recognize these variables as usual.
 At this point, it will fall back to a user-defined function that you provide to resolve it.
-This is called an "unknown symbol resolver" (USR), and this function will:
+This is called an "unknown symbol resolver" (USR)\index{unknown symbols!resolving}, and this function will:
 
 - Receive a `std::string_view` of the symbol (i.e., variable name) that the parser failed to recognize
 - Determine how to resolve the name

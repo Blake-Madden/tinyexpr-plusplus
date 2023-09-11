@@ -1,6 +1,6 @@
 # Operators
 
-The following operators are supported within math expressions:
+The following operators\index{operators} are supported within math expressions:
 
 ::: {.minipage data-latex="{\textwidth}"}
 | Operator | Description |
@@ -49,7 +49,8 @@ $$
 (5+5+5)/2
 $$
 
-You can override it so that the additions happen first (resulting in `15`), followed by the division (finally yielding `7.5`). Likewise, `(2+5)^2` will yield `49` (`7` squared), while `2+5^2` will yield `27` (`5` squared, plus `2`).
+You can override it so that the additions happen first (resulting in `15`), followed by the division (finally yielding `7.5`).
+Likewise, `(2+5)^2` will yield `49` (`7` squared), while `2+5^2` will yield `27` (`5` squared, plus `2`).
 
 ## Compatability Note {-}
 

@@ -42,7 +42,7 @@ void OnInterrupt()
     volatile te_parser& vTep = tep;
     }
 ```
-Functions in `te_parser` which have `volatile` overloads can then be
+Functions in `te_parser` which have `volatile` overloads\index{volatile} can then be
 called directly:
 
 ```cpp
@@ -92,7 +92,7 @@ Note that it is required to make the initial declaration of your
 
 ## Exception Handling {-}
 
-*TinyExpr++* requires exception handling, although it does attempt to
+*TinyExpr++* requires exception handling\index{exceptions}, although it does attempt to
 minimize the use of exceptions (e.g., `noexcept` is used extensively).
 Syntax errors will be reported without the use of exceptions;
 issues such as division by zero or arithmetic overflows, however,
@@ -122,7 +122,7 @@ of the error in its `what()` method.
 
 ## Virtual Functions {-}
 
-*TinyExpr++* does not use virtual functions or derived classes,
+*TinyExpr++* does not use virtual functions\index{functions!virtual} or derived classes\index{classes!derived},
 unless you create a custom class derived from `te_expr` yourself
 (refer to [Example 5](#example-5)).
 (`te_expr` defines a virtual destructor that may be implicitly optimized to
