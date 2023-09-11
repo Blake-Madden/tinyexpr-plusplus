@@ -549,7 +549,7 @@ TinyExpr++ parses the following grammar (from lowest-to-highest operator precede
 In addition, whitespace between tokens is ignored.
 
 Valid variable names consist of a letter or underscore followed by any combination
-of: letters `a`–`z` or `A`–`Z`, digits `0`–`9`, periods, and
+of: letters `a`â€“`z` or `A`â€“`Z`, digits `0`â€“`9`, periods, and
 underscores. Constants can be integers, decimal numbers, or in scientific
 notation (e.g., `1e3` for `1000`). A leading zero is not required (e.g., `.5`
 for `0.5`).

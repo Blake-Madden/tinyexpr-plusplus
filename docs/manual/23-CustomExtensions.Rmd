@@ -147,6 +147,6 @@ res = tep.evaluate("CellMax()");
 
 :::: {.notesection data-latex=""}
 Valid variable and function names consist of a letter or underscore followed by any combination
-of: letters `a`–`z` or `A`–`Z`, digits `0`–`9`, periods, and underscores.
+of: letters `a`â€“`z` or `A`â€“`Z`, digits `0`â€“`9`, periods, and underscores.
 ::::
 :::
