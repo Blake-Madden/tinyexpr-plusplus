@@ -1,8 +1,56 @@
 # Custom Extensions
 
+## Binding to Custom Variables {-}
+
+::: {.minipage data-latex="{\textwidth}"}
+Along with the built-in functions and constants, you can create custom variables\index{variables!binding to custom}  for use in expressions. For example:
+
+```cpp
+#include "tinyexpr.h"
+#include <iostream>
+#include <iomanip>
+
+int main(int argc, char* argv[])
+    {
+    if (argc < 2)
+        {
+        std::cout << "Usage: example \"expression\"\n";
+        return EXIT_SUCCESS;
+        }
+
+    const char* expression = argv[1];
+    std::cout << "Evaluating:\n\t" << expression << "\n";
+
+    /* The variables x and y are bound at eval-time. */
+    double x{ 0 }, y{ 0 };
+    // Store variable names and pointers.
+    te_parser tep;
+    tep.set_variables_and_functions({ {"x", &x}, {"y", &y} });
+
+    /* This will compile the expression and check for errors. */
+    if (tep.compile(expression))
+        {
+        /* The variables can be changed here, and evaluate can be called multiple
+           times. This is efficient because the parsing has already been done.*/
+        x = 3; y = 4;
+        const double r = tep.evaluate();
+        std::cout << "Result:\n\t" << r << "\n";
+        }
+    else
+        {
+        /* Show the user where the error is at. */
+        std::cout << "\t " << std::setfill(' ') <<
+            std::setw(tep.get_last_error_position()) << '^' << "\tError here\n";
+        }
+    return EXIT_SUCCESS;
+    }
+```
+:::
+
+::: {.minipage data-latex="{\textwidth}"}
 ## Binding to Custom Functions {-}
 
-*TinyExpr++* can also call custom functions. Here is a short example:
+*TinyExpr++* can call custom functions\index{functions!binding to custom} also. Here is a short example:
 
 ```cpp
 double my_sum(double a, double b)
@@ -34,10 +82,12 @@ tep.set_variables_and_functions({
 const double r = tep.evaluate("mysum(5, 6)");
 // will be 11
 ```
+:::
 
+::: {.minipage data-latex="{\textwidth}"}
 ## Binding to Custom Classes {-}
 
-A class derived from `te_expr` can be bound to custom functions. This enables you to
+A class derived from `te_expr` can be bound to custom functions\index{classes!binding to custom}. This enables you to
 have full access to an object (via these functions) when parsing an expression.
 
 The following demonstrates creating a `te_expr`-derived class which contains an array of values:
@@ -95,10 +145,8 @@ auto result = tep.evaluate("SUM(CELL 0, CELL 1, CELL 2, CELL 3, CELL 4)");
 res = tep.evaluate("CellMax()");
 ```
 
-::: {.notesection data-latex=""}
-Valid variable names consist of a letter or underscore followed by any combination
-of: letters `a` through `z` or `A` through `Z`, digits `0` through `9`, periods, and
-underscores. Constants can be integers, decimal numbers, or in scientific
-notation (e.g., `1e3` for `1000`). A leading zero is not required (e.g., `.5`
-for `0.5`).
+:::: {.notesection data-latex=""}
+Valid variable and function names consist of a letter or underscore followed by any combination
+of: letters `a`–`z` or `A`–`Z`, digits `0`–`9`, periods, and underscores.
+::::
 :::
