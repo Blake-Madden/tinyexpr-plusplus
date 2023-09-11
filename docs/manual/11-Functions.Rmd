@@ -58,7 +58,7 @@ Table: Statistical Functions
 | Function | Description |
 | :-- | :-- |
 | AND(Value1, Value2, ...) | Returns true if all conditions are true. |
-| IF(Condition, ValueIfTrue, ValueIfFalse) | If *Condition* is true (non-zero), then *ValueIfTrue* is returned; otherwise, *ValueIfFalse* is returned. |
+| IF(Condition, ValueIfTrue, ValueIfFalse) | If *Condition* is true (non-zero), then *ValueIfTrue* is returned; otherwise, *ValueIfFalse* is returned.<br>\linebreak Note that multiple `IF` commands can be nested to create a "case" statement\index{case statements}. |
 | NOT(Value) | Returns the logical negation of *Value.* |
 | OR(Value1, Value2, ...) | Returns true if any condition is true. |
 

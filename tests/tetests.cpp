@@ -1387,31 +1387,31 @@ TEST_CASE("Custom test", "[functions]")
     SECTION("Custom test unknown parameters")
         {
         p.set_variables_and_functions({ { "MULT", __mult} });
-        p.compile(("MULT(2,30,4,5)+1"));
+        p.compile("MULT(2,30,4,5)+1");
         CHECK(1201 == p.evaluate());
         }
     SECTION("0 Parameters")
         {
         p.set_variables_and_functions({ {"Return5", return5} });
-        p.compile(("Return5()"));
+        p.compile("Return5()");
         CHECK_THAT(5, Catch::Matchers::WithinRel(p.evaluate()));
         }
     SECTION("1 Parameter")
         {
         p.set_variables_and_functions({ { "value", __value} });
-        p.compile(("value(2.1)"));
+        p.compile("value(2.1)");
         CHECK_THAT(2.1, Catch::Matchers::WithinRel(p.evaluate()));
         }
     SECTION("2 Parameters")
         {
         p.set_variables_and_functions({ { "AddEm", AddEm} });
-        p.compile(("ADDEM(2.1, 86.8)"));
+        p.compile("ADDEM(2.1, 86.8)");
         CHECK_THAT(88.9, Catch::Matchers::WithinRel(p.evaluate()));
         }
     SECTION("3 Parameters")
         {
         p.set_variables_and_functions({ {"AddEm3", AddEm3} });
-        p.compile(("ADDEM3(2.1, 86.8, 2)"));
+        p.compile("ADDEM3(2.1, 86.8, 2)");
         CHECK_THAT(90.9, Catch::Matchers::WithinRel(p.evaluate()));
         p.remove_variable_or_function("Bogus"); // nothing should happen
         p.compile(("ADDEM3(2.1, 86.8, 2)"));
@@ -1424,12 +1424,29 @@ TEST_CASE("Custom test", "[functions]")
         {
         p.set_variables_and_functions({ {"STRESS_L", 10.1},
             {"P_LEVEL", .5} });
-        p.compile(("STRESS_L*P_LEVEL"));
+        p.compile("STRESS_L*P_LEVEL");
         CHECK_THAT(5.05, Catch::Matchers::WithinRel(p.evaluate()));
         p.set_constant("P_LEVEL", .9);
         CHECK_THAT(9.09, Catch::Matchers::WithinRel(p.evaluate()));
         p.compile(("IF(STRESS_L >= P_LEVEL, 1, 0)"));
         CHECK(1 == p.evaluate());
+        }
+    SECTION("Custom variables and if")
+        {
+        p.set_variables_and_functions({ {"smartMeter1.power", 1'950},
+            {"sensor1.temperature", 45} });
+        p.compile("IF(AND(smartMeter1.power > 1,900, sensor1.temperature < 52), "
+            "TRUE, "
+            "IF(AND(smartMeter1.power < 300, sensor1.temperature > 55), FALSE,"
+            "NAN) )");
+        CHECK(1 == p.evaluate());
+        p.set_constant("smartMeter1.power", 200);
+        p.set_constant("sensor1.temperature", 57);
+        CHECK(0 == p.evaluate());
+        // on accounted for scenario
+        p.set_constant("smartMeter1.power", 500);
+        p.set_constant("sensor1.temperature", 57);
+        CHECK(std::isnan(p.evaluate()));
         }
     }
 
