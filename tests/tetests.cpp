@@ -1433,19 +1433,19 @@ TEST_CASE("Custom test", "[functions]")
         }
     SECTION("Custom variables and if")
         {
-        p.set_variables_and_functions({ {"smartMeter1.power", 1'950},
-            {"sensor1.temperature", 45} });
+        p.set_variables_and_functions({ {"smartMeter1.power", 1'950.0},
+            {"sensor1.temperature", 45.0} });
         p.compile("IF(AND(smartMeter1.power > 1,900, sensor1.temperature < 52), "
             "TRUE, "
             "IF(AND(smartMeter1.power < 300, sensor1.temperature > 55), FALSE,"
             "NAN) )");
         CHECK(1 == p.evaluate());
-        p.set_constant("smartMeter1.power", 200);
-        p.set_constant("sensor1.temperature", 57);
+        p.set_constant("smartMeter1.power", 200.0);
+        p.set_constant("sensor1.temperature", 57.0);
         CHECK(0 == p.evaluate());
         // on accounted for scenario
-        p.set_constant("smartMeter1.power", 500);
-        p.set_constant("sensor1.temperature", 57);
+        p.set_constant("smartMeter1.power", 500.0);
+        p.set_constant("sensor1.temperature", 57.0);
         CHECK(std::isnan(p.evaluate()));
         }
     }
