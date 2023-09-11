@@ -138,7 +138,7 @@ This will force the same unknown symbols to be resolved again with every evaluat
 This can be useful for when your USR's symbol resolutions are dynamic and may change with each call.
 
 ::: {.minipage data-latex="{\textwidth}"}
-For example, say that an end user will enter variables that start "STRESS", but you are uncertain what the full name will be.
+For example, say that an end user will enter variables that start with "STRESS", but you are uncertain what the full name will be.
 Additionally, you want to increase the values of these variables with every evaluation. The following demonstrates this:
 
 ```cpp
