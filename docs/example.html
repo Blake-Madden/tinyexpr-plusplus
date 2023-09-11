@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 3 Operators | TinyExpr++</title>
-  <meta name="description" content="Chapter 3 Operators | TinyExpr++" />
+  <title>Chapter 9 Example | TinyExpr++</title>
+  <meta name="description" content="Chapter 9 Example | TinyExpr++" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 3 Operators | TinyExpr++" />
+  <meta property="og:title" content="Chapter 9 Example | TinyExpr++" />
   <meta property="og:type" content="book" />
   <meta property="og:image" content="/images/cover.png" />
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 3 Operators | TinyExpr++" />
+  <meta name="twitter:title" content="Chapter 9 Example | TinyExpr++" />
   
   
   <meta name="twitter:image" content="/images/cover.png" />
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="usage.html"/>
-<link rel="next" href="functions.html"/>
+<link rel="prev" href="usage-1.html"/>
+<link rel="next" href="custom-extensions.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -235,150 +235,30 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="operators" class="section level1 hasAnchor" number="3">
-<h1><span class="header-section-number">Chapter 3</span> Operators<a href="operators.html#operators" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>The following operators are supported within math expressions:</p>
-<div class="minipage">
-<table>
-<caption>Operators</caption>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Operator</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">*</td>
-<td align="left">Multiplication.</td>
-</tr>
-<tr class="even">
-<td align="left">/</td>
-<td align="left">Division.</td>
-</tr>
-<tr class="odd">
-<td align="left">%</td>
-<td align="left">Modulus: Divides two values and returns the remainder.</td>
-</tr>
-<tr class="even">
-<td align="left">+</td>
-<td align="left">Addition.</td>
-</tr>
-<tr class="odd">
-<td align="left">-</td>
-<td align="left">Subtraction.</td>
-</tr>
-<tr class="even">
-<td align="left">^</td>
-<td align="left">Exponentiation. The number in front of ^ is the base, the number after it is the power to raise it to.</td>
-</tr>
-<tr class="odd">
-<td align="left">**</td>
-<td align="left">Exponentiation. (This is an alias for ^)</td>
-</tr>
-<tr class="even">
-<td align="left">=</td>
-<td align="left">Equals.</td>
-</tr>
-<tr class="odd">
-<td align="left">&lt;</td>
-<td align="left">Less than.</td>
-</tr>
-<tr class="even">
-<td align="left">&gt;</td>
-<td align="left">Greater than.</td>
-</tr>
-<tr class="odd">
-<td align="left">&lt;&gt;</td>
-<td align="left">Not equal to.</td>
-</tr>
-<tr class="even">
-<td align="left">!=</td>
-<td align="left">Not equal to. (This is an alias for &lt;&gt;)</td>
-</tr>
-<tr class="odd">
-<td align="left">&gt;=</td>
-<td align="left">Greater than or equal to.</td>
-</tr>
-<tr class="even">
-<td align="left">&lt;=</td>
-<td align="left">Less than or equal to.</td>
-</tr>
-<tr class="odd">
-<td align="left">&amp;</td>
-<td align="left">Logical conjunction (AND).</td>
-</tr>
-<tr class="even">
-<td align="left">|</td>
-<td align="left">Logical alternative (OR).</td>
-</tr>
-<tr class="odd">
-<td align="left">( )</td>
-<td align="left">Groups sub-expressions, overriding the order of operations.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="minipage">
-<p>For operators, the order of precedence is:</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">Operator</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">( )</td>
-<td align="left">Instructions in parentheses are executed first.</td>
-</tr>
-<tr class="even">
-<td align="left">^</td>
-<td align="left">Exponentiation.</td>
-</tr>
-<tr class="odd">
-<td align="left">*, /, and %</td>
-<td align="left">Multiplication, division, and modulus.</td>
-</tr>
-<tr class="even">
-<td align="left">+ and -</td>
-<td align="left">Addition and subtraction.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>For example, the following:</p>
-<p><span class="math display">\[
-5+5+5/2
-\]</span></p>
-<p>Will yield <code>12.5</code>. <code>5/2</code> is executed first, then added to the other fives. However, by using parentheses:</p>
-<p><span class="math display">\[
-(5+5+5)/2
-\]</span></p>
-<p>You can override it so that the additions happen first (resulting in <code>15</code>), followed by the division (finally yielding <code>7.5</code>).
-Likewise, <code>(2+5)^2</code> will yield <code>49</code> (<code>7</code> squared), while <code>2+5^2</code> will yield <code>27</code> (<code>5</code> squared, plus <code>2</code>).</p>
-<div id="compatability-note" class="section level2 unnumbered hasAnchor">
-<h2>Compatability Note<a href="operators.html#compatability-note" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The <code>%</code> character acts as a modulus operator in <em>TinyExpr++</em>, which is different from most
-spreadsheet programs. In programs such as <em>LibreOffice Calc</em> and <em>Excel</em>, <code>%</code> is used
-to convert a number to a percentage. For example, <code>=20%</code> would yield <code>0.20</code> in Excel.
-In <em>TinyExpr++</em>, however, <code>20%</code> will result in a syntax error as
-it is expecting a binary (modulus) operation.</p>
+<div id="example" class="section level1 hasAnchor" number="9">
+<h1><span class="header-section-number">Chapter 9</span> Example<a href="example.html#example" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The following is a short example demonstrating how to use <em>TinyExpr++</em>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="example.html#cb10-1" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;tinyexpr.h&quot;</span></span>
+<span id="cb10-2"><a href="example.html#cb10-2" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb10-3"><a href="example.html#cb10-3" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="example.html#cb10-4" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span> <span class="op">*</span>argv<span class="op">[])</span></span>
+<span id="cb10-5"><a href="example.html#cb10-5" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb10-6"><a href="example.html#cb10-6" tabindex="-1"></a>    te_parser tep<span class="op">;</span></span>
+<span id="cb10-7"><a href="example.html#cb10-7" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">char</span> <span class="op">*</span>c <span class="op">=</span> <span class="st">&quot;sqrt(5^2+7^2+11^2+(8-2)^2)&quot;</span><span class="op">;</span></span>
+<span id="cb10-8"><a href="example.html#cb10-8" tabindex="-1"></a>    <span class="dt">double</span> r <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span>c<span class="op">);</span></span>
+<span id="cb10-9"><a href="example.html#cb10-9" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;The expression:</span><span class="sc">\n\t</span><span class="st">&quot;</span> <span class="op">&lt;&lt;</span></span>
+<span id="cb10-10"><a href="example.html#cb10-10" tabindex="-1"></a>        c <span class="op">&lt;&lt;</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">evaluates to:</span><span class="sc">\n\t</span><span class="st">&quot;</span> <span class="op">&lt;&lt;</span> r <span class="op">&lt;&lt;</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">;</span></span>
+<span id="cb10-11"><a href="example.html#cb10-11" tabindex="-1"></a>    <span class="cf">return</span> EXIT_SUCCESS<span class="op">;</span></span>
+<span id="cb10-12"><a href="example.html#cb10-12" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
 
-</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="usage.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="usage-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="custom-extensions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

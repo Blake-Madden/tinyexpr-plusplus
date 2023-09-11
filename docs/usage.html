@@ -189,16 +189,10 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="" data-path="usage-1.html"><a href="usage-1.html#error-handling"><i class="fa fa-check"></i>Error Handling</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9</b> Examples</a>
-<ul>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-1"><i class="fa fa-check"></i>Example 1</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-2-binding-custom-variables"><i class="fa fa-check"></i>Example 2: Binding Custom Variables</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-3-calling-a-free-function"><i class="fa fa-check"></i>Example 3: Calling a Free Function</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-4-non-us-formatted-formulas"><i class="fa fa-check"></i>Example 4: Non-US Formatted Formulas</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-5"><i class="fa fa-check"></i>Example 5: Binding to Custom Classes</a></li>
-</ul></li>
+<li class="chapter" data-level="9" data-path="example.html"><a href="example.html"><i class="fa fa-check"></i><b>9</b> Example</a></li>
 <li class="chapter" data-level="10" data-path="custom-extensions.html"><a href="custom-extensions.html"><i class="fa fa-check"></i><b>10</b> Custom Extensions</a>
 <ul>
+<li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-variables"><i class="fa fa-check"></i>Binding to Custom Variables</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-functions"><i class="fa fa-check"></i>Binding to Custom Functions</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-classes"><i class="fa fa-check"></i>Binding to Custom Classes</a></li>
 </ul></li>
@@ -253,6 +247,21 @@ that you can use in your expressions. For example, in a spreadsheet application,
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="usage.html#cb3-1" tabindex="-1"></a>IF<span class="op">(</span>AND<span class="op">(</span>P_LEVEL <span class="op">&lt;</span> <span class="fl">.05</span><span class="op">,</span> N_OBS <span class="op">&gt;=</span> <span class="dv">30</span><span class="op">),</span></span>
 <span id="cb3-2"><a href="usage.html#cb3-2" tabindex="-1"></a>   P_LEVEL<span class="op">,</span></span>
 <span id="cb3-3"><a href="usage.html#cb3-3" tabindex="-1"></a>   NAN<span class="op">)</span></span></code></pre></div>
+<div class="minipage">
+<p>Logical checks can also be nested, creating a “case”-like statement:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="usage.html#cb4-1" tabindex="-1"></a>IF<span class="op">(</span>AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&gt;</span> <span class="dv">1</span><span class="op">,</span><span class="dv">900</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&lt;</span> <span class="dv">52</span><span class="op">),</span> TRUE<span class="op">,</span></span>
+<span id="cb4-2"><a href="usage.html#cb4-2" tabindex="-1"></a>   <span class="co">// First logical check failed, so now check another scenario</span></span>
+<span id="cb4-3"><a href="usage.html#cb4-3" tabindex="-1"></a>   <span class="co">// and return false if it meets our criteria.</span></span>
+<span id="cb4-4"><a href="usage.html#cb4-4" tabindex="-1"></a>   IF<span class="op">(</span>AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&lt;</span> <span class="dv">300</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&gt;</span> <span class="dv">55</span><span class="op">),</span> FALSE<span class="op">,</span></span>
+<span id="cb4-5"><a href="usage.html#cb4-5" tabindex="-1"></a>   <span class="co">// Neither scenario checked out, so the values are in an</span></span>
+<span id="cb4-6"><a href="usage.html#cb4-6" tabindex="-1"></a>   <span class="co">// unaccounted for scenario. Return NaN to indicate a failure.</span></span>
+<span id="cb4-7"><a href="usage.html#cb4-7" tabindex="-1"></a>   NAN<span class="op">)</span> <span class="op">)</span></span></code></pre></div>
+</div>
+<div class="notesection">
+<p>Expressions can optionally begin with an <code>=</code>, the same as spreadsheet programs. For example:<br />
+</p>
+<p><code>=SUM(C1, C2, C3, D1, D2, D3)</code></p>
+</div>
 <p>Please consult your application’s documentation for which custom
 variables and functions it may provide for its formulas.</p>
 

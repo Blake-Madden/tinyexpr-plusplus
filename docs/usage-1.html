@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="building.html"/>
-<link rel="next" href="examples.html"/>
+<link rel="next" href="example.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -189,16 +189,10 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="" data-path="usage-1.html"><a href="usage-1.html#error-handling"><i class="fa fa-check"></i>Error Handling</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9</b> Examples</a>
-<ul>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-1"><i class="fa fa-check"></i>Example 1</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-2-binding-custom-variables"><i class="fa fa-check"></i>Example 2: Binding Custom Variables</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-3-calling-a-free-function"><i class="fa fa-check"></i>Example 3: Calling a Free Function</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-4-non-us-formatted-formulas"><i class="fa fa-check"></i>Example 4: Non-US Formatted Formulas</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-5"><i class="fa fa-check"></i>Example 5: Binding to Custom Classes</a></li>
-</ul></li>
+<li class="chapter" data-level="9" data-path="example.html"><a href="example.html"><i class="fa fa-check"></i><b>9</b> Example</a></li>
 <li class="chapter" data-level="10" data-path="custom-extensions.html"><a href="custom-extensions.html"><i class="fa fa-check"></i><b>10</b> Custom Extensions</a>
 <ul>
+<li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-variables"><i class="fa fa-check"></i>Binding to Custom Variables</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-functions"><i class="fa fa-check"></i>Binding to Custom Functions</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-classes"><i class="fa fa-check"></i>Binding to Custom Classes</a></li>
 </ul></li>
@@ -244,19 +238,19 @@ div.csl-indent {
 <div id="usage-1" class="section level1 hasAnchor" number="8">
 <h1><span class="header-section-number">Chapter 8</span> Usage<a href="usage-1.html#usage-1" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p><em>TinyExpr++</em>’s <code>te_parser</code> class defines these functions:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="usage-1.html#cb6-1" tabindex="-1"></a><span class="dt">double</span> evaluate<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string_view<span class="op"> </span>expression<span class="op">);</span></span>
-<span id="cb6-2"><a href="usage-1.html#cb6-2" tabindex="-1"></a><span class="dt">double</span> get_result<span class="op">();</span></span>
-<span id="cb6-3"><a href="usage-1.html#cb6-3" tabindex="-1"></a><span class="dt">bool</span> success<span class="op">();</span></span>
-<span id="cb6-4"><a href="usage-1.html#cb6-4" tabindex="-1"></a><span class="dt">int64_t</span> get_last_error_position<span class="op">();</span></span>
-<span id="cb6-5"><a href="usage-1.html#cb6-5" tabindex="-1"></a><span class="bu">std::</span>string<span class="op"> </span>get_last_error_message<span class="op">();</span></span>
-<span id="cb6-6"><a href="usage-1.html#cb6-6" tabindex="-1"></a>set_variables_and_functions<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>set<span class="op">&lt;</span>te_variable<span class="op">&gt;&amp;</span> vars<span class="op">);</span></span>
-<span id="cb6-7"><a href="usage-1.html#cb6-7" tabindex="-1"></a><span class="bu">std::</span>set<span class="op">&lt;</span>te_variable<span class="op">&gt;&amp;</span> get_variables_and_functions<span class="op">();</span></span>
-<span id="cb6-8"><a href="usage-1.html#cb6-8" tabindex="-1"></a>add_variable_or_function<span class="op">(</span><span class="at">const</span> te_variable<span class="op">&amp;</span> var<span class="op">);</span></span>
-<span id="cb6-9"><a href="usage-1.html#cb6-9" tabindex="-1"></a>set_unknown_symbol_resolver<span class="op">(</span><span class="dt">te_usr_variant_type</span> usr<span class="op">);</span></span>
-<span id="cb6-10"><a href="usage-1.html#cb6-10" tabindex="-1"></a>get_decimal_separator<span class="op">();</span></span>
-<span id="cb6-11"><a href="usage-1.html#cb6-11" tabindex="-1"></a>set_decimal_separator<span class="op">();</span></span>
-<span id="cb6-12"><a href="usage-1.html#cb6-12" tabindex="-1"></a>get_list_separator<span class="op">();</span></span>
-<span id="cb6-13"><a href="usage-1.html#cb6-13" tabindex="-1"></a>set_list_separator<span class="op">();</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="usage-1.html#cb7-1" tabindex="-1"></a><span class="dt">double</span> evaluate<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string_view<span class="op"> </span>expression<span class="op">);</span></span>
+<span id="cb7-2"><a href="usage-1.html#cb7-2" tabindex="-1"></a><span class="dt">double</span> get_result<span class="op">();</span></span>
+<span id="cb7-3"><a href="usage-1.html#cb7-3" tabindex="-1"></a><span class="dt">bool</span> success<span class="op">();</span></span>
+<span id="cb7-4"><a href="usage-1.html#cb7-4" tabindex="-1"></a><span class="dt">int64_t</span> get_last_error_position<span class="op">();</span></span>
+<span id="cb7-5"><a href="usage-1.html#cb7-5" tabindex="-1"></a><span class="bu">std::</span>string<span class="op"> </span>get_last_error_message<span class="op">();</span></span>
+<span id="cb7-6"><a href="usage-1.html#cb7-6" tabindex="-1"></a>set_variables_and_functions<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>set<span class="op">&lt;</span>te_variable<span class="op">&gt;&amp;</span> vars<span class="op">);</span></span>
+<span id="cb7-7"><a href="usage-1.html#cb7-7" tabindex="-1"></a><span class="bu">std::</span>set<span class="op">&lt;</span>te_variable<span class="op">&gt;&amp;</span> get_variables_and_functions<span class="op">();</span></span>
+<span id="cb7-8"><a href="usage-1.html#cb7-8" tabindex="-1"></a>add_variable_or_function<span class="op">(</span><span class="at">const</span> te_variable<span class="op">&amp;</span> var<span class="op">);</span></span>
+<span id="cb7-9"><a href="usage-1.html#cb7-9" tabindex="-1"></a>set_unknown_symbol_resolver<span class="op">(</span><span class="dt">te_usr_variant_type</span> usr<span class="op">);</span></span>
+<span id="cb7-10"><a href="usage-1.html#cb7-10" tabindex="-1"></a>get_decimal_separator<span class="op">();</span></span>
+<span id="cb7-11"><a href="usage-1.html#cb7-11" tabindex="-1"></a>set_decimal_separator<span class="op">();</span></span>
+<span id="cb7-12"><a href="usage-1.html#cb7-12" tabindex="-1"></a>get_list_separator<span class="op">();</span></span>
+<span id="cb7-13"><a href="usage-1.html#cb7-13" tabindex="-1"></a>set_list_separator<span class="op">();</span></span></code></pre></div>
 <p><code>evaluate()</code> takes an expression and immediately returns the result. If there
 is a parse error, then it returns NaN (which can be verified by using <code>std::isnan()</code>). (<code>success()</code> will also return false.)</p>
 <p><code>get_result()</code> can be called anytime afterwards to retrieve the result from <code>evaluate()</code>.</p>
@@ -267,12 +261,12 @@ to add custom variables and functions to the parser.</p>
 <p><code>get_decimal_separator()</code>/<code>set_decimal_separator()</code> and
 <code>get_list_separator()</code>/<code>set_list_separator()</code> can be used to parse non-US formatted formulas.</p>
 <p>Example:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="usage-1.html#cb7-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
-<span id="cb7-2"><a href="usage-1.html#cb7-2" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="usage-1.html#cb7-3" tabindex="-1"></a><span class="co">// Returns 10, error position is set to te_parser::npos (i.e., no error).</span></span>
-<span id="cb7-4"><a href="usage-1.html#cb7-4" tabindex="-1"></a><span class="dt">double</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;(5+5)&quot;</span><span class="op">);</span></span>
-<span id="cb7-5"><a href="usage-1.html#cb7-5" tabindex="-1"></a><span class="co">// Returns NaN, error position is set to 3.</span></span>
-<span id="cb7-6"><a href="usage-1.html#cb7-6" tabindex="-1"></a><span class="dt">double</span> result2 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;(5+5&quot;</span><span class="op">);</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="usage-1.html#cb8-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb8-2"><a href="usage-1.html#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="usage-1.html#cb8-3" tabindex="-1"></a><span class="co">// Returns 10, error position is set to te_parser::npos (i.e., no error).</span></span>
+<span id="cb8-4"><a href="usage-1.html#cb8-4" tabindex="-1"></a><span class="dt">double</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;(5+5)&quot;</span><span class="op">);</span></span>
+<span id="cb8-5"><a href="usage-1.html#cb8-5" tabindex="-1"></a><span class="co">// Returns NaN, error position is set to 3.</span></span>
+<span id="cb8-6"><a href="usage-1.html#cb8-6" tabindex="-1"></a><span class="dt">double</span> result2 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;(5+5&quot;</span><span class="op">);</span></span></code></pre></div>
 <p>You can also provide <code>set_variables_and_functions()</code> a list of constants, bound variables, and function pointers/lambdas. <code>evaluate()</code> will then evaluate expressions using these variables and functions.</p>
 <div id="error-handling" class="section level2 unnumbered hasAnchor">
 <h2>Error Handling<a href="usage-1.html#error-handling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -302,32 +296,32 @@ If there was no parse error, then this will return <code>te_parser::npos</code>.
 </ul>
 <div class="minipage">
 <p>Example:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="usage-1.html#cb8-1" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;tinyexpr.h&quot;</span></span>
-<span id="cb8-2"><a href="usage-1.html#cb8-2" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb8-3"><a href="usage-1.html#cb8-3" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="usage-1.html#cb8-4" tabindex="-1"></a><span class="dt">double</span> x<span class="op">{</span> <span class="dv">0</span> <span class="op">},</span> y<span class="op">{</span> <span class="dv">0</span> <span class="op">};</span></span>
-<span id="cb8-5"><a href="usage-1.html#cb8-5" tabindex="-1"></a><span class="co">// Store variable names and pointers.</span></span>
-<span id="cb8-6"><a href="usage-1.html#cb8-6" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
-<span id="cb8-7"><a href="usage-1.html#cb8-7" tabindex="-1"></a>tep<span class="op">.</span>set_variables_and_functions<span class="op">({{</span><span class="st">&quot;x&quot;</span><span class="op">,</span> <span class="op">&amp;</span>x<span class="op">},</span> <span class="op">{</span><span class="st">&quot;y&quot;</span><span class="op">,</span> <span class="op">&amp;</span>y<span class="op">}});</span></span>
-<span id="cb8-8"><a href="usage-1.html#cb8-8" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="usage-1.html#cb8-9" tabindex="-1"></a><span class="co">// Compile the expression with variables.</span></span>
-<span id="cb8-10"><a href="usage-1.html#cb8-10" tabindex="-1"></a><span class="kw">auto</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;sqrt(x^2+y^2)&quot;</span><span class="op">);</span></span>
-<span id="cb8-11"><a href="usage-1.html#cb8-11" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="usage-1.html#cb8-12" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>tep<span class="op">.</span>success<span class="op">())</span></span>
-<span id="cb8-13"><a href="usage-1.html#cb8-13" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb8-14"><a href="usage-1.html#cb8-14" tabindex="-1"></a>    x <span class="op">=</span> <span class="dv">3</span><span class="op">;</span> y <span class="op">=</span> <span class="dv">4</span><span class="op">;</span></span>
-<span id="cb8-15"><a href="usage-1.html#cb8-15" tabindex="-1"></a>    <span class="co">// Will use the previously used expression, returns 5.</span></span>
-<span id="cb8-16"><a href="usage-1.html#cb8-16" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">double</span> h1 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">();</span></span>
-<span id="cb8-17"><a href="usage-1.html#cb8-17" tabindex="-1"></a></span>
-<span id="cb8-18"><a href="usage-1.html#cb8-18" tabindex="-1"></a>    x <span class="op">=</span> <span class="dv">5</span><span class="op">;</span> y <span class="op">=</span> <span class="dv">12</span><span class="op">;</span></span>
-<span id="cb8-19"><a href="usage-1.html#cb8-19" tabindex="-1"></a>    <span class="co">// Returns 13.</span></span>
-<span id="cb8-20"><a href="usage-1.html#cb8-20" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">double</span> h2 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">();</span></span>
-<span id="cb8-21"><a href="usage-1.html#cb8-21" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb8-22"><a href="usage-1.html#cb8-22" tabindex="-1"></a><span class="cf">else</span></span>
-<span id="cb8-23"><a href="usage-1.html#cb8-23" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb8-24"><a href="usage-1.html#cb8-24" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;Parse error at &quot;</span> <span class="op">&lt;&lt;</span></span>
-<span id="cb8-25"><a href="usage-1.html#cb8-25" tabindex="-1"></a>        <span class="bu">std::</span>to_string<span class="op">(</span>tep<span class="op">.</span>get_last_error_position<span class="op">())</span> <span class="op">&lt;&lt;</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">;</span></span>
-<span id="cb8-26"><a href="usage-1.html#cb8-26" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="usage-1.html#cb9-1" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;tinyexpr.h&quot;</span></span>
+<span id="cb9-2"><a href="usage-1.html#cb9-2" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb9-3"><a href="usage-1.html#cb9-3" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="usage-1.html#cb9-4" tabindex="-1"></a><span class="dt">double</span> x<span class="op">{</span> <span class="dv">0</span> <span class="op">},</span> y<span class="op">{</span> <span class="dv">0</span> <span class="op">};</span></span>
+<span id="cb9-5"><a href="usage-1.html#cb9-5" tabindex="-1"></a><span class="co">// Store variable names and pointers.</span></span>
+<span id="cb9-6"><a href="usage-1.html#cb9-6" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb9-7"><a href="usage-1.html#cb9-7" tabindex="-1"></a>tep<span class="op">.</span>set_variables_and_functions<span class="op">({{</span><span class="st">&quot;x&quot;</span><span class="op">,</span> <span class="op">&amp;</span>x<span class="op">},</span> <span class="op">{</span><span class="st">&quot;y&quot;</span><span class="op">,</span> <span class="op">&amp;</span>y<span class="op">}});</span></span>
+<span id="cb9-8"><a href="usage-1.html#cb9-8" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="usage-1.html#cb9-9" tabindex="-1"></a><span class="co">// Compile the expression with variables.</span></span>
+<span id="cb9-10"><a href="usage-1.html#cb9-10" tabindex="-1"></a><span class="kw">auto</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;sqrt(x^2+y^2)&quot;</span><span class="op">);</span></span>
+<span id="cb9-11"><a href="usage-1.html#cb9-11" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="usage-1.html#cb9-12" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>tep<span class="op">.</span>success<span class="op">())</span></span>
+<span id="cb9-13"><a href="usage-1.html#cb9-13" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb9-14"><a href="usage-1.html#cb9-14" tabindex="-1"></a>    x <span class="op">=</span> <span class="dv">3</span><span class="op">;</span> y <span class="op">=</span> <span class="dv">4</span><span class="op">;</span></span>
+<span id="cb9-15"><a href="usage-1.html#cb9-15" tabindex="-1"></a>    <span class="co">// Will use the previously used expression, returns 5.</span></span>
+<span id="cb9-16"><a href="usage-1.html#cb9-16" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">double</span> h1 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">();</span></span>
+<span id="cb9-17"><a href="usage-1.html#cb9-17" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="usage-1.html#cb9-18" tabindex="-1"></a>    x <span class="op">=</span> <span class="dv">5</span><span class="op">;</span> y <span class="op">=</span> <span class="dv">12</span><span class="op">;</span></span>
+<span id="cb9-19"><a href="usage-1.html#cb9-19" tabindex="-1"></a>    <span class="co">// Returns 13.</span></span>
+<span id="cb9-20"><a href="usage-1.html#cb9-20" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">double</span> h2 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">();</span></span>
+<span id="cb9-21"><a href="usage-1.html#cb9-21" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-22"><a href="usage-1.html#cb9-22" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb9-23"><a href="usage-1.html#cb9-23" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb9-24"><a href="usage-1.html#cb9-24" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;Parse error at &quot;</span> <span class="op">&lt;&lt;</span></span>
+<span id="cb9-25"><a href="usage-1.html#cb9-25" tabindex="-1"></a>        <span class="bu">std::</span>to_string<span class="op">(</span>tep<span class="op">.</span>get_last_error_position<span class="op">())</span> <span class="op">&lt;&lt;</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">;</span></span>
+<span id="cb9-26"><a href="usage-1.html#cb9-26" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
 </div>
 <p>Along with positional and message information, the return value of a parse can also indicate failure.
 When an evaluation fails, the parser will return NaN (i.e., <code>std::numeric_limits&lt;double&gt;::quiet_NaN()</code>) as the result.
@@ -341,7 +335,7 @@ NaN values can be verified using the standard function <code>std::isnan()</code>
         </div>
       </div>
 <a href="building.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="examples.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="example.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

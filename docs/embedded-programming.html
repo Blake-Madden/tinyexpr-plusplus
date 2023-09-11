@@ -189,16 +189,10 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="" data-path="usage-1.html"><a href="usage-1.html#error-handling"><i class="fa fa-check"></i>Error Handling</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9</b> Examples</a>
-<ul>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-1"><i class="fa fa-check"></i>Example 1</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-2-binding-custom-variables"><i class="fa fa-check"></i>Example 2: Binding Custom Variables</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-3-calling-a-free-function"><i class="fa fa-check"></i>Example 3: Calling a Free Function</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-4-non-us-formatted-formulas"><i class="fa fa-check"></i>Example 4: Non-US Formatted Formulas</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-5"><i class="fa fa-check"></i>Example 5: Binding to Custom Classes</a></li>
-</ul></li>
+<li class="chapter" data-level="9" data-path="example.html"><a href="example.html"><i class="fa fa-check"></i><b>9</b> Example</a></li>
 <li class="chapter" data-level="10" data-path="custom-extensions.html"><a href="custom-extensions.html"><i class="fa fa-check"></i><b>10</b> Custom Extensions</a>
 <ul>
+<li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-variables"><i class="fa fa-check"></i>Binding to Custom Variables</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-functions"><i class="fa fa-check"></i>Binding to Custom Functions</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-classes"><i class="fa fa-check"></i>Binding to Custom Classes</a></li>
 </ul></li>
@@ -303,20 +297,20 @@ expression is long and involves only basic arithmetic.</p>
 to do the following.</p>
 <p>First, declare your <code>te_parser</code> as a non-<code>volatile</code> object outside
 of the interrupt function (e.g., globally):</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb29-1"><a href="embedded-programming.html#cb29-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb26-1"><a href="embedded-programming.html#cb26-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span></code></pre></div>
 <p>Then, in your interrupt function, create a <code>volatile</code> reference to it:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb30-1"><a href="embedded-programming.html#cb30-1" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
-<span id="cb30-2"><a href="embedded-programming.html#cb30-2" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb30-3"><a href="embedded-programming.html#cb30-3" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
-<span id="cb30-4"><a href="embedded-programming.html#cb30-4" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb27-1"><a href="embedded-programming.html#cb27-1" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
+<span id="cb27-2"><a href="embedded-programming.html#cb27-2" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb27-3"><a href="embedded-programming.html#cb27-3" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
+<span id="cb27-4"><a href="embedded-programming.html#cb27-4" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
 <p>Functions in <code>te_parser</code> which have <code>volatile</code> overloads can then be
 called directly:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb31-1"><a href="embedded-programming.html#cb31-1" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
-<span id="cb31-2"><a href="embedded-programming.html#cb31-2" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb31-3"><a href="embedded-programming.html#cb31-3" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
-<span id="cb31-4"><a href="embedded-programming.html#cb31-4" tabindex="-1"></a>    vTep<span class="op">.</span>set_list_separator<span class="op">(</span><span class="ch">&#39;,&#39;</span><span class="op">);</span></span>
-<span id="cb31-5"><a href="embedded-programming.html#cb31-5" tabindex="-1"></a>    vTep<span class="op">.</span>set_decimal_separator<span class="op">(</span><span class="ch">&#39;.&#39;</span><span class="op">);</span></span>
-<span id="cb31-6"><a href="embedded-programming.html#cb31-6" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb28-1"><a href="embedded-programming.html#cb28-1" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
+<span id="cb28-2"><a href="embedded-programming.html#cb28-2" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb28-3"><a href="embedded-programming.html#cb28-3" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
+<span id="cb28-4"><a href="embedded-programming.html#cb28-4" tabindex="-1"></a>    vTep<span class="op">.</span>set_list_separator<span class="op">(</span><span class="ch">&#39;,&#39;</span><span class="op">);</span></span>
+<span id="cb28-5"><a href="embedded-programming.html#cb28-5" tabindex="-1"></a>    vTep<span class="op">.</span>set_decimal_separator<span class="op">(</span><span class="ch">&#39;.&#39;</span><span class="op">);</span></span>
+<span id="cb28-6"><a href="embedded-programming.html#cb28-6" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
 <p>The following functions in the <code>te_parser</code> class have <code>volatile</code> overloads:</p>
 <ul>
 <li><code>get_result()</code></li>
@@ -329,23 +323,23 @@ called directly:</p>
 </ul>
 <p>For any other functions, use <code>const_cast&lt;&gt;</code> to remove the parser
 reference’s volatility:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb32-1"><a href="embedded-programming.html#cb32-1" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
-<span id="cb32-2"><a href="embedded-programming.html#cb32-2" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb32-3"><a href="embedded-programming.html#cb32-3" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
-<span id="cb32-4"><a href="embedded-programming.html#cb32-4" tabindex="-1"></a></span>
-<span id="cb32-5"><a href="embedded-programming.html#cb32-5" tabindex="-1"></a>    <span class="co">// Use &#39;const_cast&lt;te_parser&amp;&gt;(vTep)&#39; to access</span></span>
-<span id="cb32-6"><a href="embedded-programming.html#cb32-6" tabindex="-1"></a>    <span class="co">// non-volatile functions.</span></span>
-<span id="cb32-7"><a href="embedded-programming.html#cb32-7" tabindex="-1"></a>    <span class="kw">const_cast</span><span class="op">&lt;</span>te_parser<span class="op">&amp;&gt;(</span>vTep<span class="op">).</span>set_variables_and_functions<span class="op">(</span></span>
-<span id="cb32-8"><a href="embedded-programming.html#cb32-8" tabindex="-1"></a>         <span class="op">{</span> <span class="op">{</span><span class="st">&quot;STRESS_L&quot;</span><span class="op">,</span> <span class="fl">10.1</span><span class="op">},</span></span>
-<span id="cb32-9"><a href="embedded-programming.html#cb32-9" tabindex="-1"></a>           <span class="op">{</span><span class="st">&quot;P_LEVEL&quot;</span><span class="op">,</span> <span class="fl">.5</span><span class="op">}</span> <span class="op">});</span></span>
-<span id="cb32-10"><a href="embedded-programming.html#cb32-10" tabindex="-1"></a>    <span class="kw">const_cast</span><span class="op">&lt;</span>te_parser<span class="op">&amp;&gt;(</span>vTep<span class="op">).</span>compile<span class="op">((</span><span class="st">&quot;STRESS_L*P_LEVEL&quot;</span><span class="op">));</span></span>
-<span id="cb32-11"><a href="embedded-programming.html#cb32-11" tabindex="-1"></a></span>
-<span id="cb32-12"><a href="embedded-programming.html#cb32-12" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>vTep<span class="op">.</span>success<span class="op">())</span></span>
-<span id="cb32-13"><a href="embedded-programming.html#cb32-13" tabindex="-1"></a>        <span class="op">{</span></span>
-<span id="cb32-14"><a href="embedded-programming.html#cb32-14" tabindex="-1"></a>        <span class="kw">auto</span> res <span class="op">=</span> vTep<span class="op">.</span>get_result<span class="op">();</span></span>
-<span id="cb32-15"><a href="embedded-programming.html#cb32-15" tabindex="-1"></a>        <span class="co">// Do something else...</span></span>
-<span id="cb32-16"><a href="embedded-programming.html#cb32-16" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb32-17"><a href="embedded-programming.html#cb32-17" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb29-1"><a href="embedded-programming.html#cb29-1" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
+<span id="cb29-2"><a href="embedded-programming.html#cb29-2" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb29-3"><a href="embedded-programming.html#cb29-3" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
+<span id="cb29-4"><a href="embedded-programming.html#cb29-4" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="embedded-programming.html#cb29-5" tabindex="-1"></a>    <span class="co">// Use &#39;const_cast&lt;te_parser&amp;&gt;(vTep)&#39; to access</span></span>
+<span id="cb29-6"><a href="embedded-programming.html#cb29-6" tabindex="-1"></a>    <span class="co">// non-volatile functions.</span></span>
+<span id="cb29-7"><a href="embedded-programming.html#cb29-7" tabindex="-1"></a>    <span class="kw">const_cast</span><span class="op">&lt;</span>te_parser<span class="op">&amp;&gt;(</span>vTep<span class="op">).</span>set_variables_and_functions<span class="op">(</span></span>
+<span id="cb29-8"><a href="embedded-programming.html#cb29-8" tabindex="-1"></a>         <span class="op">{</span> <span class="op">{</span><span class="st">&quot;STRESS_L&quot;</span><span class="op">,</span> <span class="fl">10.1</span><span class="op">},</span></span>
+<span id="cb29-9"><a href="embedded-programming.html#cb29-9" tabindex="-1"></a>           <span class="op">{</span><span class="st">&quot;P_LEVEL&quot;</span><span class="op">,</span> <span class="fl">.5</span><span class="op">}</span> <span class="op">});</span></span>
+<span id="cb29-10"><a href="embedded-programming.html#cb29-10" tabindex="-1"></a>    <span class="kw">const_cast</span><span class="op">&lt;</span>te_parser<span class="op">&amp;&gt;(</span>vTep<span class="op">).</span>compile<span class="op">((</span><span class="st">&quot;STRESS_L*P_LEVEL&quot;</span><span class="op">));</span></span>
+<span id="cb29-11"><a href="embedded-programming.html#cb29-11" tabindex="-1"></a></span>
+<span id="cb29-12"><a href="embedded-programming.html#cb29-12" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>vTep<span class="op">.</span>success<span class="op">())</span></span>
+<span id="cb29-13"><a href="embedded-programming.html#cb29-13" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb29-14"><a href="embedded-programming.html#cb29-14" tabindex="-1"></a>        <span class="kw">auto</span> res <span class="op">=</span> vTep<span class="op">.</span>get_result<span class="op">();</span></span>
+<span id="cb29-15"><a href="embedded-programming.html#cb29-15" tabindex="-1"></a>        <span class="co">// Do something else...</span></span>
+<span id="cb29-16"><a href="embedded-programming.html#cb29-16" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb29-17"><a href="embedded-programming.html#cb29-17" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
 <p>Note that it is required to make the initial declaration of your
 <code>te_parser</code> non-<code>volatile</code>; otherwise, the <code>const_cast&lt;&gt;</code> to the
 <code>volatile</code> reference will cause undefined behavior.</p>
@@ -381,7 +375,7 @@ of the error in its <code>what()</code> method.</p>
 <h2>Virtual Functions<a href="embedded-programming.html#virtual-functions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p><em>TinyExpr++</em> does not use virtual functions or derived classes,
 unless you create a custom class derived from <code>te_expr</code> yourself
-(refer to <a href="examples.html#example-5">Example 5</a>).
+(refer to <a href="#example-5">Example 5</a>).
 (<code>te_expr</code> defines a virtual destructor that may be implicitly optimized to
 <code>final</code> if no derived classes are defined.)</p>
 

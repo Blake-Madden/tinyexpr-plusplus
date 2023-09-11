@@ -189,16 +189,10 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="" data-path="usage-1.html"><a href="usage-1.html#error-handling"><i class="fa fa-check"></i>Error Handling</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9</b> Examples</a>
-<ul>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-1"><i class="fa fa-check"></i>Example 1</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-2-binding-custom-variables"><i class="fa fa-check"></i>Example 2: Binding Custom Variables</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-3-calling-a-free-function"><i class="fa fa-check"></i>Example 3: Calling a Free Function</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-4-non-us-formatted-formulas"><i class="fa fa-check"></i>Example 4: Non-US Formatted Formulas</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-5"><i class="fa fa-check"></i>Example 5: Binding to Custom Classes</a></li>
-</ul></li>
+<li class="chapter" data-level="9" data-path="example.html"><a href="example.html"><i class="fa fa-check"></i><b>9</b> Example</a></li>
 <li class="chapter" data-level="10" data-path="custom-extensions.html"><a href="custom-extensions.html"><i class="fa fa-check"></i><b>10</b> Custom Extensions</a>
 <ul>
+<li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-variables"><i class="fa fa-check"></i>Binding to Custom Variables</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-functions"><i class="fa fa-check"></i>Binding to Custom Functions</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-classes"><i class="fa fa-check"></i>Binding to Custom Classes</a></li>
 </ul></li>
@@ -246,12 +240,12 @@ div.csl-indent {
 <p><code>te_parser::evaluate()</code> uses a simple recursive descent parser to compile your
 expression into a syntax tree. For example, the expression <code>"sin x + 1/4"</code>
 parses as:</p>
-<div id="htmlwidget-27f2c497b7a16d27e71e" style="width:672px;height:500px;" class="grViz html-widget "></div>
-<script type="application/json" data-for="htmlwidget-27f2c497b7a16d27e71e">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"÷\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n  node5 [label = \"1\", style=filled, fillcolor = \"#add8e6\"]\n  node6 [label = \"4\", style=filled, fillcolor = \"#add8e6\"]\n  \n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  node3 -> node5\n  node3 -> node6\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-90809f3e9c5947390fc7" style="width:672px;height:500px;" class="grViz html-widget "></div>
+<script type="application/json" data-for="htmlwidget-90809f3e9c5947390fc7">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"÷\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n  node5 [label = \"1\", style=filled, fillcolor = \"#add8e6\"]\n  node6 [label = \"4\", style=filled, fillcolor = \"#add8e6\"]\n  \n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  node3 -> node5\n  node3 -> node6\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <p><code>te_parser::evaluate()</code> also automatically prunes constant branches. In this example,
 the compiled expression returned by <code>compile()</code> would become:</p>
-<div id="htmlwidget-b69cbe920a88853d45c0" style="width:672px;height:500px;" class="grViz html-widget "></div>
-<script type="application/json" data-for="htmlwidget-b69cbe920a88853d45c0">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"0.25\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n\n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-850cfa40f257487b5f4d" style="width:672px;height:500px;" class="grViz html-widget "></div>
+<script type="application/json" data-for="htmlwidget-850cfa40f257487b5f4d">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"0.25\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n\n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <div id="grammar" class="section level2 unnumbered hasAnchor">
 <h2>Grammar<a href="how-it-works.html#grammar" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p><em>TinyExpr++</em> parses the following grammar (from lowest-to-highest operator precedence):</p>
@@ -269,12 +263,6 @@ the compiled expression returned by <code>compile()</code> would become:</p>
                | &lt;function-1&gt; &lt;power&gt;
                | &lt;function-X&gt; &quot;(&quot; &lt;expr&gt; {&quot;,&quot; &lt;expr&gt;} &quot;)&quot;
                | &quot;(&quot; &lt;list&gt; &quot;)&quot;</code></pre>
-<p>In addition, whitespace between tokens is ignored.</p>
-<p>Valid variable names consist of a letter followed by any combination
-of: letters <code>a</code> through <code>z</code> or <code>A</code> through <code>Z</code>, digits <code>0</code> through <code>9</code>, periods, and
-underscores. Constants can be integers, decimal numbers, or in scientific
-notation (e.g., <code>1e3</code> for <code>1000</code>). A leading zero is not required (e.g., <code>.5</code>
-for <code>0.5</code>).</p>
 
 </div>
 </div>

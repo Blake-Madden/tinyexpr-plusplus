@@ -189,16 +189,10 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="" data-path="usage-1.html"><a href="usage-1.html#error-handling"><i class="fa fa-check"></i>Error Handling</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9</b> Examples</a>
-<ul>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-1"><i class="fa fa-check"></i>Example 1</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-2-binding-custom-variables"><i class="fa fa-check"></i>Example 2: Binding Custom Variables</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-3-calling-a-free-function"><i class="fa fa-check"></i>Example 3: Calling a Free Function</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-4-non-us-formatted-formulas"><i class="fa fa-check"></i>Example 4: Non-US Formatted Formulas</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-5"><i class="fa fa-check"></i>Example 5: Binding to Custom Classes</a></li>
-</ul></li>
+<li class="chapter" data-level="9" data-path="example.html"><a href="example.html"><i class="fa fa-check"></i><b>9</b> Example</a></li>
 <li class="chapter" data-level="10" data-path="custom-extensions.html"><a href="custom-extensions.html"><i class="fa fa-check"></i><b>10</b> Custom Extensions</a>
 <ul>
+<li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-variables"><i class="fa fa-check"></i>Binding to Custom Variables</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-functions"><i class="fa fa-check"></i>Binding to Custom Functions</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-classes"><i class="fa fa-check"></i>Binding to Custom Classes</a></li>
 </ul></li>
@@ -244,42 +238,42 @@ div.csl-indent {
 <div id="non-us-formatted-formulas" class="section level1 hasAnchor" number="12">
 <h1><span class="header-section-number">Chapter 12</span> Non-US Formatted Formulas<a href="non-us-formatted-formulas.html#non-us-formatted-formulas" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p><em>TinyExpr++</em> supports other locales and non-US formatted formulas. Here is an example:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb26-1"><a href="non-us-formatted-formulas.html#cb26-1" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;tinyexpr.h&quot;</span></span>
-<span id="cb26-2"><a href="non-us-formatted-formulas.html#cb26-2" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb26-3"><a href="non-us-formatted-formulas.html#cb26-3" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iomanip&gt;</span></span>
-<span id="cb26-4"><a href="non-us-formatted-formulas.html#cb26-4" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;locale&gt;</span></span>
-<span id="cb26-5"><a href="non-us-formatted-formulas.html#cb26-5" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;clocale&gt;</span></span>
-<span id="cb26-6"><a href="non-us-formatted-formulas.html#cb26-6" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="non-us-formatted-formulas.html#cb26-7" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span> <span class="op">*</span>argv<span class="op">[])</span></span>
-<span id="cb26-8"><a href="non-us-formatted-formulas.html#cb26-8" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb26-9"><a href="non-us-formatted-formulas.html#cb26-9" tabindex="-1"></a>    <span class="co">/* Set locale to German.</span></span>
-<span id="cb26-10"><a href="non-us-formatted-formulas.html#cb26-10" tabindex="-1"></a><span class="co">       This string is platform dependent. The following works on Windows,</span></span>
-<span id="cb26-11"><a href="non-us-formatted-formulas.html#cb26-11" tabindex="-1"></a><span class="co">       consult your platform&#39;s documentation for more details.*/</span></span>
-<span id="cb26-12"><a href="non-us-formatted-formulas.html#cb26-12" tabindex="-1"></a>    setlocale<span class="op">(</span>LC_ALL<span class="op">,</span> <span class="st">&quot;de-DE&quot;</span><span class="op">);</span></span>
-<span id="cb26-13"><a href="non-us-formatted-formulas.html#cb26-13" tabindex="-1"></a>    <span class="bu">std::</span>locale<span class="bu">::</span>global<span class="op">(</span><span class="bu">std::</span>locale<span class="op">(</span><span class="st">&quot;de-DE&quot;</span><span class="op">));</span></span>
-<span id="cb26-14"><a href="non-us-formatted-formulas.html#cb26-14" tabindex="-1"></a></span>
-<span id="cb26-15"><a href="non-us-formatted-formulas.html#cb26-15" tabindex="-1"></a>    <span class="co">/* After setting your locale to German, functions like strtod() will fail</span></span>
-<span id="cb26-16"><a href="non-us-formatted-formulas.html#cb26-16" tabindex="-1"></a><span class="co">       with values like &quot;3.14&quot; because it expects &quot;3,14&quot; instead.</span></span>
-<span id="cb26-17"><a href="non-us-formatted-formulas.html#cb26-17" tabindex="-1"></a><span class="co">       To fix this, we will tell the parser to use &quot;,&quot; as the decimal separator</span></span>
-<span id="cb26-18"><a href="non-us-formatted-formulas.html#cb26-18" tabindex="-1"></a><span class="co">       and &quot;;&quot; as the list argument separator.*/</span></span>
-<span id="cb26-19"><a href="non-us-formatted-formulas.html#cb26-19" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">char</span><span class="op">*</span> expression <span class="op">=</span> <span class="st">&quot;pow(2,2; 2)&quot;</span><span class="op">;</span> <span class="co">// instead of &quot;pow(2.2, 2)&quot;</span></span>
-<span id="cb26-20"><a href="non-us-formatted-formulas.html#cb26-20" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;Evaluating:</span><span class="sc">\n\t</span><span class="st">&quot;</span> <span class="op">&lt;&lt;</span> expression <span class="op">&lt;&lt;</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">;</span></span>
-<span id="cb26-21"><a href="non-us-formatted-formulas.html#cb26-21" tabindex="-1"></a></span>
-<span id="cb26-22"><a href="non-us-formatted-formulas.html#cb26-22" tabindex="-1"></a>    te_parser tep<span class="op">;</span></span>
-<span id="cb26-23"><a href="non-us-formatted-formulas.html#cb26-23" tabindex="-1"></a>    tep<span class="op">.</span>set_decimal_separator<span class="op">(</span><span class="ch">&#39;,&#39;</span><span class="op">);</span></span>
-<span id="cb26-24"><a href="non-us-formatted-formulas.html#cb26-24" tabindex="-1"></a>    tep<span class="op">.</span>set_list_separator<span class="op">(</span><span class="ch">&#39;;&#39;</span><span class="op">);</span></span>
-<span id="cb26-25"><a href="non-us-formatted-formulas.html#cb26-25" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span>expression<span class="op">);</span></span>
-<span id="cb26-26"><a href="non-us-formatted-formulas.html#cb26-26" tabindex="-1"></a></span>
-<span id="cb26-27"><a href="non-us-formatted-formulas.html#cb26-27" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>tep<span class="op">.</span>success<span class="op">())</span></span>
-<span id="cb26-28"><a href="non-us-formatted-formulas.html#cb26-28" tabindex="-1"></a>        <span class="op">{</span> <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;Result:</span><span class="sc">\n\t</span><span class="st">&quot;</span> <span class="op">&lt;&lt;</span> result <span class="op">&lt;&lt;</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">;</span> <span class="op">}</span></span>
-<span id="cb26-29"><a href="non-us-formatted-formulas.html#cb26-29" tabindex="-1"></a>    <span class="cf">else</span> <span class="co">/* Show the user where the error is at. */</span></span>
-<span id="cb26-30"><a href="non-us-formatted-formulas.html#cb26-30" tabindex="-1"></a>        <span class="op">{</span></span>
-<span id="cb26-31"><a href="non-us-formatted-formulas.html#cb26-31" tabindex="-1"></a>        <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st"> &quot;</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>setfill<span class="op">(</span><span class="ch">&#39; &#39;</span><span class="op">)</span> <span class="op">&lt;&lt;</span></span>
-<span id="cb26-32"><a href="non-us-formatted-formulas.html#cb26-32" tabindex="-1"></a>            <span class="bu">std::</span>setw<span class="op">(</span>tep<span class="op">.</span>get_last_error_position<span class="op">())</span> <span class="op">&lt;&lt;</span> <span class="st">&quot;^</span><span class="sc">\t</span><span class="st">Error here</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">;</span></span>
-<span id="cb26-33"><a href="non-us-formatted-formulas.html#cb26-33" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb26-34"><a href="non-us-formatted-formulas.html#cb26-34" tabindex="-1"></a></span>
-<span id="cb26-35"><a href="non-us-formatted-formulas.html#cb26-35" tabindex="-1"></a>    <span class="cf">return</span> EXIT_SUCCESS<span class="op">;</span></span>
-<span id="cb26-36"><a href="non-us-formatted-formulas.html#cb26-36" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="non-us-formatted-formulas.html#cb23-1" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;tinyexpr.h&quot;</span></span>
+<span id="cb23-2"><a href="non-us-formatted-formulas.html#cb23-2" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb23-3"><a href="non-us-formatted-formulas.html#cb23-3" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iomanip&gt;</span></span>
+<span id="cb23-4"><a href="non-us-formatted-formulas.html#cb23-4" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;locale&gt;</span></span>
+<span id="cb23-5"><a href="non-us-formatted-formulas.html#cb23-5" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;clocale&gt;</span></span>
+<span id="cb23-6"><a href="non-us-formatted-formulas.html#cb23-6" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="non-us-formatted-formulas.html#cb23-7" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span> <span class="op">*</span>argv<span class="op">[])</span></span>
+<span id="cb23-8"><a href="non-us-formatted-formulas.html#cb23-8" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb23-9"><a href="non-us-formatted-formulas.html#cb23-9" tabindex="-1"></a>    <span class="co">/* Set locale to German.</span></span>
+<span id="cb23-10"><a href="non-us-formatted-formulas.html#cb23-10" tabindex="-1"></a><span class="co">       This string is platform dependent. The following works on Windows,</span></span>
+<span id="cb23-11"><a href="non-us-formatted-formulas.html#cb23-11" tabindex="-1"></a><span class="co">       consult your platform&#39;s documentation for more details.*/</span></span>
+<span id="cb23-12"><a href="non-us-formatted-formulas.html#cb23-12" tabindex="-1"></a>    setlocale<span class="op">(</span>LC_ALL<span class="op">,</span> <span class="st">&quot;de-DE&quot;</span><span class="op">);</span></span>
+<span id="cb23-13"><a href="non-us-formatted-formulas.html#cb23-13" tabindex="-1"></a>    <span class="bu">std::</span>locale<span class="bu">::</span>global<span class="op">(</span><span class="bu">std::</span>locale<span class="op">(</span><span class="st">&quot;de-DE&quot;</span><span class="op">));</span></span>
+<span id="cb23-14"><a href="non-us-formatted-formulas.html#cb23-14" tabindex="-1"></a></span>
+<span id="cb23-15"><a href="non-us-formatted-formulas.html#cb23-15" tabindex="-1"></a>    <span class="co">/* After setting your locale to German, functions like strtod() will fail</span></span>
+<span id="cb23-16"><a href="non-us-formatted-formulas.html#cb23-16" tabindex="-1"></a><span class="co">       with values like &quot;3.14&quot; because it expects &quot;3,14&quot; instead.</span></span>
+<span id="cb23-17"><a href="non-us-formatted-formulas.html#cb23-17" tabindex="-1"></a><span class="co">       To fix this, we will tell the parser to use &quot;,&quot; as the decimal separator</span></span>
+<span id="cb23-18"><a href="non-us-formatted-formulas.html#cb23-18" tabindex="-1"></a><span class="co">       and &quot;;&quot; as the list argument separator.*/</span></span>
+<span id="cb23-19"><a href="non-us-formatted-formulas.html#cb23-19" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">char</span><span class="op">*</span> expression <span class="op">=</span> <span class="st">&quot;pow(2,2; 2)&quot;</span><span class="op">;</span> <span class="co">// instead of &quot;pow(2.2, 2)&quot;</span></span>
+<span id="cb23-20"><a href="non-us-formatted-formulas.html#cb23-20" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;Evaluating:</span><span class="sc">\n\t</span><span class="st">&quot;</span> <span class="op">&lt;&lt;</span> expression <span class="op">&lt;&lt;</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">;</span></span>
+<span id="cb23-21"><a href="non-us-formatted-formulas.html#cb23-21" tabindex="-1"></a></span>
+<span id="cb23-22"><a href="non-us-formatted-formulas.html#cb23-22" tabindex="-1"></a>    te_parser tep<span class="op">;</span></span>
+<span id="cb23-23"><a href="non-us-formatted-formulas.html#cb23-23" tabindex="-1"></a>    tep<span class="op">.</span>set_decimal_separator<span class="op">(</span><span class="ch">&#39;,&#39;</span><span class="op">);</span></span>
+<span id="cb23-24"><a href="non-us-formatted-formulas.html#cb23-24" tabindex="-1"></a>    tep<span class="op">.</span>set_list_separator<span class="op">(</span><span class="ch">&#39;;&#39;</span><span class="op">);</span></span>
+<span id="cb23-25"><a href="non-us-formatted-formulas.html#cb23-25" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span>expression<span class="op">);</span></span>
+<span id="cb23-26"><a href="non-us-formatted-formulas.html#cb23-26" tabindex="-1"></a></span>
+<span id="cb23-27"><a href="non-us-formatted-formulas.html#cb23-27" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>tep<span class="op">.</span>success<span class="op">())</span></span>
+<span id="cb23-28"><a href="non-us-formatted-formulas.html#cb23-28" tabindex="-1"></a>        <span class="op">{</span> <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;Result:</span><span class="sc">\n\t</span><span class="st">&quot;</span> <span class="op">&lt;&lt;</span> result <span class="op">&lt;&lt;</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb23-29"><a href="non-us-formatted-formulas.html#cb23-29" tabindex="-1"></a>    <span class="cf">else</span> <span class="co">/* Show the user where the error is at. */</span></span>
+<span id="cb23-30"><a href="non-us-formatted-formulas.html#cb23-30" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb23-31"><a href="non-us-formatted-formulas.html#cb23-31" tabindex="-1"></a>        <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st"> &quot;</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>setfill<span class="op">(</span><span class="ch">&#39; &#39;</span><span class="op">)</span> <span class="op">&lt;&lt;</span></span>
+<span id="cb23-32"><a href="non-us-formatted-formulas.html#cb23-32" tabindex="-1"></a>            <span class="bu">std::</span>setw<span class="op">(</span>tep<span class="op">.</span>get_last_error_position<span class="op">())</span> <span class="op">&lt;&lt;</span> <span class="st">&quot;^</span><span class="sc">\t</span><span class="st">Error here</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">;</span></span>
+<span id="cb23-33"><a href="non-us-formatted-formulas.html#cb23-33" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb23-34"><a href="non-us-formatted-formulas.html#cb23-34" tabindex="-1"></a></span>
+<span id="cb23-35"><a href="non-us-formatted-formulas.html#cb23-35" tabindex="-1"></a>    <span class="cf">return</span> EXIT_SUCCESS<span class="op">;</span></span>
+<span id="cb23-36"><a href="non-us-formatted-formulas.html#cb23-36" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
 <p>This produces the output:</p>
 <pre><code>$ Evaluating:
     pow(2,2; 2)

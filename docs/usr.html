@@ -189,16 +189,10 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="" data-path="usage-1.html"><a href="usage-1.html#error-handling"><i class="fa fa-check"></i>Error Handling</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9</b> Examples</a>
-<ul>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-1"><i class="fa fa-check"></i>Example 1</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-2-binding-custom-variables"><i class="fa fa-check"></i>Example 2: Binding Custom Variables</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-3-calling-a-free-function"><i class="fa fa-check"></i>Example 3: Calling a Free Function</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-4-non-us-formatted-formulas"><i class="fa fa-check"></i>Example 4: Non-US Formatted Formulas</a></li>
-<li class="chapter" data-level="" data-path="examples.html"><a href="examples.html#example-5"><i class="fa fa-check"></i>Example 5: Binding to Custom Classes</a></li>
-</ul></li>
+<li class="chapter" data-level="9" data-path="example.html"><a href="example.html"><i class="fa fa-check"></i><b>9</b> Example</a></li>
 <li class="chapter" data-level="10" data-path="custom-extensions.html"><a href="custom-extensions.html"><i class="fa fa-check"></i><b>10</b> Custom Extensions</a>
 <ul>
+<li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-variables"><i class="fa fa-check"></i>Binding to Custom Variables</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-functions"><i class="fa fa-check"></i>Binding to Custom Functions</a></li>
 <li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-classes"><i class="fa fa-check"></i>Binding to Custom Classes</a></li>
 </ul></li>
@@ -285,24 +279,24 @@ will also be available through <code>te_parser::get_last_error_message()</code>.
 <div class="minipage">
 <p><code>te_parser::set_unknown_symbol_resolver()</code> can accept either a function pointer or a lambda.
 Here is a simple example using a function:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="usr.html#cb23-1" tabindex="-1"></a><span class="dt">double</span> ResolveResolutionSymbols<span class="op">(</span><span class="bu">std::</span>string_view<span class="op"> </span>str<span class="op">)</span></span>
-<span id="cb23-2"><a href="usr.html#cb23-2" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb23-3"><a href="usr.html#cb23-3" tabindex="-1"></a>    <span class="co">// Note that this is case sensitive for brevity.</span></span>
-<span id="cb23-4"><a href="usr.html#cb23-4" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>str <span class="op">==</span> <span class="st">&quot;RES&quot;</span> <span class="op">||</span> str <span class="op">==</span> <span class="st">&quot;RESOLUTION&quot;</span><span class="op">)</span> <span class="op">?</span></span>
-<span id="cb23-5"><a href="usr.html#cb23-5" tabindex="-1"></a>        <span class="dv">96</span> <span class="op">:</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span></span>
-<span id="cb23-6"><a href="usr.html#cb23-6" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb19-1"><a href="usr.html#cb19-1" tabindex="-1"></a><span class="dt">double</span> ResolveResolutionSymbols<span class="op">(</span><span class="bu">std::</span>string_view<span class="op"> </span>str<span class="op">)</span></span>
+<span id="cb19-2"><a href="usr.html#cb19-2" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb19-3"><a href="usr.html#cb19-3" tabindex="-1"></a>    <span class="co">// Note that this is case sensitive for brevity.</span></span>
+<span id="cb19-4"><a href="usr.html#cb19-4" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>str <span class="op">==</span> <span class="st">&quot;RES&quot;</span> <span class="op">||</span> str <span class="op">==</span> <span class="st">&quot;RESOLUTION&quot;</span><span class="op">)</span> <span class="op">?</span></span>
+<span id="cb19-5"><a href="usr.html#cb19-5" tabindex="-1"></a>        <span class="dv">96</span> <span class="op">:</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span></span>
+<span id="cb19-6"><a href="usr.html#cb19-6" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
 </div>
 <div class="minipage">
 <p>This can be connected as such:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb24-1"><a href="usr.html#cb24-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
-<span id="cb24-2"><a href="usr.html#cb24-2" tabindex="-1"></a>tep<span class="op">.</span>set_unknown_symbol_resolver<span class="op">(</span>ResolveResolutionSymbols<span class="op">);</span></span>
-<span id="cb24-3"><a href="usr.html#cb24-3" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="usr.html#cb24-4" tabindex="-1"></a><span class="co">// Will resolve to 288, and &quot;RESOLUTION&quot; will be added as a</span></span>
-<span id="cb24-5"><a href="usr.html#cb24-5" tabindex="-1"></a><span class="co">// variable to the parser with a value of 96.</span></span>
-<span id="cb24-6"><a href="usr.html#cb24-6" tabindex="-1"></a><span class="co">// Also, beccause TinyExpr++ is case insensitive,</span></span>
-<span id="cb24-7"><a href="usr.html#cb24-7" tabindex="-1"></a><span class="co">// &quot;resolution&quot; will also be seen as 96 once &quot;RESOLUTION&quot;</span></span>
-<span id="cb24-8"><a href="usr.html#cb24-8" tabindex="-1"></a><span class="co">// was resolved.</span></span>
-<span id="cb24-9"><a href="usr.html#cb24-9" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;RESOLUTION * 3&quot;</span><span class="op">);</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb20-1"><a href="usr.html#cb20-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb20-2"><a href="usr.html#cb20-2" tabindex="-1"></a>tep<span class="op">.</span>set_unknown_symbol_resolver<span class="op">(</span>ResolveResolutionSymbols<span class="op">);</span></span>
+<span id="cb20-3"><a href="usr.html#cb20-3" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="usr.html#cb20-4" tabindex="-1"></a><span class="co">// Will resolve to 288, and &quot;RESOLUTION&quot; will be added as a</span></span>
+<span id="cb20-5"><a href="usr.html#cb20-5" tabindex="-1"></a><span class="co">// variable to the parser with a value of 96.</span></span>
+<span id="cb20-6"><a href="usr.html#cb20-6" tabindex="-1"></a><span class="co">// Also, beccause TinyExpr++ is case insensitive,</span></span>
+<span id="cb20-7"><a href="usr.html#cb20-7" tabindex="-1"></a><span class="co">// &quot;resolution&quot; will also be seen as 96 once &quot;RESOLUTION&quot;</span></span>
+<span id="cb20-8"><a href="usr.html#cb20-8" tabindex="-1"></a><span class="co">// was resolved.</span></span>
+<span id="cb20-9"><a href="usr.html#cb20-9" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;RESOLUTION * 3&quot;</span><span class="op">);</span></span></code></pre></div>
 </div>
 <div class="warningsection">
 <p>Although TinyExpr++ is case insensitive, it is your USR’s responsibility to process
@@ -312,41 +306,73 @@ will recognize it case-insensitively in future evaluations.</p>
 <div class="minipage">
 <p>The following is an example using a lambda and demonstrates
 the fiscal-year-variables scenario mentioned earlier:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb25-1"><a href="usr.html#cb25-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
-<span id="cb25-2"><a href="usr.html#cb25-2" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="usr.html#cb25-3" tabindex="-1"></a><span class="co">// Create a handler for undefined tokens that will recognize</span></span>
-<span id="cb25-4"><a href="usr.html#cb25-4" tabindex="-1"></a><span class="co">// dynamic strings like &quot;FY2004&quot; or &quot;FY1997&quot; and convert them to 2004 and 1997.</span></span>
-<span id="cb25-5"><a href="usr.html#cb25-5" tabindex="-1"></a>tep<span class="op">.</span>set_unknown_symbol_resolver<span class="op">(</span></span>
-<span id="cb25-6"><a href="usr.html#cb25-6" tabindex="-1"></a>    <span class="co">// Handler should except a string (which will be the unrecognized token)</span></span>
-<span id="cb25-7"><a href="usr.html#cb25-7" tabindex="-1"></a>    <span class="co">// and return a double.</span></span>
-<span id="cb25-8"><a href="usr.html#cb25-8" tabindex="-1"></a>    <span class="op">[](</span><span class="bu">std::</span>string_view<span class="op"> </span>str<span class="op">)</span> <span class="op">-&gt;</span> <span class="dt">double</span></span>
-<span id="cb25-9"><a href="usr.html#cb25-9" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb25-10"><a href="usr.html#cb25-10" tabindex="-1"></a>    <span class="at">const</span> <span class="bu">std::</span>regex<span class="op"> </span>re<span class="op">{</span> <span class="st">&quot;FY([0-9]</span><span class="sc">{4}</span><span class="st">)&quot;</span><span class="op">,</span></span>
-<span id="cb25-11"><a href="usr.html#cb25-11" tabindex="-1"></a>        <span class="bu">std::</span>regex_constants<span class="bu">::</span>icase<span class="op"> |</span> <span class="bu">std::</span>regex_constants<span class="bu">::</span>ECMAScript<span class="op"> };</span></span>
-<span id="cb25-12"><a href="usr.html#cb25-12" tabindex="-1"></a>    <span class="bu">std::</span>smatch<span class="op"> </span>matches<span class="op">;</span></span>
-<span id="cb25-13"><a href="usr.html#cb25-13" tabindex="-1"></a>    <span class="bu">std::</span>string<span class="op"> </span>var<span class="op">{</span> str <span class="op">};</span></span>
-<span id="cb25-14"><a href="usr.html#cb25-14" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span><span class="bu">std::</span>regex_search<span class="op">(</span>var<span class="op">.</span>cbegin<span class="op">(),</span> var<span class="op">.</span>cend<span class="op">(),</span> matches<span class="op">,</span> re<span class="op">))</span></span>
-<span id="cb25-15"><a href="usr.html#cb25-15" tabindex="-1"></a>        <span class="op">{</span></span>
-<span id="cb25-16"><a href="usr.html#cb25-16" tabindex="-1"></a>        <span class="co">// Unrecognized token is something like &quot;FY1982,&quot; so extract &quot;1982&quot;</span></span>
-<span id="cb25-17"><a href="usr.html#cb25-17" tabindex="-1"></a>        <span class="co">// from that and return 1982 as a number. At this point, the variable</span></span>
-<span id="cb25-18"><a href="usr.html#cb25-18" tabindex="-1"></a>        <span class="co">// &quot;FY1982&quot; will added to the parser and set to 1982. All future</span></span>
-<span id="cb25-19"><a href="usr.html#cb25-19" tabindex="-1"></a>        <span class="co">// evaluations will see this as 1982 (unless set_constant() is called</span></span>
-<span id="cb25-20"><a href="usr.html#cb25-20" tabindex="-1"></a>        <span class="co">// to change it).</span></span>
-<span id="cb25-21"><a href="usr.html#cb25-21" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>matches<span class="op">.</span>size<span class="op">()</span> <span class="op">&gt;</span> <span class="dv">1</span><span class="op">)</span></span>
-<span id="cb25-22"><a href="usr.html#cb25-22" tabindex="-1"></a>            <span class="op">{</span> <span class="cf">return</span> <span class="bu">std::</span>atol<span class="op">(</span>matches<span class="op">[</span><span class="dv">1</span><span class="op">].</span>str<span class="op">().</span>c_str<span class="op">());</span> <span class="op">}</span></span>
-<span id="cb25-23"><a href="usr.html#cb25-23" tabindex="-1"></a>        <span class="cf">else</span></span>
-<span id="cb25-24"><a href="usr.html#cb25-24" tabindex="-1"></a>            <span class="op">{</span> <span class="cf">return</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span> <span class="op">}</span></span>
-<span id="cb25-25"><a href="usr.html#cb25-25" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb25-26"><a href="usr.html#cb25-26" tabindex="-1"></a>    <span class="co">// Can&#39;t resolve what this token is, so return NaN.</span></span>
-<span id="cb25-27"><a href="usr.html#cb25-27" tabindex="-1"></a>    <span class="cf">else</span></span>
-<span id="cb25-28"><a href="usr.html#cb25-28" tabindex="-1"></a>        <span class="op">{</span> <span class="cf">return</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span> <span class="op">}</span></span>
-<span id="cb25-29"><a href="usr.html#cb25-29" tabindex="-1"></a>    <span class="op">});</span></span>
-<span id="cb25-30"><a href="usr.html#cb25-30" tabindex="-1"></a></span>
-<span id="cb25-31"><a href="usr.html#cb25-31" tabindex="-1"></a><span class="co">// Calculate the range between to fiscal years (will be 10):  </span></span>
-<span id="cb25-32"><a href="usr.html#cb25-32" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;ABS(FY1999-FY2009)&quot;</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb21-1"><a href="usr.html#cb21-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb21-2"><a href="usr.html#cb21-2" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="usr.html#cb21-3" tabindex="-1"></a><span class="co">// Create a handler for undefined tokens that will recognize</span></span>
+<span id="cb21-4"><a href="usr.html#cb21-4" tabindex="-1"></a><span class="co">// dynamic strings like &quot;FY2004&quot; or &quot;FY1997&quot; and convert them to 2004 and 1997.</span></span>
+<span id="cb21-5"><a href="usr.html#cb21-5" tabindex="-1"></a>tep<span class="op">.</span>set_unknown_symbol_resolver<span class="op">(</span></span>
+<span id="cb21-6"><a href="usr.html#cb21-6" tabindex="-1"></a>    <span class="co">// Handler should except a string (which will be the unrecognized token)</span></span>
+<span id="cb21-7"><a href="usr.html#cb21-7" tabindex="-1"></a>    <span class="co">// and return a double.</span></span>
+<span id="cb21-8"><a href="usr.html#cb21-8" tabindex="-1"></a>    <span class="op">[](</span><span class="bu">std::</span>string_view<span class="op"> </span>str<span class="op">)</span> <span class="op">-&gt;</span> <span class="dt">double</span></span>
+<span id="cb21-9"><a href="usr.html#cb21-9" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb21-10"><a href="usr.html#cb21-10" tabindex="-1"></a>    <span class="at">const</span> <span class="bu">std::</span>regex<span class="op"> </span>re<span class="op">{</span> <span class="st">&quot;FY([0-9]</span><span class="sc">{4}</span><span class="st">)&quot;</span><span class="op">,</span></span>
+<span id="cb21-11"><a href="usr.html#cb21-11" tabindex="-1"></a>        <span class="bu">std::</span>regex_constants<span class="bu">::</span>icase<span class="op"> |</span> <span class="bu">std::</span>regex_constants<span class="bu">::</span>ECMAScript<span class="op"> };</span></span>
+<span id="cb21-12"><a href="usr.html#cb21-12" tabindex="-1"></a>    <span class="bu">std::</span>smatch<span class="op"> </span>matches<span class="op">;</span></span>
+<span id="cb21-13"><a href="usr.html#cb21-13" tabindex="-1"></a>    <span class="bu">std::</span>string<span class="op"> </span>var<span class="op">{</span> str <span class="op">};</span></span>
+<span id="cb21-14"><a href="usr.html#cb21-14" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span><span class="bu">std::</span>regex_search<span class="op">(</span>var<span class="op">.</span>cbegin<span class="op">(),</span> var<span class="op">.</span>cend<span class="op">(),</span> matches<span class="op">,</span> re<span class="op">))</span></span>
+<span id="cb21-15"><a href="usr.html#cb21-15" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb21-16"><a href="usr.html#cb21-16" tabindex="-1"></a>        <span class="co">// Unrecognized token is something like &quot;FY1982,&quot; so extract &quot;1982&quot;</span></span>
+<span id="cb21-17"><a href="usr.html#cb21-17" tabindex="-1"></a>        <span class="co">// from that and return 1982 as a number. At this point, the variable</span></span>
+<span id="cb21-18"><a href="usr.html#cb21-18" tabindex="-1"></a>        <span class="co">// &quot;FY1982&quot; will added to the parser and set to 1982. All future</span></span>
+<span id="cb21-19"><a href="usr.html#cb21-19" tabindex="-1"></a>        <span class="co">// evaluations will see this as 1982 (unless set_constant() is called</span></span>
+<span id="cb21-20"><a href="usr.html#cb21-20" tabindex="-1"></a>        <span class="co">// to change it).</span></span>
+<span id="cb21-21"><a href="usr.html#cb21-21" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>matches<span class="op">.</span>size<span class="op">()</span> <span class="op">&gt;</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb21-22"><a href="usr.html#cb21-22" tabindex="-1"></a>            <span class="op">{</span> <span class="cf">return</span> <span class="bu">std::</span>atol<span class="op">(</span>matches<span class="op">[</span><span class="dv">1</span><span class="op">].</span>str<span class="op">().</span>c_str<span class="op">());</span> <span class="op">}</span></span>
+<span id="cb21-23"><a href="usr.html#cb21-23" tabindex="-1"></a>        <span class="cf">else</span></span>
+<span id="cb21-24"><a href="usr.html#cb21-24" tabindex="-1"></a>            <span class="op">{</span> <span class="cf">return</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb21-25"><a href="usr.html#cb21-25" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb21-26"><a href="usr.html#cb21-26" tabindex="-1"></a>    <span class="co">// Can&#39;t resolve what this token is, so return NaN.</span></span>
+<span id="cb21-27"><a href="usr.html#cb21-27" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb21-28"><a href="usr.html#cb21-28" tabindex="-1"></a>        <span class="op">{</span> <span class="cf">return</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb21-29"><a href="usr.html#cb21-29" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="cb21-30"><a href="usr.html#cb21-30" tabindex="-1"></a></span>
+<span id="cb21-31"><a href="usr.html#cb21-31" tabindex="-1"></a><span class="co">// Calculate the range between to fiscal years (will be 10):  </span></span>
+<span id="cb21-32"><a href="usr.html#cb21-32" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;ABS(FY1999-FY2009)&quot;</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>By default, the parser’s USR is a no-op and will not process anything. If you had provided a USR but then
 need to turn off this feature, then pass a no-op lambda (e.g., <code>[]{}</code>) or no-op object (<code>te_usr_noop{}</code>) to <code>set_unknown_symbol_resolver()</code>.</p>
+<p>Also, once a variable has been resolved by your USR, it will be added as a custom variable with the resolved value assigned to it.
+With subsequent evaluations, the previously unrecognized symbols you resolved will be remembered.
+This means that it will not to be resolved again and will result in the value that your USR returned from before.</p>
+<p>If you prefer to not have resolved symbols added to the parser, then pass <code>false</code> to the second parameter to <code>set_unknown_symbol_resolver()</code>.
+This will force the same unknown symbols to be resolved again with every evaluation.
+This can be useful for when your USR’s symbol resolutions are dynamic and may change with each call.</p>
+<div class="minipage">
+<p>For example, say that an end user will enter variables that start with “STRESS”, but you are uncertain what the full name will be.
+Additionally, you want to increase the values of these variables with every evaluation. The following demonstrates this:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb22-1"><a href="usr.html#cb22-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb22-2"><a href="usr.html#cb22-2" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="usr.html#cb22-3" tabindex="-1"></a>tep<span class="op">.</span>set_unknown_symbol_resolver<span class="op">(</span></span>
+<span id="cb22-4"><a href="usr.html#cb22-4" tabindex="-1"></a>    <span class="op">[](</span><span class="bu">std::</span>string_view<span class="op"> </span>str<span class="op">)</span> <span class="op">-&gt;</span> <span class="dt">double</span></span>
+<span id="cb22-5"><a href="usr.html#cb22-5" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb22-6"><a href="usr.html#cb22-6" tabindex="-1"></a>    <span class="at">static</span> <span class="dt">double</span> stressLevel<span class="op">{</span> <span class="dv">3</span> <span class="op">};</span></span>
+<span id="cb22-7"><a href="usr.html#cb22-7" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span><span class="bu">std::</span>strncmp<span class="op">(</span>str<span class="op">.</span>data<span class="op">(),</span> <span class="st">&quot;STRESS&quot;</span><span class="op">,</span> <span class="dv">6</span><span class="op">)</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb22-8"><a href="usr.html#cb22-8" tabindex="-1"></a>        <span class="op">{</span> <span class="cf">return</span> stressLevel<span class="op">++;</span> <span class="op">}</span></span>
+<span id="cb22-9"><a href="usr.html#cb22-9" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb22-10"><a href="usr.html#cb22-10" tabindex="-1"></a>        <span class="op">{</span> <span class="cf">return</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb22-11"><a href="usr.html#cb22-11" tabindex="-1"></a>    <span class="op">},</span></span>
+<span id="cb22-12"><a href="usr.html#cb22-12" tabindex="-1"></a>    <span class="co">// purge resolved varialbes after each evaluation</span></span>
+<span id="cb22-13"><a href="usr.html#cb22-13" tabindex="-1"></a>    <span class="kw">false</span><span class="op">);</span></span>
+<span id="cb22-14"><a href="usr.html#cb22-14" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="usr.html#cb22-15" tabindex="-1"></a><span class="co">// Initial resolution of STRESS_LEVEL will be 3.</span></span>
+<span id="cb22-16"><a href="usr.html#cb22-16" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;STRESS_LEVEL&quot;</span><span class="op">);</span></span>
+<span id="cb22-17"><a href="usr.html#cb22-17" tabindex="-1"></a><span class="co">// Because STRESS_LEVEL wasn&#39;t kept as a variable (with a value of 3)</span></span>
+<span id="cb22-18"><a href="usr.html#cb22-18" tabindex="-1"></a><span class="co">// in the parser, then subsequent evaluations will require</span></span>
+<span id="cb22-19"><a href="usr.html#cb22-19" tabindex="-1"></a><span class="co">// resolving it again:</span></span>
+<span id="cb22-20"><a href="usr.html#cb22-20" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;STRESS_LEVEL&quot;</span><span class="op">);</span> <span class="co">// Will be 4.</span></span>
+<span id="cb22-21"><a href="usr.html#cb22-21" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;STRESS_LEVEL&quot;</span><span class="op">);</span> <span class="co">// 5</span></span>
+<span id="cb22-22"><a href="usr.html#cb22-22" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">&quot;STRESS_LEVEL&quot;</span><span class="op">);</span> <span class="co">// 6</span></span></code></pre></div>
+</div>
 
 </div>
             </section>
