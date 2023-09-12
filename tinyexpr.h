@@ -204,7 +204,7 @@ public:
     ~te_parser()
         { te_free(m_compiledExpression); }
     /// @brief NaN (not-a-number) constant to indicate an invalid value.
-    static constexpr double te_nan = std::numeric_limits<double>::quiet_NaN();
+    static constexpr auto te_nan = std::numeric_limits<double>::quiet_NaN();
     /// @brief No position, which is what get_last_error_position() returns
     ///     when there was no parsing error.
     static constexpr int64_t npos = -1;
@@ -375,12 +375,12 @@ public:
         {
         auto cvar = find_variable_or_function(name);
         if (cvar == get_variables_and_functions().cend() || !is_constant(cvar->m_value))
-            { return std::numeric_limits<double>::quiet_NaN(); }
+            { return te_nan; }
         if (const auto val = std::get_if<double>(&cvar->m_value);
             val != nullptr)
             { return *val; }
         else
-            { return std::numeric_limits<double>::quiet_NaN(); }
+            { return te_nan; }
         }
 
     /// @returns The separator used between function arguments.
@@ -820,7 +820,7 @@ private:
     bool m_parseSuccess{ false };
     int64_t m_errorPos{ 0 };
     std::string m_lastErrorMessage;
-    double m_result{ std::numeric_limits<double>::quiet_NaN() };
+    double m_result{ te_nan };
     char m_decimalSeparator{ '.' };
     char m_listSeparator{ ',' };
     };

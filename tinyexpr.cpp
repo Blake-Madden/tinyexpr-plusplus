@@ -86,7 +86,7 @@ constexpr static double _e() noexcept
 [[nodiscard]]
 static double _fac(double a) noexcept {/* simplest version of factorial */
     if (a < 0.0 || std::isnan(a))
-        { return std::numeric_limits<double>::quiet_NaN(); }
+        { return te_parser::te_nan; }
     if (a > (std::numeric_limits<unsigned int>::max)())
         { return std::numeric_limits<double>::infinity(); }
     const auto ua = static_cast<size_t>(a);
@@ -256,7 +256,7 @@ static double _round(double val, double decimal_places)
 
     const auto decimalPostition = std::pow(10, adjustedDecimalPlaces);
     if (!std::isfinite(decimalPostition))
-        { return std::numeric_limits<double>::quiet_NaN(); }
+        { return te_parser::te_nan; }
 
     if (!useNegativeRound)
         {
@@ -290,7 +290,7 @@ static double _round(double val, double decimal_places)
 static double _ncr(double n, double r) noexcept
     {
     if (n < 0.0 || r < 0.0 || n < r || std::isnan(n) || std::isnan(r))
-        { return std::numeric_limits<double>::quiet_NaN(); }
+        { return te_parser::te_nan; }
     if (n > ((std::numeric_limits<unsigned int>::max)()) || r >
             (std::numeric_limits<unsigned int>::max)())
         { return std::numeric_limits<double>::infinity(); }
@@ -475,13 +475,13 @@ constexpr static double _true_value() noexcept
     { return 1; }
 [[nodiscard]]
 constexpr static double _nan_value() noexcept
-    { return std::numeric_limits<double>::quiet_NaN(); }
+    { return te_parser::te_nan; }
 // cotangent
 [[nodiscard]]
 static double _cot(double a) noexcept
     {
     if (a == 0.0)
-        { return std::numeric_limits<double>::quiet_NaN(); }
+        { return te_parser::te_nan; }
     return 1 / static_cast<double>(std::tan(a));
     }
 [[nodiscard]]
@@ -893,7 +893,7 @@ te_expr* te_parser::base(te_parser::state *s)
         s->m_type == te_parser::state::token_type::TOK_CLOSE ||
         s->m_type == te_parser::state::token_type::TOK_INFIX)
         {
-        ret = new_expr(TE_DEFAULT, te_variant_type{ std::numeric_limits<double>::quiet_NaN() });
+        ret = new_expr(TE_DEFAULT, te_variant_type{ te_nan });
         s->m_type = te_parser::state::token_type::TOK_ERROR;
         }
     else if (is_function0(s->m_value) || is_closure0(s->m_value))
@@ -1163,13 +1163,13 @@ te_expr* te_parser::power(te_parser::state *s)
 //--------------------------------------------------
 double te_parser::te_eval(const te_expr *n)
     {
-    if (!n) return std::numeric_limits<double>::quiet_NaN();
+    if (!n) return te_nan;
 
     // cppcheck-suppress unreadVariable
     const auto M = [&n = std::as_const(n)](const size_t e)
         {
         return (e < n->m_parameters.size()) ? te_eval(n->m_parameters[e]) :
-            std::numeric_limits<double>::quiet_NaN();
+            te_nan;
         };
 
     if (is_constant(n->m_value))
@@ -1209,7 +1209,7 @@ double te_parser::te_eval(const te_expr *n)
     else if (is_closure7(n->m_value))
         { return get_closure7(n->m_value)(n->m_parameters[7], M(0), M(1), M(2), M(3), M(4), M(5), M(6)); }
     else
-        { return std::numeric_limits<double>::quiet_NaN(); }
+        { return te_nan; }
     }
 
 //--------------------------------------------------
@@ -1271,7 +1271,7 @@ bool te_parser::compile(const std::string_view expression)
     // reset everything from previous call
     m_errorPos = te_parser::npos;
     m_lastErrorMessage.clear();
-    m_result = std::numeric_limits<double>::quiet_NaN();
+    m_result = te_nan;
     m_parseSuccess = false;
     te_free(m_compiledExpression);
     m_compiledExpression = nullptr;
@@ -1306,7 +1306,7 @@ bool te_parser::compile(const std::string_view expression)
         if (commentEnd == std::string::npos)
             {
             m_errorPos = commentStart;
-            return std::numeric_limits<double>::quiet_NaN();
+            return te_nan;
             }
         m_expression.erase(commentStart, (commentEnd + 2) - commentStart);
         }
@@ -1335,7 +1335,7 @@ bool te_parser::compile(const std::string_view expression)
     catch (const std::exception& expt)
         {
         m_parseSuccess = false;
-        m_result = std::numeric_limits<double>::quiet_NaN();
+        m_result = te_nan;
         m_lastErrorMessage = expt.what();
         }
     return m_parseSuccess;
@@ -1348,12 +1348,12 @@ double te_parser::evaluate()
         {
         m_result = (m_compiledExpression) ?
             te_eval(m_compiledExpression) :
-            std::numeric_limits<double>::quiet_NaN();
+            te_nan;
         }
     catch (const std::exception& expt)
         {
         m_parseSuccess = false;
-        m_result = std::numeric_limits<double>::quiet_NaN();
+        m_result = te_nan;
         m_lastErrorMessage = expt.what();
         }
 
@@ -1371,7 +1371,7 @@ double te_parser::evaluate(const std::string_view expression)
     if (compile(expression))
         { return evaluate(); }
     else
-        { return std::numeric_limits<double>::quiet_NaN(); }
+        { return te_nan; }
     }
 
 //--------------------------------------------------
