@@ -12,7 +12,7 @@ biblio-style: mla
 link-citations: true
 nocite: '@*'
 csl: modern-language-association.csl
-cover-image: "images/cover.png"
+cover-image: "manual/images/cover.png"
 pdf-cover: "images/cover.pdf"
 ---
 
@@ -31,12 +31,12 @@ library(webshot)
      PDF output will have its own copyright page after the title.-->
 
 :::{.wrapfigure data-latex="{r}{0.5\\textwidth}" style="width: 48%;"}
-![](images/cover.png){width=48%}
+![](manual/images/cover.png){width=48%}
 :::
 
 This book is a guide to using the *TinyExpr++* library, a C++ formula parsing and evaluation system.
 
-![](images/CC_BY-NC-ND.png)
+![](manual/images/CC_BY-NC-ND.png)
 
 This book is licensed under the [Creative Commons Attribution-NonCommercial-NoDerivs 4.0 International License](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 ```
