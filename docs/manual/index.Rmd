@@ -30,8 +30,8 @@ library(webshot)
 <!-- Just want this preface in the gitbook.
      PDF output will have its own copyright page after the title.-->
 
-:::{.wrapfigure data-latex="{r}{0.5\\textwidth}" style="width: 48%;"}
-![](manual/images/cover.png){width=48%}
+:::{.wrapfigure data-latex="{r}{0.5\\textwidth}" style="width: 75%;"}
+![](manual/images/cover.png){width=75%}
 :::
 
 This book is a guide to using the *TinyExpr++* library, a C++ formula parsing and evaluation system.
