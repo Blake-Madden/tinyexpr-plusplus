@@ -291,7 +291,7 @@ public:
     /// @param var The variable/function to remove (by name).
     void remove_variable_or_function(te_variable::name_type var)
         {
-        auto foundVar = m_customFuncsAndVars.find(te_variable{ std::move(var) });
+        auto foundVar = m_customFuncsAndVars.find(te_variable{ std::move(var), 0.0, TE_DEFAULT, nullptr });
         if (foundVar != m_customFuncsAndVars.cend())
             { m_customFuncsAndVars.erase(foundVar); }
         }
