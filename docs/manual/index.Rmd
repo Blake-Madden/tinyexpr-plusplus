@@ -17,11 +17,13 @@ pdf-cover: "images/cover.pdf"
 ---
 
 ```{r, include=FALSE}
-library(DiagrammeR)
-library(webshot)
-# Run this if diagrams do not appear in PDF
-# or you get an error about HTML in your PDF.
-# webshot::install_phantomjs()
+if (!require("pacman")) install.packages("pacman")
+library(pacman)
+pacman::p_load(DiagrammeR, webshot)
+if (!webshot::is_phantomjs_installed())
+  {
+  webshot::install_phantomjs()
+  }
 ```
 
 ```{asis, echo=knitr::is_html_output()}
