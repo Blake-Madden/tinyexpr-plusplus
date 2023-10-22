@@ -3,7 +3,7 @@
 ## Binding to Custom Variables {-}
 
 ::: {.minipage data-latex="{\textwidth}"}
-Along with the built-in functions and constants, you can create custom variables\index{variables!binding to custom}  for use in expressions. For example:
+Along with the built-in functions and constants, you can create custom variables\index{variables!binding to custom}  for use in expressions:
 
 ```cpp
 #include "tinyexpr.h"
@@ -17,18 +17,14 @@ int main(int argc, char* argv[])
         std::cout << "Usage: example \"expression\"\n";
         return EXIT_SUCCESS;
         }
-
     const char* expression = argv[1];
-    std::cout << "Evaluating:\n\t" << expression << "\n";
 
-    /* The variables x and y are bound at eval-time. */
-    double x{ 0 }, y{ 0 };
+    double x{ 0 }, y{ 0 }; // x and y are bound at eval-time.
     // Store variable names and pointers.
     te_parser tep;
     tep.set_variables_and_functions({ {"x", &x}, {"y", &y} });
 
-    /* This will compile the expression and check for errors. */
-    if (tep.compile(expression))
+    if (tep.compile(expression)) // Compile the expression and check for errors.
         {
         /* The variables can be changed here, and evaluate can be called multiple
            times. This is efficient because the parsing has already been done.*/
@@ -36,9 +32,8 @@ int main(int argc, char* argv[])
         const double r = tep.evaluate();
         std::cout << "Result:\n\t" << r << "\n";
         }
-    else
+    else // Show the user where the error is at.
         {
-        /* Show the user where the error is at. */
         std::cout << "\t " << std::setfill(' ') <<
             std::setw(tep.get_last_error_position()) << '^' << "\tError here\n";
         }
@@ -147,6 +142,6 @@ res = tep.evaluate("CellMax()");
 
 :::: {.notesection data-latex=""}
 Valid variable and function names consist of a letter or underscore followed by any combination
-of: letters `a`–`z` or `A`–`Z`, digits `0`–`9`, periods, and underscores.
+of: letters `a–z` or `A–Z`, digits `0–9`, periods, and underscores.
 ::::
 :::

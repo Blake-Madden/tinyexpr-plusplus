@@ -107,3 +107,22 @@ else
 Along with positional and message information, the return value\index{results!evaluating failed} of a parse can also indicate failure.
 When an evaluation fails, the parser will return NaN (i.e., `std::numeric_limits<double>::quiet_NaN()`) as the result.
 NaN values can be verified using the standard function `std::isnan()`.
+
+## Example {-}
+
+The following is a short example demonstrating how to use *TinyExpr++*.
+
+```cpp
+#include "tinyexpr.h"
+#include <iostream>
+
+int main(int argc, char *argv[])
+    {
+    te_parser tep;
+    const char* expression = "sqrt(5^2+7^2+11^2+(8-2)^2)";
+    const double res = tep.evaluate(expression);
+    std::cout << "The expression:\n\t" <<
+        expression << "\nevaluates to:\n\t" << res << "\n";
+    return EXIT_SUCCESS;
+    }
+```

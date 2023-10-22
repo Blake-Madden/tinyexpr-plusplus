@@ -32,9 +32,9 @@ IF(AND(smartMeter1.power > 1900, sensor1.temperature < 52), TRUE,
    // First logical check failed, so now check another scenario
    // and return false if it meets our criteria.
    IF(AND(smartMeter1.power < 300, sensor1.temperature > 55), FALSE,
-   // Neither scenario checked out, so the values are in an
-   // unaccounted for scenario. Return NaN to indicate a failure.
-   NAN) )
+     // Neither scenario checked out, so the values are in an
+     // unaccounted for scenario. Return NaN to indicate a failure.
+     NAN) )
 ```
 :::
 
