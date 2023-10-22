@@ -28,7 +28,7 @@ IF(AND(P_LEVEL < .05, N_OBS >= 30),
 Logical checks can also be nested, creating a "case"-like\index{case statements|ii} statement:
 
 ```cpp
-IF(AND(smartMeter1.power > 1,900, sensor1.temperature < 52), TRUE,
+IF(AND(smartMeter1.power > 1900, sensor1.temperature < 52), TRUE,
    // First logical check failed, so now check another scenario
    // and return false if it meets our criteria.
    IF(AND(smartMeter1.power < 300, sensor1.temperature > 55), FALSE,
