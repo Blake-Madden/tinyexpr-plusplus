@@ -98,6 +98,7 @@ The following are changes from the original TinyExpr C library:
   - `fact`: alias for `fac()`, like the *Excel* function.
   - `false`: returns `false` (i.e., `0`) in a boolean expression.
   - `if`: if a value is true (i.e., non-zero), then returns the second argument; otherwise, returns the third argument.
+  - `ifs`: checks up to three conditions, returning the value corresponding to the first met condition.
   - `max`: returns the maximum of a range of values (accepts 1-7 arguments).
   - `min`: returns the minimum of a range of values (accepts 1-7 arguments).
   - `mod`: returns remainder from a division.

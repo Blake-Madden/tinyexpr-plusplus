@@ -358,6 +358,26 @@ TEST_CASE("Main tests", "[main]")
         {
         CHECK(tep.evaluate("if(1, 9, 7)") == 9);
         CHECK(tep.evaluate("if(0, 9, 7)") == 7);
+        CHECK(tep.evaluate("if(0.000001 /* non-zero means true */, 9, 7)") == 9);
+
+        // no evaluation statement returns NaN
+        CHECK(std::isnan(tep.evaluate("IFS()")));
+        CHECK(std::isnan(tep.evaluate("IFS(0, 9)")));
+        CHECK(std::isnan(tep.evaluate("IFS(0.000, 9)")));
+        CHECK(std::isnan(tep.evaluate("IFS(FALSE, 9)")));
+        CHECK(tep.evaluate("IFS(true, 9, 0.0, 7, 1, 5)") == 9);
+        CHECK(tep.evaluate("IFS(FALSE, 9, TRUE, 7)") == 7);
+        CHECK(tep.evaluate("IFS(FALSE, 9, 0.0, 7, 1, 5)") == 5);
+        // complex expressions
+        CHECK(tep.evaluate("IFS(9 > 1, 9, 0.0, 7, 1, 5)") == 9);
+        CHECK(tep.evaluate("IFS(9 > 10, 9, 6 > 9, 6, AND(1 > 0, 1 > -1), 1)") == 1);
+        // all three expressions are false, so returns NaN
+        CHECK(std::isnan(tep.evaluate("IFS(false, 9, false, 7, false, 5)")));
+        // not enough args, so NaN is the default value for the last expression
+        CHECK(std::isnan(tep.evaluate("IFS(FALSE, 9, 0.0, 7, 1)")));
+        // NaN "condition" returns NaN
+        CHECK(std::isnan(tep.evaluate("IFS(NAN, 9)")));
+
         CHECK(tep.evaluate("and(0.0, 5)") == 0);
         CHECK(tep.evaluate("and(0.0, 0)") == 0);
         CHECK(tep.evaluate("AND(-1, 5)") == 1);

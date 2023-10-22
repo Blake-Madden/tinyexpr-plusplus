@@ -468,6 +468,16 @@ static double _or_variadic(double v1, double v2, double v3, double v4,
 constexpr static double _if(double a, double b, double c) noexcept
     { return (a != 0.0) ? b : c; }
 [[nodiscard]]
+constexpr static double _ifs(double if1, double if1True,
+                             double if2, double if2True,
+                             double if3, double if3True) noexcept
+    {
+    return (!std::isnan(if1) && if1 != 0.0) ? if1True :
+        (!std::isnan(if2) && if2 != 0.0) ? if2True :
+        (!std::isnan(if3) && if3 != 0.0) ? if3True :
+        te_parser::te_nan;
+    }
+[[nodiscard]]
 constexpr static double _false_value() noexcept
     { return 0; }
 [[nodiscard]]
@@ -592,6 +602,7 @@ const std::set<te_variable> te_parser::m_functions = {
     {"false", static_cast<te_fun0>(_false_value), TE_PURE},
     {"floor", static_cast<te_fun1>(_floor), TE_PURE},
     {"if", static_cast<te_fun3>(_if), TE_PURE},
+    {"ifs", static_cast<te_fun6>(_ifs), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
     {"ln", static_cast<te_fun1>(_log), TE_PURE},
     {"log10", static_cast<te_fun1>(_log10), TE_PURE},
     {"max", static_cast<te_fun7>(_max), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},

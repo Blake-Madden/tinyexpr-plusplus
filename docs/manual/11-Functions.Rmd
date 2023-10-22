@@ -59,6 +59,7 @@ Table: Statistical Functions\index{functions!statistical}
 | :-- | :-- |
 | AND(Value1, Value2, ...) | Returns true if all conditions are true. |
 | IF(Condition, ValueIfTrue, ValueIfFalse) | If *Condition* is true (non-zero), then *ValueIfTrue* is returned; otherwise, *ValueIfFalse* is returned.<br>\linebreak Note that multiple `IF` commands can be nested to create a "case" statement\index{case statements}. |
+| IFS(Condition1, Value1, Condition2, Value2, ...) | Checks up to three conditions, returning the value corresponding to the first met condition.<br>\linebreak This is shorthand for multiple nested `IF` commands, providing better readability. Will accept 1–3 condition/value pairs.<br>\linebreak NaN will be returned if all conditions are false. |
 | NOT(Value) | Returns the logical negation of *Value.* |
 | OR(Value1, Value2, ...) | Returns true if any condition is true. |
 
