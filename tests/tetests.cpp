@@ -2052,6 +2052,20 @@ TEST_CASE("Unknown symbol resolve funct pointer purge resolved 2", "[usr]")
     CHECK(parser.evaluate("id.temperature") == 53);
     }
 
+TEST_CASE("Unknown symbol resolve lambda with capture", "[usr]")
+    {
+    std::string str("id.temperature < 51");
+    double temperature = 49.0;
+    te_parser parser;
+    parser.set_unknown_symbol_resolver([&](std::string_view symbol)
+        {
+        return temperature += 1.0;
+        }, false);
+    CHECK(parser.compile(str));        // 50
+    CHECK_FALSE(parser.evaluate(str)); // 51
+    CHECK_FALSE(parser.evaluate(str)); // 52
+    CHECK(parser.evaluate("id.temperature") == 53);
+    }
 
 TEST_CASE("Unknown symbol resolve 1 param purged", "[usr]")
     {
