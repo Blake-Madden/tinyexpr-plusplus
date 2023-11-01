@@ -437,6 +437,16 @@ public:
     const std::string& get_expression() const noexcept
         { return m_expression; };
 private:
+    /// @brief Resets any resolved variables from USR if not being cached.
+    void reset_usr_resolved_if_necessary()
+        {
+        if (!m_keepResolvedVarialbes && resolvedVariables.size())
+            {
+            for (const auto& resolvedVar : resolvedVariables)
+                { remove_variable_or_function(resolvedVar); }
+            resolvedVariables.clear();
+            }
+        }
     /// @brief Gets the compiled expression, which will the optimized version
     ///     of the original expression.
     /// @returns The compiled expression.

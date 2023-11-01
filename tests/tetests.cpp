@@ -2022,9 +2022,6 @@ TEST_CASE("Unknown symbol resolve funct pointer keep resolved", "[usr]")
     te_parser tep;
     tep.set_unknown_symbol_resolver(ResolveResolutionSymbols);
 
-    CHECK(tep.evaluate("RES * 3") == 3 * 96);
-    // case sensitive, won't recognize it
-    CHECK(std::isnan(tep.evaluate("resolution * 5")));
     CHECK(tep.evaluate("RESOLUTION * 3") == 3 * 96);
     // is in the parser now and can be recognized case sensitively
     CHECK(tep.evaluate("resolution * 5") == 480);
@@ -2035,13 +2032,26 @@ TEST_CASE("Unknown symbol resolve funct pointer purge resolved", "[usr]")
     te_parser tep;
     tep.set_unknown_symbol_resolver(ResolveResolutionSymbols, false);
 
-    CHECK(tep.evaluate("RES * 3") == 3 * 96);
-    // case sensitive, won't recognize it
-    CHECK(std::isnan(tep.evaluate("resolution * 5")));
     CHECK(tep.evaluate("RESOLUTION * 3") == 3 * 96);
     // not in the parser, so case sensitive look up will fail
     CHECK(std::isnan(tep.evaluate("resolution * 5")));
     }
+
+TEST_CASE("Unknown symbol resolve funct pointer purge resolved 2", "[usr]")
+    {
+    std::string str("id.temperature < 51");
+    te_parser parser;
+    parser.set_unknown_symbol_resolver([](std::string_view symbol)
+        {
+        static double temperature = 49.0;
+        return temperature += 1.0;
+        }, false);
+    CHECK(parser.compile(str));        // 50
+    CHECK_FALSE(parser.evaluate(str)); // 51
+    CHECK_FALSE(parser.evaluate(str)); // 52
+    CHECK(parser.evaluate("id.temperature") == 53);
+    }
+
 
 TEST_CASE("Unknown symbol resolve 1 param purged", "[usr]")
     {

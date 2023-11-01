@@ -134,7 +134,8 @@ With subsequent evaluations, the previously unrecognized symbols you resolved wi
 This means that it will not to be resolved again and will result in the value that your USR returned from before.
 
 If you prefer to not have resolved symbols added to the parser, then pass `false` to the second parameter to `set_unknown_symbol_resolver()`.
-This will force the same unknown symbols to be resolved again with every evaluation.
+This will force the same unknown symbols to be resolved again with every call to `compile(expression)` or `evaluate(expression)`.
+(The version of `evaluate()` which does not take any parameters will not force calling the USR again, see below.)
 This can be useful for when your USR's symbol resolutions are dynamic and may change with each call.
 
 ::: {.minipage data-latex="{\textwidth}"}
@@ -166,3 +167,7 @@ tep.evaluate("STRESS_LEVEL"); // 5
 tep.evaluate("STRESS_LEVEL"); // 6
 ```
 :::
+
+As a final note, if you are not keeping resolved variables, your USR will only be called again if you call `evaluate` or `compile` with an expression.
+Because the original expression gets optimized, `evaluate()` it will not re-evaluate any variables. Calling `evaluate` with the original expression
+will force a re-compilation and in turn call the USR again.

@@ -1349,6 +1349,9 @@ bool te_parser::compile(const std::string_view expression)
         m_result = te_nan;
         m_lastErrorMessage = expt.what();
         }
+
+    reset_usr_resolved_if_necessary();
+
     return m_parseSuccess;
     }
 
@@ -1368,11 +1371,8 @@ double te_parser::evaluate()
         m_lastErrorMessage = expt.what();
         }
 
-    if (!m_keepResolvedVarialbes && resolvedVariables.size())
-        {
-        for (const auto& resolvedVar : resolvedVariables)
-            { remove_variable_or_function(resolvedVar); }
-        }
+    reset_usr_resolved_if_necessary();
+
     return m_result;
     }
 
