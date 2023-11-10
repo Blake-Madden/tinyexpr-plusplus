@@ -552,7 +552,11 @@ $if(beamer)$
   \printbibliography[heading=none]
 \end{frame}
 $else$
+\begingroup
+% double spacing just for the citation page
+\setstretch{2.0}
 \printbibliography$if(biblio-title)$[title=$biblio-title$,heading=bibintoc]$endif$
+\endgroup
 $endif$
 
 $endif$
