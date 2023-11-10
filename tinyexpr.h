@@ -91,9 +91,9 @@ using te_confun6 = double (*)(const te_expr*, double, double, double, double, do
 using te_confun7 = double (*)(const te_expr*, double, double, double, double, double, double, double);
 
 // functions for unknown symbol resolution
-using te_usr_noop = std::function<void ()>;
-using te_usr_fun0 = std::function<double (std::string_view)>;
-using te_usr_fun1 = std::function<double (std::string_view, std::string&)>;
+using te_usr_noop = std::function<void()>;
+using te_usr_fun0 = std::function<double(std::string_view)>;
+using te_usr_fun1 = std::function<double(std::string_view, std::string&)>;
 
 using te_usr_variant_type = std::variant<te_usr_noop, te_usr_fun0, te_usr_fun1>;
 

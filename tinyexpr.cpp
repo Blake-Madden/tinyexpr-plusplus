@@ -949,7 +949,7 @@ te_expr* te_parser::base(te_parser::state *s)
             int i{ 0 };
             // If there are vars or other functions in the parameters, keep track of the original
             // opening function; that is what we will do our variadic check on.
-            const auto varValid{ m_varFound };
+            const bool varValid{ m_varFound };
             const auto openingVar = m_currentVar;
             // load any parameters
             for(i = 0; i < arity; i++)
@@ -1183,44 +1183,47 @@ double te_parser::te_eval(const te_expr *n)
             te_nan;
         };
 
-    if (is_constant(n->m_value))
-        { return get_constant(n->m_value); }
-    else if (is_variable(n->m_value))
-        { return *(get_variable(n->m_value)); }
-    else if (is_function0(n->m_value))
-        { return get_function0(n->m_value)(); }
-    else if (is_function1(n->m_value))
-        { return get_function1(n->m_value)( M(0) ); }
-    else if (is_function2(n->m_value))
-        { return get_function2(n->m_value)(M(0), M(1)); }
-    else if (is_function3(n->m_value))
-        { return get_function3(n->m_value)(M(0), M(1), M(2)); }
-    else if (is_function4(n->m_value))
-        { return get_function4(n->m_value)(M(0), M(1), M(2), M(3)); }
-    else if (is_function5(n->m_value))
-        { return get_function5(n->m_value)(M(0), M(1), M(2), M(3), M(4)); }
-    else if (is_function6(n->m_value))
-        { return get_function6(n->m_value)(M(0), M(1), M(2), M(3), M(4), M(5)); }
-    else if (is_function7(n->m_value))
-        { return get_function7(n->m_value)(M(0), M(1), M(2), M(3), M(4), M(5), M(6)); }
-    else if (is_closure0(n->m_value))
-        { return get_closure0(n->m_value)(n->m_parameters[0]); }
-    else if (is_closure1(n->m_value))
-        { return get_closure1(n->m_value)(n->m_parameters[1], M(0)); }
-    else if (is_closure2(n->m_value))
-        { return get_closure2(n->m_value)(n->m_parameters[2], M(0), M(1)); }
-    else if (is_closure3(n->m_value))
-        { return get_closure3(n->m_value)(n->m_parameters[3], M(0), M(1), M(2)); }
-    else if (is_closure4(n->m_value))
-        { return get_closure4(n->m_value)(n->m_parameters[4], M(0), M(1), M(2), M(3)); }
-    else if (is_closure5(n->m_value))
-        { return get_closure5(n->m_value)(n->m_parameters[5], M(0), M(1), M(2), M(3), M(4)); }
-    else if (is_closure6(n->m_value))
-        { return get_closure6(n->m_value)(n->m_parameters[6], M(0), M(1), M(2), M(3), M(4), M(5)); }
-    else if (is_closure7(n->m_value))
-        { return get_closure7(n->m_value)(n->m_parameters[7], M(0), M(1), M(2), M(3), M(4), M(5), M(6)); }
-    else
-        { return te_nan; }
+    switch (n->m_value.index())
+        {
+    case 0:
+        return get_constant(n->m_value);
+    case 1:
+        return *(get_variable(n->m_value));
+    case 2:
+        return get_function0(n->m_value)();
+    case 3:
+        return get_function1(n->m_value)(M(0));
+    case 4:
+        return get_function2(n->m_value)(M(0), M(1));
+    case 5:
+        return get_function3(n->m_value)(M(0), M(1), M(2));
+    case 6:
+        return get_function4(n->m_value)(M(0), M(1), M(2), M(3));
+    case 7:
+        return get_function5(n->m_value)(M(0), M(1), M(2), M(3), M(4));
+    case 8:
+        return get_function6(n->m_value)(M(0), M(1), M(2), M(3), M(4), M(5));
+    case 9:
+        return get_function7(n->m_value)(M(0), M(1), M(2), M(3), M(4), M(5), M(6));
+    case 10:
+        return get_closure0(n->m_value)(n->m_parameters[0]);
+    case 11:
+        return get_closure1(n->m_value)(n->m_parameters[1], M(0));
+    case 12:
+        return get_closure2(n->m_value)(n->m_parameters[2], M(0), M(1));
+    case 13:
+        return get_closure3(n->m_value)(n->m_parameters[3], M(0), M(1), M(2));
+    case 14:
+        return get_closure4(n->m_value)(n->m_parameters[4], M(0), M(1), M(2), M(3));
+    case 15:
+        return get_closure5(n->m_value)(n->m_parameters[5], M(0), M(1), M(2), M(3), M(4));
+    case 16:
+        return get_closure6(n->m_value)(n->m_parameters[6], M(0), M(1), M(2), M(3), M(4), M(5));
+    case 17:
+        return get_closure7(n->m_value)(n->m_parameters[7], M(0), M(1), M(2), M(3), M(4), M(5), M(6));
+    default:
+        return te_nan;
+        };
     }
 
 //--------------------------------------------------
