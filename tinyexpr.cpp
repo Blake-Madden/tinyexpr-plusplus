@@ -684,7 +684,7 @@ void te_parser::next_token(te_parser::state *s)
                         {
                         try
                             {
-                            // "double usr(string_view)" resolver
+                            // "te_return_type usr(string_view)" resolver
                             if (m_unknownSymbolResolve.index() == 1)
                                 {
                                 const auto retUsrVal = std::get<1>(m_unknownSymbolResolve)(currentVarToken);
@@ -701,7 +701,7 @@ void te_parser::next_token(te_parser::state *s)
                                         }
                                     }
                                 }
-                            // "double usr(string_view, string&)" resolver
+                            // "te_return_type usr(string_view, string&)" resolver
                             else if (m_unknownSymbolResolve.index() == 2)
                                 {
                                 const auto retUsrVal =
@@ -1248,7 +1248,7 @@ void te_parser::optimize(te_expr *n)
             }
         if (known)
             {
-            const double value = te_eval(n);
+            const auto value = te_eval(n);
             te_free_parameters(n);
             n->m_type = TE_DEFAULT;
             n->m_value = value;

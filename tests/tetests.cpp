@@ -181,7 +181,7 @@ double bench_a10(double a) {
 }
 
 double bench_as(double a) {
-    return sqrt(pow(a, 1.5) + pow(a, 2.5));
+    return std::sqrt(std::pow(a, 1.5) + std::pow(a, 2.5));
 }
 
 double bench_al(double a) {
