@@ -124,6 +124,6 @@ of the error in its `what()` method.
 
 *TinyExpr++* does not use virtual functions\index{functions!virtual} or derived classes\index{classes!derived},
 unless you create a custom class derived from `te_expr` yourself
-(refer to [Example 5](#example-5)).
+(refer to ["Binding to Custom Classes"](#custom-classes) for an example).
 (`te_expr` defines a virtual destructor that may be implicitly optimized to
 `final` if no derived classes are defined.)
