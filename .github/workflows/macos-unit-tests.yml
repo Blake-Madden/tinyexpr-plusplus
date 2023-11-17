@@ -31,6 +31,7 @@ jobs:
              fi
              
              cd ..
+             rm -rf bin
              cmake -DTE_POW_FROM_RIGHT=1 ./
              make -j4
              cd bin
@@ -48,6 +49,7 @@ jobs:
              fi
 
              cd ..
+             rm -rf bin
              cmake -DTE_FLOAT=1 ./
              make -j4
              cd bin
