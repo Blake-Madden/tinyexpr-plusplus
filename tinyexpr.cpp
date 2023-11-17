@@ -51,127 +51,127 @@
 
 // builtin functions
 [[nodiscard]]
-constexpr static double _equal(double a, double b) noexcept
-    { return (a == b) ? 1 : 0; }
+constexpr static te_type _equal(te_type a, te_type b) noexcept
+    { return static_cast<te_type>((a == b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static double _not_equal(double a, double b) noexcept
-    { return (a != b) ? 1 : 0; }
+constexpr static te_type _not_equal(te_type a, te_type b) noexcept
+    { return static_cast<te_type>((a != b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static double _less_than(double a, double b) noexcept
-    { return (a < b) ? 1 : 0; }
+constexpr static te_type _less_than(te_type a, te_type b) noexcept
+    { return static_cast<te_type>((a < b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static double _less_than_equal_to(double a, double b)
-    noexcept { return (a <= b) ? 1 : 0; }
+constexpr static te_type _less_than_equal_to(te_type a, te_type b) noexcept
+    { return static_cast<te_type>((a <= b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static double _greater_than(double a, double b) noexcept
-    { return (a > b) ? 1 : 0; }
+constexpr static te_type _greater_than(te_type a, te_type b) noexcept
+    { return static_cast<te_type>((a > b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static double _greater_than_equal_to(double a, double b) noexcept
-    { return (a >= b) ? 1 : 0; }
+constexpr static te_type _greater_than_equal_to(te_type a, te_type b) noexcept
+    { return static_cast<te_type>((a >= b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static double _and(double a, double b) noexcept
-    { return (a && b) ? 1 : 0; }
+constexpr static te_type _and(te_type a, te_type b) noexcept
+    { return static_cast<te_type>((a && b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static double _or(double a, double b) noexcept
-    { return (a || b) ? 1 : 0; }
+constexpr static te_type _or(te_type a, te_type b) noexcept
+    { return static_cast<te_type>((a || b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static double _not(double a) noexcept
+constexpr static te_type _not(te_type a) noexcept
     { return !a; }
 [[nodiscard]]
-constexpr static double _pi() noexcept
-    { return 3.14159265358979323846; }
+constexpr static te_type _pi() noexcept
+    { return static_cast<te_type>(3.14159265358979323846); }
 [[nodiscard]]
-constexpr static double _e() noexcept
-    { return 2.71828182845904523536; }
+constexpr static te_type _e() noexcept
+    { return static_cast<te_type>(2.71828182845904523536); }
 [[nodiscard]]
-static double _fac(double a) noexcept {/* simplest version of factorial */
+static te_type _fac(te_type a) noexcept {/* simplest version of factorial */
     if (a < 0.0 || std::isnan(a))
         { return te_parser::te_nan; }
     if (a > (std::numeric_limits<unsigned int>::max)())
-        { return std::numeric_limits<double>::infinity(); }
+        { return std::numeric_limits<te_type>::infinity(); }
     const auto ua = static_cast<size_t>(a);
     unsigned long int result{ 1 }, i{ 1 };
     for (i = 1; i <= ua; i++)
         {
         if (i > (std::numeric_limits<unsigned long>::max)() / result)
-            return std::numeric_limits<double>::infinity();
+            return std::numeric_limits<te_type>::infinity();
         result *= i;
         }
-    return static_cast<double>(result);
+    return static_cast<te_type>(result);
 }
 
 [[nodiscard]]
-static double _absolute_value(double n)
-    { return std::fabs(static_cast<double>(n)); }
+static te_type _absolute_value(te_type n)
+    { return std::fabs(static_cast<te_type>(n)); }
 
 [[nodiscard]]
-static double _log(double x)
-    { return std::log(static_cast<double>(x)); }
+static te_type _log(te_type x)
+    { return std::log(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _log10(double x)
-    { return std::log10(static_cast<double>(x)); }
+static te_type _log10(te_type x)
+    { return std::log10(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _pow(double x, double y)
-    { return std::pow(static_cast<double>(x), static_cast<double>(y)); }
+static te_type _pow(te_type x, te_type y)
+    { return std::pow(static_cast<te_type>(x), static_cast<te_type>(y)); }
 
 [[nodiscard]]
-static double _tan(double x)
-    { return std::tan(static_cast<double>(x)); }
+static te_type _tan(te_type x)
+    { return std::tan(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _tanh(double x)
-    { return std::tanh(static_cast<double>(x)); }
+static te_type _tanh(te_type x)
+    { return std::tanh(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _trunc(double x)
-    { return std::trunc(static_cast<double>(x)); }
+static te_type _trunc(te_type x)
+    { return std::trunc(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _sin(double x)
-    { return std::sin(static_cast<double>(x)); }
+static te_type _sin(te_type x)
+    { return std::sin(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _sinh(double x)
-    { return std::sinh(static_cast<double>(x)); }
+static te_type _sinh(te_type x)
+    { return std::sinh(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _sqrt(double x)
+static te_type _sqrt(te_type x)
     {
     if (x < 0)
         {
         throw std::runtime_error("Negative value passed to SQRT.");
         }
-    return std::sqrt(static_cast<double>(x));
+    return std::sqrt(static_cast<te_type>(x));
     }
 
 [[nodiscard]]
-static double _floor(double x)
-    { return std::floor(static_cast<double>(x)); }
+static te_type _floor(te_type x)
+    { return std::floor(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _ceil(double x)
-    { return std::ceil(static_cast<double>(x)); }
+static te_type _ceil(te_type x)
+    { return std::ceil(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _exp(double x)
-    { return std::exp(static_cast<double>(x)); }
+static te_type _exp(te_type x)
+    { return std::exp(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _cos(double x)
-    { return std::cos(static_cast<double>(x)); }
+static te_type _cos(te_type x)
+    { return std::cos(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _cosh(double x)
-    { return std::cosh(static_cast<double>(x)); }
+static te_type _cosh(te_type x)
+    { return std::cosh(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _acos(double x)
-    { return std::acos(static_cast<double>(x)); }
+static te_type _acos(te_type x)
+    { return std::acos(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _asin(double x)
+static te_type _asin(te_type x)
     {
     if (std::isfinite(x) &&
         (x < -1.0 || x > 1.0))
@@ -179,46 +179,46 @@ static double _asin(double x)
         throw std::runtime_error(
             "Argument passed to ASIN must be between -1 and 1.");
         }
-    return std::asin(static_cast<double>(x));
+    return std::asin(static_cast<te_type>(x));
     }
 
 [[nodiscard]]
-static double _atan(double x)
-    { return std::atan(static_cast<double>(x)); }
+static te_type _atan(te_type x)
+    { return std::atan(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static double _atan2(double y, double x)
-    { return std::atan2(static_cast<double>(y), (static_cast<double>(x))); }
+static te_type _atan2(te_type y, te_type x)
+    { return std::atan2(static_cast<te_type>(y), (static_cast<te_type>(x))); }
 
 [[nodiscard]]
-static double _tgamma(double y)
+static te_type _tgamma(te_type y)
     { return std::tgamma(y); }
 
 [[nodiscard]]
-static double _random()
+static te_type _random()
     {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<> distr(0, 1);
+    std::uniform_real_distribution<te_type> distr(0, 1);
     return distr(gen);
     }
 [[nodiscard]]
-constexpr static double _divide(double a, double b)
+constexpr static te_type _divide(te_type a, te_type b)
     {
     if (b == 0)
         { throw std::runtime_error("Division by zero."); }
     return a / b;
     }
 [[nodiscard]]
-static double _modulus(double a, double b)
+static te_type _modulus(te_type a, te_type b)
     {
     if (b == 0)
         { throw std::runtime_error("Modulus by zero."); }
     return std::fmod(a,b);
     }
 [[nodiscard]]
-static double _sum(double v1, double v2, double v3, double v4,
-                   double v5, double v6, double v7)
+static te_type _sum(te_type v1, te_type v2, te_type v3, te_type v4,
+                    te_type v5, te_type v6, te_type v7)
     {
     return (std::isnan(v1) ? 0 : v1) +
         (std::isnan(v2) ? 0 : v2) +
@@ -229,8 +229,8 @@ static double _sum(double v1, double v2, double v3, double v4,
         (std::isnan(v7) ? 0 : v7);
     }
 [[nodiscard]]
-static double _average(double v1, double v2, double v3, double v4,
-                       double v5, double v6, double v7)
+static te_type _average(te_type v1, te_type v2, te_type v3, te_type v4,
+                        te_type v5, te_type v6, te_type v7)
     {
     const auto validN = (std::isnan(v1) ? 0 : 1) +
         (std::isnan(v2) ? 0 : 1) +
@@ -240,21 +240,21 @@ static double _average(double v1, double v2, double v3, double v4,
         (std::isnan(v6) ? 0 : 1) +
         (std::isnan(v7) ? 0 : 1);
     const auto total = _sum(v1, v2, v3, v4, v5, v6, v7);
-    return _divide(total, validN);
+    return _divide(total, static_cast<te_type>(validN));
     }
 
 /// @warning This version of round emulates Excel behavior of supporting
 ///     negative decimal places (e.g., ROUND(21.5, -1) = 20). Be aware
 ///     of that if using this function outside of TinyExpr++.
 [[nodiscard]]
-static double _round(double val, double decimal_places)
+static te_type _round(te_type val, te_type decimal_places)
     {
     const bool useNegativeRound{ decimal_places < 0 };
     const size_t adjustedDecimalPlaces{
         std::isnan(decimal_places) ?
         0 : static_cast<size_t>(std::abs(decimal_places)) };
 
-    const auto decimalPostition = std::pow(10, adjustedDecimalPlaces);
+    const te_type decimalPostition = static_cast<te_type>(std::pow(10, adjustedDecimalPlaces));
     if (!std::isfinite(decimalPostition))
         { return te_parser::te_nan; }
 
@@ -262,13 +262,15 @@ static double _round(double val, double decimal_places)
         {
         if (val < 0)
             {
-            return (decimalPostition == 0) ? std::ceil(val - 0.5f) :
-                std::ceil((val * decimalPostition) - 0.5f) / decimalPostition;
+            return (decimalPostition == 0) ? std::ceil(val - static_cast<te_type>(0.5)) :
+                std::ceil(static_cast<te_type>(val * decimalPostition) - static_cast<te_type>(0.5)) /
+                    decimalPostition;
             }
         else
             {
-            return (decimalPostition == 0) ? std::floor(val + 0.5f) :
-                std::floor((val * decimalPostition) + 0.5f) / decimalPostition;
+            return (decimalPostition == 0) ? std::floor(val + static_cast<te_type>(0.5)) :
+                std::floor(static_cast<te_type>(val * decimalPostition) + static_cast<te_type>(0.5)) /
+                    decimalPostition;
             }
         }
     else
@@ -276,24 +278,26 @@ static double _round(double val, double decimal_places)
         // ROUND(21.5, -1) = 20
         if (val < 0)
             {
-            return std::ceil((val / decimalPostition) - 0.5f) * decimalPostition;
+            return std::ceil(static_cast<te_type>(val / decimalPostition) - static_cast<te_type>(0.5)) *
+                decimalPostition;
             }
         else
             {
-            return std::floor((val / decimalPostition) + 0.5f) * decimalPostition;
+            return std::floor(static_cast<te_type>(val / decimalPostition) + static_cast<te_type>(0.5)) *
+                decimalPostition;
             }
         }
     }
 
 // Combinations (without repetition)
 [[nodiscard]]
-static double _ncr(double n, double r) noexcept
+static te_type _ncr(te_type n, te_type r) noexcept
     {
     if (n < 0.0 || r < 0.0 || n < r || std::isnan(n) || std::isnan(r))
         { return te_parser::te_nan; }
     if (n > ((std::numeric_limits<unsigned int>::max)()) || r >
             (std::numeric_limits<unsigned int>::max)())
-        { return std::numeric_limits<double>::infinity(); }
+        { return std::numeric_limits<te_type>::infinity(); }
     const unsigned long int un{ static_cast<unsigned int>(n) };
     unsigned long int ur{ static_cast<unsigned int>(r) };
     unsigned long int result{ 1 };
@@ -301,27 +305,27 @@ static double _ncr(double n, double r) noexcept
     for (decltype(ur) i = 1; i <= ur; i++)
         {
         if (result > ((std::numeric_limits<unsigned long>::max)()) / (un - ur + i))
-            return std::numeric_limits<double>::infinity();
+            return std::numeric_limits<te_type>::infinity();
         result *= un - ur + i;
         result /= i;
         }
-    return static_cast<double>(result);
+    return static_cast<te_type>(result);
     }
 // Permutations (without repetition)
 [[nodiscard]]
-static double _npr(double n, double r) noexcept { return _ncr(n, r) * _fac(r); }
+static te_type _npr(te_type n, te_type r) noexcept { return _ncr(n, r) * _fac(r); }
 
 [[nodiscard]]
-constexpr static double _add(double a, double b) noexcept { return a + b; }
+constexpr static te_type _add(te_type a, te_type b) noexcept { return a + b; }
 [[nodiscard]]
-constexpr static double _sub(double a, double b) noexcept { return a - b; }
+constexpr static te_type _sub(te_type a, te_type b) noexcept { return a - b; }
 [[nodiscard]]
-constexpr static double _mul(double a, double b) noexcept { return a * b; }
+constexpr static te_type _mul(te_type a, te_type b) noexcept { return a * b; }
 
 // Shift operators
 //--------------------------------------------------
 [[nodiscard]]
-static double _left_shift(double a, double b)
+static te_type _left_shift(te_type a, te_type b)
     {
     if (std::floor(a) != a)
         {
@@ -352,12 +356,12 @@ static double _left_shift(double a, double b)
         throw std::runtime_error(
             "Overflow in left shift (<<) operation; base number is too large.");
         }
-    return static_cast<double>(static_cast<uint64_t>(a) << static_cast<uint64_t>(b));
+    return static_cast<te_type>(static_cast<uint64_t>(a) << static_cast<uint64_t>(b));
     }
 
 //--------------------------------------------------
 [[nodiscard]]
-static double _right_shift(double a, double b)
+static te_type _right_shift(te_type a, te_type b)
     {
     if (std::floor(a) != a)
         {
@@ -379,14 +383,14 @@ static double _right_shift(double a, double b)
         throw std::runtime_error(
             "Additive expression of right shift (>>) operation must be between 0-63.");
         }
-    return static_cast<double>(static_cast<uint64_t>(a) >> static_cast<uint64_t>(b));
+    return static_cast<te_type>(static_cast<uint64_t>(a) >> static_cast<uint64_t>(b));
     }
 
 /// @warning This emulates Excel, where a negative shift amount acts as a right shift.\n
 ///     Be aware of this if using this function outside of TinyExpr++.
 //--------------------------------------------------
 [[nodiscard]]
-static double _left_shift_or_right(double a, double b)
+static te_type _left_shift_or_right(te_type a, te_type b)
     {
     return (b >= 0) ?
         _left_shift(a, b) : _right_shift(a, std::abs(b));
@@ -396,20 +400,20 @@ static double _left_shift_or_right(double a, double b)
 ///     Be aware of this if using this function outside of TinyExpr++.
 //--------------------------------------------------
 [[nodiscard]]
-static double _right_shift_or_left(double a, double b)
+static te_type _right_shift_or_left(te_type a, te_type b)
     {
     return (b >= 0) ?
         _right_shift(a, b) : _left_shift(a, std::abs(b));
     }
 
 [[nodiscard]]
-constexpr static double _sqr(double a) noexcept { return a*a; }
+constexpr static te_type _sqr(te_type a) noexcept { return a*a; }
 [[nodiscard]]
-static double _max_maybe_nan(double v1, double v2_maybe_nan) noexcept
+static te_type _max_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
     { return (std::max)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
 [[nodiscard]]
-static double _max(double v1, double v2, double v3, double v4,
-                   double v5, double v6, double v7) noexcept
+static te_type _max(te_type v1, te_type v2, te_type v3, te_type v4,
+                    te_type v5, te_type v6, te_type v7) noexcept
     {
     // assumes that at least v1 is a number, rest can be NaN
     auto maxVal = _max_maybe_nan(v1, v2);
@@ -420,11 +424,11 @@ static double _max(double v1, double v2, double v3, double v4,
     return _max_maybe_nan(maxVal, v7);
     }
 [[nodiscard]]
-static double _min_maybe_nan(double v1, double v2_maybe_nan) noexcept
+static te_type _min_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
     { return (std::min)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
 [[nodiscard]]
-static double _min(double v1, double v2, double v3, double v4,
-                   double v5, double v6, double v7) noexcept
+static te_type _min(te_type v1, te_type v2, te_type v3, te_type v4,
+                    te_type v5, te_type v6, te_type v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
     auto minVal = _min_maybe_nan(v1, v2);
@@ -435,11 +439,11 @@ static double _min(double v1, double v2, double v3, double v4,
     return _min_maybe_nan(minVal, v7);
     }
 [[nodiscard]]
-static double _and_maybe_nan(double v1, double v2_maybe_nan) noexcept
+static te_type _and_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
     { return std::isnan(v2_maybe_nan) ? v1 : (v1 && v2_maybe_nan); }
 [[nodiscard]]
-static double _and_variadic(double v1, double v2, double v3, double v4,
-                            double v5, double v6, double v7) noexcept
+static te_type _and_variadic(te_type v1, te_type v2, te_type v3, te_type v4,
+                             te_type v5, te_type v6, te_type v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
     auto andVal = _and_maybe_nan(v1, v2);
@@ -450,11 +454,11 @@ static double _and_variadic(double v1, double v2, double v3, double v4,
     return _and_maybe_nan(andVal, v7);
     }
 [[nodiscard]]
-static double _or_maybe_nan(double v1, double v2_maybe_nan) noexcept
+static te_type _or_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
     { return std::isnan(v2_maybe_nan) ? v1 : (v1 || v2_maybe_nan); }
 [[nodiscard]]
-static double _or_variadic(double v1, double v2, double v3, double v4,
-                           double v5, double v6, double v7) noexcept
+static te_type _or_variadic(te_type v1, te_type v2, te_type v3, te_type v4,
+                            te_type v5, te_type v6, te_type v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
     auto orVal = _or_maybe_nan(v1, v2);
@@ -465,12 +469,12 @@ static double _or_variadic(double v1, double v2, double v3, double v4,
     return _or_maybe_nan(orVal, v7);
     }
 [[nodiscard]]
-constexpr static double _if(double a, double b, double c) noexcept
+constexpr static te_type _if(te_type a, te_type b, te_type c) noexcept
     { return (a != 0.0) ? b : c; }
 [[nodiscard]]
-constexpr static double _ifs(double if1, double if1True,
-                             double if2, double if2True,
-                             double if3, double if3True) noexcept
+constexpr static te_type _ifs(te_type if1, te_type if1True,
+                              te_type if2, te_type if2True,
+                              te_type if3, te_type if3True) noexcept
     {
     return (!std::isnan(if1) && if1 != 0.0) ? if1True :
         (!std::isnan(if2) && if2 != 0.0) ? if2True :
@@ -478,30 +482,30 @@ constexpr static double _ifs(double if1, double if1True,
         te_parser::te_nan;
     }
 [[nodiscard]]
-constexpr static double _false_value() noexcept
+constexpr static te_type _false_value() noexcept
     { return 0; }
 [[nodiscard]]
-constexpr static double _true_value() noexcept
+constexpr static te_type _true_value() noexcept
     { return 1; }
 [[nodiscard]]
-constexpr static double _nan_value() noexcept
+constexpr static te_type _nan_value() noexcept
     { return te_parser::te_nan; }
 // cotangent
 [[nodiscard]]
-static double _cot(double a) noexcept
+static te_type _cot(te_type a) noexcept
     {
     if (a == 0.0)
         { return te_parser::te_nan; }
-    return 1 / static_cast<double>(std::tan(a));
+    return 1 / static_cast<te_type>(std::tan(a));
     }
 [[nodiscard]]
-constexpr static double _sign(double a) noexcept
-    { return (a < 0.0) ? -1 : (a > 0.0) ? 1 : 0; }
+constexpr static te_type _sign(te_type a) noexcept
+    { return static_cast<te_type>((a < 0.0) ? -1 : (a > 0.0) ? 1 : 0); }
 [[nodiscard]]
-constexpr static double _negate(double a) noexcept
+constexpr static te_type _negate(te_type a) noexcept
     { return -a; }
 [[nodiscard]]
-constexpr static double _comma([[maybe_unused]] double a, double b) noexcept
+constexpr static te_type _comma([[maybe_unused]] te_type a, te_type b) noexcept
     { return b; }
 
 //--------------------------------------------------
@@ -584,11 +588,11 @@ const std::set<te_variable> te_parser::m_functions = {
     {"bitrshift", static_cast<te_fun2>(_right_shift_or_left), TE_PURE},
     {"ceil", static_cast<te_fun1>(_ceil), TE_PURE},
     {"clamp", static_cast<te_fun3>(
-        [](const double num, const double start, const double end)
+        [](const te_type num, const te_type start, const te_type end)
             {
             return (start <= end) ?
-                std::clamp<double>(num, start, end) :
-                std::clamp<double>(num, end, start);
+                std::clamp<te_type>(num, start, end) :
+                std::clamp<te_type>(num, end, start);
             }),
         TE_PURE},
     {"combin", static_cast<te_fun2>(_ncr), TE_PURE},
@@ -654,7 +658,7 @@ void te_parser::next_token(te_parser::state *s)
             s->m_next[0] == get_decimal_separator())
             {
             char* nEnd{ nullptr };
-            s->m_value = std::strtod(s->m_next, &nEnd);
+            s->m_value = static_cast<te_type>(std::strtod(s->m_next, &nEnd));
             s->m_next = nEnd;
             s->m_type = te_parser::state::token_type::TOK_NUMBER;
             }
@@ -1172,7 +1176,7 @@ te_expr* te_parser::power(te_parser::state *s)
     }
 
 //--------------------------------------------------
-double te_parser::te_eval(const te_expr *n)
+te_type te_parser::te_eval(const te_expr *n)
     {
     if (!n) return te_nan;
 
@@ -1359,7 +1363,7 @@ bool te_parser::compile(const std::string_view expression)
     }
 
 //--------------------------------------------------
-double te_parser::evaluate()
+te_type te_parser::evaluate()
     {
     try
         {
@@ -1380,7 +1384,7 @@ double te_parser::evaluate()
     }
 
 //--------------------------------------------------
-double te_parser::evaluate(const std::string_view expression)
+te_type te_parser::evaluate(const std::string_view expression)
     {
     if (compile(expression))
         { return evaluate(); }

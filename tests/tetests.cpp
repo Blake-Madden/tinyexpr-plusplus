@@ -54,86 +54,86 @@
 
 namespace TETesting
 {
-double sum0() {
+te_type sum0() {
     return 6;
 }
-double sum1(double a) {
+te_type sum1(te_type a) {
     return a * 2;
 }
-double sum2(double a, double b) {
+te_type sum2(te_type a, te_type b) {
     return a + b;
 }
-double sum3(double a, double b, double c) {
+te_type sum3(te_type a, te_type b, te_type c) {
     return a + b + c;
 }
-double sum4(double a, double b, double c, double d) {
+te_type sum4(te_type a, te_type b, te_type c, te_type d) {
     return a + b + c + d;
 }
-double sum5(double a, double b, double c, double d, double e) {
+te_type sum5(te_type a, te_type b, te_type c, te_type d, te_type e) {
     return a + b + c + d + e;
 }
-double sum6(double a, double b, double c, double d, double e, double f) {
+te_type sum6(te_type a, te_type b, te_type c, te_type d, te_type e, te_type f) {
     return a + b + c + d + e + f;
 }
-double sum7(double a, double b, double c, double d, double e, double f, double g) {
+te_type sum7(te_type a, te_type b, te_type c, te_type d, te_type e, te_type f, te_type g) {
     return a + b + c + d + e + f + g;
 }
 
-double clo0(const te_expr* context) {
-    if (context) return *(std::get<const double*>(context->m_value)) + 6;
+te_type clo0(const te_expr* context) {
+    if (context) return *(std::get<const te_type*>(context->m_value)) + 6;
     return 6;
 }
-double clo1(const te_expr* context, double a) {
-    if (context) return *(std::get<const double*>(context->m_value)) + a * 2;
+te_type clo1(const te_expr* context, te_type a) {
+    if (context) return *(std::get<const te_type*>(context->m_value)) + a * 2;
     return a * 2;
 }
-double clo2(const te_expr* context, double a, double b) {
-    if (context) return *(std::get<const double*>(context->m_value)) + a + b;
+te_type clo2(const te_expr* context, te_type a, te_type b) {
+    if (context) return *(std::get<const te_type*>(context->m_value)) + a + b;
     return a + b;
 }
 
-double clo3(const te_expr* context, double a, double b, double c) {
-    if (context) return *(std::get<const double*>(context->m_value)) + a + b + c;
+te_type clo3(const te_expr* context, te_type a, te_type b, te_type c) {
+    if (context) return *(std::get<const te_type*>(context->m_value)) + a + b + c;
     return a + b + c;
 }
 
-double clo4(const te_expr* context, double a, double b, double c, double d) {
-    if (context) return *(std::get<const double*>(context->m_value)) + a + b + c + d;
+te_type clo4(const te_expr* context, te_type a, te_type b, te_type c, te_type d) {
+    if (context) return *(std::get<const te_type*>(context->m_value)) + a + b + c + d;
     return a + b + c + d;
 }
 
-double clo5(const te_expr* context, double a, double b, double c, double d, double e) {
-    if (context) return *(std::get<const double*>(context->m_value)) + a + b + c + d + e;
+te_type clo5(const te_expr* context, te_type a, te_type b, te_type c, te_type d, te_type e) {
+    if (context) return *(std::get<const te_type*>(context->m_value)) + a + b + c + d + e;
     return a + b + c + d + e;
 }
 
-double clo6(const te_expr* context, double a, double b, double c, double d, double e, double f) {
-    if (context) return *(std::get<const double*>(context->m_value)) + a + b + c + d + e + f;
+te_type clo6(const te_expr* context, te_type a, te_type b, te_type c, te_type d, te_type e, te_type f) {
+    if (context) return *(std::get<const te_type*>(context->m_value)) + a + b + c + d + e + f;
     return a + b + c + d + e + f;
 }
 
-double clo7(const te_expr* context, double a, double b, double c, double d, double e, double f, double g) {
-    if (context) return *(std::get<const double*>(context->m_value)) + a + b + c + d + e + f + g;
+te_type clo7(const te_expr* context, te_type a, te_type b, te_type c, te_type d, te_type e, te_type f, te_type g) {
+    if (context) return *(std::get<const te_type*>(context->m_value)) + a + b + c + d + e + f + g;
     return a + b + c + d + e + f + g;
 }
 
-inline double AddEm(const double a, const double b){
+inline te_type AddEm(const te_type a, const te_type b){
     return a+b;
 }
 
-inline double AddEm3(const double a, const double b, const double c){
+inline te_type AddEm3(const te_type a, const te_type b, const te_type c){
     return a+b+c;
 }
 
-inline double __value(const double a){
+inline te_type __value(const te_type a){
     return a;
 }
 
-inline double return5(){
+inline te_type return5(){
     return 5;
 }
 
-inline double __mult(const double a, const double b, const double c, const double d){
+inline te_type __mult(const te_type a, const te_type b, const te_type c, const te_type d){
     return a*b*c*d;
 }
 
@@ -142,49 +142,49 @@ class te_expr_array : public te_expr
 public:
     explicit te_expr_array(const te_variable_flags type) noexcept :
         te_expr(type) {}
-    std::array<double, 5> m_data = { 5, 6, 7, 8, 9 };
+    std::array<te_type, 5> m_data = { 5, 6, 7, 8, 9 };
     };
 
 // Returns the value of a cell from the object's data.
-double cell(const te_expr* context, double a)
+te_type cell(const te_expr* context, te_type a)
     {
     auto* c = dynamic_cast<const te_expr_array*>(context);
-    return static_cast<double>(c->m_data[static_cast<size_t>(a)]);
+    return static_cast<te_type>(c->m_data[static_cast<size_t>(a)]);
     }
 
 // Returns the max value object's data.
-double cell_max(const te_expr* context)
+te_type cell_max(const te_expr* context)
     {
     auto* c = dynamic_cast<const te_expr_array*>(context);
-    return static_cast<double>(
+    return static_cast<te_type>(
         *std::max_element(c->m_data.cbegin(), c->m_data.cend()));
     }
 
-double bench_a5(double a) {
+te_type bench_a5(te_type a) {
     return a+5;
 }
 
-double bench_a55(double a) {
+te_type bench_a55(te_type a) {
     return 5+a+5;
 }
 
-double bench_a5abs(double a) {
+te_type bench_a5abs(te_type a) {
     return fabs(a+5);
 }
 
-double bench_a52(double a) {
+te_type bench_a52(te_type a) {
     return (a+5)*2;
 }
 
-double bench_a10(double a) {
+te_type bench_a10(te_type a) {
     return a+(5*2);
 }
 
-double bench_as(double a) {
-    return std::sqrt(std::pow(a, 1.5) + std::pow(a, 2.5));
+te_type bench_as(te_type a) {
+    return static_cast<te_type>(std::sqrt(std::pow(a, 1.5) + std::pow(a, 2.5)));
 }
 
-double bench_al(double a) {
+te_type bench_al(te_type a) {
     return (1/(a+1)+2/(a+2)+3/(a+3));
 }
 
@@ -232,10 +232,10 @@ TEST_CASE("Main tests", "[main]")
     CHECK(std::isnan(tep.evaluate("asin(1.01)")));
     CHECK(std::isnan(tep.evaluate("asin(-1.01)")));
     CHECK(tep.get_last_error_message() == "Argument passed to ASIN must be between -1 and 1.");
-    CHECK(tep.evaluate("asin(1)") == std::asin(1.0));
+    CHECK(tep.evaluate("asin(1)") == std::asin(static_cast<te_type>(1.0)));
     CHECK(tep.get_last_error_message().empty());
     CHECK(tep.success());
-    CHECK(tep.evaluate("asin(-1)") == std::asin(-1.0));
+    CHECK(tep.evaluate("asin(-1)") == std::asin(static_cast<te_type>(-1.0)));
     CHECK(tep.get_last_error_message().empty());
     CHECK(tep.success());
 
@@ -262,7 +262,7 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("10^5*5e-5") == 5);
 
     CHECK_THAT(tep.evaluate("ln 1000"), Catch::Matchers::WithinRel(6.9078, 0.00001));
-    CHECK(tep.evaluate("ln e") == 1);
+    CHECK_THAT(tep.evaluate("ln e"), Catch::Matchers::WithinRel(1.0, 0.00001));
     CHECK(tep.evaluate("ln(exp(3))") == 3);
     CHECK_THAT(tep.evaluate("ln(2.7182818)"), Catch::Matchers::WithinRel(1.0, 0.00001));
     CHECK_THAT(tep.evaluate("ln(86)"), Catch::Matchers::WithinRel(4.454373, 0.00001));
@@ -274,11 +274,11 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("100^--.5+1") == 11);
     CHECK(tep.evaluate("100^---+-++---++-+-+-.5+1") == 11);
 
-    CHECK(tep.evaluate("100^-.5+1") == 1.1);
-    CHECK(tep.evaluate("100^---.5+1") == 1.1);
-    CHECK(tep.evaluate("100^+---.5+1") == 1.1);
-    CHECK(tep.evaluate("1e2^+---.5e0+1e0") == 1.1);
-    CHECK(tep.evaluate("--(1e2^(+(-(-(-.5e0))))+1e0)") == 1.1);
+    CHECK(tep.evaluate("100^-.5+1") == static_cast<te_type>(1.1));
+    CHECK(tep.evaluate("100^---.5+1") == static_cast<te_type>(1.1));
+    CHECK(tep.evaluate("100^+---.5+1") == static_cast<te_type>(1.1));
+    CHECK(tep.evaluate("1e2^+---.5e0+1e0") == static_cast<te_type>(1.1));
+    CHECK(tep.evaluate("--(1e2^(+(-(-(-.5e0))))+1e0)") == static_cast<te_type>(1.1));
 
     CHECK(tep.evaluate("sqrt 100 + 7") == 17);
     CHECK(tep.evaluate("sqrt 100 * 7") == 70);
@@ -333,9 +333,9 @@ TEST_CASE("Main tests", "[main]")
         CHECK(tep.evaluate("round(9.57878423)") == 10);
         CHECK(tep.evaluate("round(pow(2,2))") == 4);
         // non-variadic function inside of variadic
-        CHECK(tep.evaluate("round(9.57878423, 1)") == 9.6);
-        CHECK(tep.evaluate("round(9.57878423, 2)") == 9.58);
-        CHECK(tep.evaluate("round(9.57878423, 3)") == 9.579);
+        CHECK(tep.evaluate("round(9.57878423, 1)") == static_cast<te_type>(9.6));
+        CHECK(tep.evaluate("round(9.57878423, 2)") == static_cast<te_type>(9.58));
+        CHECK(tep.evaluate("round(9.57878423, 3)") == static_cast<te_type>(9.579));
         CHECK(tep.evaluate("sum(9)") == 9);
         CHECK(tep.evaluate("sum(9,9)") == 18);
         CHECK(tep.evaluate("sum(9,9,9)") == 27);
@@ -522,7 +522,7 @@ TEST_CASE("Combinatorics", "[combinatorics]")
 
 TEST_CASE("Variables", "[variables]")
     {
-    double x{ 0 }, y{ 0 }, test{ 0 };
+    te_type x{ 0 }, y{ 0 }, test{ 0 };
 
     te_parser tep;
     tep.set_variables_and_functions({ {"x", &x}, {"y", &y}, {"te_st", &test} });
@@ -562,10 +562,10 @@ TEST_CASE("Variables", "[variables]")
         {
         for (x = 0; x < 5; ++x)
             {
-            double ev{ 0 };
+            te_type ev{ 0 };
 
             ev = tep.evaluate("cos x + sin y");
-            CHECK_THAT(ev, Catch::Matchers::WithinRel(cos(x) + sin(y)));
+            CHECK_THAT(ev, Catch::Matchers::WithinRel(std::cos(x) + std::sin(y)));
 
             ev = tep.evaluate("x+x+x-y");
             CHECK_THAT(ev, Catch::Matchers::WithinRel(x+x+x-y));
@@ -582,7 +582,7 @@ TEST_CASE("Variables", "[variables]")
 
 TEST_CASE("Dynamic", "[dynamic]")
     {
-    double x{ 2 }, f{ 5 };
+    te_type x{ 2 }, f{ 5 };
     const std::set<te_variable> lookup =
         {
         {"x", &x},
@@ -672,12 +672,12 @@ TEST_CASE("Zeros", "[zeros]")
 
 TEST_CASE("Functions", "[functions]")
     {
-    double x{ 0 }, y{ 0 };
+    te_type x{ 0 }, y{ 0 };
 
     te_parser tep;
     tep.set_variables_and_functions({ {"x", &x}, {"y", &y} });
 
-    for (x = -5; x < 5; x += 0.1)
+    for (x = -5; x < 5; x += (te_type)0.1)
         {
         CHECK_THAT(tep.evaluate("abs x"), Catch::Matchers::WithinRel(fabs(x)));
         if (!std::isnan(acos(x)))
@@ -711,7 +711,7 @@ TEST_CASE("Functions", "[functions]")
         CHECK_THAT(tep.evaluate("tan x"), Catch::Matchers::WithinRel(tan(x)));
         CHECK_THAT(tep.evaluate("tanh x"), Catch::Matchers::WithinRel(tanh(x)));
 
-        for (y = -2; y < 2; y += 0.2)
+        for (y = -2; y < 2; y += (te_type)0.2)
             {
             if (fabs(x) < 0.01) break;
             CHECK_THAT(tep.evaluate("atan2(x,y)"), Catch::Matchers::WithinRel(atan2(x, y)));
@@ -725,7 +725,7 @@ TEST_CASE("Functions", "[functions]")
 
 TEST_CASE("Power", "[power]")
     {
-    const double a{ 2 }, b{ 3 };
+    const te_type a{ 2 }, b{ 3 };
 
     const std::set<te_variable> lookup = {
         {"a", &a},
@@ -870,7 +870,7 @@ TEST_CASE("Cells", "[closure]")
 
 TEST_CASE("Closure", "[closure]")
     {
-    double extra{ 0 };
+    te_type extra{ 0 };
 
     te_expr te{ TE_DEFAULT, &extra };
 
@@ -889,7 +889,7 @@ TEST_CASE("Closure", "[closure]")
     tep.set_variables_and_functions(lookup);
 
     extra = 0;
-    double answer{ 6 };
+    te_type answer{ 6 };
     [[maybe_unused]] auto res = tep.evaluate("c0");
     CHECK(tep.success());
     CHECK(tep.evaluate() == answer + extra);
@@ -1317,7 +1317,7 @@ TEST_CASE("Division", "[math]")
     te_parser p;
 
     p.compile("4/2.2");
-    CHECK_THAT(1.81818, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(1.81818, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
     CHECK(std::isnan(p.evaluate("5 / 0")));
     CHECK_FALSE(p.success());
     CHECK(p.get_last_error_message() == "Division by zero.");
@@ -1362,9 +1362,9 @@ TEST_CASE("Remove custom var", "[functions]")
     te_parser p;
 
     p.set_variables_and_functions({
-        {"STRESS_L", 10.1},
-        {"P_LEVEL", .5},
-        {"z", .75} });
+        {"STRESS_L", static_cast<te_type>(10.1) },
+        {"P_LEVEL", static_cast<te_type>(.5) },
+        {"z", static_cast<te_type>(.75) } });
     p.compile(("z + STRESS_L + P_LEVEL"));
     CHECK(p.is_variable_used(("Z")));
     CHECK(p.is_variable_used(("STRESs_L")));
@@ -1389,9 +1389,9 @@ TEST_CASE("Is variable used", "[functions]")
     te_parser p;
 
     p.set_variables_and_functions({
-        {"STRESS_L", 10.1},
-        {"P_LEVEL", .5},
-        {"z", .75} });
+        {"STRESS_L", static_cast<te_type>(10.1) },
+        {"P_LEVEL", static_cast<te_type>(.5) },
+        {"z", static_cast<te_type>(.75) } });
     p.compile(("z + STRESS_L"));
     CHECK(p.is_variable_used(("Z")));
     CHECK(p.is_variable_used(("STRESs_L")));
@@ -1442,19 +1442,19 @@ TEST_CASE("Custom test", "[functions]")
         }
     SECTION("Custom variables")
         {
-        p.set_variables_and_functions({ {"STRESS_L", 10.1},
-            {"P_LEVEL", .5} });
+        p.set_variables_and_functions({ {"STRESS_L", static_cast<te_type>(10.1) },
+            {"P_LEVEL", static_cast<te_type>(.5) } });
         p.compile("STRESS_L*P_LEVEL");
         CHECK_THAT(5.05, Catch::Matchers::WithinRel(p.evaluate()));
-        p.set_constant("P_LEVEL", .9);
+        p.set_constant("P_LEVEL", static_cast<te_type>(.9));
         CHECK_THAT(9.09, Catch::Matchers::WithinRel(p.evaluate()));
         p.compile(("IF(STRESS_L >= P_LEVEL, 1, 0)"));
         CHECK(1 == p.evaluate());
         }
     SECTION("Custom variables and if")
         {
-        p.set_variables_and_functions({ {"smartMeter1.power", 1'950.0},
-            {"sensor1.temperature", 45.0} });
+        p.set_variables_and_functions({ {"smartMeter1.power", static_cast<te_type>(1'950.0) },
+            {"sensor1.temperature", static_cast<te_type>(45.0) } });
         p.compile("IF(AND(smartMeter1.power > 1,900, sensor1.temperature < 52), "
             "TRUE, "
             "IF(AND(smartMeter1.power < 300, sensor1.temperature > 55), FALSE,"
@@ -1494,11 +1494,11 @@ TEST_CASE("Funcs and vars with period", "[functions]")
         }
     SECTION("Custom variables")
         {
-        p.set_variables_and_functions({ {"STATS.STRESS_L", 10.1},
-            {"stats.REGRESSION.P_LEVEL", .5} });
+        p.set_variables_and_functions({ {"STATS.STRESS_L", static_cast<te_type>(10.1) },
+            {"stats.REGRESSION.P_LEVEL", static_cast<te_type>(.5) } });
         p.compile(("statS.STRESS_L*StAts.REGRESSION.P_LEVEL"));
         CHECK_THAT(5.05, Catch::Matchers::WithinRel(p.evaluate()));
-        p.set_constant("statS.REGRESSION.P_LEVEL", .9);
+        p.set_constant("statS.REGRESSION.P_LEVEL", static_cast<te_type>(.9));
         CHECK_THAT(9.09, Catch::Matchers::WithinRel(p.evaluate()));
         p.compile(("IF(StAts.STRESS_L >= Stats.REGRESSION.P_LEVEL, 1, 0)"));
         CHECK(1 == p.evaluate());
@@ -1538,11 +1538,11 @@ TEST_CASE("Funcs and vars start with underscore", "[functions]")
         }
     SECTION("Custom variables")
         {
-        p.set_variables_and_functions({ {"_STATS.STRESS_L", 10.1},
-            {"_stats.REGRESSION.P_LEVEL", .5} });
+        p.set_variables_and_functions({ {"_STATS.STRESS_L", static_cast<te_type>(10.1) },
+            {"_stats.REGRESSION.P_LEVEL", static_cast<te_type>(.5) } });
         p.compile(("_statS.STRESS_L*_StAts.REGRESSION.P_LEVEL"));
         CHECK_THAT(5.05, Catch::Matchers::WithinRel(p.evaluate()));
-        p.set_constant("_statS.REGRESSION.P_LEVEL", .9);
+        p.set_constant("_statS.REGRESSION.P_LEVEL", static_cast<te_type>(.9));
         CHECK_THAT(9.09, Catch::Matchers::WithinRel(p.evaluate()));
         p.compile(("IF(_StAts.STRESS_L >= _Stats.REGRESSION.P_LEVEL, 1, 0)"));
         CHECK(1 == p.evaluate());
@@ -1561,8 +1561,8 @@ TEST_CASE("Funcs and vars start with underscore", "[functions]")
 TEST_CASE("Complex", "[functions]")
     {
     te_parser tep;
-    tep.set_variables_and_functions({ {"N_OBS", 29.0},
-            {"P_LEVEL", .049} });
+    tep.set_variables_and_functions({ {"N_OBS", static_cast<te_type>(29.0) },
+            {"P_LEVEL", static_cast<te_type>(.049) } });
 
     [[maybe_unused]] auto res = tep.evaluate(R"(
 IF(AND(P_LEVEL < .05, N_OBS >= 30),
@@ -1603,7 +1603,7 @@ NAN)
     tep.set_constant("N_OBS", 31);
     CHECK_THAT(.049, Catch::Matchers::WithinRel(tep.evaluate()));
 
-    tep.set_constant("P_LEVEL", .06);
+    tep.set_constant("P_LEVEL", static_cast<te_type>(.06));
     res = tep.evaluate(R"(
 IF(P_LEVEL < .05 & N_OBS >= 30,
 P_LEVEL,
@@ -1674,22 +1674,22 @@ TEST_CASE("Additional math functions", "[math]")
     CHECK_THAT(9, Catch::Matchers::WithinRel(p.evaluate()));
 
     p.compile(("SIN(3)"));
-    CHECK_THAT(0.141120008, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(0.141120008, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
 
     p.compile(("COS(7)"));
-    CHECK_THAT(.7539, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(.7539, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
 
     p.compile(("TAN(7)"));
-    CHECK_THAT(.871447983, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(.871447983, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
 
     p.compile(("ATAN(7)"));
-    CHECK_THAT(1.42889927, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(1.42889927, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
 
     p.compile(("SINH(7)"));
-    CHECK_THAT(548.316123, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(548.316123, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
 
     p.compile(("COSH(1)"));
-    CHECK_THAT(1.54308, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(1.54308, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
 
     p.compile(("FLOOR(-3.2)"));
     CHECK_THAT(-4, Catch::Matchers::WithinRel(p.evaluate()));
@@ -1713,10 +1713,10 @@ TEST_CASE("Additional math functions", "[math]")
     CHECK_THAT(2, Catch::Matchers::WithinRel(p.evaluate()));
 
     p.compile(("LN(10)"));
-    CHECK_THAT(2.30258509, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(2.30258509, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
 
     p.compile(("LN(100)"));
-    CHECK_THAT(4.60517019, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(4.60517019, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
 
     p.compile(("ABS(-2.7)"));
     CHECK_THAT(2.7, Catch::Matchers::WithinRel(p.evaluate()));
@@ -1749,13 +1749,13 @@ TEST_CASE("Additional math functions", "[math]")
     CHECK_THAT(0, Catch::Matchers::WithinRel(p.evaluate()));
 
     p.compile(("COT(0.1)"));
-    CHECK_THAT(9.9666, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(9.9666, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
 
     p.compile(("COT(1.57)"));
-    CHECK_THAT(0.0007963, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(0.0007963, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
 
     p.compile(("EXP(3)"));
-    CHECK_THAT(20.085540, Catch::Matchers::WithinRel(p.evaluate(), 0.0001));
+    CHECK_THAT(20.085540, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
 
     p.compile(("SQRT(9)"));
     CHECK_THAT(3, Catch::Matchers::WithinRel(p.evaluate()));
@@ -1862,16 +1862,16 @@ TEST_CASE("Logical functions", "[logic]")
 TEST_CASE("Validate variables", "[names]")
     {
     te_parser tep;
-    CHECK_THROWS(tep.add_variable_or_function({ "", 5.0 }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "", 5.0 } }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "Var WithSpace", 5.0 } }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "Varÿ", 5.0 } }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "Var,", 5.0 } }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "Var$", 5.0 } }));
-    CHECK_THROWS(tep.set_variables_and_functions({ { "Var ", 5.0 } }));
+    CHECK_THROWS(tep.add_variable_or_function({ "", static_cast<te_type>(5.0) }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "", static_cast<te_type>(5.0) } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Var WithSpace", static_cast<te_type>(5.0) } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Varÿ", static_cast<te_type>(5.0) } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Var,", static_cast<te_type>(5.0) } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Var$", static_cast<te_type>(5.0) } }));
+    CHECK_THROWS(tep.set_variables_and_functions({ { "Var ", static_cast<te_type>(5.0) } }));
 
     // should be fine
-    CHECK_NOTHROW(tep.set_variables_and_functions({ { "Var_OK74_", 5.0 } }));
+    CHECK_NOTHROW(tep.set_variables_and_functions({ { "Var_OK74_", static_cast<te_type>(5.0) } }));
     }
 
 TEST_CASE("Clamp", "[clamp]")
@@ -1893,7 +1893,7 @@ TEST_CASE("Lambdas", "[lambdas]")
     te_parser tep;
     tep.set_variables_and_functions({
         { "mysum",
-            [](double a, double b) noexcept
+            [](te_type a, te_type b) noexcept
                 { return a + b; } }
         });
 
@@ -2011,7 +2011,7 @@ TEST_CASE("Shift operators", "[shift]")
         }
     }
 
-double ResolveResolutionSymbols(std::string_view str)
+te_type ResolveResolutionSymbols(std::string_view str)
     {
     return (str == "RES" || str == "RESOLUTION") ?
         96 : te_parser::te_nan;
@@ -2043,7 +2043,7 @@ TEST_CASE("Unknown symbol resolve funct pointer purge resolved 2", "[usr]")
     te_parser parser;
     parser.set_unknown_symbol_resolver([](std::string_view symbol)
         {
-        static double temperature = 49.0;
+        static te_type temperature = 49.0;
         return temperature += 1.0;
         }, false);
     CHECK(parser.compile(str));        // 50
@@ -2055,7 +2055,7 @@ TEST_CASE("Unknown symbol resolve funct pointer purge resolved 2", "[usr]")
 TEST_CASE("Unknown symbol resolve lambda with capture", "[usr]")
     {
     std::string str("id.temperature < 51");
-    double temperature = 49.0;
+    te_type temperature = 49.0;
     te_parser parser;
     parser.set_unknown_symbol_resolver([&](std::string_view symbol)
         {
@@ -2071,9 +2071,9 @@ TEST_CASE("Unknown symbol resolve 1 param purged", "[usr]")
     {
     te_parser tep;
     tep.set_unknown_symbol_resolver(
-        [](std::string_view str) -> double
+        [](std::string_view str) -> te_type
         {
-        static double stressLevel{ 3 };
+        static te_type stressLevel{ 3 };
         if (std::strncmp(str.data(), "STRESS", 6) == 0)
             { return stressLevel++; }
         else
@@ -2094,7 +2094,7 @@ TEST_CASE("Unknown symbol resolve 1 param", "[usr]")
     {
     te_parser tep;
     tep.set_unknown_symbol_resolver(
-        [](std::string_view str) -> double
+        [](std::string_view str) -> te_type
         {
         if (std::strncmp(str.data(), "STRESS_LOW", str.length()) == 0)
             { return 2; }
@@ -2119,7 +2119,7 @@ TEST_CASE("Unknown symbol resolve 2 param", "[usr]")
     {
     te_parser tep;
     tep.set_unknown_symbol_resolver(
-        [](std::string_view str, std::string& message) -> double
+        [](std::string_view str, std::string& message) -> te_type
         {
         if (std::strncmp(str.data(), "STRESS_LOW", str.length()) == 0)
             {
@@ -2155,7 +2155,7 @@ TEST_CASE("Unknown symbol resolve disable", "[usr]")
     {
     te_parser tep;
     tep.set_unknown_symbol_resolver(
-        [](std::string_view str, std::string& message) -> double
+        [](std::string_view str, std::string& message) -> te_type
         {
         if (std::strncmp(str.data(), "STRESS_LOW", str.length()) == 0)
             {
@@ -2186,7 +2186,7 @@ TEST_CASE("Unknown symbol resolve throws", "[usr]")
     {
     te_parser tep;
     tep.set_unknown_symbol_resolver(
-        [](std::string_view str) -> double
+        [](std::string_view str) -> te_type
         {
         if (std::strncmp(str.data(), "STRESS_LOW", str.length()) == 0)
             { return 2; }
@@ -2210,8 +2210,8 @@ TEST_CASE("Unknown symbol resolve dynamic", "[usr]")
     // dynamic strings like "FY2004" or "FY1997" and convert them to 2004 and 1997.
     tep.set_unknown_symbol_resolver(
         // Handler should except a string (which will be the unrecognized token)
-        // and return a double.
-        [](std::string_view str) -> double
+        // and return a te_type.
+        [](std::string_view str) -> te_type
         {
         const std::regex re{ "FY([0-9]{4})",
             std::regex_constants::icase | std::regex_constants::ECMAScript };
@@ -2225,7 +2225,7 @@ TEST_CASE("Unknown symbol resolve dynamic", "[usr]")
             // evaluations will see this as 1982 (unless set_constant() is called
             // to change it).
             if (matches.size() > 1)
-                { return std::atol(matches[1].str().c_str()); }
+                { return static_cast<te_type>(std::atol(matches[1].str().c_str())); }
             else
                 { return te_parser::te_nan; }
             }
@@ -2343,12 +2343,12 @@ TEST_CASE("Volatile", "[volatile]")
     volatile te_parser& vTep = tep;
 
     const_cast<te_parser&>(vTep).set_variables_and_functions(
-        { {"STRESS_L", 10.1},
-          {"P_LEVEL", .5} });
+        { {"STRESS_L", static_cast<te_type>(10.1) },
+          {"P_LEVEL", static_cast<te_type>(.5) } });
     const_cast<te_parser&>(vTep).compile(("STRESS_L*P_LEVEL"));
     CHECK_THAT(5.05, Catch::Matchers::WithinRel(const_cast<te_parser&>(vTep).evaluate()));
     CHECK_THAT(5.05, Catch::Matchers::WithinRel(const_cast<te_parser&>(vTep).evaluate("STRESS_L*P_LEVEL")));
-    const_cast<te_parser&>(vTep).set_constant("P_LEVEL", .9);
+    const_cast<te_parser&>(vTep).set_constant("P_LEVEL", static_cast<te_type>(.9));
     CHECK_THAT(9.09, Catch::Matchers::WithinRel(const_cast<te_parser&>(vTep).evaluate()));
     const_cast<te_parser&>(vTep).compile(("IF(STRESS_L >= P_LEVEL, 1, 0)"));
     CHECK(const_cast<te_parser&>(vTep).evaluate() == 1);
@@ -2421,7 +2421,7 @@ COMBIN(15,
 
 TEST_CASE("Benchmarks", "[!benchmark]")
     {
-    double benchmarkVar{ 9 };
+    te_type benchmarkVar{ 9 };
     te_parser tep;
     tep.set_variables_and_functions({ {"a", &benchmarkVar} });
 

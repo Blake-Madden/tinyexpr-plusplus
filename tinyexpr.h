@@ -69,36 +69,47 @@
 #include <utility>
 #include <functional>
 
+class te_parser;
+
+/// @brief Define this to use @c float instead of @c double for the parser's data type.
+#ifdef TE_FLOAT
+    /// @brief The parameter and return type for parser and its functions.
+    using te_type = float;
+#else
+    /// @brief The parameter and return type for parser and its functions.
+    using te_type = double;
+#endif
+
 class te_expr;
 
 // regular functions
-using te_fun0 = double (*)();
-using te_fun1 = double (*)(double);
-using te_fun2 = double (*)(double, double);
-using te_fun3 = double (*)(double, double, double);
-using te_fun4 = double (*)(double, double, double, double);
-using te_fun5 = double (*)(double, double, double, double, double);
-using te_fun6 = double (*)(double, double, double, double, double, double);
-using te_fun7 = double (*)(double, double, double, double, double, double, double);
+using te_fun0 = te_type (*)();
+using te_fun1 = te_type (*)(te_type);
+using te_fun2 = te_type (*)(te_type, te_type);
+using te_fun3 = te_type (*)(te_type, te_type, te_type);
+using te_fun4 = te_type (*)(te_type, te_type, te_type, te_type);
+using te_fun5 = te_type (*)(te_type, te_type, te_type, te_type, te_type);
+using te_fun6 = te_type (*)(te_type, te_type, te_type, te_type, te_type, te_type);
+using te_fun7 = te_type (*)(te_type, te_type, te_type, te_type, te_type, te_type, te_type);
 // context functions (where te_variable passes a client's te_expr as the first argument)
-using te_confun0 = double (*)(const te_expr*);
-using te_confun1 = double (*)(const te_expr*, double);
-using te_confun2 = double (*)(const te_expr*, double, double);
-using te_confun3 = double (*)(const te_expr*, double, double, double);
-using te_confun4 = double (*)(const te_expr*, double, double, double, double);
-using te_confun5 = double (*)(const te_expr*, double, double, double, double, double);
-using te_confun6 = double (*)(const te_expr*, double, double, double, double, double, double);
-using te_confun7 = double (*)(const te_expr*, double, double, double, double, double, double, double);
+using te_confun0 = te_type (*)(const te_expr*);
+using te_confun1 = te_type (*)(const te_expr*, te_type);
+using te_confun2 = te_type (*)(const te_expr*, te_type, te_type);
+using te_confun3 = te_type (*)(const te_expr*, te_type, te_type, te_type);
+using te_confun4 = te_type (*)(const te_expr*, te_type, te_type, te_type, te_type);
+using te_confun5 = te_type (*)(const te_expr*, te_type, te_type, te_type, te_type, te_type);
+using te_confun6 = te_type (*)(const te_expr*, te_type, te_type, te_type, te_type, te_type, te_type);
+using te_confun7 = te_type (*)(const te_expr*, te_type, te_type, te_type, te_type, te_type, te_type, te_type);
 
 // functions for unknown symbol resolution
 using te_usr_noop = std::function<void()>;
-using te_usr_fun0 = std::function<double(std::string_view)>;
-using te_usr_fun1 = std::function<double(std::string_view, std::string&)>;
+using te_usr_fun0 = std::function<te_type(std::string_view)>;
+using te_usr_fun1 = std::function<te_type(std::string_view, std::string&)>;
 
 using te_usr_variant_type = std::variant<te_usr_noop, te_usr_fun0, te_usr_fun1>;
 
 // do not change the ordering of these, the indices are used to determine the value type of a te_variable
-using te_variant_type = std::variant<double, const double*, // indices 0-1
+using te_variant_type = std::variant<te_type, const te_type*, // indices 0-1
     // indices 2-9
     te_fun0, te_fun1, te_fun2, te_fun3, te_fun4, te_fun5, te_fun6, te_fun7,
     // indices 10-17
@@ -163,8 +174,8 @@ public:
     virtual ~te_expr() {}
     /// @brief The type that m_value represents.
     te_variable_flags m_type{ TE_DEFAULT };
-    /// @brief The double constant, double pointer, or function to bind to.
-    te_variant_type m_value{ 0.0 };
+    /// @brief The te_type constant, te_type pointer, or function to bind to.
+    te_variant_type m_value{ static_cast<te_type>(0.0) };
     /// @brief Additional parameters.
     std::vector<te_expr*> m_parameters{ nullptr };
     };
@@ -181,7 +192,7 @@ public:
         { return te_string_less{}(m_name, that.m_name); }
     /// @brief The name as it would appear in a formula.
     name_type m_name;
-    /// @brief The double constant, double pointer, or function to bind the name to.
+    /// @brief The te_type constant, te_type pointer, or function to bind the name to.
     te_variant_type m_value;
     /// @brief The type that m_value represents.
     te_variable_flags m_type{ TE_DEFAULT };
@@ -205,7 +216,7 @@ public:
     ~te_parser()
         { te_free(m_compiledExpression); }
     /// @brief NaN (not-a-number) constant to indicate an invalid value.
-    static constexpr auto te_nan = std::numeric_limits<double>::quiet_NaN();
+    static constexpr auto te_nan = std::numeric_limits<te_type>::quiet_NaN();
     /// @brief No position, which is what get_last_error_position() returns
     ///     when there was no parsing error.
     static constexpr int64_t npos = -1;
@@ -223,7 +234,7 @@ public:
         @throws std::runtime_error Throws an exception in the case of arithmetic overflows
             (e.g., `1 << 64` would cause an overflow).*/
     [[nodiscard]]
-    double evaluate();
+    te_type evaluate();
     /** @brief Compiles and evaluates an expression and returns its result.
         @param expression The formula to compile and evaluate.
         @returns The result, or NaN on error.
@@ -231,14 +242,14 @@ public:
         @throws std::runtime_error Throws an exception in the case of arithmetic overflows
             (e.g., `1 << 64` would cause an overflow).*/
     [[nodiscard]]
-    double evaluate(const std::string_view expression);
+    te_type evaluate(const std::string_view expression);
     /// @returns The last call to evaluate()'s result (which will be NaN on error).
     [[nodiscard]]
-    double get_result() const noexcept
+    te_type get_result() const noexcept
         { return m_result; }
     /// @private
     [[nodiscard]]
-    double get_result() const volatile noexcept
+    te_type get_result() const volatile noexcept
         { return m_result; }
     /// @returns Whether the last call to compile() was successful.
     /// @sa get_last_error_position().
@@ -292,7 +303,8 @@ public:
     /// @param var The variable/function to remove (by name).
     void remove_variable_or_function(te_variable::name_type var)
         {
-        auto foundVar = m_customFuncsAndVars.find(te_variable{ std::move(var), 0.0, TE_DEFAULT, nullptr });
+        auto foundVar = m_customFuncsAndVars.find(
+            te_variable{ std::move(var), static_cast<te_type>(0.0), TE_DEFAULT, nullptr });
         if (foundVar != m_customFuncsAndVars.cend())
             { m_customFuncsAndVars.erase(foundVar); }
         }
@@ -350,7 +362,7 @@ public:
     ///     then this will add it.\n
     ///     If a variable with the provided name is found but is not a constant,
     ///     then this will be ignored.
-    void set_constant(const std::string_view name, const double value)
+    void set_constant(const std::string_view name, const te_type value)
         {
         auto cvar = find_variable_or_function(name);
         if (cvar == get_variables_and_functions().end())
@@ -372,12 +384,12 @@ public:
     /// @param name The name of the (constant) variable.
     /// @returns The value of the constant variable if found, NaN otherwise.
     [[nodiscard]]
-    double get_constant(const std::string_view name) const
+    te_type get_constant(const std::string_view name) const
         {
         auto cvar = find_variable_or_function(name);
         if (cvar == get_variables_and_functions().cend() || !is_constant(cvar->m_value))
             { return te_nan; }
-        if (const auto val = std::get_if<double>(&cvar->m_value);
+        if (const auto val = std::get_if<te_type>(&cvar->m_value);
             val != nullptr)
             { return *val; }
         else
@@ -502,7 +514,7 @@ private:
             { return m_customFuncsAndVars.end(); }
 
         return m_customFuncsAndVars.find(
-            te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
+            te_variable{ te_variable::name_type{ name }, static_cast<te_type>(0.0), TE_DEFAULT, nullptr });
         }
 
     /// @returns An iterator to the custom variable or function with the given @c name,
@@ -515,7 +527,7 @@ private:
             { return m_customFuncsAndVars.cend(); }
 
         return m_customFuncsAndVars.find(
-            te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
+            te_variable{ te_variable::name_type{ name }, static_cast<te_type>(0.0), TE_DEFAULT, nullptr });
         }
 
     [[nodiscard]]
@@ -543,18 +555,18 @@ private:
     constexpr static bool is_constant(const te_variant_type& var) noexcept
         { return var.index() == 0; }
     [[nodiscard]]
-    constexpr static double get_constant(const te_variant_type& var)
+    constexpr static te_type get_constant(const te_variant_type& var)
         {
-        assert(std::holds_alternative<double>(var));
+        assert(std::holds_alternative<te_type>(var));
         return std::get<0>(var);
         }
     [[nodiscard]]
     constexpr static bool is_variable(const te_variant_type& var) noexcept
         { return var.index() == 1; }
     [[nodiscard]]
-    constexpr static const double* get_variable(const te_variant_type& var)
+    constexpr static const te_type* get_variable(const te_variant_type& var)
         {
-        assert(std::holds_alternative<const double*>(var));
+        assert(std::holds_alternative<const te_type*>(var));
         return std::get<1>(var);
         }
     [[nodiscard]]
@@ -765,7 +777,7 @@ private:
                         std::set<te_variable>& variables);
     /* Evaluates the expression. */
     [[nodiscard]]
-    static double te_eval(const te_expr* n);
+    static te_type te_eval(const te_expr* n);
     /* Frees the expression. */
     /* This is safe to call on null pointers. */
     static inline void te_free(te_expr* n)
@@ -780,14 +792,14 @@ private:
     static auto find_builtin(const std::string_view name)
         {
         return m_functions.find(
-            te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
+            te_variable{ te_variable::name_type{ name }, static_cast<te_type>(0.0), TE_DEFAULT, nullptr });
         }
 
     [[nodiscard]]
     static auto find_lookup(state* s, const std::string_view name)
         {
         return s->m_lookup.find(
-            te_variable{ te_variable::name_type{ name }, 0.0, TE_DEFAULT, nullptr });
+            te_variable{ te_variable::name_type{ name }, static_cast<te_type>(0.0), TE_DEFAULT, nullptr });
         }
 
     void next_token(state* s);
@@ -831,7 +843,7 @@ private:
     bool m_parseSuccess{ false };
     int64_t m_errorPos{ 0 };
     std::string m_lastErrorMessage;
-    double m_result{ te_nan };
+    te_type m_result{ te_nan };
     char m_decimalSeparator{ '.' };
     char m_listSeparator{ ',' };
     };

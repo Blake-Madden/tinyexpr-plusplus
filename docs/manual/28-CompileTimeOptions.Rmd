@@ -1,5 +1,15 @@
 # Compile-time Options
 
+## `TE_FLOAT` {-}
+
+`double` is the default data type used for the parser's variable types, parameters, and return types.
+For embedded environments that require `float`, compile with `TE_FLOAT` defined to use `float` instead.
+
+When using this option, it is recommended to use the helper typedef `te_type`.
+This will map to either `float` or `double` (depending on whether `TE_FLOAT` is defined).
+By defining your functions and variables with `te_type`,
+you won't need to replace `double` and `float` if needing to change this compiler flag.
+
 ## `TE_POW_FROM_RIGHT` {-}
 
 By default, *TinyExpr++* does exponentiation from left to right. For example:

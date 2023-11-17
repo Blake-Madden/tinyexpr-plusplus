@@ -148,6 +148,7 @@ The following are changes from the original TinyExpr C library:
 - Added `set_constant()` function to find and update the value of a constant (custom) variable by name.
   (In this context, a constant is a variable mapped to a double value in the parser, rather than mapped to a runtime variable.)
 - Added `get_constant()` function to return the value of a constant (custom) variable by name.
+- Added `TE_FLOAT` preprocessor flag to use `float` instead of `double` for the parser's data type.
 - Binary search (i.e., `std::set`) is now used to look up custom variables and functions (small optimization).
 - You no longer need to specify the number of arguments for custom functions; it will deduce that for you.
 - The position of an error when evaluating an expression is now managed by the `te_parser` class and accessible via `get_last_error_position()`.
