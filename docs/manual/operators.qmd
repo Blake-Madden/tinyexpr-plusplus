@@ -56,6 +56,6 @@ Likewise, `(2+5)^2` will yield `49` (`7` squared), while `2+5^2` will yield `27`
 
 The `%` character acts as a modulus operator in *TinyExpr++*, which is different from most
 spreadsheet programs. In programs such as *LibreOffice Calc* and *Excel*, `%` is used
-to convert a number to a percentage. For example, `=20%` would yield `0.20` in Excel.
+to convert a number to a percentage. For example, `=20%` would yield `0.20` in *Excel*.
 In *TinyExpr++*, however, `20%` will result in a syntax error as
 it is expecting a binary (modulus) operation.
