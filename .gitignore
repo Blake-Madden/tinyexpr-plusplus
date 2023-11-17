@@ -2,7 +2,6 @@
 /tests/bin/
 /tests/out/
 /.vs
-/docs/html/
 CMakeSettings.json
 .Rproj.user
 *.tex
@@ -10,7 +9,8 @@ CMakeSettings.json
 /tests/demo/bin
 /tests/demo/.vs
 .Rhistory
-docs/manual/_bookdown_files/TinyExpr++ReferenceManual_files/
+/docs/html/
+/docs/manual/_bookdown_files/TinyExpr++ReferenceManual_files/
 /docs/manual/TinyExpr++ReferenceManual.log
 /docs/manual/TinyExpr++ReferenceManual.aux
 /docs/manual/TinyExpr++ReferenceManual.bcf
@@ -20,3 +20,4 @@ docs/manual/_bookdown_files/TinyExpr++ReferenceManual_files/
 /docs/manual/TinyExpr++ReferenceManual.ilg
 /docs/manual/TinyExpr++ReferenceManual.ind
 /docs/manual/.quarto
+/docs/search.json

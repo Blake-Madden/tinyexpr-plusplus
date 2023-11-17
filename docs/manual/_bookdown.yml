@@ -1,6 +1,0 @@
-delete_merged_file: true
-book_filename: TinyExpr++ReferenceManual
-language:
-  ui:
-    chapter_name: "Chapter "
-output_dir: ".."

@@ -1,0 +1,67 @@
+project:
+  type: book
+  output-dir: ".."
+toc: true
+toc-depth: 2
+biblio-title: References
+bibliography: cites.bib
+biblio-style: mla
+link-citations: true
+nocite: '@*'
+csl: modern-language-association.csl
+pdf-cover: "images/cover.pdf"
+book:
+  title: TinyExpr++
+  subtitle: User Reference & Programming Manual
+  author: Blake Madden
+  date: today
+  date-format: long
+  output-file: "TinyExpr++ReferenceManual"
+  language: en
+  search: false
+  cover-image: "manual/images/cover.png"
+  image: "manual/images/cover.png"
+  navbar:
+    logo: tinyexpr_logo.png
+    right:
+      - icon: github
+        href: https://github.com/Blake-Madden/tinyexpr-plusplus
+        aria-label: Github
+  chapters:
+    - index.qmd
+    - part: "User Guide"
+      chapters:
+      - 09-EndUserUsage.qmd
+      - 10-Operators.qmd
+      - 11-Functions.qmd
+      - 12-Constants.qmd
+      - 13-Comments.qmd
+    - part: "Developer Guide"
+      chapters:
+      - 20-Building.qmd
+      - 21-Usage.qmd
+      - 23-CustomExtensions.qmd
+      - 24-UnknownSymbolResolution.qmd
+      - 26-NonUSFormulas.qmd
+      - 27-TechnicalOverview.qmd
+      - 28-CompileTimeOptions.qmd
+      - 29-Embedded.qmd
+    - part: "Appendix"
+      chapters:
+      - 40-Appendix.qmd
+format:
+  pdf:
+    documentclass: book
+    number-sections: true
+    template: latex/default.tex
+    include-in-header: latex/preamble.tex
+    latex-engine: xelatex
+    keep-tex: true
+    citation-package: biblatex
+    lot: true
+    code-block-bg: false
+  html:
+    theme: cosmo
+    html-math-method: katex
+    css: style.css
+    smooth-scroll: true
