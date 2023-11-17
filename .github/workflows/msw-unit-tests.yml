@@ -44,6 +44,29 @@ jobs:
 
              cd ..
              cd ..
+             rmdir /S /Q bin
+             cmake -DTE_POW_FROM_RIGHT = 1 ./
+             msbuild ${{ env.testrunner }}.sln
+             cd bin\Debug
+             ./${{ env.testrunner }} --reporter JUnit::out=${{ env.outfile }}
+             cat ${{ env.outfile }}
+             $FileContent = Get-Content ${{ env.outfile }}
+             $errors = (Select-String -InputObject $FileContent -Pattern 'errors="([0-9]+)"' | % { $($_.matches.groups[1]) } )
+             $failures = (Select-String -InputObject $FileContent -Pattern 'failures="([0-9]+)"' | % { $($_.matches.groups[1]) } )
+             if ($errors.Value -gt 0)
+               {
+               Write-Host "Error count is: " + $errors.Value
+               exit 1
+               }
+             if ($failures.Value -gt 0)
+               {
+               Write-Host "Failure count is: " + $failures.Value
+               exit 1
+               }
+
+             cd ..
+             cd ..
+             rmdir /S /Q bin
              cmake -DTE_FLOAT = 1 ./
              msbuild ${{ env.testrunner }}.sln
              cd bin\Debug
