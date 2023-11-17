@@ -45,7 +45,7 @@ book:
       - non-us-formulas.qmd
       - technical-overview.qmd
       - compile-time-options.qmd
-      - embedded.qmd
+      - embedded-programming.qmd
     - part: "Appendix"
       chapters:
       - Appendix.qmd
