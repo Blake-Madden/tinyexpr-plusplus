@@ -51,4 +51,21 @@ jobs:
                exit 1
              fi
 
+              cd ..
+             cmake -DTE_FLOAT=1 ./
+             make -j4
+             cd bin
+             ./TETestRunner --reporter JUnit::out=TE-junit2.xml
+             cat TE-junit2.xml
+             errors=$(cat TE-junit2.xml | grep -Po '(errors)="\K[^"]*')
+             failures=$(cat TE-junit2.xml | grep -Po '(failures)="\K[^"]*')
+             echo "Error count is: ${errors}"
+             echo "Failure count is: ${failures}"
+             if [ "$errors" -gt 0 ]; then
+               exit 1
+             fi
+             if [ "$failures" -gt 0 ]; then
+               exit 1
+             fi
+
              
