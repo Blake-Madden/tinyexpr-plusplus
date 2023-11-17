@@ -4,7 +4,11 @@
 expression into a syntax tree. For example, the expression `"sin x + 1/4"`
 parses as:
 
-```{r, echo=FALSE, dev = c('pdf', 'png')}
+```{r}
+#| echo: false
+#| out-width: 100%
+#| fig-format: png
+
 DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = TB]
   
@@ -21,14 +25,17 @@ DiagrammeR::grViz("digraph {
   node1 -> node3
   node3 -> node5
   node3 -> node6
-  }",
-  height = 500)
+  }")
 ```
 
 `te_parser::evaluate()` also automatically prunes constant branches. In this example,
 the compiled expression returned by `compile()` would become:
 
-```{r, echo=FALSE, dev = c('pdf', 'png')}
+```{r}
+#| echo: false
+#| out-width: 100%
+#| fig-format: png
+
 DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = TB]
   
@@ -41,8 +48,7 @@ DiagrammeR::grViz("digraph {
   # edge definitions with the node IDs
   node1 -> node2 -> node4
   node1 -> node3
-  }",
-  height = 500)
+  }")
 ```
 
 ## Grammar {-}
