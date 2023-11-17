@@ -23,6 +23,13 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
                                    DEPENDENCIES ${CMAKE_PROJECT_NAME})
 ENDIF()
 
+IF(TE_FLOAT)
+    ADD_DEFINITIONS(-DTE_FLOAT)
+ENDIF(TE_FLOAT)
+IF(TE_POW_FROM_RIGHT)
+    ADD_DEFINITIONS(-DTE_POW_FROM_RIGHT)
+ENDIF(TE_POW_FROM_RIGHT)
+
 # place Catch2 at the same folder level as this repo if it isn't installed
 # (you will need to do this on Windows or macOS or if version 3 of Catch2 isn't installed)
 GET_FILENAME_COMPONENT(_fullpath "${_dir}" REALPATH)
