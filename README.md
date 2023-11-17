@@ -518,25 +518,6 @@ the compiled expression returned by `te_compile()` would become:
 
 ![example syntax tree](docs/e2.png)
 
-## Performance
-
-TinyExpr++ is fairly fast compared to compiled C when the expression is short, when the
-expression does hard calculations (e.g., exponentiation), and when some of the
-work can be simplified by `evaluate()`. TinyExpr++ is slow compared to C when the
-expression is long and involves only basic arithmetic.
-
-Here are some example benchmarks:
-
-| Expression | TinyExpr++ | Native C | Comparison  |
-| :------------- |-------------:| -----:|----:|
-| sqrt(a^1.5+a^2.5) | 1,707 ns | 58.25 ns | 29% slower |
-| a+5 | 535 ns | 0.67 ns | 798% slower |
-| a+(5*2) | 0.73 ns | 969 ns | 1,327% slower |
-| (a+5)*2 | 0.66 ns | 980 ns | 1,484% slower |
-| (1/(a+1)+2/(a+2)+3/(a+3)) | 3,388 ns | 3.941 ns | 859%  slower |
-
-Note that TinyExpr++ is slower compared to TinyExpr because of additional type safety checks.
-
 ## Grammar
 
 TinyExpr++ parses the following grammar (from lowest-to-highest operator precedence):
@@ -573,32 +554,3 @@ left-to-right, but this can be changed - see below).
 
 Please refer to the [TinyExpr++ Reference Manual](docs/TinyExpr++ReferenceManual.pdf)
 for a full list of available functions.
-
-## Compile-time Options
-
-By default, TinyExpr++ does exponentiation from left to right. For example:
-
-`a^b^c == (a^b)^c` and `-a^b == (-a)^b`
-
-This is by design; it's the way that spreadsheets do it
-(e.g., *LibreOffice Calc*, *Excel*, *Google Sheets*).
-
-If you would rather have exponentiation work from right to left, you need to
-define `TE_POW_FROM_RIGHT` when compiling. With `TE_POW_FROM_RIGHT` defined, the
-behavior is:
-
-`a^b^c == a^(b^c)` and `-a^b == -(a^b)`
-
-That will match how many scripting languages do it (e.g., Python, Ruby).
-
-Note that symbols can be defined by passing them to your compiler's
-command line (or in a Cmake configuration) as such: `-DTE_POW_FROM_RIGHT`
-
-## Hints
-
-- To allow constant optimization, surround constant expressions in parentheses.
-  For example, `x+(1+5)` will evaluate the `(1+5)` expression at compile time and
-  compile the entire expression as `x+6`, saving a runtime calculation. The
-  parentheses are important, because TinyExpr++ will not change the order of
-  evaluation. If you instead compiled `x+1+5`, TinyExpr++ will insist that `1` is
-  added to `x` first, and `5` is added to the result second.
