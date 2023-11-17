@@ -31,12 +31,12 @@ to do the following.
 First, declare your `te_parser` as a non-`volatile` object outside
 of the interrupt function (e.g., globally):
 
-```cpp
+```{.cpp}
 te_parser tep;
 ```
 Then, in your interrupt function, create a `volatile` reference to it:
 
-```cpp
+```{.cpp}
 void OnInterrupt()
     {
     volatile te_parser& vTep = tep;
@@ -45,7 +45,7 @@ void OnInterrupt()
 Functions in `te_parser` which have `volatile` overloads\index{volatile} can then be
 called directly:
 
-```cpp
+```{.cpp}
 void OnInterrupt()
     {
     volatile te_parser& vTep = tep;
@@ -66,7 +66,7 @@ The following functions in the `te_parser` class have `volatile` overloads:
 For any other functions, use `const_cast<>` to remove the parser
 reference's volatility:
 
-```cpp
+```{.cpp}
 void OnInterrupt()
     {
     volatile te_parser& vTep = tep;

@@ -2,7 +2,7 @@
 
 *TinyExpr++* supports other locales and non-US formatted formulas\index{localization!separators|ii}. Here is an example:
 
-```cpp
+```{.cpp}
 #include "tinyexpr.h"
 #include <iostream>
 #include <iomanip>

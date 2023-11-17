@@ -2,7 +2,7 @@
 
 *TinyExpr++*'s `te_parser` class defines these functions:
 
-```cpp
+```{.cpp}
 double evaluate(const std::string_view expression);
 double get_result();
 bool success();
@@ -34,13 +34,13 @@ to add custom variables and functions to the parser.
 
 Example:
 
-```cpp
+```{.cpp}
 te_parser tep;
 
 // Returns 10, error position is set to te_parser::npos (i.e., no error).
-double result = tep.evaluate("(5+5)");
+auto result = tep.evaluate("(5+5)");
 // Returns NaN, error position is set to 3.
-double result2 = tep.evaluate("(5+5");
+auto result2 = tep.evaluate("(5+5");
 ```
 
 You can also provide `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas. `evaluate()` will then evaluate expressions using these variables and functions.
@@ -74,7 +74,7 @@ If there was no parse error, then this will return `te_parser::npos`.
 ::: {.minipage data-latex="{\textwidth}"}
 Example:
 
-```cpp
+```{.cpp}
 #include "tinyexpr.h"
 #include <iostream>
 
@@ -90,11 +90,11 @@ if (tep.success())
     {
     x = 3; y = 4;
     // Will use the previously used expression, returns 5.
-    const double h1 = tep.evaluate();
+    const auto h1 = tep.evaluate();
 
     x = 5; y = 12;
     // Returns 13.
-    const double h2 = tep.evaluate();
+    const auto h2 = tep.evaluate();
     }
 else
     {
@@ -112,7 +112,7 @@ NaN values can be verified using the standard function `std::isnan()`.
 
 The following is a short example demonstrating how to use *TinyExpr++*.
 
-```cpp
+```{.cpp}
 #include "tinyexpr.h"
 #include <iostream>
 
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
     {
     te_parser tep;
     const char* expression = "sqrt(5^2+7^2+11^2+(8-2)^2)";
-    const double res = tep.evaluate(expression);
+    const auto res = tep.evaluate(expression);
     std::cout << "The expression:\n\t" <<
         expression << "\nevaluates to:\n\t" << res << "\n";
     return EXIT_SUCCESS;

@@ -2,21 +2,21 @@
 
 *TinyExpr++* is a formula-solving library which accepts math and logic expressions such as:
 
-```cpp
+```{.cpp}
 ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2
 ```
 
 Applications using *TinyExpr++* may provide context-specific variables
 that you can use in your expressions. For example, in a spreadsheet application, values representing cells such as `C1` and `D2` may be available. This would enable the use of expressions such as:
 
-```cpp
+```{.cpp}
 SUM(C1, C2, C3, D1, D2, D3)
 ```
 
 As another example, in a statistical program, the values `N_OBS` and
 `P_LEVEL` may be available. This would make an expression such as this possible:
 
-```cpp
+```{.cpp}
 IF(AND(P_LEVEL < .05, N_OBS >= 30),
    P_LEVEL,
    NAN)
@@ -25,7 +25,7 @@ IF(AND(P_LEVEL < .05, N_OBS >= 30),
 ::: {.minipage data-latex="{\textwidth}"}
 Logical checks can also be nested, creating a "case"-like\index{case statements|ii} statement:
 
-```cpp
+```{.cpp}
 IF(AND(smartMeter1.power > 1900, sensor1.temperature < 52), TRUE,
    // First logical check failed, so now check another scenario
    // and return false if it meets our criteria.
@@ -39,7 +39,7 @@ IF(AND(smartMeter1.power > 1900, sensor1.temperature < 52), TRUE,
 ::: {.minipage data-latex="{\textwidth}"}
 The same can be accomplished using the `IFS()` function:
 
-```cpp
+```{.cpp}
 IFS(AND(smartMeter1.power > 1900, sensor1.temperature < 52), TRUE,
     // First logical check failed, so now check another scenarios
     // and return false either meets our criteria.

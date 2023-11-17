@@ -54,7 +54,7 @@ will also be available through `te_parser::get_last_error_message()`.
 `te_parser::set_unknown_symbol_resolver()` can accept either a function pointer or a lambda. 
 Here is a simple example using a function:
 
-```cpp
+```{.cpp}
 double ResolveResolutionSymbols(std::string_view str)
     {
     // Note that this is case sensitive for brevity.
@@ -67,7 +67,7 @@ double ResolveResolutionSymbols(std::string_view str)
 ::: {.minipage data-latex="{\textwidth}"}
 This can be connected as such:
 
-```cpp
+```{.cpp}
 te_parser tep;
 tep.set_unknown_symbol_resolver(ResolveResolutionSymbols);
 
@@ -90,7 +90,7 @@ will recognize it case-insensitively in future evaluations.
 The following is an example using a lambda and demonstrates
 the fiscal-year-variables scenario mentioned earlier:
 
-```cpp
+```{.cpp}
 te_parser tep;
 
 // Create a handler for undefined tokens that will recognize
@@ -142,7 +142,7 @@ This can be useful for when your USR's symbol resolutions are dynamic and may ch
 For example, say that an end user will enter variables that start with "STRESS," but you are uncertain what the full name will be.
 Additionally, you want to increase the values of these variables with every evaluation. The following demonstrates this:
 
-```cpp
+```{.cpp}
 te_parser tep;
 
 tep.set_unknown_symbol_resolver(

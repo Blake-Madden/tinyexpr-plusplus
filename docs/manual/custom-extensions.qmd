@@ -5,7 +5,7 @@
 ::: {.minipage data-latex="{\textwidth}"}
 Along with the built-in functions and constants, you can create custom variables\index{variables!binding to custom}  for use in expressions:
 
-```cpp
+```{.cpp}
 #include "tinyexpr.h"
 #include <iostream>
 #include <iomanip>
@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
         /* The variables can be changed here, and evaluate can be called multiple
            times. This is efficient because the parsing has already been done.*/
         x = 3; y = 4;
-        const double r = tep.evaluate();
+        const auto r = tep.evaluate();
         std::cout << "Result:\n\t" << r << "\n";
         }
     else // Show the user where the error is at.
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 
 *TinyExpr++* can call custom functions\index{functions!binding to custom} also. Here is a short example:
 
-```cpp
+```{.cpp}
 double my_sum(double a, double b)
     {
     /* Example function that adds two numbers together. */
@@ -60,13 +60,13 @@ tep.set_variables_and_functions(
     { "mysum", my_sum } // function pointer
 });
 
-const double r = tep.evaluate("mysum(5, 6)");
+const auto r = tep.evaluate("mysum(5, 6)");
 // will be 11
 ```
 
 Here is an example of using a lambda:
 
-```cpp
+```{.cpp}
 te_parser tep;
 tep.set_variables_and_functions({
     { "mysum",
@@ -74,7 +74,7 @@ tep.set_variables_and_functions({
             { return a + b; } }
     });
 
-const double r = tep.evaluate("mysum(5, 6)");
+const auto r = tep.evaluate("mysum(5, 6)");
 // will be 11
 ```
 :::
@@ -87,7 +87,7 @@ have full access to an object (via these functions) when parsing an expression.
 
 The following demonstrates creating a `te_expr`-derived class which contains an array of values:
 
-```cpp
+```{.cpp}
 class te_expr_array : public te_expr
     {
 public:
@@ -100,7 +100,7 @@ public:
 Next, create two functions that can accept this object and perform
 actions on it. (Note that proper error handling is not included for brevity.):
 
-```cpp
+```{.cpp}
 // Returns the value of a cell from the object's data.
 double cell(const te_expr* context, double a)
     {
@@ -120,7 +120,7 @@ double cell_max(const te_expr* context)
 Finally, create an instance of the class and connect the custom functions to it,
 while also adding them to the parser:
 
-```cpp
+```{.cpp}
 te_expr_array teArray{ TE_DEFAULT };
 
 te_parser tep;

@@ -9,7 +9,7 @@ C/C++ style comments are supported, which provide:
 For example, assuming that the variables `P_LEVEL` and `N_OBS` have been
 defined within the parser, an expression such as this could be used:
 
-```cpp
+```{.cpp}
 /* Returns the p-level of a study if:
    p-level < 5% AND
    number of observations was at least 30.
