@@ -31,24 +31,24 @@ book:
     - index.qmd
     - part: "User Guide"
       chapters:
-      - 09-EndUserUsage.qmd
-      - 10-Operators.qmd
-      - 11-Functions.qmd
-      - 12-Constants.qmd
-      - 13-Comments.qmd
+      - end-user-usage.qmd
+      - operators.qmd
+      - functions.qmd
+      - constants.qmd
+      - comments.qmd
     - part: "Developer Guide"
       chapters:
-      - 20-Building.qmd
-      - 21-Usage.qmd
-      - 23-CustomExtensions.qmd
-      - 24-UnknownSymbolResolution.qmd
-      - 26-NonUSFormulas.qmd
-      - 27-TechnicalOverview.qmd
-      - 28-CompileTimeOptions.qmd
-      - 29-Embedded.qmd
+      - building.qmd
+      - usage.qmd
+      - custom-extensions.qmd
+      - unknown-symbol-resolution.qmd
+      - non-us-formulas.qmd
+      - technical-overview.qmd
+      - compile-time-options.qmd
+      - embedded.qmd
     - part: "Appendix"
       chapters:
-      - 40-Appendix.qmd
+      - Appendix.qmd
 format:
   pdf:
     documentclass: book
