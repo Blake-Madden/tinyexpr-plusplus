@@ -1,22 +1,6 @@
---- 
-title: "TinyExpr++"
-subtitle: "User Reference & Programming Manual"
-author: Blake Madden
-date: 2023
-documentclass: book
-site: bookdown::bookdown_site
-lot: yes
-biblio-title: References
-bibliography: cites.bib
-biblio-style: mla
-link-citations: true
-nocite: '@*'
-csl: modern-language-association.csl
-cover-image: "manual/images/cover.png"
-pdf-cover: "images/cover.pdf"
----
+```{r}
+#| include: false
 
-```{r, include=FALSE}
 if (!require("pacman")) install.packages("pacman")
 library(pacman)
 pacman::p_load(DiagrammeR, webshot)
@@ -26,24 +10,18 @@ if (!webshot::is_phantomjs_installed())
   }
 ```
 
-```{asis, echo=knitr::is_html_output()}
-# Preface {#cover .unnumbered}
-
+::: {.content-visible when-format="html"}
 <!-- Just want this preface in the gitbook.
      PDF output will have its own copyright page after the title.-->
 
-:::{.wrapfigure data-latex="{r}{0.5\\textwidth}" style="width: 75%;"}
-![](manual/images/cover.png){width=75%}
-:::
-
-This book is a guide to using the *TinyExpr++* library, a C++ formula parsing and evaluation system.
+This book is the guide to using the *TinyExpr++* library, a C++ formula parsing and evaluation system.
 
 ![](manual/images/CC_BY-NC-ND.png)
 
 This book is licensed under the [Creative Commons Attribution-NonCommercial-NoDerivs 4.0 International License](https://creativecommons.org/licenses/by-nc-nd/4.0/).
-```
+:::
 
-# Overview
+# Overview {-}
 
 This is the programming manual for *TinyExpr++*, the C++ version of the *TinyExpr* [@TinyExpr] formula parsing library. (This manual includes documentation from *TinyExpr* by Lewis Van Winkle.)
 

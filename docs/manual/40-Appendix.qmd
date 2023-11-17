@@ -1,0 +1,6 @@
+::: {.content-visible when-format="html"}
+# References {-}
+:::
+
+::: {#refs}
+:::

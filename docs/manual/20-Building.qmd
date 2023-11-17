@@ -1,5 +1,3 @@
-# (PART) Developer Guide {-}
-
 # Building
 
 *TinyExpr++* is self-contained in two files: `tinyexpr.cpp` and `tinyexpr.h`. To use

@@ -1,5 +1,3 @@
-# (PART) User Guide {-}
-
 # Usage
 
 *TinyExpr++* is a formula-solving library which accepts math and logic expressions such as:
