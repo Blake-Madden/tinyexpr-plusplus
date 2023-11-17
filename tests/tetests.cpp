@@ -679,44 +679,44 @@ TEST_CASE("Functions", "[functions]")
 
     for (x = -5; x < 5; x += (te_type)0.1)
         {
-        CHECK_THAT(tep.evaluate("abs x"), Catch::Matchers::WithinRel(fabs(x)));
-        if (!std::isnan(acos(x)))
-            CHECK_THAT(tep.evaluate("acos x"), Catch::Matchers::WithinRel(acos(x)));
+        CHECK_THAT(tep.evaluate("abs x"), Catch::Matchers::WithinRel(std::fabs(x)));
+        if (!std::isnan(std::acos(x)))
+            CHECK_THAT(tep.evaluate("acos x"), Catch::Matchers::WithinRel(std::acos(x)));
         else
             CHECK(std::isnan(tep.evaluate("acos x")));
-        if (!std::isnan(asin(x)))
-            CHECK_THAT(tep.evaluate("asin x"), Catch::Matchers::WithinRel(asin(x)));
+        if (!std::isnan(std::asin(x)))
+            CHECK_THAT(tep.evaluate("asin x"), Catch::Matchers::WithinRel(std::asin(x)));
         else
             CHECK(std::isnan(tep.evaluate("asin x")));
-        CHECK_THAT(tep.evaluate("atan x"), Catch::Matchers::WithinRel(atan(x)));
-        CHECK_THAT(tep.evaluate("ceil x"), Catch::Matchers::WithinRel(ceil(x)));
-        CHECK_THAT(tep.evaluate("cos x"), Catch::Matchers::WithinRel(cos(x)));
-        CHECK_THAT(tep.evaluate("cosh x"), Catch::Matchers::WithinRel(cosh(x)));
-        CHECK_THAT(tep.evaluate("exp x"), Catch::Matchers::WithinRel(exp(x)));
-        CHECK_THAT(tep.evaluate("floor x"), Catch::Matchers::WithinRel(floor(x)));
+        CHECK_THAT(tep.evaluate("atan x"), Catch::Matchers::WithinRel(std::atan(x)));
+        CHECK_THAT(tep.evaluate("ceil x"), Catch::Matchers::WithinRel(std::ceil(x)));
+        CHECK_THAT(tep.evaluate("cos x"), Catch::Matchers::WithinRel(std::cos(x)));
+        CHECK_THAT(tep.evaluate("cosh x"), Catch::Matchers::WithinRel(std::cosh(x)));
+        CHECK_THAT(tep.evaluate("exp x"), Catch::Matchers::WithinRel(std::exp(x)));
+        CHECK_THAT(tep.evaluate("floor x"), Catch::Matchers::WithinRel(std::floor(x)));
         if (!std::isnan(log(x)))
-            CHECK_THAT(tep.evaluate("ln x"), Catch::Matchers::WithinRel(log(x)));
+            CHECK_THAT(tep.evaluate("ln x"), Catch::Matchers::WithinRel(std::log(x)));
         else
             CHECK(std::isnan(tep.evaluate("ln x")));
-        if (!std::isnan(log10(x)))
-            CHECK_THAT(tep.evaluate("log10 x"), Catch::Matchers::WithinRel(log10(x)));
+        if (!std::isnan(std::log10(x)))
+            CHECK_THAT(tep.evaluate("log10 x"), Catch::Matchers::WithinRel(std::log10(x)));
         else
             CHECK(std::isnan(tep.evaluate("log10 x")));
-        CHECK_THAT(tep.evaluate("sin x"), Catch::Matchers::WithinRel(sin(x)));
-        CHECK_THAT(tep.evaluate("sinh x"), Catch::Matchers::WithinRel(sinh(x)));
-        if (!std::isnan(sqrt(x)))
-            CHECK_THAT(tep.evaluate("sqrt x"), Catch::Matchers::WithinRel(sqrt(x)));
+        CHECK_THAT(tep.evaluate("sin x"), Catch::Matchers::WithinRel(std::sin(x)));
+        CHECK_THAT(tep.evaluate("sinh x"), Catch::Matchers::WithinRel(std::sinh(x)));
+        if (!std::isnan(std::sqrt(x)))
+            CHECK_THAT(tep.evaluate("sqrt x"), Catch::Matchers::WithinRel(std::sqrt(x)));
         else
             CHECK(std::isnan(tep.evaluate("sqrt x")));
-        CHECK_THAT(tep.evaluate("tan x"), Catch::Matchers::WithinRel(tan(x)));
-        CHECK_THAT(tep.evaluate("tanh x"), Catch::Matchers::WithinRel(tanh(x)));
+        CHECK_THAT(tep.evaluate("tan x"), Catch::Matchers::WithinRel(std::tan(x)));
+        CHECK_THAT(tep.evaluate("tanh x"), Catch::Matchers::WithinRel(std::tanh(x)));
 
         for (y = -2; y < 2; y += (te_type)0.2)
             {
-            if (fabs(x) < 0.01) break;
-            CHECK_THAT(tep.evaluate("atan2(x,y)"), Catch::Matchers::WithinRel(atan2(x, y)));
-            if (!std::isnan(pow(x, y)))
-                CHECK_THAT(tep.evaluate("pow(x,y)"), Catch::Matchers::WithinRel(pow(x, y)));
+            if (std::abs(x) < 0.01) break;
+            CHECK_THAT(tep.evaluate("atan2(x,y)"), Catch::Matchers::WithinRel(std::atan2(x, y)));
+            if (!std::isnan(std::pow(x, y)))
+                CHECK_THAT(tep.evaluate("pow(x,y)"), Catch::Matchers::WithinRel(std::pow(x, y)));
             else
                 CHECK(std::isnan(tep.evaluate("pow(x,y)")));
             }
