@@ -688,7 +688,7 @@ void te_parser::next_token(te_parser::state *s)
                         {
                         try
                             {
-                            // "te_return_type usr(string_view)" resolver
+                            // "te_type usr(string_view)" resolver
                             if (m_unknownSymbolResolve.index() == 1)
                                 {
                                 const auto retUsrVal = std::get<1>(m_unknownSymbolResolve)(currentVarToken);
@@ -705,7 +705,7 @@ void te_parser::next_token(te_parser::state *s)
                                         }
                                     }
                                 }
-                            // "te_return_type usr(string_view, string&)" resolver
+                            // "te_type usr(string_view, string&)" resolver
                             else if (m_unknownSymbolResolve.index() == 2)
                                 {
                                 const auto retUsrVal =
