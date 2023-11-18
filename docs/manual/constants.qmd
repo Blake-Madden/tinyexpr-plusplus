@@ -12,6 +12,10 @@ The following mathematical and logical constants\index{constants} are available:
 Table: Math Constants
 :::
 
+::: {.warningsection data-latex=""}
+If [`TE_FLOAT`](#te-float) is defined, then some precision for pi and Euler's number will be lost.
+:::
+
 ::: {.minipage data-latex="{\textwidth}"}
 | Constant | Value |
 | :------------- |:------------ |

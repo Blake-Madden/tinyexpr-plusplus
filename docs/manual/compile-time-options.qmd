@@ -1,14 +1,11 @@
 # Compile-time Options
 
-## `TE_FLOAT` {-}
+## `TE_FLOAT` {-#te-float}
 
 `double` is the default data type used for the parser's variable types, parameters, and return types.
-For embedded environments that require `float`, compile with `TE_FLOAT` defined to use `float` instead.
+Compile with `TE_FLOAT` defined to use `float` instead.
 
-When using this option, it is recommended to use the helper typedef `te_type`.
-This will map to either `float` or `double` (depending on whether `TE_FLOAT` is defined).
-By defining your functions and variables with `te_type`,
-you won't need to replace `double` and `float` if needing to change this compiler flag.
+Refer to [floating-point numbers](#fp-numbers) for more information.
 
 ## `TE_POW_FROM_RIGHT` {-}
 

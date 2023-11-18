@@ -16,8 +16,6 @@ Here are some example benchmarks:
 | :------------- |-------------:| -----:|----:|
 | sqrt(a^1.5+a^2.5) | 1,707 ns | 58.25 ns | 29% slower |
 | a+5 | 535 ns | 0.67 ns | 798% slower |
-| a+(5*2) | 0.73 ns | 969 ns | 1,327% slower |
-| (a+5)*2 | 0.66 ns | 980 ns | 1,484% slower |
 | (1/(a+1)+2/(a+2)+3/(a+3)) | 3,388 ns | 3.941 ns | 859%  slower |
 
 Note that *TinyExpr++* is slower compared to *TinyExpr* because of additional type safety checks (e.g., the use of `std::variant` instead of unions).
@@ -90,6 +88,39 @@ Note that it is required to make the initial declaration of your
 `te_parser` non-`volatile`; otherwise, the `const_cast<>` to the
 `volatile` reference will cause undefined behavior.
 
+## Floating-point Numbers {-#fp-numbers}
+
+`double` is the default data type used for the parser's variable types, parameters, and return types.
+For embedded environments that require `float`, compile with `TE_FLOAT` defined to use `float` instead.
+
+When using this option, it is recommended to use the helper typedef `te_type`.
+This will map to either `float` or `double` (depending on whether `TE_FLOAT` is defined).
+By defining your functions and variables with `te_type`,
+you won't need to replace `double` and `float` if needing to change this compiler flag.
+
+For example, a custom function would be written as such:
+
+```{.cpp}
+// Regular function.
+te_type my_sum(te_type a, te_type b)
+    {
+    return a + b;
+    }
+
+te_parser tep;
+tep.set_variables_and_functions(
+    {
+    { "mysum", my_sum } // function pointer
+    });
+
+// Lambda.
+tep.set_variables_and_functions({
+    { "mysum2",
+        [](te_type a, te_type b) noexcept
+            { return a + b; } }
+    });
+```
+
 ## Exception Handling {-}
 
 *TinyExpr++* requires exception handling\index{exceptions}, although it does attempt to
@@ -101,7 +132,7 @@ exceptions and return NaN (not a number) as the result.
 
 Exceptions can also be thrown when defining custom functions or variables
 which do not follow the proper naming convention.
-(Function and variable names must only contain the characters
+(Function and variable names may only contain the characters
 `a`-`z`, `A`-`Z`, `0`-`9`, `.`, and `_`, and must begin with a letter.)
 
 Finally, specifying an illegal character for a list or decimal separator
