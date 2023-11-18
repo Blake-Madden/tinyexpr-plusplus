@@ -27,7 +27,7 @@ is a parse error, then it returns NaN (which can be verified by using `std::isna
 to add custom variables and functions to the parser.
 
 `set_unknown_symbol_resolver()` is used to provide a custom function to resolve unknown symbols in an expression.
-(Refer to ch. \@ref(usr) for further details.)
+(Refer to [ch. -@sec-usr] for further details.)
 
 `get_decimal_separator()`/`set_decimal_separator()` and
 `get_list_separator()`/`set_list_separator()` can be used to parse non-US formatted formulas.
