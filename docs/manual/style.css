@@ -1,6 +1,247 @@
-p.caption {
-  color: #777;
+.darkmode {
+  background-color: black;
+  color: white;
+}
+
+.darkmode p code {
+  background-color: black !important;
+  color: white !important;;
+}
+
+/* pseudo glossary features*/
+.glsentry {
+  break-inside: avoid-page;
+  page-break-inside: avoid;
+}
+
+.glsterm {
+  font-weight: bold;
+}
+
+.glsdef {
+  text-indent: 0pt;
+  padding-left: 20pt;
+}
+
+/* adapted from https://www.kirstencassidy.com/css-fancy-quotes/*/
+.fancyquotes {
+  quotes: "\201C""\201D""\2018""\2019";
+  padding: 1em 1em 1em 1em;
+  display: inline-block;
+  position: relative;
+  color: black;
+  background: #ccc;
+  border: 1px solid rgb(215,215,215);
+  width: 100%;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  text-align: justify;
+  text-justify: inter-word;
+}
+/* add smart quotes around the first and last paragraphs
+    inside of a fancyquotes div.*/
+.fancyquotes p:first-of-type:before {
+  content: open-quote;
+  display: inline;
+  height: 0;
+  line-height: 0;
+  left: -10px;
+  position: relative;
+  top: 30px;
+  color: white;
+  font-size: 4em;
+}
+.fancyquotes p:last-of-type:after {
+  content: close-quote;
+  display: inline;
+  height: 0;
+  line-height: 0;
+  left: 10px;
+  position: relative;
+  top: 35px;
+  color: white;
+  font-size: 4em;
+}
+/* left align subsequent paragraphs to the top one,
+    which is pushed over by the opening smart quote.*/
+.fancyquotes p:not(:first-of-type) {
+  padding-left: 1em;
+}
+.fancyquotes p {
+  margin-bottom: 0 !important;
+}
+
+.FlushLeft {
+  text-align: left;
+}
+.FlushRight {
+  text-align: right;
+}
+
+.notesection {
+  padding: 1em 1em 1em 1em;
+  display: inline-block;
+  position: relative;
+  color: rgb(28,77,93);
+  background: rgb(232,244,248);
+  border: 1px solid rgb(28,77,93);
+  border-radius: 15px;
+  width: 100%;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+.notesection::before {
+  content: "📝Note";
+  font-weight: bold;
+}
+
+.tipsection {
+  padding: 1em 1em 1em 1em;
+  display: inline-block;
+  position: relative;
+  color: black;
+  background: rgb(252,248,227);
+  border: 1px solid black;
+  border-radius: 15px;
+  width: 100%;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+.tipsection::before {
+  content: "💡Tip";
+  font-weight: bold;
+}
+
+.warningsection {
+  padding: 1em 1em 1em 1em;
+  display: inline-block;
+  position: relative;
+  color: black;
+  background: rgb(255,207,219);
+  border: 1px solid black;
+  border-radius: 15px;
+  width: 100%;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+.warningsection::before {
+  content: "⚠️Warning";
+  font-weight: bold;
+}
+
+/* gray box for radiobutton options and such.*/
+.optionssection {
+  padding: 1em 1em 1em 1em;
+  display: inline-block;
+  position: relative;
+  color: black;
+  background: rgb(241,241,241);
+  border: 1px solid rgb(215,215,215);
+  width: 100%;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+.optionssection .optionssectiontitle {
+  background: rgb(215,215,215);
+  font-weight: bold;
+  border-radius: 15px;
+  padding: 0em 1em 0em 1em;
+}
+
+/* prevents a section from being split by a page break.*/
+.minipage {
+  break-inside: avoid-page;
+  page-break-inside: avoid;
+}
+
+/* displays a label as a keyboard button.*/
+.keys {
+  display: inline-block;
+  margin: 0 .1em;
+  padding: .1em .6em;
+  font-family: var(--ff-sans);
+  font-size: 11px;
+  line-height: var(--s-prose-line-height);
+  color: black;
+  text-shadow: 0 1px 0 white;
+  background-color: #ededed;
+  border: 1px solid black;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgb(12 13 14 / 15%), inset 0 1px 0 0 #fff;
+  overflow-wrap: break-word;
+}
+
+.keys p {
+  margin-top: 0  !important;
+  margin-bottom: 0 !important;
+}
+
+.menu {
+   display: inline-block;
+}
+
+/* used to make buttons look like a breadcrumb trail.*/
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+/* places an image to the right of the text.*/
+.wrapfigure {
+  float: right;
+  padding: 0 0 0 2%;
+}
+
+.wrapfigure p img {
+  float: inherit;
+  /* Size has to be passed to image via markdown for LaTex,
+     but in here we want the image to the 100% of the parent container.*/
+  width: 100% !important;
+  padding: inherit;
+}
+
+/* prevents sections from being split by a page break.*/
+@media print {
+.notesection, .tipsection, .warningsection, .optionssection .keys .menu{
+       break-inside: avoid-page;
+       page-break-inside: avoid;
+    }
+}
+
+.figure {
+  text-align: center;
+}
+.caption {
+  color: #777 !important;
+  margin-bottom: 10px;
+  text-align: left;
+}
+caption {
+  color: #777 !important; /* kable tries to override this*/
   margin-top: 10px;
+  text-align: left;
 }
 p code {
   white-space: inherit;
@@ -11,4 +252,33 @@ pre {
 }
 pre code {
   white-space: inherit;
+}
+.flushright {
+  text-align: right;
+}
+pre.numberSource code > span > a:first-child::before {
+  left: -0.3em;
+}
+.header-section-number {
+  padding-right: .2em;
+  font-weight: 500;
+}
+.level1 .header-section-number {
+  display: inline-block;
+  border-bottom: 3px solid;
+}
+.level1 h1 {
+  border-bottom: 1px solid;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+}
+h1.title {
+  font-weight: 700;
+}
+.book .book-body .page-wrapper .page-inner section.normal {
+  font-weight: 500;
+}
+.book .book-body .page-wrapper .page-inner section.normal pre a {
+  color: inherit;
 }
