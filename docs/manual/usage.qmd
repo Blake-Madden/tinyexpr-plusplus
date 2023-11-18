@@ -1,11 +1,21 @@
 # Usage
 
-## Functions &amp; Data Types {-}
+## Data Types {-}
 
 The following data types and constants are used throughout *TinyExpr++*:
 
+`te_parser`: The main class for defining an evaluation engine and solving expressions.
+
 `te_type`: The data type for variables, function parameters, and results.
 By default this is `double`, but can be `float` when [`TE_FLOAT`](#te-float) is defined.
+
+`te_variable`: A user-defined variable or function that can be embedded into a `te_parser`.
+(Refer to [custom variables](#custom-variables).)
+
+`te_expr`: The base class for a compiled expression.
+Classes that derive from this can be bound to custom functions. In turn, this allows for
+connecting more complex, class-based objects to the parser.
+(Refer to [custom classes](#custom-classes).)
 
 `te_parser::te_nan`: An invalid numeric value.
 This should be returned from user-defined functions to signal a failed calculation.
@@ -15,7 +25,14 @@ This should be returned from user-defined functions to signal a failed calculati
 `te_usr_noop`: A no-op function. When passed to `te_parser::set_unknown_symbol_resolver()`, will disable unknown symbol resolution.
 (Refer to [ch. -@sec-usr].)
 
-*TinyExpr++*'s `te_parser` class defines these functions:
+{{< pagebreak >}}
+
+## Functions {-}
+
+The primary interface to *TinyExpr++* is the class `te_parser`. A `te_parser` is a self-contained parser,
+which stores its own user-defined variables &amp; functions, separators, and state information.
+
+`te_parser` provides these functions:
 
 ```{.cpp}
 te_type evaluate(const std::string_view expression);            // <1>
@@ -122,6 +139,8 @@ else
 Along with positional and message information, the return value\index{results!evaluating failed} of a parse can also indicate failure.
 When an evaluation fails, the parser will return NaN (i.e., `std::numeric_limits<te_type>::quiet_NaN()`) as the result.
 NaN values can be verified using the standard function `std::isnan()`.
+
+{{< pagebreak >}}
 
 ## Example {-}
 

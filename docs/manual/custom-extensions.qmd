@@ -80,7 +80,7 @@ const auto r = tep.evaluate("mysum(5, 6)");
 :::
 
 ::: {.minipage data-latex="{\textwidth}"}
-## Binding to Custom Classes {#custom-classes .unnumbered}
+## Binding to Custom Classes {-#custom-classes}
 
 A class derived from `te_expr` can be bound to custom functions\index{classes!binding to custom}. This enables you to
 have full access to an object (via these functions) when parsing an expression.
