@@ -1,35 +1,50 @@
 # Usage
 
+## Functions &amp; Data Types {-}
+
+The following data types and constants are used throughout *TinyExpr++*:
+
+`te_type`: The data type for variables, function parameters, and results.
+By default this is `double`, but can be `float` when [`TE_FLOAT`](#te-float) is defined.
+
+`te_parser::te_nan`: An invalid numeric value.
+This should be returned from user-defined functions to signal a failed calculation.
+
+`te_parser::npos`: An invalid position. This is returned from `te_parser::get_last_error_position()` when no error occurred.
+
+`te_usr_noop`: A no-op function. When passed to `te_parser::set_unknown_symbol_resolver()`, will disable unknown symbol resolution.
+(Refer to [ch. -@sec-usr].)
+
 *TinyExpr++*'s `te_parser` class defines these functions:
 
 ```{.cpp}
-te_type evaluate(const std::string_view expression);
-te_type get_result();
+te_type evaluate(const std::string_view expression);            // <1>
+te_type get_result();                                           // <2>
 bool success();
 int64_t get_last_error_position();
 std::string get_last_error_message();
-set_variables_and_functions(const std::set<te_variable>& vars);
+set_variables_and_functions(const std::set<te_variable>& vars); // <3>
 std::set<te_variable>& get_variables_and_functions();
 add_variable_or_function(const te_variable& var);
-set_unknown_symbol_resolver(te_usr_variant_type usr);
-get_decimal_separator();
-set_decimal_separator();
-get_list_separator();
-set_list_separator();
+set_unknown_symbol_resolver(te_usr_variant_type usr);           // <4>
+get_decimal_separator();                                        // <5>
+set_decimal_separator();                                        // <5>
+get_list_separator();                                           // <5>
+set_list_separator();                                           // <5>
 ```
 
-`evaluate()` takes an expression and immediately returns the result. If there
+1. `evaluate()` takes an expression and immediately returns the result. If there
 is a parse error, then it returns NaN (which can be verified by using `std::isnan()`). (`success()` will also return false.)
 
-`get_result()` can be called anytime afterwards to retrieve the result from `evaluate()`.
+2. `get_result()` can be called anytime afterwards to retrieve the result from `evaluate()`.
 
-`set_variables_and_functions()`, `get_variables_and_functions()`, and `add_variable_or_function()` are used
+3. `set_variables_and_functions()`, `get_variables_and_functions()`, and `add_variable_or_function()` are used
 to add custom variables and functions to the parser.
 
-`set_unknown_symbol_resolver()` is used to provide a custom function to resolve unknown symbols in an expression.
+4. `set_unknown_symbol_resolver()` is used to provide a custom function to resolve unknown symbols in an expression.
 (Refer to [ch. -@sec-usr] for further details.)
 
-`get_decimal_separator()`/`set_decimal_separator()` and
+5. `get_decimal_separator()`/`set_decimal_separator()` and
 `get_list_separator()`/`set_list_separator()` can be used to parse non-US formatted formulas.
 
 Example:
