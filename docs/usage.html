@@ -290,7 +290,9 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#error-handling" id="toc-error-handling" class="nav-link active" data-scroll-target="#error-handling">Error Handling</a></li>
+  <li><a href="#data-types" id="toc-data-types" class="nav-link active" data-scroll-target="#data-types">Data Types</a></li>
+  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
+  <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling">Error Handling</a></li>
   <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a></li>
   </ul>
 </nav>
@@ -315,33 +317,66 @@ div.csl-indent {
 
 </header>
 
-<p><em>TinyExpr++</em>’s <code>te_parser</code> class defines these functions:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> evaluate<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string_view<span class="op"> </span>expression<span class="op">);</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> get_result<span class="op">();</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> success<span class="op">();</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int64_t</span> get_last_error_position<span class="op">();</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string<span class="op"> </span>get_last_error_message<span class="op">();</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>set_variables_and_functions<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>set<span class="op">&lt;</span>te_variable<span class="op">&gt;&amp;</span> vars<span class="op">);</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>set<span class="op">&lt;</span>te_variable<span class="op">&gt;&amp;</span> get_variables_and_functions<span class="op">();</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>add_variable_or_function<span class="op">(</span><span class="at">const</span> te_variable<span class="op">&amp;</span> var<span class="op">);</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>set_unknown_symbol_resolver<span class="op">(</span><span class="dt">te_usr_variant_type</span> usr<span class="op">);</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>get_decimal_separator<span class="op">();</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>set_decimal_separator<span class="op">();</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>get_list_separator<span class="op">();</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>set_list_separator<span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><code>evaluate()</code> takes an expression and immediately returns the result. If there is a parse error, then it returns NaN (which can be verified by using <code>std::isnan()</code>). (<code>success()</code> will also return false.)</p>
-<p><code>get_result()</code> can be called anytime afterwards to retrieve the result from <code>evaluate()</code>.</p>
-<p><code>set_variables_and_functions()</code>, <code>get_variables_and_functions()</code>, and <code>add_variable_or_function()</code> are used to add custom variables and functions to the parser.</p>
-<p><code>set_unknown_symbol_resolver()</code> is used to provide a custom function to resolve unknown symbols in an expression. (Refer to ch.&nbsp;@ref(usr) for further details.)</p>
-<p><code>get_decimal_separator()</code>/<code>set_decimal_separator()</code> and <code>get_list_separator()</code>/<code>set_list_separator()</code> can be used to parse non-US formatted formulas.</p>
+<section id="data-types" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="data-types">Data Types</h2>
+<p>The following data types and constants are used throughout <em>TinyExpr++</em>:</p>
+<p><code>te_parser</code>: The main class for defining an evaluation engine and solving expressions.</p>
+<p><code>te_type</code>: The data type for variables, function parameters, and results. By default this is <code>double</code>, but can be <code>float</code> when <a href="compile-time-options.html#te-float"><code>TE_FLOAT</code></a> is defined.</p>
+<p><code>te_variable</code>: A user-defined variable or function that can be embedded into a <code>te_parser</code>. (Refer to <a href="custom-extensions.html#custom-variables">custom variables</a>.)</p>
+<p><code>te_expr</code>: The base class for a compiled expression. Classes that derive from this can be bound to custom functions. In turn, this allows for connecting more complex, class-based objects to the parser. (Refer to <a href="custom-extensions.html#custom-classes">custom classes</a>.)</p>
+<p><code>te_parser::te_nan</code>: An invalid numeric value. This should be returned from user-defined functions to signal a failed calculation.</p>
+<p><code>te_parser::npos</code>: An invalid position. This is returned from <code>te_parser::get_last_error_position()</code> when no error occurred.</p>
+<p><code>te_usr_noop</code>: A no-op function. When passed to <code>te_parser::set_unknown_symbol_resolver()</code>, will disable unknown symbol resolution. (Refer to <a href="unknown-symbol-resolution.html">ch.&nbsp;<span>9</span></a>.)</p>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="functions" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="functions">Functions</h2>
+<p>The primary interface to <em>TinyExpr++</em> is the class <code>te_parser</code>. A <code>te_parser</code> is a self-contained parser, which stores its own user-defined variables &amp; functions, separators, and state information.</p>
+<p><code>te_parser</code> provides these functions:</p>
+<div class="sourceCode" id="annotated-cell-1"><pre class="sourceCode cpp code-annotation-code code-with-copy code-annotated"><code class="sourceCode cpp"><a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-1-1" class="code-annotation-target"><a href="#annotated-cell-1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">te_type</span> evaluate<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string_view<span class="op"> </span>expression<span class="op">);</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-1-2" class="code-annotation-target"><a href="#annotated-cell-1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">te_type</span> get_result<span class="op">();</span></span>
+<span id="annotated-cell-1-3"><a href="#annotated-cell-1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> success<span class="op">();</span></span>
+<span id="annotated-cell-1-4"><a href="#annotated-cell-1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int64_t</span> get_last_error_position<span class="op">();</span></span>
+<span id="annotated-cell-1-5"><a href="#annotated-cell-1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string<span class="op"> </span>get_last_error_message<span class="op">();</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="annotated-cell-1-6" class="code-annotation-target"><a href="#annotated-cell-1-6" aria-hidden="true" tabindex="-1"></a>set_variables_and_functions<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>set<span class="op">&lt;</span>te_variable<span class="op">&gt;&amp;</span> vars<span class="op">);</span></span>
+<span id="annotated-cell-1-7"><a href="#annotated-cell-1-7" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>set<span class="op">&lt;</span>te_variable<span class="op">&gt;&amp;</span> get_variables_and_functions<span class="op">();</span></span>
+<span id="annotated-cell-1-8"><a href="#annotated-cell-1-8" aria-hidden="true" tabindex="-1"></a>add_variable_or_function<span class="op">(</span><span class="at">const</span> te_variable<span class="op">&amp;</span> var<span class="op">);</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="4" onclick="event.preventDefault();">4</a><span id="annotated-cell-1-9" class="code-annotation-target"><a href="#annotated-cell-1-9" aria-hidden="true" tabindex="-1"></a>set_unknown_symbol_resolver<span class="op">(</span><span class="dt">te_usr_variant_type</span> usr<span class="op">);</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="5" onclick="event.preventDefault();">5</a><span id="annotated-cell-1-10" class="code-annotation-target"><a href="#annotated-cell-1-10" aria-hidden="true" tabindex="-1"></a>get_decimal_separator<span class="op">();</span></span>
+<span id="annotated-cell-1-11"><a href="#annotated-cell-1-11" aria-hidden="true" tabindex="-1"></a>set_decimal_separator<span class="op">();</span></span>
+<span id="annotated-cell-1-12"><a href="#annotated-cell-1-12" aria-hidden="true" tabindex="-1"></a>get_list_separator<span class="op">();</span></span>
+<span id="annotated-cell-1-13"><a href="#annotated-cell-1-13" aria-hidden="true" tabindex="-1"></a>set_list_separator<span class="op">();</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-1" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-cell="annotated-cell-1" data-code-lines="1"><code>evaluate()</code> takes an expression and immediately returns the result. If there is a parse error, then it returns NaN (which can be verified by using <code>std::isnan()</code>). (<code>success()</code> will also return false.)</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-annotation="2" data-code-cell="annotated-cell-1" data-code-lines="2"><code>get_result()</code> can be called anytime afterwards to retrieve the result from <code>evaluate()</code>.</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-annotation="3" data-code-cell="annotated-cell-1" data-code-lines="6"><code>set_variables_and_functions()</code>, <code>get_variables_and_functions()</code>, and <code>add_variable_or_function()</code> are used to add custom variables and functions to the parser.</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-annotation="4" data-code-cell="annotated-cell-1" data-code-lines="9"><code>set_unknown_symbol_resolver()</code> is used to provide a custom function to resolve unknown symbols in an expression. (Refer to <a href="unknown-symbol-resolution.html">ch.&nbsp;<span>9</span></a> for further details.)</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-annotation="5" data-code-cell="annotated-cell-1" data-code-lines="10,11,12,13"><code>get_decimal_separator()</code>/<code>set_decimal_separator()</code> and <code>get_list_separator()</code>/<code>set_list_separator()</code> can be used to parse non-US formatted formulas.</span>
+</dd>
+</dl>
 <p>Example:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Returns 10, error position is set to te_parser::npos (i.e., no error).</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">"(5+5)"</span><span class="op">);</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Returns NaN, error position is set to 3.</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> result2 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">"(5+5"</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Returns 10, error position is set to te_parser::npos (i.e., no error).</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">"(5+5)"</span><span class="op">);</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Returns NaN, error position is set to 3.</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> result2 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">"(5+5"</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>You can also provide <code>set_variables_and_functions()</code> a list of constants, bound variables, and function pointers/lambdas. <code>evaluate()</code> will then evaluate expressions using these variables and functions.</p>
+</section>
 <section id="error-handling" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="error-handling">Error Handling</h2>
 <p><em>TinyExpr++</em> will throw exceptions when:</p>
@@ -367,50 +402,51 @@ div.csl-indent {
 </ul>
 <div class="minipage">
 <p>Example:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tinyexpr.h"</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> x<span class="op">{</span> <span class="dv">0</span> <span class="op">},</span> y<span class="op">{</span> <span class="dv">0</span> <span class="op">};</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Store variable names and pointers.</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>tep<span class="op">.</span>set_variables_and_functions<span class="op">({{</span><span class="st">"x"</span><span class="op">,</span> <span class="op">&amp;</span>x<span class="op">},</span> <span class="op">{</span><span class="st">"y"</span><span class="op">,</span> <span class="op">&amp;</span>y<span class="op">}});</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Compile the expression with variables.</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">"sqrt(x^2+y^2)"</span><span class="op">);</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>tep<span class="op">.</span>success<span class="op">())</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="dv">3</span><span class="op">;</span> y <span class="op">=</span> <span class="dv">4</span><span class="op">;</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Will use the previously used expression, returns 5.</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> h1 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">();</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="dv">5</span><span class="op">;</span> y <span class="op">=</span> <span class="dv">12</span><span class="op">;</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Returns 13.</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> h2 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">();</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">"Parse error at "</span> <span class="op">&lt;&lt;</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>to_string<span class="op">(</span>tep<span class="op">.</span>get_last_error_position<span class="op">())</span> <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tinyexpr.h"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="dt">te_type</span> x<span class="op">{</span> <span class="dv">0</span> <span class="op">},</span> y<span class="op">{</span> <span class="dv">0</span> <span class="op">};</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Store variable names and pointers.</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>tep<span class="op">.</span>set_variables_and_functions<span class="op">({{</span><span class="st">"x"</span><span class="op">,</span> <span class="op">&amp;</span>x<span class="op">},</span> <span class="op">{</span><span class="st">"y"</span><span class="op">,</span> <span class="op">&amp;</span>y<span class="op">}});</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Compile the expression with variables.</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">"sqrt(x^2+y^2)"</span><span class="op">);</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>tep<span class="op">.</span>success<span class="op">())</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="dv">3</span><span class="op">;</span> y <span class="op">=</span> <span class="dv">4</span><span class="op">;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Will use the previously used expression, returns 5.</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> h1 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">();</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="dv">5</span><span class="op">;</span> y <span class="op">=</span> <span class="dv">12</span><span class="op">;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Returns 13.</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> h2 <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">();</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">"Parse error at "</span> <span class="op">&lt;&lt;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>to_string<span class="op">(</span>tep<span class="op">.</span>get_last_error_position<span class="op">())</span> <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Along with positional and message information, the return value of a parse can also indicate failure. When an evaluation fails, the parser will return NaN (i.e., <code>std::numeric_limits&lt;double&gt;::quiet_NaN()</code>) as the result. NaN values can be verified using the standard function <code>std::isnan()</code>.</p>
+<p>Along with positional and message information, the return value of a parse can also indicate failure. When an evaluation fails, the parser will return NaN (i.e., <code>std::numeric_limits&lt;te_type&gt;::quiet_NaN()</code>) as the result. NaN values can be verified using the standard function <code>std::isnan()</code>.</p>
+<div style="page-break-after: always;"></div>
 </section>
 <section id="example" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="example">Example</h2>
 <p>The following is a short example demonstrating how to use <em>TinyExpr++</em>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tinyexpr.h"</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span> <span class="op">*</span>argv<span class="op">[])</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    te_parser tep<span class="op">;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">char</span><span class="op">*</span> expression <span class="op">=</span> <span class="st">"sqrt(5^2+7^2+11^2+(8-2)^2)"</span><span class="op">;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> res <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span>expression<span class="op">);</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">"The expression:</span><span class="sc">\n\t</span><span class="st">"</span> <span class="op">&lt;&lt;</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        expression <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">evaluates to:</span><span class="sc">\n\t</span><span class="st">"</span> <span class="op">&lt;&lt;</span> res <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> EXIT_SUCCESS<span class="op">;</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tinyexpr.h"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span> <span class="op">*</span>argv<span class="op">[])</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    te_parser tep<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">char</span><span class="op">*</span> expression <span class="op">=</span> <span class="st">"sqrt(5^2+7^2+11^2+(8-2)^2)"</span><span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> res <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span>expression<span class="op">);</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">"The expression:</span><span class="sc">\n\t</span><span class="st">"</span> <span class="op">&lt;&lt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        expression <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">evaluates to:</span><span class="sc">\n\t</span><span class="st">"</span> <span class="op">&lt;&lt;</span> res <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> EXIT_SUCCESS<span class="op">;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list" style="display: none">

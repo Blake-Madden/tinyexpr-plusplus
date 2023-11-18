@@ -316,27 +316,34 @@ div.csl-indent {
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>IF<span class="op">(</span>AND<span class="op">(</span>P_LEVEL <span class="op">&lt;</span> <span class="fl">.05</span><span class="op">,</span> N_OBS <span class="op">&gt;=</span> <span class="dv">30</span><span class="op">),</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   P_LEVEL<span class="op">,</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   NAN<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="minipage">
 <p>Logical checks can also be nested, creating a “case”-like statement:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>IF<span class="op">(</span>AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&gt;</span> <span class="dv">1900</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&lt;</span> <span class="dv">52</span><span class="op">),</span> TRUE<span class="op">,</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>   <span class="co">// First logical check failed, so now check another scenario</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>   <span class="co">// and return false if it meets our criteria.</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>   IF<span class="op">(</span>AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&lt;</span> <span class="dv">300</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&gt;</span> <span class="dv">55</span><span class="op">),</span> FALSE<span class="op">,</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>     <span class="co">// Neither scenario checked out, so the values are in an</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>     <span class="co">// unaccounted for scenario. Return NaN to indicate a failure.</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>     NAN<span class="op">)</span> <span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="minipage">
+<div class="sourceCode" id="annotated-cell-4"><pre class="sourceCode cpp code-annotation-code code-with-copy code-annotated"><code class="sourceCode cpp"><span id="annotated-cell-4-1"><a href="#annotated-cell-4-1" aria-hidden="true" tabindex="-1"></a>IF<span class="op">(</span>AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&gt;</span> <span class="dv">1900</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&lt;</span> <span class="dv">52</span><span class="op">),</span> TRUE<span class="op">,</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-4-2" class="code-annotation-target"><a href="#annotated-cell-4-2" aria-hidden="true" tabindex="-1"></a>   IF<span class="op">(</span>AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&lt;</span> <span class="dv">300</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&gt;</span> <span class="dv">55</span><span class="op">),</span> FALSE<span class="op">,</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-4-3" class="code-annotation-target"><a href="#annotated-cell-4-3" aria-hidden="true" tabindex="-1"></a>      NAN<span class="op">)</span> <span class="op">)</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-4" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-cell="annotated-cell-4" data-code-lines="2">First logical check failed, so now check another scenario and return false if it meets our criteria.</span>
+</dd>
+<dt data-target-cell="annotated-cell-4" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-annotation="2" data-code-cell="annotated-cell-4" data-code-lines="3">Neither scenario passed; return NaN because the values are in an unaccounted for scenario.</span>
+</dd>
+</dl>
 <p>The same can be accomplished using the <code>IFS()</code> function:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>IFS<span class="op">(</span>AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&gt;</span> <span class="dv">1900</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&lt;</span> <span class="dv">52</span><span class="op">),</span> TRUE<span class="op">,</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// First logical check failed, so now check another scenarios</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// and return false either meets our criteria.</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&lt;</span> <span class="dv">0</span><span class="op">),</span> FALSE<span class="op">,</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&lt;</span> <span class="dv">300</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&gt;</span> <span class="dv">55</span><span class="op">),</span> FALSE<span class="op">)</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// NaN is returned if no conditions were met and we are</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// in an unknown state.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<div class="sourceCode" id="annotated-cell-5"><pre class="sourceCode cpp code-annotation-code code-with-copy code-annotated"><code class="sourceCode cpp"><span id="annotated-cell-5-1"><a href="#annotated-cell-5-1" aria-hidden="true" tabindex="-1"></a>IFS<span class="op">(</span>AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&gt;</span> <span class="dv">1900</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&lt;</span> <span class="dv">52</span><span class="op">),</span> TRUE<span class="op">,</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-5" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-5-2" class="code-annotation-target"><a href="#annotated-cell-5-2" aria-hidden="true" tabindex="-1"></a>    AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&lt;</span> <span class="dv">0</span><span class="op">),</span> FALSE<span class="op">,</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-5" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-5-3" class="code-annotation-target"><a href="#annotated-cell-5-3" aria-hidden="true" tabindex="-1"></a>    AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&lt;</span> <span class="dv">300</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&gt;</span> <span class="dv">55</span><span class="op">),</span> FALSE<span class="op">)</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-5" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-cell="annotated-cell-5" data-code-lines="2">First logical check failed, so now check another scenario and return false if it meets our criteria.</span>
+</dd>
+<dt data-target-cell="annotated-cell-5" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-annotation="2" data-code-cell="annotated-cell-5" data-code-lines="3">Neither scenario passed; return NaN because the values are in an unaccounted for scenario.</span>
+</dd>
+</dl>
 <div class="notesection">
 <p>Expressions can optionally begin with an <code>=</code>, the same as spreadsheet programs. For example:<br>
 </p>
