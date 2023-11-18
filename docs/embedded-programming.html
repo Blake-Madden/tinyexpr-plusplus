@@ -1,69 +1,32 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
-<head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 15 Embedded Programming | TinyExpr++</title>
-  <meta name="description" content="Chapter 15 Embedded Programming | TinyExpr++" />
-  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
 
-  <meta property="og:title" content="Chapter 15 Embedded Programming | TinyExpr++" />
-  <meta property="og:type" content="book" />
-  <meta property="og:image" content="/manual/images/cover.png" />
-  
-  
-
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 15 Embedded Programming | TinyExpr++" />
-  
-  
-  <meta name="twitter:image" content="/manual/images/cover.png" />
-
-<meta name="author" content="Blake Madden" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<meta name="date" content="2023-01-01" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  
-  
-<link rel="prev" href="compile-time-options.html"/>
-<link rel="next" href="references.html"/>
-<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
-<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
-
-
-
-
-
-
-<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
-<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
-<script src="libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
-<script src="libs/viz-1.8.2/viz.js"></script>
-<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
-<script src="libs/grViz-binding-1.0.10/grViz.js"></script>
-
-
-<style type="text/css">
+<title>TinyExpr++ - 13&nbsp; Embedded Programming</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -84,56 +47,19 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-</style>
-
-<style type="text/css">
-  
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-</style>
-<style type="text/css">
-/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+/* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
 }
-.hanging div.csl-entry {
+.hanging-indent div.csl-entry {
   margin-left:2em;
   text-indent:-2em;
 }
@@ -147,170 +73,305 @@ div.csl-right-inline {
 }
 div.csl-indent {
   margin-left: 2em;
-}
-</style>
+}</style>
 
-<link rel="stylesheet" href="style.css" type="text/css" />
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<link href="./Appendix.html" rel="next">
+<link href="./compile-time-options.html" rel="prev">
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="nav-sidebar floating nav-fixed">
 
-
-
-  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
-
-    <div class="book-summary">
-      <nav role="navigation">
-
-<ul class="summary">
-<li><a href="./">TinyExpr++ Reference Manual</a></li>
-
-<li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
-<li class="chapter" data-level="1" data-path="overview.html"><a href="overview.html"><i class="fa fa-check"></i><b>1</b> Overview</a>
-<ul>
-<li class="chapter" data-level="" data-path="overview.html"><a href="overview.html#features"><i class="fa fa-check"></i>Features</a></li>
-</ul></li>
-<li class="part"><span><b>I User Guide</b></span></li>
-<li class="chapter" data-level="2" data-path="usage.html"><a href="usage.html"><i class="fa fa-check"></i><b>2</b> Usage</a></li>
-<li class="chapter" data-level="3" data-path="operators.html"><a href="operators.html"><i class="fa fa-check"></i><b>3</b> Operators</a>
-<ul>
-<li class="chapter" data-level="" data-path="operators.html"><a href="operators.html#compatability-note"><i class="fa fa-check"></i>Compatability Note</a></li>
-</ul></li>
-<li class="chapter" data-level="4" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>4</b> Functions</a></li>
-<li class="chapter" data-level="5" data-path="constants.html"><a href="constants.html"><i class="fa fa-check"></i><b>5</b> Constants</a></li>
-<li class="chapter" data-level="6" data-path="comments.html"><a href="comments.html"><i class="fa fa-check"></i><b>6</b> Comments</a></li>
-<li class="part"><span><b>II Developer Guide</b></span></li>
-<li class="chapter" data-level="7" data-path="building.html"><a href="building.html"><i class="fa fa-check"></i><b>7</b> Building</a>
-<ul>
-<li class="chapter" data-level="" data-path="building.html"><a href="building.html#requirements"><i class="fa fa-check"></i>Requirements</a></li>
-</ul></li>
-<li class="chapter" data-level="8" data-path="usage-1.html"><a href="usage-1.html"><i class="fa fa-check"></i><b>8</b> Usage</a>
-<ul>
-<li class="chapter" data-level="" data-path="usage-1.html"><a href="usage-1.html#error-handling"><i class="fa fa-check"></i>Error Handling</a></li>
-</ul></li>
-<li class="chapter" data-level="9" data-path="example.html"><a href="example.html"><i class="fa fa-check"></i><b>9</b> Example</a></li>
-<li class="chapter" data-level="10" data-path="custom-extensions.html"><a href="custom-extensions.html"><i class="fa fa-check"></i><b>10</b> Custom Extensions</a>
-<ul>
-<li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-variables"><i class="fa fa-check"></i>Binding to Custom Variables</a></li>
-<li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-functions"><i class="fa fa-check"></i>Binding to Custom Functions</a></li>
-<li class="chapter" data-level="" data-path="custom-extensions.html"><a href="custom-extensions.html#binding-to-custom-classes"><i class="fa fa-check"></i>Binding to Custom Classes</a></li>
-</ul></li>
-<li class="chapter" data-level="11" data-path="usr.html"><a href="usr.html"><i class="fa fa-check"></i><b>11</b> Handling Unknown Variables</a></li>
-<li class="chapter" data-level="12" data-path="non-us-formatted-formulas.html"><a href="non-us-formatted-formulas.html"><i class="fa fa-check"></i><b>12</b> Non-US Formatted Formulas</a></li>
-<li class="chapter" data-level="13" data-path="how-it-works.html"><a href="how-it-works.html"><i class="fa fa-check"></i><b>13</b> How it Works</a>
-<ul>
-<li class="chapter" data-level="" data-path="how-it-works.html"><a href="how-it-works.html#grammar"><i class="fa fa-check"></i>Grammar</a></li>
-</ul></li>
-<li class="chapter" data-level="14" data-path="compile-time-options.html"><a href="compile-time-options.html"><i class="fa fa-check"></i><b>14</b> Compile-time Options</a>
-<ul>
-<li class="chapter" data-level="" data-path="compile-time-options.html"><a href="compile-time-options.html#te_pow_from_right"><i class="fa fa-check"></i><code>TE_POW_FROM_RIGHT</code></a></li>
-</ul></li>
-<li class="chapter" data-level="15" data-path="embedded-programming.html"><a href="embedded-programming.html"><i class="fa fa-check"></i><b>15</b> Embedded Programming</a>
-<ul>
-<li class="chapter" data-level="" data-path="embedded-programming.html"><a href="embedded-programming.html#performance"><i class="fa fa-check"></i>Performance</a></li>
-<li class="chapter" data-level="" data-path="embedded-programming.html"><a href="embedded-programming.html#volatility"><i class="fa fa-check"></i>Volatility</a></li>
-<li class="chapter" data-level="" data-path="embedded-programming.html"><a href="embedded-programming.html#exception-handling"><i class="fa fa-check"></i>Exception Handling</a></li>
-<li class="chapter" data-level="" data-path="embedded-programming.html"><a href="embedded-programming.html#virtual-functions"><i class="fa fa-check"></i>Virtual Functions</a></li>
-</ul></li>
-<li class="part"><span><b>III Appendix</b></span></li>
-<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
-<li class="divider"></li>
-<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
-
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./tinyexpr_logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">TinyExpr++</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Blake-Madden/tinyexpr-plusplus" rel="" target=""><i class="bi bi-github" role="img" aria-label="Github">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
 </ul>
-
-      </nav>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./building.html">Developer Guide</a></li><li class="breadcrumb-item"><a href="./embedded-programming.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Embedded Programming</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
     </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">User Guide</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./end-user-usage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Usage</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./operators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Operators</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Functions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Constants</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./comments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Comments</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Developer Guide</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./building.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Building</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./usage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Usage</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./custom-extensions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Custom Extensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./unknown-symbol-resolution.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Handling Unknown Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./non-us-formulas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Non-US Formatted Formulas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./technical-overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">How it Works</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./compile-time-options.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Compile-time Options</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./embedded-programming.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Embedded Programming</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Appendix</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#performance" id="toc-performance" class="nav-link active" data-scroll-target="#performance">Performance</a></li>
+  <li><a href="#volatility" id="toc-volatility" class="nav-link" data-scroll-target="#volatility">Volatility</a></li>
+  <li><a href="#fp-numbers" id="toc-fp-numbers" class="nav-link" data-scroll-target="#fp-numbers">Floating-point Numbers</a></li>
+  <li><a href="#exception-handling" id="toc-exception-handling" class="nav-link" data-scroll-target="#exception-handling">Exception Handling</a></li>
+  <li><a href="#virtual-functions" id="toc-virtual-functions" class="nav-link" data-scroll-target="#virtual-functions">Virtual Functions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
 
-    <div class="book-body">
-      <div class="body-inner">
-        <div class="book-header" role="navigation">
-          <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">TinyExpr++</a>
-          </h1>
-        </div>
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Embedded Programming</span></h1>
+</div>
 
-        <div class="page-wrapper" tabindex="-1" role="main">
-          <div class="page-inner">
 
-            <section class="normal" id="section-">
-<div id="embedded-programming" class="section level1 hasAnchor" number="15">
-<h1><span class="header-section-number">Chapter 15</span> Embedded Programming<a href="embedded-programming.html#embedded-programming" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>The following section discusses topics related to using <em>TinyExpr++</em> in an
-embedded environment.</p>
-<div id="performance" class="section level2 unnumbered hasAnchor">
-<h2>Performance<a href="embedded-programming.html#performance" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p><em>TinyExpr++</em> is fairly fast compared to compiled C when the expression is short, when the
-expression does hard calculations (e.g., exponentiation), and when some of the
-work can be simplified by <code>evaluate()</code>. <em>TinyExpr++</em> is slower compared to C when the
-expression is long and involves only basic arithmetic.</p>
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>The following section discusses topics related to using <em>TinyExpr++</em> in an embedded environment.</p>
+<section id="performance" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="performance">Performance</h2>
+<p><em>TinyExpr++</em> is fairly fast compared to compiled C when the expression is short, when the expression does hard calculations (e.g., exponentiation), and when some of the work can be simplified by <code>evaluate()</code>. <em>TinyExpr++</em> is slower compared to C when the expression is long and involves only basic arithmetic.</p>
 <p>Here are some example benchmarks:</p>
-<table>
+<table class="table">
 <thead>
 <tr class="header">
-<th align="left">Expression</th>
-<th align="right"><em>TinyExpr++</em></th>
-<th align="right">Native C</th>
-<th align="right">Comparison</th>
+<th style="text-align: left;">Expression</th>
+<th style="text-align: right;"><em>TinyExpr++</em></th>
+<th style="text-align: right;">Native C</th>
+<th style="text-align: right;">Comparison</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">sqrt(a<sup>1.5+a</sup>2.5)</td>
-<td align="right">1,707 ns</td>
-<td align="right">58.25 ns</td>
-<td align="right">29% slower</td>
+<td style="text-align: left;">sqrt(a<sup>1.5+a</sup>2.5)</td>
+<td style="text-align: right;">1,707 ns</td>
+<td style="text-align: right;">58.25 ns</td>
+<td style="text-align: right;">29% slower</td>
 </tr>
 <tr class="even">
-<td align="left">a+5</td>
-<td align="right">535 ns</td>
-<td align="right">0.67 ns</td>
-<td align="right">798% slower</td>
+<td style="text-align: left;">a+5</td>
+<td style="text-align: right;">535 ns</td>
+<td style="text-align: right;">0.67 ns</td>
+<td style="text-align: right;">798% slower</td>
 </tr>
 <tr class="odd">
-<td align="left">a+(5*2)</td>
-<td align="right">0.73 ns</td>
-<td align="right">969 ns</td>
-<td align="right">1,327% slower</td>
-</tr>
-<tr class="even">
-<td align="left">(a+5)*2</td>
-<td align="right">0.66 ns</td>
-<td align="right">980 ns</td>
-<td align="right">1,484% slower</td>
-</tr>
-<tr class="odd">
-<td align="left">(1/(a+1)+2/(a+2)+3/(a+3))</td>
-<td align="right">3,388 ns</td>
-<td align="right">3.941 ns</td>
-<td align="right">859% slower</td>
+<td style="text-align: left;">(1/(a+1)+2/(a+2)+3/(a+3))</td>
+<td style="text-align: right;">3,388 ns</td>
+<td style="text-align: right;">3.941 ns</td>
+<td style="text-align: right;">859% slower</td>
 </tr>
 </tbody>
 </table>
 <p>Note that <em>TinyExpr++</em> is slower compared to <em>TinyExpr</em> because of additional type safety checks (e.g., the use of <code>std::variant</code> instead of unions).</p>
-</div>
-<div id="volatility" class="section level2 unnumbered hasAnchor">
-<h2>Volatility<a href="embedded-programming.html#volatility" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>If needing to use a <code>te_parser</code> object as <code>volatile</code>
-(e.g., accessing it in a system interrupt), then you will need
-to do the following.</p>
-<p>First, declare your <code>te_parser</code> as a non-<code>volatile</code> object outside
-of the interrupt function (e.g., globally):</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb26-1"><a href="embedded-programming.html#cb26-1" tabindex="-1"></a>te_parser tep<span class="op">;</span></span></code></pre></div>
+</section>
+<section id="volatility" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="volatility">Volatility</h2>
+<p>If needing to use a <code>te_parser</code> object as <code>volatile</code> (e.g., accessing it in a system interrupt), then you will need to do the following.</p>
+<p>First, declare your <code>te_parser</code> as a non-<code>volatile</code> object outside of the interrupt function (e.g., globally):</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>te_parser tep<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Then, in your interrupt function, create a <code>volatile</code> reference to it:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb27-1"><a href="embedded-programming.html#cb27-1" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
-<span id="cb27-2"><a href="embedded-programming.html#cb27-2" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb27-3"><a href="embedded-programming.html#cb27-3" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
-<span id="cb27-4"><a href="embedded-programming.html#cb27-4" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
-<p>Functions in <code>te_parser</code> which have <code>volatile</code> overloads can then be
-called directly:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb28-1"><a href="embedded-programming.html#cb28-1" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
-<span id="cb28-2"><a href="embedded-programming.html#cb28-2" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb28-3"><a href="embedded-programming.html#cb28-3" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
-<span id="cb28-4"><a href="embedded-programming.html#cb28-4" tabindex="-1"></a>    vTep<span class="op">.</span>set_list_separator<span class="op">(</span><span class="ch">&#39;,&#39;</span><span class="op">);</span></span>
-<span id="cb28-5"><a href="embedded-programming.html#cb28-5" tabindex="-1"></a>    vTep<span class="op">.</span>set_decimal_separator<span class="op">(</span><span class="ch">&#39;.&#39;</span><span class="op">);</span></span>
-<span id="cb28-6"><a href="embedded-programming.html#cb28-6" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Functions in <code>te_parser</code> which have <code>volatile</code> overloads can then be called directly:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    vTep<span class="op">.</span>set_list_separator<span class="op">(</span><span class="ch">','</span><span class="op">);</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    vTep<span class="op">.</span>set_decimal_separator<span class="op">(</span><span class="ch">'.'</span><span class="op">);</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The following functions in the <code>te_parser</code> class have <code>volatile</code> overloads:</p>
 <ul>
 <li><code>get_result()</code></li>
@@ -321,45 +382,56 @@ called directly:</p>
 <li><code>get_list_separator()</code></li>
 <li><code>set_list_separator()</code></li>
 </ul>
-<p>For any other functions, use <code>const_cast&lt;&gt;</code> to remove the parser
-reference’s volatility:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb29-1"><a href="embedded-programming.html#cb29-1" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
-<span id="cb29-2"><a href="embedded-programming.html#cb29-2" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb29-3"><a href="embedded-programming.html#cb29-3" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
-<span id="cb29-4"><a href="embedded-programming.html#cb29-4" tabindex="-1"></a></span>
-<span id="cb29-5"><a href="embedded-programming.html#cb29-5" tabindex="-1"></a>    <span class="co">// Use &#39;const_cast&lt;te_parser&amp;&gt;(vTep)&#39; to access</span></span>
-<span id="cb29-6"><a href="embedded-programming.html#cb29-6" tabindex="-1"></a>    <span class="co">// non-volatile functions.</span></span>
-<span id="cb29-7"><a href="embedded-programming.html#cb29-7" tabindex="-1"></a>    <span class="kw">const_cast</span><span class="op">&lt;</span>te_parser<span class="op">&amp;&gt;(</span>vTep<span class="op">).</span>set_variables_and_functions<span class="op">(</span></span>
-<span id="cb29-8"><a href="embedded-programming.html#cb29-8" tabindex="-1"></a>         <span class="op">{</span> <span class="op">{</span><span class="st">&quot;STRESS_L&quot;</span><span class="op">,</span> <span class="fl">10.1</span><span class="op">},</span></span>
-<span id="cb29-9"><a href="embedded-programming.html#cb29-9" tabindex="-1"></a>           <span class="op">{</span><span class="st">&quot;P_LEVEL&quot;</span><span class="op">,</span> <span class="fl">.5</span><span class="op">}</span> <span class="op">});</span></span>
-<span id="cb29-10"><a href="embedded-programming.html#cb29-10" tabindex="-1"></a>    <span class="kw">const_cast</span><span class="op">&lt;</span>te_parser<span class="op">&amp;&gt;(</span>vTep<span class="op">).</span>compile<span class="op">((</span><span class="st">&quot;STRESS_L*P_LEVEL&quot;</span><span class="op">));</span></span>
-<span id="cb29-11"><a href="embedded-programming.html#cb29-11" tabindex="-1"></a></span>
-<span id="cb29-12"><a href="embedded-programming.html#cb29-12" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>vTep<span class="op">.</span>success<span class="op">())</span></span>
-<span id="cb29-13"><a href="embedded-programming.html#cb29-13" tabindex="-1"></a>        <span class="op">{</span></span>
-<span id="cb29-14"><a href="embedded-programming.html#cb29-14" tabindex="-1"></a>        <span class="kw">auto</span> res <span class="op">=</span> vTep<span class="op">.</span>get_result<span class="op">();</span></span>
-<span id="cb29-15"><a href="embedded-programming.html#cb29-15" tabindex="-1"></a>        <span class="co">// Do something else...</span></span>
-<span id="cb29-16"><a href="embedded-programming.html#cb29-16" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb29-17"><a href="embedded-programming.html#cb29-17" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
-<p>Note that it is required to make the initial declaration of your
-<code>te_parser</code> non-<code>volatile</code>; otherwise, the <code>const_cast&lt;&gt;</code> to the
-<code>volatile</code> reference will cause undefined behavior.</p>
-</div>
-<div id="exception-handling" class="section level2 unnumbered hasAnchor">
-<h2>Exception Handling<a href="embedded-programming.html#exception-handling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p><em>TinyExpr++</em> requires exception handling, although it does attempt to
-minimize the use of exceptions (e.g., <code>noexcept</code> is used extensively).
-Syntax errors will be reported without the use of exceptions;
-issues such as division by zero or arithmetic overflows, however,
-will internally use exceptions. The parser will trap these
-exceptions and return NaN (not a number) as the result.</p>
-<p>Exceptions can also be thrown when defining custom functions or variables
-which do not follow the proper naming convention.
-(Function and variable names must only contain the characters
-<code>a</code>-<code>z</code>, <code>A</code>-<code>Z</code>, <code>0</code>-<code>9</code>, <code>.</code>, and <code>_</code>, and must begin with a letter.)</p>
-<p>Finally, specifying an illegal character for a list or decimal separator
-will also throw.</p>
-<p>The following functions in <code>te_parser</code> can throw and should be wrapped
-in <code>try</code>/<code>catch</code> blocks:</p>
+<p>For any other functions, use <code>const_cast&lt;&gt;</code> to remove the parser reference’s volatility:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Use 'const_cast&lt;te_parser&amp;&gt;(vTep)' to access</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// non-volatile functions.</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const_cast</span><span class="op">&lt;</span>te_parser<span class="op">&amp;&gt;(</span>vTep<span class="op">).</span>set_variables_and_functions<span class="op">(</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>         <span class="op">{</span> <span class="op">{</span><span class="st">"STRESS_L"</span><span class="op">,</span> <span class="fl">10.1</span><span class="op">},</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>           <span class="op">{</span><span class="st">"P_LEVEL"</span><span class="op">,</span> <span class="fl">.5</span><span class="op">}</span> <span class="op">});</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const_cast</span><span class="op">&lt;</span>te_parser<span class="op">&amp;&gt;(</span>vTep<span class="op">).</span>compile<span class="op">((</span><span class="st">"STRESS_L*P_LEVEL"</span><span class="op">));</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>vTep<span class="op">.</span>success<span class="op">())</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">auto</span> res <span class="op">=</span> vTep<span class="op">.</span>get_result<span class="op">();</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Do something else...</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Note that it is required to make the initial declaration of your <code>te_parser</code> non-<code>volatile</code>; otherwise, the <code>const_cast&lt;&gt;</code> to the <code>volatile</code> reference will cause undefined behavior.</p>
+</section>
+<section id="fp-numbers" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="fp-numbers">Floating-point Numbers</h2>
+<p><code>double</code> is the default data type used for the parser’s variable types, parameters, and return types. For embedded environments that require <code>float</code>, compile with <code>TE_FLOAT</code> defined to use <code>float</code> instead.</p>
+<p>When using this option, it is recommended to use the helper typedef <code>te_type</code>. This will map to either <code>float</code> or <code>double</code> (depending on whether <code>TE_FLOAT</code> is defined). By defining your functions and variables with <code>te_type</code>, you won’t need to replace <code>double</code> and <code>float</code> if needing to change this compiler flag.</p>
+<p>For example, a custom function would be written as such:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Regular function.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">te_type</span> my_sum<span class="op">(</span><span class="dt">te_type</span> a<span class="op">,</span> <span class="dt">te_type</span> b<span class="op">)</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a <span class="op">+</span> b<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>te_parser tep<span class="op">;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>tep<span class="op">.</span>set_variables_and_functions<span class="op">(</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span> <span class="st">"mysum"</span><span class="op">,</span> my_sum <span class="op">}</span> <span class="co">// function pointer</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">// Lambda.</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>tep<span class="op">.</span>set_variables_and_functions<span class="op">({</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span> <span class="st">"mysum2"</span><span class="op">,</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">[](</span><span class="dt">te_type</span> a<span class="op">,</span> <span class="dt">te_type</span> b<span class="op">)</span> <span class="kw">noexcept</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span> <span class="cf">return</span> a <span class="op">+</span> b<span class="op">;</span> <span class="op">}</span> <span class="op">}</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="exception-handling" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="exception-handling">Exception Handling</h2>
+<p><em>TinyExpr++</em> requires exception handling, although it does attempt to minimize the use of exceptions (e.g., <code>noexcept</code> is used extensively). Syntax errors will be reported without the use of exceptions; issues such as division by zero or arithmetic overflows, however, will internally use exceptions. The parser will trap these exceptions and return NaN (not a number) as the result.</p>
+<p>Exceptions can also be thrown when defining custom functions or variables which do not follow the proper naming convention. (Function and variable names may only contain the characters <code>a</code>-<code>z</code>, <code>A</code>-<code>Z</code>, <code>0</code>-<code>9</code>, <code>.</code>, and <code>_</code>, and must begin with a letter.)</p>
+<p>Finally, specifying an illegal character for a list or decimal separator will also throw.</p>
+<p>The following functions in <code>te_parser</code> can throw and should be wrapped in <code>try</code>/<code>catch</code> blocks:</p>
 <ul>
 <li><code>compile()</code></li>
 <li><code>evaluate()</code></li>
@@ -368,86 +440,272 @@ in <code>try</code>/<code>catch</code> blocks:</p>
 <li><code>set_decimal_separator()</code></li>
 <li><code>set_list_separator()</code></li>
 </ul>
-<p>The caught <code>std::runtime_error</code> exception will provide a description
-of the error in its <code>what()</code> method.</p>
+<p>The caught <code>std::runtime_error</code> exception will provide a description of the error in its <code>what()</code> method.</p>
+</section>
+<section id="virtual-functions" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="virtual-functions">Virtual Functions</h2>
+<p><em>TinyExpr++</em> does not use virtual functions or derived classes, unless you create a custom class derived from <code>te_expr</code> yourself (refer to <a href="custom-extensions.html#custom-classes">“Binding to Custom Classes”</a> for an example). (<code>te_expr</code> defines a virtual destructor that may be implicitly optimized to <code>final</code> if no derived classes are defined.)</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list" style="display: none">
+<div id="ref-ExcelBible" class="csl-entry" role="listitem">
+Alexander, Michael, and Dick Kusleika. <em>Microsoft Excel 365 Bible</em>. Wiley, 2022.
 </div>
-<div id="virtual-functions" class="section level2 unnumbered hasAnchor">
-<h2>Virtual Functions<a href="embedded-programming.html#virtual-functions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p><em>TinyExpr++</em> does not use virtual functions or derived classes,
-unless you create a custom class derived from <code>te_expr</code> yourself
-(refer to <a href="#example-5">Example 5</a>).
-(<code>te_expr</code> defines a virtual destructor that may be implicitly optimized to
-<code>final</code> if no derived classes are defined.)</p>
-
+<div id="ref-TinyExpr" class="csl-entry" role="listitem">
+Winkle, Lewis Van. <em>C Math Evaluation Library: TinyExpr</em>. 2016, <a href="https://codeplea.com/tinyexpr">https://codeplea.com/tinyexpr</a>.
 </div>
 </div>
+</section>
 
-
-
-            </section>
-
-          </div>
-        </div>
-      </div>
-<a href="compile-time-options.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
-    </div>
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./compile-time-options.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Compile-time Options</span></span>
+      </a>          
   </div>
-<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
-<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
-<script>
-gitbook.require(["gitbook"], function(gitbook) {
-gitbook.start({
-"sharing": null,
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": null,
-"text": null
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["TinyExpr++ReferenceManual.pdf"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-}
-});
-});
-</script>
+  <div class="nav-page nav-page-next">
+      <a href="./Appendix.html" class="pagination-link">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    var src = "true";
-    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:")
-      if (/^https?:/.test(src))
-        src = src.replace(/^https?:/, '');
-    script.src = src;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
-</body>
 
-</html>
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

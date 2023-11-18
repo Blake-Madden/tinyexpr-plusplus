@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>TinyExpr++ - 5&nbsp; Comments</title>
+<title>TinyExpr++ - 1&nbsp; Usage</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -78,8 +78,8 @@ div.csl-indent {
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
-<link href="./building.html" rel="next">
-<link href="./constants.html" rel="prev">
+<link href="./operators.html" rel="next">
+<link href="./index.html" rel="prev">
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -145,7 +145,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./end-user-usage.html">User Guide</a></li><li class="breadcrumb-item"><a href="./comments.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Comments</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./end-user-usage.html">User Guide</a></li><li class="breadcrumb-item"><a href="./end-user-usage.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Usage</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
     </div>
@@ -174,7 +174,7 @@ div.csl-indent {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./end-user-usage.html" class="sidebar-item-text sidebar-link">
+  <a href="./end-user-usage.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Usage</span></span></a>
   </div>
 </li>
@@ -198,7 +198,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./comments.html" class="sidebar-item-text sidebar-link active">
+  <a href="./comments.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Comments</span></span></a>
   </div>
 </li>
@@ -293,7 +293,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Comments</span></h1>
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Usage</span></h1>
 </div>
 
 
@@ -308,23 +308,41 @@ div.csl-indent {
 
 </header>
 
-<p>Comments can be embedded within an expression to clarify its intent. C/C++ style comments are supported, which provide:</p>
-<ul>
-<li>multi-line comments (text within a pair of <code>/*</code> and <code>*/</code>).</li>
-<li>single line comments (everything after a <code>//</code> until the end of the current line).</li>
-</ul>
-<p>For example, assuming that the variables <code>P_LEVEL</code> and <code>N_OBS</code> have been defined within the parser, an expression such as this could be used:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* Returns the p-level of a study if:</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">   p-level &lt; 5% AND</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">   number of observations was at least 30.</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">   Otherwise, NaN is returned. */</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>IF<span class="op">(</span><span class="co">// Review the results from the analysis</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>   AND<span class="op">(</span>P_LEVEL <span class="op">&lt;</span> <span class="fl">.05</span><span class="op">,</span> N_OBS <span class="op">&gt;=</span> <span class="dv">30</span><span class="op">),</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>   <span class="co">// ...and return the p-level if acceptable</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>   P_LEVEL<span class="op">,</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>   <span class="co">// or NaN if not</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>   NAN<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><em>TinyExpr++</em> is a formula-solving library which accepts math and logic expressions such as:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ABS<span class="op">(((</span><span class="dv">5</span><span class="op">+</span><span class="dv">2</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span>ABS<span class="op">(-</span><span class="dv">2</span><span class="op">)))</span> <span class="op">*</span> <span class="op">-</span><span class="dv">9</span> <span class="op">+</span> <span class="dv">2</span><span class="op">)</span> <span class="op">-</span> <span class="dv">5</span><span class="op">^</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Applications using <em>TinyExpr++</em> may provide context-specific variables that you can use in your expressions. For example, in a spreadsheet application, values representing cells such as <code>C1</code> and <code>D2</code> may be available. This would enable the use of expressions such as:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>SUM<span class="op">(</span>C1<span class="op">,</span> C2<span class="op">,</span> C3<span class="op">,</span> D1<span class="op">,</span> D2<span class="op">,</span> D3<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As another example, in a statistical program, the values <code>N_OBS</code> and <code>P_LEVEL</code> may be available. This would make an expression such as this possible:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>IF<span class="op">(</span>AND<span class="op">(</span>P_LEVEL <span class="op">&lt;</span> <span class="fl">.05</span><span class="op">,</span> N_OBS <span class="op">&gt;=</span> <span class="dv">30</span><span class="op">),</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   P_LEVEL<span class="op">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   NAN<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="minipage">
+<p>Logical checks can also be nested, creating a “case”-like statement:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>IF<span class="op">(</span>AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&gt;</span> <span class="dv">1900</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&lt;</span> <span class="dv">52</span><span class="op">),</span> TRUE<span class="op">,</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>   <span class="co">// First logical check failed, so now check another scenario</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>   <span class="co">// and return false if it meets our criteria.</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>   IF<span class="op">(</span>AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&lt;</span> <span class="dv">300</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&gt;</span> <span class="dv">55</span><span class="op">),</span> FALSE<span class="op">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>     <span class="co">// Neither scenario checked out, so the values are in an</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>     <span class="co">// unaccounted for scenario. Return NaN to indicate a failure.</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>     NAN<span class="op">)</span> <span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="minipage">
+<p>The same can be accomplished using the <code>IFS()</code> function:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>IFS<span class="op">(</span>AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&gt;</span> <span class="dv">1900</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&lt;</span> <span class="dv">52</span><span class="op">),</span> TRUE<span class="op">,</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// First logical check failed, so now check another scenarios</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// and return false either meets our criteria.</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&lt;</span> <span class="dv">0</span><span class="op">),</span> FALSE<span class="op">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    AND<span class="op">(</span>smartMeter1<span class="op">.</span>power <span class="op">&lt;</span> <span class="dv">300</span><span class="op">,</span> sensor1<span class="op">.</span>temperature <span class="op">&gt;</span> <span class="dv">55</span><span class="op">),</span> FALSE<span class="op">)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// NaN is returned if no conditions were met and we are</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// in an unknown state.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="notesection">
+<p>Expressions can optionally begin with an <code>=</code>, the same as spreadsheet programs. For example:<br>
+</p>
+<p><code>=SUM(C1, C2, C3, D1, D2, D3)</code></p>
+</div>
+<p>Please consult your application’s documentation for which custom variables and functions it may provide for its formulas.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list" style="display: none">
@@ -572,13 +590,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./constants.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Constants</span></span>
+      <a href="./index.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./building.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Building</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./operators.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Operators</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

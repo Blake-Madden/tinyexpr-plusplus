@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>TinyExpr++ - 5&nbsp; Comments</title>
+<title>TinyExpr++ - 13&nbsp; Embedded Programming</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -78,8 +78,8 @@ div.csl-indent {
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
-<link href="./building.html" rel="next">
-<link href="./constants.html" rel="prev">
+<link href="./Appendix.html" rel="next">
+<link href="./compile-time-options.html" rel="prev">
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -145,7 +145,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./end-user-usage.html">User Guide</a></li><li class="breadcrumb-item"><a href="./comments.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Comments</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./building.html">Developer Guide</a></li><li class="breadcrumb-item"><a href="./embedded.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Embedded Programming</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
     </div>
@@ -198,7 +198,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./comments.html" class="sidebar-item-text sidebar-link active">
+  <a href="./comments.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Comments</span></span></a>
   </div>
 </li>
@@ -257,7 +257,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./embedded-programming.html" class="sidebar-item-text sidebar-link">
+  <a href="./embedded.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Embedded Programming</span></span></a>
   </div>
 </li>
@@ -286,14 +286,23 @@ div.csl-indent {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#performance" id="toc-performance" class="nav-link active" data-scroll-target="#performance">Performance</a></li>
+  <li><a href="#volatility" id="toc-volatility" class="nav-link" data-scroll-target="#volatility">Volatility</a></li>
+  <li><a href="#exception-handling" id="toc-exception-handling" class="nav-link" data-scroll-target="#exception-handling">Exception Handling</a></li>
+  <li><a href="#virtual-functions" id="toc-virtual-functions" class="nav-link" data-scroll-target="#virtual-functions">Virtual Functions</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Comments</span></h1>
+<h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Embedded Programming</span></h1>
 </div>
 
 
@@ -308,23 +317,121 @@ div.csl-indent {
 
 </header>
 
-<p>Comments can be embedded within an expression to clarify its intent. C/C++ style comments are supported, which provide:</p>
+<p>The following section discusses topics related to using <em>TinyExpr++</em> in an embedded environment.</p>
+<section id="performance" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="performance">Performance</h2>
+<p><em>TinyExpr++</em> is fairly fast compared to compiled C when the expression is short, when the expression does hard calculations (e.g., exponentiation), and when some of the work can be simplified by <code>evaluate()</code>. <em>TinyExpr++</em> is slower compared to C when the expression is long and involves only basic arithmetic.</p>
+<p>Here are some example benchmarks:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Expression</th>
+<th style="text-align: right;"><em>TinyExpr++</em></th>
+<th style="text-align: right;">Native C</th>
+<th style="text-align: right;">Comparison</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">sqrt(a<sup>1.5+a</sup>2.5)</td>
+<td style="text-align: right;">1,707 ns</td>
+<td style="text-align: right;">58.25 ns</td>
+<td style="text-align: right;">29% slower</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">a+5</td>
+<td style="text-align: right;">535 ns</td>
+<td style="text-align: right;">0.67 ns</td>
+<td style="text-align: right;">798% slower</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">a+(5*2)</td>
+<td style="text-align: right;">0.73 ns</td>
+<td style="text-align: right;">969 ns</td>
+<td style="text-align: right;">1,327% slower</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">(a+5)*2</td>
+<td style="text-align: right;">0.66 ns</td>
+<td style="text-align: right;">980 ns</td>
+<td style="text-align: right;">1,484% slower</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">(1/(a+1)+2/(a+2)+3/(a+3))</td>
+<td style="text-align: right;">3,388 ns</td>
+<td style="text-align: right;">3.941 ns</td>
+<td style="text-align: right;">859% slower</td>
+</tr>
+</tbody>
+</table>
+<p>Note that <em>TinyExpr++</em> is slower compared to <em>TinyExpr</em> because of additional type safety checks (e.g., the use of <code>std::variant</code> instead of unions).</p>
+</section>
+<section id="volatility" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="volatility">Volatility</h2>
+<p>If needing to use a <code>te_parser</code> object as <code>volatile</code> (e.g., accessing it in a system interrupt), then you will need to do the following.</p>
+<p>First, declare your <code>te_parser</code> as a non-<code>volatile</code> object outside of the interrupt function (e.g., globally):</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>te_parser tep<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then, in your interrupt function, create a <code>volatile</code> reference to it:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Functions in <code>te_parser</code> which have <code>volatile</code> overloads can then be called directly:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    vTep<span class="op">.</span>set_list_separator<span class="op">(</span><span class="ch">','</span><span class="op">);</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    vTep<span class="op">.</span>set_decimal_separator<span class="op">(</span><span class="ch">'.'</span><span class="op">);</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The following functions in the <code>te_parser</code> class have <code>volatile</code> overloads:</p>
 <ul>
-<li>multi-line comments (text within a pair of <code>/*</code> and <code>*/</code>).</li>
-<li>single line comments (everything after a <code>//</code> until the end of the current line).</li>
+<li><code>get_result()</code></li>
+<li><code>success()</code></li>
+<li><code>get_last_error_position()</code></li>
+<li><code>get_decimal_separator()</code></li>
+<li><code>set_decimal_separator()</code></li>
+<li><code>get_list_separator()</code></li>
+<li><code>set_list_separator()</code></li>
 </ul>
-<p>For example, assuming that the variables <code>P_LEVEL</code> and <code>N_OBS</code> have been defined within the parser, an expression such as this could be used:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* Returns the p-level of a study if:</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">   p-level &lt; 5% AND</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">   number of observations was at least 30.</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">   Otherwise, NaN is returned. */</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>IF<span class="op">(</span><span class="co">// Review the results from the analysis</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>   AND<span class="op">(</span>P_LEVEL <span class="op">&lt;</span> <span class="fl">.05</span><span class="op">,</span> N_OBS <span class="op">&gt;=</span> <span class="dv">30</span><span class="op">),</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>   <span class="co">// ...and return the p-level if acceptable</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>   P_LEVEL<span class="op">,</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>   <span class="co">// or NaN if not</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>   NAN<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For any other functions, use <code>const_cast&lt;&gt;</code> to remove the parser reference’s volatility:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Use 'const_cast&lt;te_parser&amp;&gt;(vTep)' to access</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// non-volatile functions.</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const_cast</span><span class="op">&lt;</span>te_parser<span class="op">&amp;&gt;(</span>vTep<span class="op">).</span>set_variables_and_functions<span class="op">(</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>         <span class="op">{</span> <span class="op">{</span><span class="st">"STRESS_L"</span><span class="op">,</span> <span class="fl">10.1</span><span class="op">},</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>           <span class="op">{</span><span class="st">"P_LEVEL"</span><span class="op">,</span> <span class="fl">.5</span><span class="op">}</span> <span class="op">});</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const_cast</span><span class="op">&lt;</span>te_parser<span class="op">&amp;&gt;(</span>vTep<span class="op">).</span>compile<span class="op">((</span><span class="st">"STRESS_L*P_LEVEL"</span><span class="op">));</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>vTep<span class="op">.</span>success<span class="op">())</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">auto</span> res <span class="op">=</span> vTep<span class="op">.</span>get_result<span class="op">();</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Do something else...</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Note that it is required to make the initial declaration of your <code>te_parser</code> non-<code>volatile</code>; otherwise, the <code>const_cast&lt;&gt;</code> to the <code>volatile</code> reference will cause undefined behavior.</p>
+</section>
+<section id="exception-handling" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="exception-handling">Exception Handling</h2>
+<p><em>TinyExpr++</em> requires exception handling, although it does attempt to minimize the use of exceptions (e.g., <code>noexcept</code> is used extensively). Syntax errors will be reported without the use of exceptions; issues such as division by zero or arithmetic overflows, however, will internally use exceptions. The parser will trap these exceptions and return NaN (not a number) as the result.</p>
+<p>Exceptions can also be thrown when defining custom functions or variables which do not follow the proper naming convention. (Function and variable names must only contain the characters <code>a</code>-<code>z</code>, <code>A</code>-<code>Z</code>, <code>0</code>-<code>9</code>, <code>.</code>, and <code>_</code>, and must begin with a letter.)</p>
+<p>Finally, specifying an illegal character for a list or decimal separator will also throw.</p>
+<p>The following functions in <code>te_parser</code> can throw and should be wrapped in <code>try</code>/<code>catch</code> blocks:</p>
+<ul>
+<li><code>compile()</code></li>
+<li><code>evaluate()</code></li>
+<li><code>set_variables_and_functions()</code></li>
+<li><code>add_variable_or_function()</code></li>
+<li><code>set_decimal_separator()</code></li>
+<li><code>set_list_separator()</code></li>
+</ul>
+<p>The caught <code>std::runtime_error</code> exception will provide a description of the error in its <code>what()</code> method.</p>
+</section>
+<section id="virtual-functions" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="virtual-functions">Virtual Functions</h2>
+<p><em>TinyExpr++</em> does not use virtual functions or derived classes, unless you create a custom class derived from <code>te_expr</code> yourself (refer to <a href="custom-extensions.html#custom-classes">“Binding to Custom Classes”</a> for an example). (<code>te_expr</code> defines a virtual destructor that may be implicitly optimized to <code>final</code> if no derived classes are defined.)</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list" style="display: none">
@@ -335,6 +442,7 @@ Alexander, Michael, and Dick Kusleika. <em>Microsoft Excel 365 Bible</em>. Wiley
 Winkle, Lewis Van. <em>C Math Evaluation Library: TinyExpr</em>. 2016, <a href="https://codeplea.com/tinyexpr">https://codeplea.com/tinyexpr</a>.
 </div>
 </div>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -572,13 +680,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./constants.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Constants</span></span>
+      <a href="./compile-time-options.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Compile-time Options</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./building.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Building</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./Appendix.html" class="pagination-link">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
