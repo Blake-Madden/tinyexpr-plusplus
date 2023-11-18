@@ -4,10 +4,10 @@
 
 <a href="docs/TinyExpr++ReferenceManual.pdf"><img alt="Manual" src="docs/manual/images/cover.png" width="200" align="right"/></a>
 
-TinyExpr++ is the C++ version of the [TinyExpr](https://github.com/codeplea/tinyexpr) library, which is a small
+*TinyExpr++* is the C++ version of the [*TinyExpr*](https://github.com/codeplea/tinyexpr) library, which is a small
 recursive-descent parser and evaluation engine for math expressions.
 
-In addition to math operators and precedence, TinyExpr++ also supports
+In addition to math operators and precedence, *TinyExpr++* also supports
 the standard C math functions and runtime binding of variables and user-defined functions.
 
 Please refer to the [TinyExpr++ Reference Manual](docs/TinyExpr++ReferenceManual.pdf)
@@ -61,12 +61,12 @@ For notes on embedded programming, please refer to the [embedded programming](Em
 
 ## Changes from TinyExpr
 
-Please refer [here](TinyExprChanges.md) for a list of changes from the original TinyExpr C library.
+Please refer [here](TinyExprChanges.md) for a list of changes from the original *TinyExpr* C library.
 
 ## Building
 
-TinyExpr++ is self-contained in two files: `tinyexpr.cpp` and `tinyexpr.h`. To use
-TinyExpr++, simply add those two files to your project.
+*TinyExpr++* is self-contained in two files: "tinyexpr.cpp and "tinyexpr.h". To use
+*TinyExpr++*, simply add those two files to your project.
 
 The documentation can be built using the following:
 
@@ -95,7 +95,7 @@ std::cout << std::setprecision(8) << "The expression:\n\t" <<
 
 ## Usage
 
-TinyExpr++'s `te_parser` class defines these functions:
+*TinyExpr++*'s `te_parser` class defines these functions:
 
 ```cpp
 double evaluate(const std::string_view expression);
@@ -245,7 +245,7 @@ This produces the output:
 
 ## Binding to Custom Functions
 
-TinyExpr++ can also call custom functions. Here is a short example:
+*TinyExpr++* can also call custom functions. Here is a short example:
 
 ```cpp
 double my_sum(double a, double b)
@@ -340,7 +340,7 @@ res = tep.evaluate("CellMax()");
 
 ## Non-US Formatted Formulas
 
-TinyExpr++ supports other locales and non-US formatted formulas. Here is an example:
+*TinyExpr++* supports other locales and non-US formatted formulas. Here is an example:
 
 ```cpp
 #include "tinyexpr.h"
@@ -413,7 +413,7 @@ the compiled expression returned by `te_compile()` would become:
 
 ## Grammar
 
-TinyExpr++ parses the following grammar (from lowest-to-highest operator precedence):
+*TinyExpr++* parses the following grammar (from lowest-to-highest operator precedence):
 
     <list>      =    <expr> {(",", ";" [dependent on locale]) <expr>}
     <expr>      =    <term> {("&" | "|") <term>}
@@ -440,7 +440,7 @@ for `0.5`).
 
 ## Supported Functions
 
-TinyExpr++ supports addition (`+`), subtraction/negation (`-`), multiplication (`*`),
+*TinyExpr++* supports addition (`+`), subtraction/negation (`-`), multiplication (`*`),
 division (`/`), exponentiation (`^`), modulus (`%`), and left/right shift (`<<`, `>>`)
 with the normal operator precedence (the one exception being that exponentiation is evaluated
 left-to-right, but this can be changed - see below).
