@@ -51,40 +51,40 @@
 
 // builtin functions
 [[nodiscard]]
-constexpr static te_type _equal(te_type a, te_type b) noexcept
+constexpr static te_type _te_equal(te_type a, te_type b) noexcept
     { return static_cast<te_type>((a == b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static te_type _not_equal(te_type a, te_type b) noexcept
+constexpr static te_type _te_not_equal(te_type a, te_type b) noexcept
     { return static_cast<te_type>((a != b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static te_type _less_than(te_type a, te_type b) noexcept
+constexpr static te_type _te_less_than(te_type a, te_type b) noexcept
     { return static_cast<te_type>((a < b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static te_type _less_than_equal_to(te_type a, te_type b) noexcept
+constexpr static te_type _te_less_than_equal_to(te_type a, te_type b) noexcept
     { return static_cast<te_type>((a <= b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static te_type _greater_than(te_type a, te_type b) noexcept
+constexpr static te_type _te_greater_than(te_type a, te_type b) noexcept
     { return static_cast<te_type>((a > b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static te_type _greater_than_equal_to(te_type a, te_type b) noexcept
+constexpr static te_type _te_greater_than_equal_to(te_type a, te_type b) noexcept
     { return static_cast<te_type>((a >= b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static te_type _and(te_type a, te_type b) noexcept
+constexpr static te_type _te_and(te_type a, te_type b) noexcept
     { return static_cast<te_type>((a && b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static te_type _or(te_type a, te_type b) noexcept
+constexpr static te_type _te_or(te_type a, te_type b) noexcept
     { return static_cast<te_type>((a || b) ? 1 : 0); }
 [[nodiscard]]
-constexpr static te_type _not(te_type a) noexcept
+constexpr static te_type _te_not(te_type a) noexcept
     { return !a; }
 [[nodiscard]]
-constexpr static te_type _pi() noexcept
+constexpr static te_type _te_pi() noexcept
     { return static_cast<te_type>(3.14159265358979323846); }
 [[nodiscard]]
-constexpr static te_type _e() noexcept
+constexpr static te_type _te_e() noexcept
     { return static_cast<te_type>(2.71828182845904523536); }
 [[nodiscard]]
-static te_type _fac(te_type a) noexcept {/* simplest version of factorial */
+static te_type _te_fac(te_type a) noexcept {/* simplest version of factorial */
     if (a < 0.0 || std::isnan(a))
         { return te_parser::te_nan; }
     if (a > (std::numeric_limits<unsigned int>::max)())
@@ -101,43 +101,43 @@ static te_type _fac(te_type a) noexcept {/* simplest version of factorial */
 }
 
 [[nodiscard]]
-static te_type _absolute_value(te_type n)
+static te_type _te_absolute_value(te_type n)
     { return std::fabs(static_cast<te_type>(n)); }
 
 [[nodiscard]]
-static te_type _log(te_type x)
+static te_type _te_log(te_type x)
     { return std::log(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _log10(te_type x)
+static te_type _te_log10(te_type x)
     { return std::log10(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _pow(te_type x, te_type y)
+static te_type _te_pow(te_type x, te_type y)
     { return std::pow(static_cast<te_type>(x), static_cast<te_type>(y)); }
 
 [[nodiscard]]
-static te_type _tan(te_type x)
+static te_type _te_tan(te_type x)
     { return std::tan(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _tanh(te_type x)
+static te_type _te_tanh(te_type x)
     { return std::tanh(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _trunc(te_type x)
+static te_type _te_trunc(te_type x)
     { return std::trunc(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _sin(te_type x)
+static te_type _te_sin(te_type x)
     { return std::sin(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _sinh(te_type x)
+static te_type _te_sinh(te_type x)
     { return std::sinh(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _sqrt(te_type x)
+static te_type _te_sqrt(te_type x)
     {
     if (x < 0)
         {
@@ -147,31 +147,31 @@ static te_type _sqrt(te_type x)
     }
 
 [[nodiscard]]
-static te_type _floor(te_type x)
+static te_type _te_floor(te_type x)
     { return std::floor(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _ceil(te_type x)
+static te_type _te_ceil(te_type x)
     { return std::ceil(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _exp(te_type x)
+static te_type _te_exp(te_type x)
     { return std::exp(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _cos(te_type x)
+static te_type _te_cos(te_type x)
     { return std::cos(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _cosh(te_type x)
+static te_type _te_cosh(te_type x)
     { return std::cosh(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _acos(te_type x)
+static te_type _te_acos(te_type x)
     { return std::acos(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _asin(te_type x)
+static te_type _te_asin(te_type x)
     {
     if (std::isfinite(x) &&
         (x < -1.0 || x > 1.0))
@@ -183,19 +183,19 @@ static te_type _asin(te_type x)
     }
 
 [[nodiscard]]
-static te_type _atan(te_type x)
+static te_type _te_atan(te_type x)
     { return std::atan(static_cast<te_type>(x)); }
 
 [[nodiscard]]
-static te_type _atan2(te_type y, te_type x)
+static te_type _te_atan2(te_type y, te_type x)
     { return std::atan2(static_cast<te_type>(y), (static_cast<te_type>(x))); }
 
 [[nodiscard]]
-static te_type _tgamma(te_type y)
+static te_type _te_tgamma(te_type y)
     { return std::tgamma(y); }
 
 [[nodiscard]]
-static te_type _random()
+static te_type _te_random()
     {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -203,21 +203,21 @@ static te_type _random()
     return distr(gen);
     }
 [[nodiscard]]
-constexpr static te_type _divide(te_type a, te_type b)
+constexpr static te_type _te_divide(te_type a, te_type b)
     {
     if (b == 0)
         { throw std::runtime_error("Division by zero."); }
     return a / b;
     }
 [[nodiscard]]
-static te_type _modulus(te_type a, te_type b)
+static te_type _te_modulus(te_type a, te_type b)
     {
     if (b == 0)
         { throw std::runtime_error("Modulus by zero."); }
     return std::fmod(a,b);
     }
 [[nodiscard]]
-static te_type _sum(te_type v1, te_type v2, te_type v3, te_type v4,
+static te_type _te_sum(te_type v1, te_type v2, te_type v3, te_type v4,
                     te_type v5, te_type v6, te_type v7)
     {
     return (std::isnan(v1) ? 0 : v1) +
@@ -229,7 +229,7 @@ static te_type _sum(te_type v1, te_type v2, te_type v3, te_type v4,
         (std::isnan(v7) ? 0 : v7);
     }
 [[nodiscard]]
-static te_type _average(te_type v1, te_type v2, te_type v3, te_type v4,
+static te_type _te_average(te_type v1, te_type v2, te_type v3, te_type v4,
                         te_type v5, te_type v6, te_type v7)
     {
     const auto validN = (std::isnan(v1) ? 0 : 1) +
@@ -239,15 +239,15 @@ static te_type _average(te_type v1, te_type v2, te_type v3, te_type v4,
         (std::isnan(v5) ? 0 : 1) +
         (std::isnan(v6) ? 0 : 1) +
         (std::isnan(v7) ? 0 : 1);
-    const auto total = _sum(v1, v2, v3, v4, v5, v6, v7);
-    return _divide(total, static_cast<te_type>(validN));
+    const auto total = _te_sum(v1, v2, v3, v4, v5, v6, v7);
+    return _te_divide(total, static_cast<te_type>(validN));
     }
 
 /// @warning This version of round emulates Excel behavior of supporting
 ///     negative decimal places (e.g., ROUND(21.5, -1) = 20). Be aware
 ///     of that if using this function outside of TinyExpr++.
 [[nodiscard]]
-static te_type _round(te_type val, te_type decimal_places)
+static te_type _te_round(te_type val, te_type decimal_places)
     {
     const bool useNegativeRound{ decimal_places < 0 };
     const size_t adjustedDecimalPlaces{
@@ -291,7 +291,7 @@ static te_type _round(te_type val, te_type decimal_places)
 
 // Combinations (without repetition)
 [[nodiscard]]
-static te_type _ncr(te_type n, te_type r) noexcept
+static te_type _te_ncr(te_type n, te_type r) noexcept
     {
     if (n < 0.0 || r < 0.0 || n < r || std::isnan(n) || std::isnan(r))
         { return te_parser::te_nan; }
@@ -313,19 +313,23 @@ static te_type _ncr(te_type n, te_type r) noexcept
     }
 // Permutations (without repetition)
 [[nodiscard]]
-static te_type _npr(te_type n, te_type r) noexcept { return _ncr(n, r) * _fac(r); }
+static te_type _te_npr(te_type n, te_type r) noexcept
+    { return _te_ncr(n, r) * _te_fac(r); }
 
 [[nodiscard]]
-constexpr static te_type _add(te_type a, te_type b) noexcept { return a + b; }
+constexpr static te_type _te_add(te_type a, te_type b) noexcept
+    { return a + b; }
 [[nodiscard]]
-constexpr static te_type _sub(te_type a, te_type b) noexcept { return a - b; }
+constexpr static te_type _te_sub(te_type a, te_type b) noexcept
+    { return a - b; }
 [[nodiscard]]
-constexpr static te_type _mul(te_type a, te_type b) noexcept { return a * b; }
+constexpr static te_type _te_mul(te_type a, te_type b) noexcept
+    { return a * b; }
 
 // Shift operators
 //--------------------------------------------------
 [[nodiscard]]
-static te_type _left_shift(te_type a, te_type b)
+static te_type _te_left_shift(te_type a, te_type b)
     {
     if (std::floor(a) != a)
         {
@@ -361,7 +365,7 @@ static te_type _left_shift(te_type a, te_type b)
 
 //--------------------------------------------------
 [[nodiscard]]
-static te_type _right_shift(te_type a, te_type b)
+static te_type _te_right_shift(te_type a, te_type b)
     {
     if (std::floor(a) != a)
         {
@@ -390,89 +394,90 @@ static te_type _right_shift(te_type a, te_type b)
 ///     Be aware of this if using this function outside of TinyExpr++.
 //--------------------------------------------------
 [[nodiscard]]
-static te_type _left_shift_or_right(te_type a, te_type b)
+static te_type _te_left_shift_or_right(te_type a, te_type b)
     {
     return (b >= 0) ?
-        _left_shift(a, b) : _right_shift(a, std::abs(b));
+        _te_left_shift(a, b) : _te_right_shift(a, std::abs(b));
     }
 
 /// @warning This emulates Excel, where a negative shift amount acts as a right shift.\n
 ///     Be aware of this if using this function outside of TinyExpr++.
 //--------------------------------------------------
 [[nodiscard]]
-static te_type _right_shift_or_left(te_type a, te_type b)
+static te_type _te_right_shift_or_left(te_type a, te_type b)
     {
     return (b >= 0) ?
-        _right_shift(a, b) : _left_shift(a, std::abs(b));
+        _te_right_shift(a, b) : _te_left_shift(a, std::abs(b));
     }
 
 [[nodiscard]]
-constexpr static te_type _sqr(te_type a) noexcept { return a*a; }
+constexpr static te_type _te_sqr(te_type a) noexcept
+    { return a*a; }
 [[nodiscard]]
-static te_type _max_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
+static te_type _te_max_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
     { return (std::max)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
 [[nodiscard]]
-static te_type _max(te_type v1, te_type v2, te_type v3, te_type v4,
+static te_type _te_max(te_type v1, te_type v2, te_type v3, te_type v4,
                     te_type v5, te_type v6, te_type v7) noexcept
     {
     // assumes that at least v1 is a number, rest can be NaN
-    auto maxVal = _max_maybe_nan(v1, v2);
-    maxVal = _max_maybe_nan(maxVal, v3);
-    maxVal = _max_maybe_nan(maxVal, v4);
-    maxVal = _max_maybe_nan(maxVal, v5);
-    maxVal = _max_maybe_nan(maxVal, v6);
-    return _max_maybe_nan(maxVal, v7);
+    auto maxVal = _te_max_maybe_nan(v1, v2);
+    maxVal = _te_max_maybe_nan(maxVal, v3);
+    maxVal = _te_max_maybe_nan(maxVal, v4);
+    maxVal = _te_max_maybe_nan(maxVal, v5);
+    maxVal = _te_max_maybe_nan(maxVal, v6);
+    return _te_max_maybe_nan(maxVal, v7);
     }
 [[nodiscard]]
-static te_type _min_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
+static te_type _te_min_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
     { return (std::min)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan); }
 [[nodiscard]]
-static te_type _min(te_type v1, te_type v2, te_type v3, te_type v4,
+static te_type _te_min(te_type v1, te_type v2, te_type v3, te_type v4,
                     te_type v5, te_type v6, te_type v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
-    auto minVal = _min_maybe_nan(v1, v2);
-    minVal = _min_maybe_nan(minVal, v3);
-    minVal = _min_maybe_nan(minVal, v4);
-    minVal = _min_maybe_nan(minVal, v5);
-    minVal = _min_maybe_nan(minVal, v6);
-    return _min_maybe_nan(minVal, v7);
+    auto minVal = _te_min_maybe_nan(v1, v2);
+    minVal = _te_min_maybe_nan(minVal, v3);
+    minVal = _te_min_maybe_nan(minVal, v4);
+    minVal = _te_min_maybe_nan(minVal, v5);
+    minVal = _te_min_maybe_nan(minVal, v6);
+    return _te_min_maybe_nan(minVal, v7);
     }
 [[nodiscard]]
-static te_type _and_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
+static te_type _te_and_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
     { return std::isnan(v2_maybe_nan) ? v1 : (v1 && v2_maybe_nan); }
 [[nodiscard]]
-static te_type _and_variadic(te_type v1, te_type v2, te_type v3, te_type v4,
+static te_type _te_and_variadic(te_type v1, te_type v2, te_type v3, te_type v4,
                              te_type v5, te_type v6, te_type v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
-    auto andVal = _and_maybe_nan(v1, v2);
-    andVal = _and_maybe_nan(andVal, v3);
-    andVal = _and_maybe_nan(andVal, v4);
-    andVal = _and_maybe_nan(andVal, v5);
-    andVal = _and_maybe_nan(andVal, v6);
-    return _and_maybe_nan(andVal, v7);
+    auto andVal = _te_and_maybe_nan(v1, v2);
+    andVal = _te_and_maybe_nan(andVal, v3);
+    andVal = _te_and_maybe_nan(andVal, v4);
+    andVal = _te_and_maybe_nan(andVal, v5);
+    andVal = _te_and_maybe_nan(andVal, v6);
+    return _te_and_maybe_nan(andVal, v7);
     }
 [[nodiscard]]
-static te_type _or_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
+static te_type _te_or_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
     { return std::isnan(v2_maybe_nan) ? v1 : (v1 || v2_maybe_nan); }
 [[nodiscard]]
-static te_type _or_variadic(te_type v1, te_type v2, te_type v3, te_type v4,
+static te_type _te_or_variadic(te_type v1, te_type v2, te_type v3, te_type v4,
                             te_type v5, te_type v6, te_type v7) noexcept
     {
     // assumes that at least v1 is legit, rest can be NaN
-    auto orVal = _or_maybe_nan(v1, v2);
-    orVal = _or_maybe_nan(orVal, v3);
-    orVal = _or_maybe_nan(orVal, v4);
-    orVal = _or_maybe_nan(orVal, v5);
-    orVal = _or_maybe_nan(orVal, v6);
-    return _or_maybe_nan(orVal, v7);
+    auto orVal = _te_or_maybe_nan(v1, v2);
+    orVal = _te_or_maybe_nan(orVal, v3);
+    orVal = _te_or_maybe_nan(orVal, v4);
+    orVal = _te_or_maybe_nan(orVal, v5);
+    orVal = _te_or_maybe_nan(orVal, v6);
+    return _te_or_maybe_nan(orVal, v7);
     }
 [[nodiscard]]
-constexpr static te_type _if(te_type a, te_type b, te_type c) noexcept
+constexpr static te_type _te_if(te_type a, te_type b, te_type c) noexcept
     { return (a != 0.0) ? b : c; }
 [[nodiscard]]
-constexpr static te_type _ifs(te_type if1, te_type if1True,
+constexpr static te_type _te_ifs(te_type if1, te_type if1True,
                               te_type if2, te_type if2True,
                               te_type if3, te_type if3True) noexcept
     {
@@ -482,27 +487,27 @@ constexpr static te_type _ifs(te_type if1, te_type if1True,
         te_parser::te_nan;
     }
 [[nodiscard]]
-constexpr static te_type _false_value() noexcept
+constexpr static te_type _te_false_value() noexcept
     { return 0; }
 [[nodiscard]]
-constexpr static te_type _true_value() noexcept
+constexpr static te_type _te_true_value() noexcept
     { return 1; }
 [[nodiscard]]
-constexpr static te_type _nan_value() noexcept
+constexpr static te_type _te_nan_value() noexcept
     { return te_parser::te_nan; }
 // cotangent
 [[nodiscard]]
-static te_type _cot(te_type a) noexcept
+static te_type _te_cot(te_type a) noexcept
     {
     if (a == 0.0)
         { return te_parser::te_nan; }
     return 1 / static_cast<te_type>(std::tan(a));
     }
 [[nodiscard]]
-constexpr static te_type _sign(te_type a) noexcept
+constexpr static te_type _te_sign(te_type a) noexcept
     { return static_cast<te_type>((a < 0.0) ? -1 : (a > 0.0) ? 1 : 0); }
 [[nodiscard]]
-constexpr static te_type _negate(te_type a) noexcept
+constexpr static te_type _te_negate(te_type a) noexcept
     { return -a; }
 [[nodiscard]]
 constexpr static te_type _comma([[maybe_unused]] te_type a, te_type b) noexcept
@@ -576,17 +581,17 @@ const std::set<std::string> te_parser::m_operators = {
 
 //--------------------------------------------------
 const std::set<te_variable> te_parser::m_functions = {
-    {"abs", static_cast<te_fun1>(_absolute_value), TE_PURE},
-    {"acos", static_cast<te_fun1>(_acos), TE_PURE},
+    {"abs", static_cast<te_fun1>(_te_absolute_value), TE_PURE},
+    {"acos", static_cast<te_fun1>(_te_acos), TE_PURE},
     // variadic, accepts 1-7 arguments
-    {"and", static_cast<te_fun7>(_and_variadic), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"asin", static_cast<te_fun1>(_asin), TE_PURE},
-    {"atan", static_cast<te_fun1>(_atan), TE_PURE},
-    {"atan2", static_cast<te_fun2>(_atan2), TE_PURE},
-    {"average", static_cast<te_fun7>(_average), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"bitlshift", static_cast<te_fun2>(_left_shift_or_right), TE_PURE},
-    {"bitrshift", static_cast<te_fun2>(_right_shift_or_left), TE_PURE},
-    {"ceil", static_cast<te_fun1>(_ceil), TE_PURE},
+    {"and", static_cast<te_fun7>(_te_and_variadic), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"asin", static_cast<te_fun1>(_te_asin), TE_PURE},
+    {"atan", static_cast<te_fun1>(_te_atan), TE_PURE},
+    {"atan2", static_cast<te_fun2>(_te_atan2), TE_PURE},
+    {"average", static_cast<te_fun7>(_te_average), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"bitlshift", static_cast<te_fun2>(_te_left_shift_or_right), TE_PURE},
+    {"bitrshift", static_cast<te_fun2>(_te_right_shift_or_left), TE_PURE},
+    {"ceil", static_cast<te_fun1>(_te_ceil), TE_PURE},
     {"clamp", static_cast<te_fun3>(
         [](const te_type num, const te_type start, const te_type end)
             {
@@ -595,45 +600,45 @@ const std::set<te_variable> te_parser::m_functions = {
                 std::clamp<te_type>(num, end, start);
             }),
         TE_PURE},
-    {"combin", static_cast<te_fun2>(_ncr), TE_PURE},
-    {"cos", static_cast<te_fun1>(_cos), TE_PURE},
-    {"cosh", static_cast<te_fun1>(_cosh), TE_PURE},
-    {"cot", static_cast<te_fun1>(_cot), TE_PURE},
-    {"e", static_cast<te_fun0>(_e), TE_PURE},
-    {"exp", static_cast<te_fun1>(_exp), TE_PURE},
-    {"fac", static_cast<te_fun1>(_fac), TE_PURE},
-    {"fact", static_cast<te_fun1>(_fac), TE_PURE},
-    {"false", static_cast<te_fun0>(_false_value), TE_PURE},
-    {"floor", static_cast<te_fun1>(_floor), TE_PURE},
-    {"if", static_cast<te_fun3>(_if), TE_PURE},
-    {"ifs", static_cast<te_fun6>(_ifs), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"ln", static_cast<te_fun1>(_log), TE_PURE},
-    {"log10", static_cast<te_fun1>(_log10), TE_PURE},
-    {"max", static_cast<te_fun7>(_max), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"min", static_cast<te_fun7>(_min), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"mod", static_cast<te_fun2>(_modulus), TE_PURE},
-    {"nan", static_cast<te_fun0>(_nan_value), TE_PURE},
-    {"ncr", static_cast<te_fun2>(_ncr), TE_PURE},
-    {"not", static_cast<te_fun1>(_not), TE_PURE},
-    {"npr", static_cast<te_fun2>(_npr), TE_PURE},
-    {"or", static_cast<te_fun7>(_or_variadic), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"permut", static_cast<te_fun2>(_npr), TE_PURE},
-    {"pi", static_cast<te_fun0>(_pi), TE_PURE},
-    {"pow", static_cast<te_fun2>(_pow), TE_PURE},
-    {"power",/* Excel alias*/ static_cast<te_fun2>(_pow), TE_PURE},
-    {"rand", static_cast<te_fun0>(_random), TE_PURE},
-    {"round", static_cast<te_fun2>(_round), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"sign", static_cast<te_fun1>(_sign), TE_PURE},
-    {"sin", static_cast<te_fun1>(_sin), TE_PURE},
-    {"sinh", static_cast<te_fun1>(_sinh), TE_PURE},
-    {"sqr", static_cast<te_fun1>(_sqr), TE_PURE},
-    {"sqrt", static_cast<te_fun1>(_sqrt), TE_PURE},
-    {"sum", static_cast<te_fun7>(_sum), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
-    {"tan", static_cast<te_fun1>(_tan), TE_PURE},
-    {"tanh", static_cast<te_fun1>(_tanh), TE_PURE},
-    {"tgamma", static_cast<te_fun1>(_tgamma), TE_PURE},
-    {"true", static_cast<te_fun0>(_true_value), TE_PURE},
-    {"trunc", static_cast<te_fun1>(_trunc), TE_PURE}
+    {"combin", static_cast<te_fun2>(_te_ncr), TE_PURE},
+    {"cos", static_cast<te_fun1>(_te_cos), TE_PURE},
+    {"cosh", static_cast<te_fun1>(_te_cosh), TE_PURE},
+    {"cot", static_cast<te_fun1>(_te_cot), TE_PURE},
+    {"e", static_cast<te_fun0>(_te_e), TE_PURE},
+    {"exp", static_cast<te_fun1>(_te_exp), TE_PURE},
+    {"fac", static_cast<te_fun1>(_te_fac), TE_PURE},
+    {"fact", static_cast<te_fun1>(_te_fac), TE_PURE},
+    {"false", static_cast<te_fun0>(_te_false_value), TE_PURE},
+    {"floor", static_cast<te_fun1>(_te_floor), TE_PURE},
+    {"if", static_cast<te_fun3>(_te_if), TE_PURE},
+    {"ifs", static_cast<te_fun6>(_te_ifs), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"ln", static_cast<te_fun1>(_te_log), TE_PURE},
+    {"log10", static_cast<te_fun1>(_te_log10), TE_PURE},
+    {"max", static_cast<te_fun7>(_te_max), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"min", static_cast<te_fun7>(_te_min), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"mod", static_cast<te_fun2>(_te_modulus), TE_PURE},
+    {"nan", static_cast<te_fun0>(_te_nan_value), TE_PURE},
+    {"ncr", static_cast<te_fun2>(_te_ncr), TE_PURE},
+    {"not", static_cast<te_fun1>(_te_not), TE_PURE},
+    {"npr", static_cast<te_fun2>(_te_npr), TE_PURE},
+    {"or", static_cast<te_fun7>(_te_or_variadic), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"permut", static_cast<te_fun2>(_te_npr), TE_PURE},
+    {"pi", static_cast<te_fun0>(_te_pi), TE_PURE},
+    {"pow", static_cast<te_fun2>(_te_pow), TE_PURE},
+    {"power",/* Excel alias*/ static_cast<te_fun2>(_te_pow), TE_PURE},
+    {"rand", static_cast<te_fun0>(_te_random), TE_PURE},
+    {"round", static_cast<te_fun2>(_te_round), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"sign", static_cast<te_fun1>(_te_sign), TE_PURE},
+    {"sin", static_cast<te_fun1>(_te_sin), TE_PURE},
+    {"sinh", static_cast<te_fun1>(_te_sinh), TE_PURE},
+    {"sqr", static_cast<te_fun1>(_te_sqr), TE_PURE},
+    {"sqrt", static_cast<te_fun1>(_te_sqrt), TE_PURE},
+    {"sum", static_cast<te_fun7>(_te_sum), static_cast<te_variable_flags>(TE_PURE|TE_VARIADIC)},
+    {"tan", static_cast<te_fun1>(_te_tan), TE_PURE},
+    {"tanh", static_cast<te_fun1>(_te_tanh), TE_PURE},
+    {"tgamma", static_cast<te_fun1>(_te_tgamma), TE_PURE},
+    {"true", static_cast<te_fun0>(_te_true_value), TE_PURE},
+    {"trunc", static_cast<te_fun1>(_te_trunc), TE_PURE}
 };
 
 //--------------------------------------------------
@@ -772,26 +777,26 @@ void te_parser::next_token(te_parser::state *s)
                 /* Look for an operator or special character. */
                 const auto tok = s->m_next++[0];
                 if (tok == '+')
-                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _add; }
+                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _te_add; }
                 else if (tok == '-')
-                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _sub; }
+                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _te_sub; }
                 else if (tok == '*' && s->m_next[0] == '*')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_pow);
+                    s->m_value = static_cast<te_fun2>(_te_pow);
                     ++s->m_next;
                     }
                 else if (tok == '*')
-                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _mul; }
+                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _te_mul; }
                 else if (tok == '/')
-                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _divide; }
+                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _te_divide; }
                 else if (tok == '^')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_pow);
+                    s->m_value = static_cast<te_fun2>(_te_pow);
                     }
                 else if (tok == '%')
-                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _modulus; }
+                    { s->m_type = te_parser::state::token_type::TOK_INFIX; s->m_value = _te_modulus; }
                 else if (tok == '(')
                     { s->m_type = te_parser::state::token_type::TOK_OPEN; }
                 else if (tok == ')')
@@ -802,70 +807,70 @@ void te_parser::next_token(te_parser::state *s)
                 else if (tok == '<' && s->m_next[0] == '<')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_left_shift);
+                    s->m_value = static_cast<te_fun2>(_te_left_shift);
                     ++s->m_next;
                     }
                 else if (tok == '>' && s->m_next[0] == '>')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_right_shift);
+                    s->m_value = static_cast<te_fun2>(_te_right_shift);
                     ++s->m_next;
                     }
                 // logical operators
                 else if (tok == '=' && s->m_next[0] == '=')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_equal);
+                    s->m_value = static_cast<te_fun2>(_te_equal);
                     ++s->m_next;
                     }
                 else if (tok == '=')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_equal);
+                    s->m_value = static_cast<te_fun2>(_te_equal);
                     }
                 else if (tok == '!' && s->m_next[0] == '=')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_not_equal);
+                    s->m_value = static_cast<te_fun2>(_te_not_equal);
                     ++s->m_next;
                     }
                 else if (tok == '<' && s->m_next[0] == '>')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_not_equal);
+                    s->m_value = static_cast<te_fun2>(_te_not_equal);
                     ++s->m_next;
                     }
                 else if (tok == '<' && s->m_next[0] == '=')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_less_than_equal_to);
+                    s->m_value = static_cast<te_fun2>(_te_less_than_equal_to);
                     ++s->m_next;
                     }
                 else if (tok == '<')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_less_than);
+                    s->m_value = static_cast<te_fun2>(_te_less_than);
                     }
                 else if (tok == '>' && s->m_next[0] == '=')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_greater_than_equal_to);
+                    s->m_value = static_cast<te_fun2>(_te_greater_than_equal_to);
                     ++s->m_next;
                     }
                 else if (tok == '>')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_greater_than);
+                    s->m_value = static_cast<te_fun2>(_te_greater_than);
                     }
                 else if (tok == '&')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_and);
+                    s->m_value = static_cast<te_fun2>(_te_and);
                     }
                 else if (tok == '|')
                     {
                     s->m_type = te_parser::state::token_type::TOK_INFIX;
-                    s->m_value = static_cast<te_fun2>(_or);
+                    s->m_value = static_cast<te_fun2>(_te_or);
                     }
                 else if (tok == ' ' || tok == '\t' || tok == '\n' || tok == '\r')
                     { /*noop*/ }
@@ -1000,8 +1005,8 @@ te_expr* te_parser::expr(te_parser::state *s)
 
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-        (get_function2(s->m_value) == _and ||
-         get_function2(s->m_value) == _or))
+        (get_function2(s->m_value) == _te_and ||
+         get_function2(s->m_value) == _te_or))
         {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
@@ -1020,12 +1025,12 @@ te_expr* te_parser::expr_level2(te_parser::state *s)
 
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-        (get_function2(s->m_value) == _equal ||
-         get_function2(s->m_value) == _not_equal ||
-         get_function2(s->m_value) == _less_than ||
-         get_function2(s->m_value) == _less_than_equal_to ||
-         get_function2(s->m_value) == _greater_than ||
-         get_function2(s->m_value) == _greater_than_equal_to))
+        (get_function2(s->m_value) == _te_equal ||
+         get_function2(s->m_value) == _te_not_equal ||
+         get_function2(s->m_value) == _te_less_than ||
+         get_function2(s->m_value) == _te_less_than_equal_to ||
+         get_function2(s->m_value) == _te_greater_than ||
+         get_function2(s->m_value) == _te_greater_than_equal_to))
         {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
@@ -1044,8 +1049,8 @@ te_expr* te_parser::expr_level3(te_parser::state *s)
 
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-        (get_function2(s->m_value) == _left_shift ||
-         get_function2(s->m_value) == _right_shift))
+        (get_function2(s->m_value) == _te_left_shift ||
+         get_function2(s->m_value) == _te_right_shift))
         {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
@@ -1064,8 +1069,8 @@ te_expr* te_parser::expr_level4(te_parser::state *s)
 
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-        (get_function2(s->m_value) == _add ||
-         get_function2(s->m_value) == _sub))
+        (get_function2(s->m_value) == _te_add ||
+         get_function2(s->m_value) == _te_sub))
         {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
@@ -1082,9 +1087,9 @@ te_expr* te_parser::term(te_parser::state *s)
     te_expr* ret = factor(s);
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-        (get_function2(s->m_value) == _mul ||
-         get_function2(s->m_value) == _divide ||
-         get_function2(s->m_value) == _modulus)) {
+        (get_function2(s->m_value) == _te_mul ||
+         get_function2(s->m_value) == _te_divide ||
+         get_function2(s->m_value) == _te_modulus)) {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
         ret = new_expr(TE_PURE, t, { ret, factor(s) });
@@ -1102,7 +1107,7 @@ te_expr* te_parser::factor(te_parser::state *s) {
 
     if (ret->m_type == TE_PURE &&
         is_function1(ret->m_value) &&
-        get_function1(ret->m_value) == _negate) {
+        get_function1(ret->m_value) == _te_negate) {
         te_expr *se = ret->m_parameters[0];
         delete ret;
         ret = se;
@@ -1128,7 +1133,7 @@ te_expr* te_parser::factor(te_parser::state *s) {
     }
 
     if (neg) {
-        ret = new_expr(TE_PURE, te_variant_type(_negate), { ret });
+        ret = new_expr(TE_PURE, te_variant_type(_te_negate), { ret });
     }
 
     return ret;
@@ -1140,7 +1145,7 @@ te_expr* te_parser::factor(te_parser::state *s)
     te_expr* ret = power(s);
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-        (get_function2(s->m_value) == static_cast<te_fun2>(_pow))) {
+        (get_function2(s->m_value) == static_cast<te_fun2>(_te_pow))) {
         const te_fun2 t = get_function2(s->m_value);
         next_token(s);
         ret = new_expr(TE_PURE, t, { ret, power(s) });
@@ -1157,10 +1162,10 @@ te_expr* te_parser::power(te_parser::state *s)
     int Sign{ 1 };
     while (s->m_type == te_parser::state::token_type::TOK_INFIX &&
         is_function2(s->m_value) &&
-           (get_function2(s->m_value) == _add ||
-            get_function2(s->m_value) == _sub))
+           (get_function2(s->m_value) == _te_add ||
+            get_function2(s->m_value) == _te_sub))
         {
-        if (get_function2(s->m_value) == _sub) Sign = -Sign;
+        if (get_function2(s->m_value) == _te_sub) Sign = -Sign;
         next_token(s);
         }
 
@@ -1169,7 +1174,7 @@ te_expr* te_parser::power(te_parser::state *s)
     if (Sign == 1) {
         ret = base(s);
     } else {
-        ret = new_expr(TE_PURE, te_variant_type(_negate), { base(s) });
+        ret = new_expr(TE_PURE, te_variant_type(_te_negate), { base(s) });
     }
 
     return ret;
