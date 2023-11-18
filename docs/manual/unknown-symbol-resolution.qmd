@@ -36,8 +36,8 @@ take one of the following signatures:
 
 ::: {.minipage data-latex="{\textwidth}"}
 ```
-    double callback(std::string_view);
-    double callback(std::string_view, std::string&);
+    te_type callback(std::string_view);
+    te_type callback(std::string_view, std::string&);
 ```
 :::
 
@@ -55,7 +55,7 @@ will also be available through `te_parser::get_last_error_message()`.
 Here is a simple example using a function:
 
 ```{.cpp}
-double ResolveResolutionSymbols(std::string_view str)
+te_type ResolveResolutionSymbols(std::string_view str)
     {
     // Note that this is case sensitive for brevity.
     return (str == "RES" || str == "RESOLUTION") ?
@@ -97,8 +97,8 @@ te_parser tep;
 // dynamic strings like "FY2004" or "FY1997" and convert them to 2004 and 1997.
 tep.set_unknown_symbol_resolver(
     // Handler should except a string (which will be the unrecognized token)
-    // and return a double.
-    [](std::string_view str) -> double
+    // and return a te_type.
+    [](std::string_view str) -> te_type
     {
     const std::regex re{ "FY([0-9]{4})",
         std::regex_constants::icase | std::regex_constants::ECMAScript };
@@ -146,9 +146,9 @@ Additionally, you want to increase the values of these variables with every eval
 te_parser tep;
 
 tep.set_unknown_symbol_resolver(
-    [](std::string_view str) -> double
+    [](std::string_view str) -> te_type
     {
-    static double stressLevel{ 3 };
+    static te_type stressLevel{ 3 };
     if (std::strncmp(str.data(), "STRESS", 6) == 0)
         { return stressLevel++; }
     else

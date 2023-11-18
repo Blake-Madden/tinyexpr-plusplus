@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
         }
     const char* expression = argv[1];
 
-    double x{ 0 }, y{ 0 }; // x and y are bound at eval-time.
+    te_type x{ 0 }, y{ 0 }; // x and y are bound at eval-time.
     // Store variable names and pointers.
     te_parser tep;
     tep.set_variables_and_functions({ {"x", &x}, {"y", &y} });
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 *TinyExpr++* can call custom functions\index{functions!binding to custom} also. Here is a short example:
 
 ```{.cpp}
-double my_sum(double a, double b)
+te_type my_sum(te_type a, te_type b)
     {
     /* Example function that adds two numbers together. */
     return a + b;
@@ -70,7 +70,7 @@ Here is an example of using a lambda:
 te_parser tep;
 tep.set_variables_and_functions({
     { "mysum",
-        [](double a, double b) noexcept
+        [](te_type a, te_type b) noexcept
             { return a + b; } }
     });
 
@@ -93,7 +93,7 @@ class te_expr_array : public te_expr
 public:
     explicit te_expr_array(const te_variable_flags type) noexcept :
         te_expr(type) {}
-    std::array<double, 5> m_data = { 5, 6, 7, 8, 9 };
+    std::array<te_type, 5> m_data = { 5, 6, 7, 8, 9 };
     };
 ```
 
@@ -102,17 +102,17 @@ actions on it. (Note that proper error handling is not included for brevity.):
 
 ```{.cpp}
 // Returns the value of a cell from the object's data.
-double cell(const te_expr* context, double a)
+te_type cell(const te_expr* context, te_type a)
     {
     auto* c = dynamic_cast<const te_expr_array*>(context);
-    return static_cast<double>(c->m_data[static_cast<size_t>(a)]);
+    return static_cast<te_type>(c->m_data[static_cast<size_t>(a)]);
     }
 
 // Returns the max value of the object's data.
-double cell_max(const te_expr* context)
+te_type cell_max(const te_expr* context)
     {
     auto* c = dynamic_cast<const te_expr_array*>(context);
-    return static_cast<double>(
+    return static_cast<te_type>(
         *std::max_element(c->m_data.cbegin(), c->m_data.cend()));
     }
 ```
