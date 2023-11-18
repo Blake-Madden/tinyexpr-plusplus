@@ -1,6 +1,6 @@
 # Custom Extensions
 
-## Binding to Custom Variables {-}
+## Binding to Custom Variables {-#custom-variables}
 
 ::: {.minipage data-latex="{\textwidth}"}
 Along with the built-in functions and constants, you can create custom variables\index{variables!binding to custom}  for use in expressions:
