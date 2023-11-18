@@ -13,12 +13,14 @@ defined within the parser, an expression such as this could be used:
 /* Returns the p-level of a study if:
    p-level < 5% AND
    number of observations was at least 30.
-   Otherwise, NaN is returned. */
+   Otherwise, NaN is returned. */             // <1>
 
 IF(// Review the results from the analysis
    AND(P_LEVEL < .05, N_OBS >= 30),
    // ...and return the p-level if acceptable
-   P_LEVEL,
+   P_LEVEL,                                   // <2>
    // or NaN if not
    NAN)
 ```
+1. Comment that can span multiple lines.
+2. Single line comment.

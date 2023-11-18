@@ -91,7 +91,8 @@ Note that it is required to make the initial declaration of your
 ## Floating-point Numbers {-#fp-numbers}
 
 `double` is the default data type used for the parser's variable types, parameters, and return types.
-For embedded environments that require `float`, compile with `TE_FLOAT` defined to use `float` instead.
+For embedded environments that require `float`\index{floating-point numbers!\texttt{float} vs. \texttt{double}},
+compile with `TE_FLOAT` defined to use `float` instead.
 
 When using this option, it is recommended to use the helper typedef `te_type`.
 This will map to either `float` or `double` (depending on whether `TE_FLOAT` is defined).

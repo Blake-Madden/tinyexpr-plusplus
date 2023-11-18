@@ -22,34 +22,25 @@ IF(AND(P_LEVEL < .05, N_OBS >= 30),
    NAN)
 ```
 
-::: {.minipage data-latex="{\textwidth}"}
 Logical checks can also be nested, creating a "case"-like\index{case statements|ii} statement:
 
 ```{.cpp}
 IF(AND(smartMeter1.power > 1900, sensor1.temperature < 52), TRUE,
-   // First logical check failed, so now check another scenario
-   // and return false if it meets our criteria.
-   IF(AND(smartMeter1.power < 300, sensor1.temperature > 55), FALSE,
-     // Neither scenario checked out, so the values are in an
-     // unaccounted for scenario. Return NaN to indicate a failure.
-     NAN) )
+   IF(AND(smartMeter1.power < 300, sensor1.temperature > 55), FALSE, // <1>
+      NAN) )                                                         // <2>
 ```
-:::
+1. First logical check failed, so now check another scenario and return false if it meets our criteria.
+2. Neither scenario passed; return NaN because the values are in an unaccounted for scenario.
 
-::: {.minipage data-latex="{\textwidth}"}
 The same can be accomplished using the `IFS()` function:
 
 ```{.cpp}
 IFS(AND(smartMeter1.power > 1900, sensor1.temperature < 52), TRUE,
-    // First logical check failed, so now check another scenarios
-    // and return false either meets our criteria.
-    AND(smartMeter1.power < 0), FALSE,
-    AND(smartMeter1.power < 300, sensor1.temperature > 55), FALSE)
-
-    // NaN is returned if no conditions were met and we are
-    // in an unknown state.
+    AND(smartMeter1.power < 0), FALSE,                             // <1>
+    AND(smartMeter1.power < 300, sensor1.temperature > 55), FALSE) // <2>
 ```
-:::
+1. First logical check failed, so now check another scenario and return false if it meets our criteria.
+2. Neither scenario passed; return NaN because the values are in an unaccounted for scenario.
 
 ::: {.notesection data-latex=""}
 Expressions can optionally begin with an `=`, the same as spreadsheet programs. For example: \

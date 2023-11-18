@@ -10,6 +10,9 @@ link-citations: true
 nocite: '@*'
 csl: modern-language-association.csl
 pdf-cover: "images/cover.pdf"
+number-sections: true
+crossref:
+  chapters: true
 book:
   title: TinyExpr++
   subtitle: User Reference & Programming Manual
@@ -52,7 +55,6 @@ book:
 format:
   pdf:
     documentclass: book
-    number-sections: true
     template: latex/default.tex
     include-in-header: latex/preamble.tex
     latex-engine: xelatex

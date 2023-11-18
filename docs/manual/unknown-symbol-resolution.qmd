@@ -108,7 +108,7 @@ tep.set_unknown_symbol_resolver(
         {
         // Unrecognized token is something like "FY1982," so extract "1982"
         // from that and return 1982 as a number. At this point, the variable
-        // "FY1982" will added to the parser and set to 1982. All future
+        // "FY1982" will be added to the parser and set to 1982. All future
         // evaluations will see this as 1982 (unless set_constant() is called
         // to change it).
         if (matches.size() > 1)
