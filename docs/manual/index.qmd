@@ -43,6 +43,7 @@ It's open-source, free, easy-to-use, and self-contained in a single source and h
 - Case insensitive.
 - Supports non-US formulas (e.g., `POW(2,2; 2)` instead of `POW(2.2, 2)`).
 - Supports C and C++ style comments within math expressions.
+- Can be configured to use `double` or [`float`](#te-float) for its calculations.
 - Released under the zlib license - free for nearly any use.
 - Easy to use and integrate with your code.
 - Thread-safe; parser is in a self-contained object.
