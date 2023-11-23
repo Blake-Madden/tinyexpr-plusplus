@@ -5,10 +5,8 @@ embedded environment\index{embedded systems}.
 
 ## Performance {-}
 
-*TinyExpr++* is fairly fast compared to compiled C when the expression is short, when the
-expression does hard calculations (e.g., exponentiation), and when some of the
-work can be simplified by `evaluate()`. *TinyExpr++* is slower compared to C when the
-expression is long and involves only basic arithmetic.
+*TinyExpr++* is fairly fast compared to compiled C when the expression is short or does hard calculations (e.g., exponentiation).
+*TinyExpr++* is slower compared to C when the expression is long and involves only basic arithmetic.
 
 Here are some example benchmarks:
 

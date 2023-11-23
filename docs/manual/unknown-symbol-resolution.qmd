@@ -1,6 +1,6 @@
 # Handling Unknown Variables {#sec-usr}
 
-Although it is possible to add [custom variables](#custom-variables) to the parser, there may be times when you can't
+Although it is possible to add [variables](#custom-variables) to the parser, there may be times when you can't
 anticipate the exact variable\index{variables!unknown|see{unknown symbols}} names that a user will enter. For example, a user could enter
 variables representing fiscal years in the format of `FY[year]`. From there, they would like to perform operation
 such as getting the range between them. In this situation, their expression may be something like this:
