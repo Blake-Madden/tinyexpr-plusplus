@@ -2420,6 +2420,37 @@ COMBIN(15,
 
 3)
 )");
+
+        tep.compile((
+            R"(//
+//Combination
+COMBIN(15,
+//
+3)
+//)"));
+        CHECK(455 == tep.evaluate());
+        CHECK(tep.get_expression() ==
+            R"(
+
+COMBIN(15,
+
+3)
+)");
+
+        // stray '/' at the end, bounds check
+        tep.compile((
+            R"(//Combination
+COMBIN(15,
+//The first argument
+3)
+/)"));
+        CHECK(std::isnan(tep.evaluate()));
+        CHECK(tep.get_expression() ==
+            R"(
+COMBIN(15,
+
+3)
+/)");
         }
     }
 

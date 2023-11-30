@@ -1323,36 +1323,38 @@ bool te_parser::compile(const std::string_view expression)
     if (m_expression.length() && m_expression.front() == '=')
         { m_expression.erase(0, 1); }
 
-    // remove multi-line comments
     size_t commentStart{ 0 };
     while (commentStart != std::string::npos)
         {
-        commentStart = m_expression.find("/*", commentStart);
-        if (commentStart == std::string::npos)
+        commentStart = m_expression.find('/', commentStart);
+        if (commentStart == std::string::npos ||
+            commentStart == m_expression.length() - 1)
             { break; }
-        auto commentEnd = m_expression.find("*/", commentStart);
-        if (commentEnd == std::string::npos)
+        // remove multi-line comments
+        if (m_expression[commentStart + 1] == '*')
             {
-            m_errorPos = commentStart;
-            return te_nan;
+            auto commentEnd = m_expression.find("*/", commentStart);
+            if (commentEnd == std::string::npos)
+                {
+                m_errorPos = commentStart;
+                return te_nan;
+                }
+            m_expression.erase(commentStart, (commentEnd + 2) - commentStart);
             }
-        m_expression.erase(commentStart, (commentEnd + 2) - commentStart);
-        }
-    // remove single-line comments
-    commentStart = 0;
-    while (commentStart != std::string::npos)
-        {
-        commentStart = m_expression.find("//", commentStart);
-        if (commentStart == std::string::npos)
-            { break; }
-        auto commentEnd = m_expression.find_first_of("\n\r", commentStart);
-        if (commentEnd == std::string::npos)
+        // remove single-line comments
+        else if (m_expression[commentStart + 1] == '/')
             {
-            m_expression.erase(commentStart);
-            break;
+            auto commentEnd = m_expression.find_first_of("\n\r", commentStart);
+            if (commentEnd == std::string::npos)
+                {
+                m_expression.erase(commentStart);
+                break;
+                }
+            else
+                { m_expression.erase(commentStart, commentEnd - commentStart); }
             }
         else
-            { m_expression.erase(commentStart, commentEnd - commentStart); }
+            { break; }
         }
     
     try
