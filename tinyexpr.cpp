@@ -760,15 +760,15 @@ void te_parser::next_token(te_parser::state *s)
                         s->m_type = te_parser::state::token_type::TOK_VARIABLE;
                         s->m_value = m_currentVar->m_value;
                         }
-                    else if (is_closure(m_currentVar->m_value))
+                    else if (is_function(m_currentVar->m_value))
                         {
-                        s->context = m_currentVar->m_context;
                         s->m_type = te_parser::state::token_type::TOK_FUNCTION;
                         s->m_varType = m_currentVar->m_type;
                         s->m_value = m_currentVar->m_value;
                         }
-                    else if (is_function(m_currentVar->m_value))
+                    else if (is_closure(m_currentVar->m_value))
                         {
+                        s->context = m_currentVar->m_context;
                         s->m_type = te_parser::state::token_type::TOK_FUNCTION;
                         s->m_varType = m_currentVar->m_type;
                         s->m_value = m_currentVar->m_value;
