@@ -37,10 +37,6 @@ for a full list of features.
 
 Note: for current users of *TinyExpr++*, please see the [compatibility advisory](CompatibilityAdvisory.md) for recent changes.
 
-## Embedded Programming
-
-For notes on embedded programming, please refer to the [embedded programming](Embedded.md) overview.
-
 ## Features
 
 - **C++17 with no dependencies**.
