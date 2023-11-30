@@ -460,7 +460,7 @@ private:
             resolvedVariables.clear();
             }
         }
-    /// @brief Gets the compiled expression, which will the optimized version
+    /// @brief Gets the compiled expression, which will be the optimized version
     ///     of the original expression.
     /// @returns The compiled expression.
     [[nodiscard]]
