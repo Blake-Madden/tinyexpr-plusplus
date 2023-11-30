@@ -1354,7 +1354,7 @@ bool te_parser::compile(const std::string_view expression)
                 { m_expression.erase(commentStart, commentEnd - commentStart); }
             }
         else
-            { break; }
+            { ++commentStart; }
         }
     
     try

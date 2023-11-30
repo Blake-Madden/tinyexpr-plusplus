@@ -2451,6 +2451,14 @@ COMBIN(15,
 
 3)
 /)");
+
+        tep.compile((
+            R"(21 / 7 // division)"));
+        CHECK(3 == tep.evaluate());
+
+        tep.compile((
+            R"(21 / /* division */ 7 // division)"));
+        CHECK(3 == tep.evaluate());
         }
     }
 
