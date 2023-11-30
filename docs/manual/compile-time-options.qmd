@@ -1,4 +1,4 @@
-# Compile-time Options
+# Compile-time Options {compile-time-options}
 
 ## `TE_FLOAT` {-#te-float}
 
@@ -6,6 +6,15 @@
 Compile with `TE_FLOAT` defined to use `float` instead.
 
 Refer to [floating-point numbers](#fp-numbers) for more information.
+
+## `TE_NO_BOOKKEEPING` {-}
+
+By default, the parser will keep track of all functions and variables used in the last expression it evaluated.
+From this, the presence of a function or variable in the expression can be verified via `is_function_used()`
+and `is_variable_used()`.
+
+Turning this option off can provide a small optimization, as it will result in less heap allocations and search operations.
+Defining `TE_NO_BOOKKEEPING` will disable this feature.
 
 ## `TE_POW_FROM_RIGHT` {-}
 

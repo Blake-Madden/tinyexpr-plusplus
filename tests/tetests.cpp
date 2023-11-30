@@ -1339,6 +1339,7 @@ TEST_CASE("Modulus", "[math]")
     CHECK(p.get_last_error_message() == "Modulus by zero.");
     }
 
+#ifndef TE_NO_BOOKKEEPING
 TEST_CASE("Is function used", "[functions]")
     {
     te_parser p;
@@ -1399,6 +1400,7 @@ TEST_CASE("Is variable used", "[functions]")
     CHECK_FALSE(p.is_variable_used(("zz")));
     CHECK_FALSE(p.is_variable_used(("TRESS_L")));
     }
+#endif
 
 TEST_CASE("Custom test", "[functions]")
     {
@@ -2355,8 +2357,10 @@ TEST_CASE("Volatile", "[volatile]")
     CHECK(vTep.get_result() == 1);
     CHECK(vTep.success());
     CHECK(const_cast<te_parser&>(vTep).get_variables_and_functions().size() == 2);
+#ifndef TE_NO_BOOKKEEPING
     CHECK_FALSE(const_cast<te_parser&>(vTep).is_function_used("sum"));
     CHECK(const_cast<te_parser&>(vTep).is_variable_used("P_LEVEL"));
+#endif
     // just make sure we can call these
     vTep.set_list_separator(',');
     vTep.set_decimal_separator('.');

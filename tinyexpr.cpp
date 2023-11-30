@@ -539,7 +539,8 @@ void te_parser::te_free_parameters(te_expr *n)
     }
 
 //--------------------------------------------------
-const std::set<std::string> te_parser::m_operators = {
+const std::set<std::string> te_parser::m_operators =
+{
     { "+" },
     { "-" },
     { "*" },
@@ -740,12 +741,14 @@ void te_parser::next_token(te_parser::state *s)
                     }
                 else
                     {
+                #ifndef TE_NO_BOOKKEEPING
                     // keep track of what's been used in the formula
                     if (is_function(m_currentVar->m_value) ||
                         is_closure(m_currentVar->m_value))
                         { m_usedFunctions.insert(m_currentVar->m_name); }
                     else
                         { m_usedVars.insert(m_currentVar->m_name); }
+                #endif
 
                     if (is_constant(m_currentVar->m_value))
                         {
@@ -1300,8 +1303,10 @@ bool te_parser::compile(const std::string_view expression)
     m_compiledExpression = nullptr;
     m_currentVar = m_functions.cend();
     m_varFound = false;
+#ifndef TE_NO_BOOKKEEPING
     m_usedFunctions.clear();
     m_usedVars.clear();
+#endif
     resolvedVariables.clear();
     if (get_list_separator() == get_decimal_separator())
         { throw std::runtime_error("List and decimal separators cannot be the same"); }

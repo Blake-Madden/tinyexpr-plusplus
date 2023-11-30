@@ -420,7 +420,7 @@ public:
             { throw std::runtime_error("List separator must be either a ',' or ';'."); }
         m_listSeparator = sep;
         }
-
+#ifndef TE_NO_BOOKKEEPING
     /// @returns @c true if @c name is a function that had been used in the last parsed formula.
     /// @param name The name of the function.
     /// @sa compile() and evaluate().
@@ -439,7 +439,7 @@ public:
         return m_usedVars.find(
             te_variable::name_type{ name }) != m_usedVars.cend();
         }
-
+#endif
     /// @returns A report of all available functions and variables.
     [[nodiscard]]
     std::string list_available_functions_and_variables();
@@ -827,8 +827,10 @@ private:
 
     std::set<te_variable>::const_iterator m_currentVar;
     bool m_varFound{ false };
+#ifndef TE_NO_BOOKKEEPING
     std::set<te_variable::name_type, te_string_less> m_usedFunctions;
     std::set<te_variable::name_type, te_string_less> m_usedVars;
+#endif
 
     static const std::set<te_variable> m_functions;
     std::set<te_variable> m_customFuncsAndVars;

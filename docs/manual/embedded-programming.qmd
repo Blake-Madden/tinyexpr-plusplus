@@ -16,7 +16,10 @@ Here are some example benchmarks:
 | a+5 | 535 ns | 0.67 ns | 798% slower |
 | (1/(a+1)+2/(a+2)+3/(a+3)) | 3,388 ns | 3.941 ns | 859%  slower |
 
-Note that *TinyExpr++* is slower compared to *TinyExpr* because of additional type safety checks (e.g., the use of `std::variant` instead of unions).
+Note that *TinyExpr++* is slower compared to *TinyExpr* because of additional type safety checks (e.g., the use of `std::variant` instead of unions),
+case insensitivity, and bookkeeping operations.
+
+Refer to [compile-time options](#compile-time-options) for flags that can provide optimization.
 
 ## Volatility {-}
 
