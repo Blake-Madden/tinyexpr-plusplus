@@ -758,7 +758,7 @@ void te_parser::next_token(te_parser::state* s)
 
     do
         {
-        if (!*s->m_next)
+        if (*s->m_next == 0)
             {
             s->m_type = te_parser::state::token_type::TOK_END;
             return;
