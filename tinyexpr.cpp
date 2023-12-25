@@ -334,23 +334,24 @@ static te_type _te_round(te_type val, te_type decimal_places)
         {
         return te_parser::te_nan;
         }
+    constexpr te_type roundEpsilon{ 0.5 };
 
     if (!useNegativeRound)
         {
         if (val < 0)
             {
             return (decimalPostition == 0) ?
-                       std::ceil(val - static_cast<te_type>(0.5)) :
+                       std::ceil(val - roundEpsilon) :
                        std::ceil(static_cast<te_type>(val * decimalPostition) -
-                                 static_cast<te_type>(0.5)) /
+                                 roundEpsilon) /
                            decimalPostition;
             }
         else
             {
             return (decimalPostition == 0) ?
-                       std::floor(val + static_cast<te_type>(0.5)) :
+                       std::floor(val + roundEpsilon) :
                        std::floor(static_cast<te_type>(val * decimalPostition) +
-                                  static_cast<te_type>(0.5)) /
+                                  roundEpsilon) /
                            decimalPostition;
             }
         }
@@ -360,13 +361,13 @@ static te_type _te_round(te_type val, te_type decimal_places)
         if (val < 0)
             {
             return std::ceil(static_cast<te_type>(val / decimalPostition) -
-                             static_cast<te_type>(0.5)) *
+                             roundEpsilon) *
                    decimalPostition;
             }
         else
             {
             return std::floor(static_cast<te_type>(val / decimalPostition) +
-                              static_cast<te_type>(0.5)) *
+                              roundEpsilon) *
                    decimalPostition;
             }
         }
