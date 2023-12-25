@@ -656,7 +656,7 @@ constexpr static te_type _comma([[maybe_unused]] te_type a, te_type b) noexcept
 //--------------------------------------------------
 void te_parser::te_free_parameters(te_expr* n)
     {
-    if (!n)
+    if (n == nullptr)
         {
         return;
         }
@@ -749,7 +749,7 @@ const std::set<te_variable> te_parser::m_functions = {
 void te_parser::next_token(te_parser::state* s)
     {
     assert(s);
-    if (!s)
+    if (s == nullptr)
         {
         return;
         }
@@ -1415,7 +1415,7 @@ te_type te_parser::te_eval(const te_expr* n)
 //--------------------------------------------------
 void te_parser::optimize(te_expr* n)
     {
-    if (!n)
+    if (n == nullptr)
         {
         return;
         }
@@ -1432,7 +1432,7 @@ void te_parser::optimize(te_expr* n)
         bool known{ true };
         for (int i = 0; i < arity; ++i)
             {
-            if (!n->m_parameters[i])
+            if (n->m_parameters[i] == nullptr)
                 {
                 break;
                 }
