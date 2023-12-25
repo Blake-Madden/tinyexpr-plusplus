@@ -509,15 +509,15 @@ static te_type _te_right_shift_or_left(te_type a, te_type b)
     }
 
 [[nodiscard]]
-constexpr static te_type _te_sqr(te_type a) noexcept
+constexpr static te_type _te_sqr(te_type val) noexcept
     {
-    return a * a;
+    return val * val;
     }
 
 [[nodiscard]]
-static te_type _te_max_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
+static te_type _te_max_maybe_nan(te_type val1, te_type val2MaybeNan) noexcept
     {
-    return (std::max)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan);
+    return (std::max)(val1, std::isnan(val2MaybeNan) ? val1 : val2MaybeNan);
     }
 
 [[nodiscard]]
@@ -534,9 +534,9 @@ static te_type _te_max(te_type v1, te_type v2, te_type v3, te_type v4, te_type v
     }
 
 [[nodiscard]]
-static te_type _te_min_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
+static te_type _te_min_maybe_nan(te_type val1, te_type val2MaybeNan) noexcept
     {
-    return (std::min)(v1, std::isnan(v2_maybe_nan) ? v1 : v2_maybe_nan);
+    return (std::min)(val1, std::isnan(val2MaybeNan) ? val1 : val2MaybeNan);
     }
 
 [[nodiscard]]
@@ -553,9 +553,9 @@ static te_type _te_min(te_type v1, te_type v2, te_type v3, te_type v4, te_type v
     }
 
 [[nodiscard]]
-static te_type _te_and_maybe_nan(te_type v1, te_type v2_maybe_nan) noexcept
+static te_type _te_and_maybe_nan(te_type val1, te_type val2MaybeNan) noexcept
     {
-    return std::isnan(v2_maybe_nan) ? v1 : (v1 && v2_maybe_nan);
+    return std::isnan(val2MaybeNan) ? val1 : (val1 && val2MaybeNan);
     }
 
 [[nodiscard]]
@@ -1124,7 +1124,7 @@ te_expr* te_parser::base(te_parser::state* s)
             // If there are vars or other functions in the parameters, keep track of the original
             // opening function; that is what we will do our variadic check on.
             const bool varValid{ m_varFound };
-            const auto openingVar = m_currentVar;
+            const std::set<te_variable>::const_iterator openingVar = m_currentVar;
             // load any parameters
             int i{ 0 };
             for (i = 0; i < arity; i++)
@@ -1156,34 +1156,36 @@ te_expr* te_parser::base(te_parser::state* s)
     }
 
 //--------------------------------------------------
-te_expr* te_parser::list(te_parser::state* s)
+te_expr* te_parser::list(te_parser::state* theState)
     {
     /* <list>      =    <expr> {"," <expr>} */
-    te_expr* ret = expr(s);
+    te_expr* ret = expr(theState);
 
-    while (s->m_type == te_parser::state::token_type::TOK_SEP)
+    while (theState->m_type == te_parser::state::token_type::TOK_SEP)
         {
-        next_token(s);
-        ret = new_expr(TE_PURE, te_variant_type(_comma), { ret, expr(s) });
+        next_token(theState);
+        ret = new_expr(TE_PURE, te_variant_type(_comma), { ret, expr(theState) });
         }
 
     return ret;
     }
 
 //--------------------------------------------------
-te_expr* te_parser::expr(te_parser::state* s)
+te_expr* te_parser::expr(te_parser::state* theState)
     {
     /* <expr>      =    <term> {(logic operations) <term>} */
     // These are the lowest of operator precedence
     // (once we have split tokens into arguments)
-    te_expr* ret = expr_level2(s);
+    te_expr* ret = expr_level2(theState);
 
-    while (s->m_type == te_parser::state::token_type::TOK_INFIX && is_function2(s->m_value) &&
-           (get_function2(s->m_value) == _te_and || get_function2(s->m_value) == _te_or))
+    while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
+           is_function2(theState->m_value) &&
+        (get_function2(theState->m_value) == _te_and ||
+         get_function2(theState->m_value) == _te_or))
         {
-        const te_fun2 t = get_function2(s->m_value);
-        next_token(s);
-        ret = new_expr(TE_PURE, t, { ret, expr_level2(s) });
+        const te_fun2 t = get_function2(theState->m_value);
+        next_token(theState);
+        ret = new_expr(TE_PURE, t, { ret, expr_level2(theState) });
         }
 
     return ret;
@@ -1231,18 +1233,20 @@ te_expr* te_parser::expr_level3(te_parser::state* s)
     }
 
 //--------------------------------------------------
-te_expr* te_parser::expr_level4(te_parser::state* s)
+te_expr* te_parser::expr_level4(te_parser::state* theState)
     {
     /* <expr>      =    <term> {("+" | "-") <term>} */
     // Fourth from the lowest level of operator precendence
-    te_expr* ret = term(s);
+    te_expr* ret = term(theState);
 
-    while (s->m_type == te_parser::state::token_type::TOK_INFIX && is_function2(s->m_value) &&
-           (get_function2(s->m_value) == _te_add || get_function2(s->m_value) == _te_sub))
+    while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
+           is_function2(theState->m_value) &&
+           (get_function2(theState->m_value) == _te_add ||
+            get_function2(theState->m_value) == _te_sub))
         {
-        const te_fun2 t = get_function2(s->m_value);
-        next_token(s);
-        ret = new_expr(TE_PURE, t, { ret, term(s) });
+        const te_fun2 t = get_function2(theState->m_value);
+        next_token(theState);
+        ret = new_expr(TE_PURE, t, { ret, term(theState) });
         }
 
     return ret;

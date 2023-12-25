@@ -1018,15 +1018,15 @@ class te_parser
     [[nodiscard]]
     te_expr* term(state* s);
     [[nodiscard]]
-    te_expr* expr(state* s);
+    te_expr* expr(state* theState);
     [[nodiscard]]
     te_expr* expr_level2(state* s);
     [[nodiscard]]
     te_expr* expr_level3(state* s);
     [[nodiscard]]
-    te_expr* expr_level4(state* s);
+    te_expr* expr_level4(state* theState);
     [[nodiscard]]
-    te_expr* list(state* s);
+    te_expr* list(state* theState);
 
     std::string m_expression;
     te_expr* m_compiledExpression{ nullptr };
