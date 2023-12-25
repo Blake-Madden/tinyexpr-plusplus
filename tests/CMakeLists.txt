@@ -23,6 +23,14 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
                                    DEPENDENCIES ${CMAKE_PROJECT_NAME})
 ENDIF()
 
+find_program(CLANG_TIDY_COMMAND
+      NAMES
+         clang-tidy
+      NO_CACHE)
+if(CLANG_TIDY_COMMAND)
+    set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND} --extra-arg=/EHsc)
+endif()
+
 IF(TE_FLOAT)
     ADD_DEFINITIONS(-DTE_FLOAT)
 ENDIF(TE_FLOAT)
