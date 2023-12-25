@@ -1528,7 +1528,9 @@ bool te_parser::compile(const std::string_view expression)
             if (commentEnd == std::string::npos)
                 {
                 m_errorPos = commentStart;
-                return te_nan;
+                m_parseSuccess = false;
+                m_result = te_nan;
+                return false;
                 }
             m_expression.erase(commentStart, (commentEnd + 2) - commentStart);
             }
