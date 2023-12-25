@@ -52,6 +52,8 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <catch2/benchmark/catch_benchmark_all.hpp>
 
+// clang-format off
+// NOLINTBEGIN
 namespace TETesting
 {
 te_type sum0() {
@@ -2503,4 +2505,7 @@ TEST_CASE("Benchmarks", "[!benchmark]")
     BENCHMARK("(1/(a+1)+2/(a+2)+3/(a+3)) Native")
         { return bench_al(benchmarkVar); };
     }
-}
+} // namespace TETesting
+
+// NOLINTEND
+// clang-format on
