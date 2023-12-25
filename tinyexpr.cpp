@@ -1558,7 +1558,7 @@ bool te_parser::compile(const std::string_view expression)
     try
         {
         m_compiledExpression = te_compile(m_expression, get_variables_and_functions());
-        m_parseSuccess = (m_compiledExpression != nullptr) ? true : false;
+        m_parseSuccess = (m_compiledExpression != nullptr);
         }
     catch (const std::exception& expt)
         {
