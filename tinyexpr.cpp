@@ -679,47 +679,6 @@ void te_parser::te_free_parameters(te_expr* n)
     }
 
 //--------------------------------------------------
-const std::set<std::string> te_parser::m_operators = {
-    { "+" },
-    { "-" },
-    { "*" },
-    { "/" },
-    { "^" },
-    { "%" },
-    { "<<" },
-    { ">>" },
-    { "(" },
-    { ")" },
-    { "=" },
-    { "==" },
-    { "<>" },
-    { "!=" },
-    { "<" },
-    { "<=" },
-    { ">" },
-    { ">=" },
-    { "&" },
-    { "&&" },
-    { "|" },
-    { "||" },
-    { "^" },
-    { "**" },
-    { "//" },
-    { "/*" },
-    { "*/" },
-    // not currently used, but might be in the future
-    { "\"" },
-    { "'" },
-    { "[" },
-    { "]" },
-    { "!" },
-    // list and decimal separators
-    { "," },
-    { ";" },
-    { "." }
-};
-
-//--------------------------------------------------
 const std::set<te_variable> te_parser::m_functions = {
     { "abs", static_cast<te_fun1>(_te_absolute_value), TE_PURE },
     { "acos", static_cast<te_fun1>(_te_acos), TE_PURE },

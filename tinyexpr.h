@@ -1045,9 +1045,6 @@ class te_parser
     std::set<te_variable::name_type> resolvedVariables;
     bool m_keepResolvedVarialbes{ true };
 
-    // just keeps track of built-in operators
-    static const std::set<std::string> m_operators;
-
     bool m_parseSuccess{ false };
     int64_t m_errorPos{ 0 };
     std::string m_lastErrorMessage;
