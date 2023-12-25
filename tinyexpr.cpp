@@ -646,9 +646,9 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    constexpr static te_type _comma([[maybe_unused]] te_type, te_type val) noexcept
+    constexpr static te_type _comma([[maybe_unused]] te_type unusedVal, te_type val2) noexcept
         {
-        return val;
+        return val2;
         }
     } // namespace te_builtins
 
