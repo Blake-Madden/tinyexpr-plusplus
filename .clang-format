@@ -1,0 +1,33 @@
+---
+IndentWidth: 4
+ColumnLimit: 100
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+BreakAfterAttributes: Always
+BreakBeforeBraces: Whitesmiths
+BreakBeforeTernaryOperators: false
+Cpp11BracedListStyle: false
+IncludeBlocks: Merge
+IndentCaseLabels: false
+InsertNewlineAtEOF: true
+LineEnding: LF
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: All
+PointerAlignment: Left
+QualifierAlignment: Custom
+QualifierOrder: ['inline', 'constexpr', 'static', 'const', 'volatile', 'restrict', 'friend', 'type']
+ReferenceAlignment: Left
+ReflowComments: true
+RemoveSemicolon: true
+SeparateDefinitionBlocks: Always
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeParens: ControlStatements
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+UseTab: Never
+AlwaysBreakTemplateDeclarations: Yes
+SpaceAfterTemplateKeyword: false
+AlignAfterOpenBracket: Align
+InsertBraces: true
