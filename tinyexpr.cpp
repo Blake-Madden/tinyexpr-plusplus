@@ -141,21 +141,21 @@ static te_type _te_fac(te_type a) noexcept
     }
 
 [[nodiscard]]
-static te_type _te_absolute_value(te_type n)
+static te_type _te_absolute_value(te_type val)
     {
-    return std::fabs(static_cast<te_type>(n));
+    return std::fabs(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_log(te_type x)
+static te_type _te_log(te_type val)
     {
-    return std::log(static_cast<te_type>(x));
+    return std::log(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_log10(te_type x)
+static te_type _te_log10(te_type val)
     {
-    return std::log10(static_cast<te_type>(x));
+    return std::log10(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
@@ -165,95 +165,95 @@ static te_type _te_pow(te_type x, te_type y)
     }
 
 [[nodiscard]]
-static te_type _te_tan(te_type x)
+static te_type _te_tan(te_type val)
     {
-    return std::tan(static_cast<te_type>(x));
+    return std::tan(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_tanh(te_type x)
+static te_type _te_tanh(te_type val)
     {
-    return std::tanh(static_cast<te_type>(x));
+    return std::tanh(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_trunc(te_type x)
+static te_type _te_trunc(te_type val)
     {
-    return std::trunc(static_cast<te_type>(x));
+    return std::trunc(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_sin(te_type x)
+static te_type _te_sin(te_type val)
     {
-    return std::sin(static_cast<te_type>(x));
+    return std::sin(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_sinh(te_type x)
+static te_type _te_sinh(te_type val)
     {
-    return std::sinh(static_cast<te_type>(x));
+    return std::sinh(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_sqrt(te_type x)
+static te_type _te_sqrt(te_type val)
     {
-    if (x < 0)
+    if (val < 0)
         {
         throw std::runtime_error("Negative value passed to SQRT.");
         }
-    return std::sqrt(static_cast<te_type>(x));
+    return std::sqrt(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_floor(te_type x)
+static te_type _te_floor(te_type val)
     {
-    return std::floor(static_cast<te_type>(x));
+    return std::floor(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_ceil(te_type x)
+static te_type _te_ceil(te_type val)
     {
-    return std::ceil(static_cast<te_type>(x));
+    return std::ceil(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_exp(te_type x)
+static te_type _te_exp(te_type val)
     {
-    return std::exp(static_cast<te_type>(x));
+    return std::exp(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_cos(te_type x)
+static te_type _te_cos(te_type val)
     {
-    return std::cos(static_cast<te_type>(x));
+    return std::cos(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_cosh(te_type x)
+static te_type _te_cosh(te_type val)
     {
-    return std::cosh(static_cast<te_type>(x));
+    return std::cosh(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_acos(te_type x)
+static te_type _te_acos(te_type val)
     {
-    return std::acos(static_cast<te_type>(x));
+    return std::acos(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_asin(te_type x)
+static te_type _te_asin(te_type val)
     {
-    if (std::isfinite(x) && (x < -1.0 || x > 1.0))
+    if (std::isfinite(val) && (val < -1.0 || val > 1.0))
         {
         throw std::runtime_error("Argument passed to ASIN must be between -1 and 1.");
         }
-    return std::asin(static_cast<te_type>(x));
+    return std::asin(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
-static te_type _te_atan(te_type x)
+static te_type _te_atan(te_type val)
     {
-    return std::atan(static_cast<te_type>(x));
+    return std::atan(static_cast<te_type>(val));
     }
 
 [[nodiscard]]
@@ -263,9 +263,9 @@ static te_type _te_atan2(te_type y, te_type x)
     }
 
 [[nodiscard]]
-static te_type _te_tgamma(te_type y)
+static te_type _te_tgamma(te_type val)
     {
-    return std::tgamma(y);
+    return std::tgamma(val);
     }
 
 [[nodiscard]]
@@ -1121,12 +1121,12 @@ te_expr* te_parser::base(te_parser::state* s)
             }
         else
             {
-            int i{ 0 };
             // If there are vars or other functions in the parameters, keep track of the original
             // opening function; that is what we will do our variadic check on.
             const bool varValid{ m_varFound };
             const auto openingVar = m_currentVar;
             // load any parameters
+            int i{ 0 };
             for (i = 0; i < arity; i++)
                 {
                 next_token(s);
@@ -1331,20 +1331,20 @@ te_expr* te_parser::factor(te_parser::state* s)
 te_expr* te_parser::power(te_parser::state* s)
     {
     /* <power>     =    {("-" | "+")} <base> */
-    int Sign{ 1 };
+    int theSign{ 1 };
     while (s->m_type == te_parser::state::token_type::TOK_INFIX && is_function2(s->m_value) &&
            (get_function2(s->m_value) == _te_add || get_function2(s->m_value) == _te_sub))
         {
         if (get_function2(s->m_value) == _te_sub)
             {
-            Sign = -Sign;
+            theSign = -theSign;
             }
         next_token(s);
         }
 
     te_expr* ret{ nullptr };
 
-    if (Sign == 1)
+    if (theSign == 1)
         {
         ret = base(s);
         }
