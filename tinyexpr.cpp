@@ -670,7 +670,7 @@ void te_parser::te_free_parameters(te_expr* n)
         }
     else if (is_function(n->m_value))
         {
-        for (auto param : n->m_parameters)
+        for (auto* param : n->m_parameters)
             {
             te_free(param);
             param = nullptr;
