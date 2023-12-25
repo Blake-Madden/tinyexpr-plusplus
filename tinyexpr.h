@@ -1012,17 +1012,17 @@ class te_parser
     [[nodiscard]]
     te_expr* base(state* s);
     [[nodiscard]]
-    te_expr* power(state* s);
+    te_expr* power(state* theState);
     [[nodiscard]]
-    te_expr* factor(state* s);
+    te_expr* factor(state* theState);
     [[nodiscard]]
-    te_expr* term(state* s);
+    te_expr* term(state* theState);
     [[nodiscard]]
     te_expr* expr(state* theState);
     [[nodiscard]]
-    te_expr* expr_level2(state* s);
+    te_expr* expr_level2(state* theState);
     [[nodiscard]]
-    te_expr* expr_level3(state* s);
+    te_expr* expr_level3(state* theState);
     [[nodiscard]]
     te_expr* expr_level4(state* theState);
     [[nodiscard]]
