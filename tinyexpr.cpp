@@ -300,23 +300,24 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    static te_type _te_sum(te_type v1, te_type v2, te_type v3, te_type v4, te_type v5, te_type v6,
-                           te_type v7)
+    static te_type _te_sum(te_type val1, te_type val2, te_type val3, te_type val4, te_type val5,
+                           te_type val6, te_type val7)
         {
-        return (std::isnan(v1) ? 0 : v1) + (std::isnan(v2) ? 0 : v2) + (std::isnan(v3) ? 0 : v3) +
-               (std::isnan(v4) ? 0 : v4) + (std::isnan(v5) ? 0 : v5) + (std::isnan(v6) ? 0 : v6) +
-               (std::isnan(v7) ? 0 : v7);
+        return (std::isnan(val1) ? 0 : val1) + (std::isnan(val2) ? 0 : val2) +
+               (std::isnan(val3) ? 0 : val3) + (std::isnan(val4) ? 0 : val4) +
+               (std::isnan(val5) ? 0 : val5) + (std::isnan(val6) ? 0 : val6) +
+               (std::isnan(val7) ? 0 : val7);
         }
 
     [[nodiscard]]
-    static te_type _te_average(te_type v1, te_type v2, te_type v3, te_type v4, te_type v5,
-                               te_type v6, te_type v7)
+    static te_type _te_average(te_type val1, te_type val2, te_type val3, te_type val4, te_type val5,
+                               te_type val6, te_type val7)
         {
-        const auto validN = (std::isnan(v1) ? 0 : 1) + (std::isnan(v2) ? 0 : 1) +
-                            (std::isnan(v3) ? 0 : 1) + (std::isnan(v4) ? 0 : 1) +
-                            (std::isnan(v5) ? 0 : 1) + (std::isnan(v6) ? 0 : 1) +
-                            (std::isnan(v7) ? 0 : 1);
-        const auto total = _te_sum(v1, v2, v3, v4, v5, v6, v7);
+        const auto validN = (std::isnan(val1) ? 0 : 1) + (std::isnan(val2) ? 0 : 1) +
+                            (std::isnan(val3) ? 0 : 1) + (std::isnan(val4) ? 0 : 1) +
+                            (std::isnan(val5) ? 0 : 1) + (std::isnan(val6) ? 0 : 1) +
+                            (std::isnan(val7) ? 0 : 1);
+        const auto total = _te_sum(val1, val2, val3, val4, val5, val6, val7);
         return _te_divide(total, static_cast<te_type>(validN));
         }
 
@@ -431,13 +432,13 @@ namespace te_builtins
     // Shift operators
     //--------------------------------------------------
     [[nodiscard]]
-    static te_type _te_left_shift(te_type a, te_type b)
+    static te_type _te_left_shift(te_type a, te_type val2)
         {
         if (std::floor(a) != a)
             {
             throw std::runtime_error("Left side of left shift (<<) operation must be an integer.");
             }
-        else if (std::floor(b) != b)
+        else if (std::floor(val2) != val2)
             {
             throw std::runtime_error(
                 "Additive expression of left shift (<<) operation must be an integer.");
@@ -448,62 +449,62 @@ namespace te_builtins
             }
         // bitness is limited to 64-bit, so ensure shift doesn't go beyond that
         // and cause undefined behavior
-        else if (b < 0 || b >= 64)
+        else if (val2 < 0 || val2 >= 64)
             {
             throw std::runtime_error(
                 "Additive expression of left shift (<<) operation must be between 0-63.");
             }
-        const auto multipler = (static_cast<uint64_t>(1) << static_cast<uint64_t>(b));
+        const auto multipler = (static_cast<uint64_t>(1) << static_cast<uint64_t>(val2));
         const auto maxBaseNumber = (std::numeric_limits<uint64_t>::max() / multipler);
         if (static_cast<uint64_t>(a) > maxBaseNumber)
             {
             throw std::runtime_error(
                 "Overflow in left shift (<<) operation; base number is too large.");
             }
-        return static_cast<te_type>(static_cast<uint64_t>(a) << static_cast<uint64_t>(b));
+        return static_cast<te_type>(static_cast<uint64_t>(a) << static_cast<uint64_t>(val2));
         }
 
     //--------------------------------------------------
     [[nodiscard]]
-    static te_type _te_right_shift(te_type a, te_type b)
+    static te_type _te_right_shift(te_type val1, te_type val2)
         {
-        if (std::floor(a) != a)
+        if (std::floor(val1) != val1)
             {
             throw std::runtime_error("Left side of right shift (>>) operation must be an integer.");
             }
-        else if (std::floor(b) != b)
+        else if (std::floor(val2) != val2)
             {
             throw std::runtime_error(
                 "Additive expression of right shift (>>)operation must be an integer.");
             }
-        else if (a < 0)
+        else if (val1 < 0)
             {
             throw std::runtime_error("Left side of right shift (<<) operation cannot be negative.");
             }
-        else if (b < 0 || b >= 64)
+        else if (val2 < 0 || val2 >= 64)
             {
             throw std::runtime_error(
                 "Additive expression of right shift (>>) operation must be between 0-63.");
             }
-        return static_cast<te_type>(static_cast<uint64_t>(a) >> static_cast<uint64_t>(b));
+        return static_cast<te_type>(static_cast<uint64_t>(val1) >> static_cast<uint64_t>(val2));
         }
 
     /// @warning This emulates Excel, where a negative shift amount acts as a right shift.\n
     ///     Be aware of this if using this function outside of TinyExpr++.
     //--------------------------------------------------
     [[nodiscard]]
-    static te_type _te_left_shift_or_right(te_type a, te_type b)
+    static te_type _te_left_shift_or_right(te_type val1, te_type val2)
         {
-        return (b >= 0) ? _te_left_shift(a, b) : _te_right_shift(a, std::abs(b));
+        return (val2 >= 0) ? _te_left_shift(val1, val2) : _te_right_shift(val1, std::abs(val2));
         }
 
     /// @warning This emulates Excel, where a negative shift amount acts as a right shift.\n
     ///     Be aware of this if using this function outside of TinyExpr++.
     //--------------------------------------------------
     [[nodiscard]]
-    static te_type _te_right_shift_or_left(te_type a, te_type b)
+    static te_type _te_right_shift_or_left(te_type val1, te_type val2)
         {
-        return (b >= 0) ? _te_right_shift(a, b) : _te_left_shift(a, std::abs(b));
+        return (val2 >= 0) ? _te_right_shift(val1, val2) : _te_left_shift(val1, std::abs(val2));
         }
 
     [[nodiscard]]
@@ -519,16 +520,16 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    static te_type _te_max(te_type v1, te_type v2, te_type v3, te_type v4, te_type v5, te_type v6,
-                           te_type v7) noexcept
+    static te_type _te_max(te_type val1, te_type val2, te_type val3, te_type val4, te_type val5,
+                           te_type val6, te_type val7) noexcept
         {
-        // assumes that at least v1 is a number, rest can be NaN
-        auto maxVal = _te_max_maybe_nan(v1, v2);
-        maxVal = _te_max_maybe_nan(maxVal, v3);
-        maxVal = _te_max_maybe_nan(maxVal, v4);
-        maxVal = _te_max_maybe_nan(maxVal, v5);
-        maxVal = _te_max_maybe_nan(maxVal, v6);
-        return _te_max_maybe_nan(maxVal, v7);
+        // assumes that at least val1 is a number, rest can be NaN
+        auto maxVal = _te_max_maybe_nan(val1, val2);
+        maxVal = _te_max_maybe_nan(maxVal, val3);
+        maxVal = _te_max_maybe_nan(maxVal, val4);
+        maxVal = _te_max_maybe_nan(maxVal, val5);
+        maxVal = _te_max_maybe_nan(maxVal, val6);
+        return _te_max_maybe_nan(maxVal, val7);
         }
 
     [[nodiscard]]
@@ -538,16 +539,16 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    static te_type _te_min(te_type v1, te_type v2, te_type v3, te_type v4, te_type v5, te_type v6,
-                           te_type v7) noexcept
+    static te_type _te_min(te_type val1, te_type val2, te_type val3, te_type val4, te_type val5,
+                           te_type val6, te_type val7) noexcept
         {
-        // assumes that at least v1 is legit, rest can be NaN
-        auto minVal = _te_min_maybe_nan(v1, v2);
-        minVal = _te_min_maybe_nan(minVal, v3);
-        minVal = _te_min_maybe_nan(minVal, v4);
-        minVal = _te_min_maybe_nan(minVal, v5);
-        minVal = _te_min_maybe_nan(minVal, v6);
-        return _te_min_maybe_nan(minVal, v7);
+        // assumes that at least val1 is legit, rest can be NaN
+        auto minVal = _te_min_maybe_nan(val1, val2);
+        minVal = _te_min_maybe_nan(minVal, val3);
+        minVal = _te_min_maybe_nan(minVal, val4);
+        minVal = _te_min_maybe_nan(minVal, val5);
+        minVal = _te_min_maybe_nan(minVal, val6);
+        return _te_min_maybe_nan(minVal, val7);
         }
 
     [[nodiscard]]
@@ -557,16 +558,16 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    static te_type _te_and_variadic(te_type v1, te_type v2, te_type v3, te_type v4, te_type v5,
-                                    te_type v6, te_type v7) noexcept
+    static te_type _te_and_variadic(te_type val1, te_type val2, te_type val3, te_type val4,
+                                    te_type val5, te_type val6, te_type val7) noexcept
         {
-        // assumes that at least v1 is legit, rest can be NaN
-        auto andVal = _te_and_maybe_nan(v1, v2);
-        andVal = _te_and_maybe_nan(andVal, v3);
-        andVal = _te_and_maybe_nan(andVal, v4);
-        andVal = _te_and_maybe_nan(andVal, v5);
-        andVal = _te_and_maybe_nan(andVal, v6);
-        return _te_and_maybe_nan(andVal, v7);
+        // assumes that at least val1 is legit, rest can be NaN
+        auto andVal = _te_and_maybe_nan(val1, val2);
+        andVal = _te_and_maybe_nan(andVal, val3);
+        andVal = _te_and_maybe_nan(andVal, val4);
+        andVal = _te_and_maybe_nan(andVal, val5);
+        andVal = _te_and_maybe_nan(andVal, val6);
+        return _te_and_maybe_nan(andVal, val7);
         }
 
     [[nodiscard]]
@@ -576,22 +577,22 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    static te_type _te_or_variadic(te_type v1, te_type v2, te_type v3, te_type v4, te_type v5,
-                                   te_type v6, te_type v7) noexcept
+    static te_type _te_or_variadic(te_type val1, te_type val2, te_type val3, te_type val4,
+                                   te_type val5, te_type val6, te_type val7) noexcept
         {
-        // assumes that at least v1 is legit, rest can be NaN
-        auto orVal = _te_or_maybe_nan(v1, v2);
-        orVal = _te_or_maybe_nan(orVal, v3);
-        orVal = _te_or_maybe_nan(orVal, v4);
-        orVal = _te_or_maybe_nan(orVal, v5);
-        orVal = _te_or_maybe_nan(orVal, v6);
-        return _te_or_maybe_nan(orVal, v7);
+        // assumes that at least val1 is legit, rest can be NaN
+        auto orVal = _te_or_maybe_nan(val1, val2);
+        orVal = _te_or_maybe_nan(orVal, val3);
+        orVal = _te_or_maybe_nan(orVal, val4);
+        orVal = _te_or_maybe_nan(orVal, val5);
+        orVal = _te_or_maybe_nan(orVal, val6);
+        return _te_or_maybe_nan(orVal, val7);
         }
 
     [[nodiscard]]
-    constexpr static te_type _te_if(te_type a, te_type b, te_type c) noexcept
+    constexpr static te_type _te_if(te_type val1, te_type val2, te_type val3) noexcept
         {
-        return (a != 0.0) ? b : c;
+        return (val1 != 0.0) ? val2 : val3;
         }
 
     [[nodiscard]]
