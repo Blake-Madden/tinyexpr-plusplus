@@ -818,7 +818,7 @@ void te_parser::next_token(te_parser::state* s)
                                         "Internal error in parser using unknown symbol resolver.");
                                     if (m_currentVar != s->m_lookup.cend())
                                         {
-                                        resolvedVariables.insert(
+                                        m_resolvedVariables.insert(
                                             te_variable::name_type{ currentVarToken });
                                         m_varFound = true;
                                         }
@@ -839,7 +839,7 @@ void te_parser::next_token(te_parser::state* s)
                                         "Internal error in parser using unknown symbol resolver.");
                                     if (m_currentVar != s->m_lookup.cend())
                                         {
-                                        resolvedVariables.insert(
+                                        m_resolvedVariables.insert(
                                             te_variable::name_type{ currentVarToken });
                                         m_varFound = true;
                                         }
@@ -1493,7 +1493,7 @@ bool te_parser::compile(const std::string_view expression)
     m_usedFunctions.clear();
     m_usedVars.clear();
 #endif
-    resolvedVariables.clear();
+    m_resolvedVariables.clear();
     if (get_list_separator() == get_decimal_separator())
         {
         throw std::runtime_error("List and decimal separators cannot be the same");

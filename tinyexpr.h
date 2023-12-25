@@ -542,13 +542,13 @@ class te_parser
     /// @brief Resets any resolved variables from USR if not being cached.
     void reset_usr_resolved_if_necessary()
         {
-        if (!m_keepResolvedVarialbes && resolvedVariables.size())
+        if (!m_keepResolvedVarialbes && m_resolvedVariables.size())
             {
-            for (const auto& resolvedVar : resolvedVariables)
+            for (const auto& resolvedVar : m_resolvedVariables)
                 {
                 remove_variable_or_function(resolvedVar);
                 }
-            resolvedVariables.clear();
+            m_resolvedVariables.clear();
             }
         }
 
@@ -1042,7 +1042,7 @@ class te_parser
     std::set<te_variable> m_customFuncsAndVars;
 
     te_usr_variant_type m_unknownSymbolResolve{ te_usr_noop{} };
-    std::set<te_variable::name_type> resolvedVariables;
+    std::set<te_variable::name_type> m_resolvedVariables;
     bool m_keepResolvedVarialbes{ true };
 
     bool m_parseSuccess{ false };
