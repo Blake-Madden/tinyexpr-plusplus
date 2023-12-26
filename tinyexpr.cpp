@@ -1296,7 +1296,7 @@ te_expr* te_parser::factor(te_parser::state* theState)
     int neg{ 0 };
 
     if (ret->m_type == TE_PURE && is_function1(ret->m_value) &&
-        get_function1(ret->m_value) == _te_negate)
+        get_function1(ret->m_value) == te_builtins::_te_negate)
         {
         te_expr* se = ret->m_parameters[0];
         delete ret;
@@ -1307,7 +1307,7 @@ te_expr* te_parser::factor(te_parser::state* theState)
     te_expr* insertion{ nullptr };
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
            is_function2(theState->m_value) &&
-           (get_function2(theState->m_value) == static_cast<te_fun2>(_te_pow)))
+           (get_function2(theState->m_value) == static_cast<te_fun2>(te_builtins::_te_pow)))
         {
         const te_fun2 t = get_function2(theState->m_value);
         next_token(theState);
@@ -1329,7 +1329,7 @@ te_expr* te_parser::factor(te_parser::state* theState)
 
     if (neg)
         {
-        ret = new_expr(TE_PURE, te_variant_type(_te_negate), { ret });
+        ret = new_expr(TE_PURE, te_variant_type(te_builtins::_te_negate), { ret });
         }
 
     return ret;
