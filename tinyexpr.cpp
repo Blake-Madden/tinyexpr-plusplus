@@ -130,8 +130,8 @@ namespace te_builtins
             return std::numeric_limits<te_type>::infinity();
             }
         const auto usignVal = static_cast<size_t>(val);
-        unsigned long int result{ 1 };
-        for (unsigned long int i = 1; i <= usignVal; i++)
+        uint32_t result{ 1 };
+        for (uint32_t i = 1; i <= usignVal; i++)
             {
             if (i > (std::numeric_limits<unsigned long>::max)() / result)
                 {
@@ -380,9 +380,9 @@ namespace te_builtins
             {
             return std::numeric_limits<te_type>::infinity();
             }
-        const unsigned long int usignN{ static_cast<unsigned int>(val1) };
-        unsigned long int usignR{ static_cast<unsigned int>(val2) };
-        unsigned long int result{ 1 };
+        const uint32_t usignN{ static_cast<unsigned int>(val1) };
+        uint32_t usignR{ static_cast<unsigned int>(val2) };
+        uint32_t result{ 1 };
         if (usignR > usignN / 2)
             {
             usignR = usignN - usignR;
@@ -691,7 +691,7 @@ void te_parser::te_free_parameters(te_expr* texp)
     }
 
 //--------------------------------------------------
-const std::set<te_variable> te_parser::m_functions = {
+const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "abs", static_cast<te_fun1>(te_builtins::_te_absolute_value), TE_PURE },
     { "acos", static_cast<te_fun1>(te_builtins::_te_acos), TE_PURE },
     // variadic, accepts 1-7 arguments
