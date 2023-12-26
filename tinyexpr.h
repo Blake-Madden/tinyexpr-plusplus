@@ -977,22 +977,22 @@ class te_parser
     te_expr* te_compile(const std::string_view expression, std::set<te_variable>& variables);
     /* Evaluates the expression. */
     [[nodiscard]]
-    static te_type te_eval(const te_expr* n);
+    static te_type te_eval(const te_expr* texp);
 
     /* Frees the expression. */
     /* This is safe to call on null pointers. */
-    inline static void te_free(te_expr* n)
+    inline static void te_free(te_expr* texp)
         {
-        if (!n)
+        if (texp == nullptr)
             {
             return;
             }
-        te_free_parameters(n);
-        delete n;
+        te_free_parameters(texp);
+        delete texp;
         }
 
-    static void te_free_parameters(te_expr* n);
-    static void optimize(te_expr* n);
+    static void te_free_parameters(te_expr* texp);
+    static void optimize(te_expr* texp);
 
     [[nodiscard]]
     static auto find_builtin(const std::string_view name)
@@ -1008,9 +1008,9 @@ class te_parser
                                              static_cast<te_type>(0.0), TE_DEFAULT, nullptr });
         }
 
-    void next_token(state* s);
+    void next_token(state* theState);
     [[nodiscard]]
-    te_expr* base(state* s);
+    te_expr* base(state* theState);
     [[nodiscard]]
     te_expr* power(state* theState);
     [[nodiscard]]
