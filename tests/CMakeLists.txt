@@ -52,10 +52,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 add_executable(${CMAKE_PROJECT_NAME} ../tinyexpr.cpp tetests.cpp testingmain.cpp)
 if(MSVC)
-    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION
                                $<$<CONFIG:Release>:NDEBUG>)
     target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /MP /W3 /WX /wd4554
-                           $<$<CONFIG:Debug>:/Od> $<$<CONFIG:Release>:/O2>)
+                           $<$<CONFIG:Debug>:/Od /fsanitize=address> $<$<CONFIG:Release>:/O2>)
 endif()
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Catch2::Catch2)
 
