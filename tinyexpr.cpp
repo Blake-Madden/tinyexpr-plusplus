@@ -133,7 +133,7 @@ namespace te_builtins
         uint32_t result{ 1 };
         for (uint32_t i = 1; i <= usignVal; i++)
             {
-            if (i > (std::numeric_limits<unsigned long>::max)() / result)
+            if (i > (std::numeric_limits<uint32_t>::max)() / result)
                 {
                 return std::numeric_limits<te_type>::infinity();
                 }
@@ -354,17 +354,14 @@ namespace te_builtins
                                     ROUND_EPSILON) /
                             decimalPostition;
             }
-        else
+        // ROUND(21.5, -1) = 20
+        if (val < 0)
             {
-            // ROUND(21.5, -1) = 20
-            if (val < 0)
-                {
-                return std::ceil(static_cast<te_type>(val / decimalPostition) - ROUND_EPSILON) *
-                       decimalPostition;
-                }
-            return std::floor(static_cast<te_type>(val / decimalPostition) + ROUND_EPSILON) *
+            return std::ceil(static_cast<te_type>(val / decimalPostition) - ROUND_EPSILON) *
                     decimalPostition;
             }
+        return std::floor(static_cast<te_type>(val / decimalPostition) + ROUND_EPSILON) *
+                decimalPostition;
         }
 
     // Combinations (without repetition)
@@ -389,7 +386,7 @@ namespace te_builtins
             }
         for (decltype(usignR) i = 1; i <= usignR; i++)
             {
-            if (result > ((std::numeric_limits<unsigned long>::max)()) / (usignN - usignR + i))
+            if (result > ((std::numeric_limits<uint32_t>::max)()) / (usignN - usignR + i))
                 {
                 return std::numeric_limits<te_type>::infinity();
                 }
