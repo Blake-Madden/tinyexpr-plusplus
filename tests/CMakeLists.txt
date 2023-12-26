@@ -11,6 +11,11 @@ cmake_minimum_required(VERSION 3.12)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Options:
+# - USE_ADDRESS_SANITIZE to use ASAN
+# - TE_FLOAT and TE_POW_FROM_RIGHT to enable the respective preprocessors
+#   when compiling
+
 project(TETestRunner)
 
 # https://github.com/bilke/cmake-modules/blob/master/CodeCoverage.cmake
@@ -54,8 +59,13 @@ add_executable(${CMAKE_PROJECT_NAME} ../tinyexpr.cpp tetests.cpp testingmain.cpp
 if(MSVC)
     target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION
                                $<$<CONFIG:Release>:NDEBUG>)
-    target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /MP /W3 /WX /wd4554
+    if(USE_ADDRESS_SANITIZE)
+        target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /MP /W3 /WX /wd4554
                            $<$<CONFIG:Debug>:/Od /fsanitize=address> $<$<CONFIG:Release>:/O2>)
+    else()
+        target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /MP /W3 /WX /wd4554
+                           $<$<CONFIG:Debug>:/Od> $<$<CONFIG:Release>:/O2>)
+    endif()
 endif()
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Catch2::Catch2)
 
