@@ -934,7 +934,7 @@ void te_parser::next_token(te_parser::state* theState)
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::_te_pow);
-                    ++theState->m_next;
+                    std::advance(theState->m_next, 1);
                     }
                 else if (tok == '*')
                     {
@@ -973,20 +973,20 @@ void te_parser::next_token(te_parser::state* theState)
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::_te_left_shift);
-                    ++theState->m_next;
+                    std::advance(theState->m_next, 1);
                     }
                 else if (tok == '>' && theState->m_next[0] == '>')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::_te_right_shift);
-                    ++theState->m_next;
+                    std::advance(theState->m_next, 1);
                     }
                 // logical operators
                 else if (tok == '=' && theState->m_next[0] == '=')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::_te_equal);
-                    ++theState->m_next;
+                    std::advance(theState->m_next, 1);
                     }
                 else if (tok == '=')
                     {
@@ -997,19 +997,19 @@ void te_parser::next_token(te_parser::state* theState)
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::_te_not_equal);
-                    ++theState->m_next;
+                    std::advance(theState->m_next, 1);
                     }
                 else if (tok == '<' && theState->m_next[0] == '>')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::_te_not_equal);
-                    ++theState->m_next;
+                    std::advance(theState->m_next, 1);
                     }
                 else if (tok == '<' && theState->m_next[0] == '=')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::_te_less_than_equal_to);
-                    ++theState->m_next;
+                    std::advance(theState->m_next, 1);
                     }
                 else if (tok == '<')
                     {
@@ -1020,7 +1020,7 @@ void te_parser::next_token(te_parser::state* theState)
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::_te_greater_than_equal_to);
-                    ++theState->m_next;
+                    std::advance(theState->m_next, 1);
                     }
                 else if (tok == '>')
                     {
