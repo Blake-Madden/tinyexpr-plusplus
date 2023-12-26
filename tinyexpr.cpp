@@ -348,14 +348,11 @@ namespace te_builtins
                            std::ceil(static_cast<te_type>(val * decimalPostition) - ROUND_EPSILON) /
                                decimalPostition;
                 }
-            else
-                {
-                return (decimalPostition == 0) ?
-                           std::floor(val + ROUND_EPSILON) :
-                           std::floor(static_cast<te_type>(val * decimalPostition) +
-                                      ROUND_EPSILON) /
-                               decimalPostition;
-                }
+            return (decimalPostition == 0) ?
+                        std::floor(val + ROUND_EPSILON) :
+                        std::floor(static_cast<te_type>(val * decimalPostition) +
+                                    ROUND_EPSILON) /
+                            decimalPostition;
             }
         else
             {
