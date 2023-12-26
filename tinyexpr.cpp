@@ -365,11 +365,8 @@ namespace te_builtins
                 return std::ceil(static_cast<te_type>(val / decimalPostition) - ROUND_EPSILON) *
                        decimalPostition;
                 }
-            else
-                {
-                return std::floor(static_cast<te_type>(val / decimalPostition) + ROUND_EPSILON) *
-                       decimalPostition;
-                }
+            return std::floor(static_cast<te_type>(val / decimalPostition) + ROUND_EPSILON) *
+                    decimalPostition;
             }
         }
 
@@ -441,22 +438,23 @@ namespace te_builtins
             {
             throw std::runtime_error("Left side of left shift (<<) operation must be an integer.");
             }
-        else if (std::floor(val2) != val2)
+        if (std::floor(val2) != val2)
             {
             throw std::runtime_error(
                 "Additive expression of left shift (<<) operation must be an integer.");
             }
-        else if (val1 < 0)
+        if (val1 < 0)
             {
             throw std::runtime_error("Left side of left shift (<<) operation cannot be negative.");
             }
         // bitness is limited to 64-bit, so ensure shift doesn't go beyond that
         // and cause undefined behavior
-        else if (val2 < 0 || val2 >= BITNESS_64BIT)
+        if (val2 < 0 || val2 >= BITNESS_64BIT)
             {
             throw std::runtime_error(
                 "Additive expression of left shift (<<) operation must be between 0-63.");
             }
+
         const auto multipler = (static_cast<uint64_t>(1) << static_cast<uint64_t>(val2));
         const auto maxBaseNumber = (std::numeric_limits<uint64_t>::max() / multipler);
         if (static_cast<uint64_t>(val1) > maxBaseNumber)
@@ -477,20 +475,21 @@ namespace te_builtins
             {
             throw std::runtime_error("Left side of right shift (>>) operation must be an integer.");
             }
-        else if (std::floor(val2) != val2)
+        if (std::floor(val2) != val2)
             {
             throw std::runtime_error(
                 "Additive expression of right shift (>>)operation must be an integer.");
             }
-        else if (val1 < 0)
+        if (val1 < 0)
             {
             throw std::runtime_error("Left side of right shift (<<) operation cannot be negative.");
             }
-        else if (val2 < 0 || val2 >= BITNESS_64BIT)
+        if (val2 < 0 || val2 >= BITNESS_64BIT)
             {
             throw std::runtime_error(
                 "Additive expression of right shift (>>) operation must be between 0-63.");
             }
+
         return static_cast<te_type>(static_cast<uint64_t>(val1) >> static_cast<uint64_t>(val2));
         }
 
@@ -775,7 +774,7 @@ void te_parser::next_token(te_parser::state* theState)
 
     theState->m_type = te_parser::state::token_type::TOK_NULL;
 
-    do
+    do // NOLINT
         {
         if (*theState->m_next == 0)
             {
@@ -1510,12 +1509,10 @@ te_expr* te_parser::te_compile(const std::string_view expression, std::set<te_va
             }
         return nullptr;
         }
-    else
-        {
-        optimize(root);
-        m_errorPos = te_parser::npos;
-        return root;
-        }
+
+    optimize(root);
+    m_errorPos = te_parser::npos;
+    return root;
     }
 
 //--------------------------------------------------
@@ -1584,10 +1581,7 @@ bool te_parser::compile(const std::string_view expression)
                 m_expression.erase(commentStart);
                 break;
                 }
-            else
-                {
-                m_expression.erase(commentStart, commentEnd - commentStart);
-                }
+            m_expression.erase(commentStart, commentEnd - commentStart);
             }
         else
             {
@@ -1638,10 +1632,7 @@ te_type te_parser::evaluate(const std::string_view expression) // NOLINT(-readab
         {
         return evaluate();
         }
-    else
-        {
-        return te_nan;
-        }
+    return te_nan;
     }
 
 //--------------------------------------------------
