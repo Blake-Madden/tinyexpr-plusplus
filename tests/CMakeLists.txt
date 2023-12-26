@@ -27,7 +27,7 @@ find_program(CLANG_TIDY_COMMAND
       NAMES
          clang-tidy
       NO_CACHE)
-if(CLANG_TIDY_COMMAND)
+if(CLANG_TIDY_COMMAND AND MSVC)
     set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND} --extra-arg=/EHsc)
 endif()
 

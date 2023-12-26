@@ -4,14 +4,14 @@ HeaderFilterRegex:   ''
 FormatStyle:         none
 InheritParentConfig: true
 CheckOptions:
-  readability-braces-around-statements.ShortStatementLines: '1'
-  readability-function-size.LineThreshold: '800'
-  readability-identifier-naming.ClassMemberPrefix: 'm_'
-  readability-identifier-naming.ClassMemberCase: 'camelBack'
-  readability-identifier-naming.LocalVariableCase: 'camelBack'
-  readability-identifier-naming.MacroDefinitionCase: 'UPPER_CASE'
-  readability-identifier-naming.ParameterCase: 'camelBack'
-  readability-identifier-naming.ClassCase: 'lower_case'
-  readability-identifier-naming.StructCase: 'lower_case'
-  readability-identifier-naming.EnumCase: 'lower_case'
-  readability-identifier-naming.NamespaceCase: 'lower_case'
+  readability-braces-around-statements.ShortStatementLines: 1
+  readability-function-size.LineThreshold: 800
+  readability-identifier-naming.ClassMemberPrefix: m_
+  readability-identifier-naming.ClassMemberCase: camelBack
+  readability-identifier-naming.LocalVariableCase: camelBack
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
+  readability-identifier-naming.ParameterCase: camelBack
+  readability-identifier-naming.ClassCase: lower_case
+  readability-identifier-naming.StructCase: lower_case
+  readability-identifier-naming.EnumCase: lower_case
+  readability-identifier-naming.NamespaceCase: lower_case
