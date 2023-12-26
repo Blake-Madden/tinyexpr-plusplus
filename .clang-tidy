@@ -1,5 +1,5 @@
 ---
-Checks: '-clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,modernize-*,readability-*,cert-*,bugprone-*,misc-*,openmp-*,performance-*,portability-*,hicpp-*,google-*,-bugprone-branch-clone,-hicpp-signed-bitwise,-misc-use-anonymous-namespace,-misc-no-recursion,-modernize-use-trailing-return-type'
+Checks: '-clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,modernize-*,readability-*,cert-*,bugprone-*,misc-*,openmp-*,performance-*,portability-*,hicpp-*,google-*,-readability-function-cognitive-complexity,-bugprone-branch-clone,-hicpp-signed-bitwise,-misc-use-anonymous-namespace,-misc-no-recursion,-modernize-use-trailing-return-type'
 HeaderFilterRegex:   ''
 FormatStyle:         none
 InheritParentConfig: true
@@ -14,4 +14,5 @@ CheckOptions:
   readability-identifier-naming.ClassCase: lower_case
   readability-identifier-naming.StructCase: lower_case
   readability-identifier-naming.EnumCase: lower_case
+  readability-identifier-naming.FunctionNameCase: lower_case
   readability-identifier-naming.NamespaceCase: lower_case
