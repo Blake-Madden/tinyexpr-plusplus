@@ -91,19 +91,19 @@ namespace te_builtins
     [[nodiscard]]
     constexpr static te_type _te_and(te_type val1, te_type val2) noexcept
         {
-        return static_cast<te_type>((val1 && val2) ? 1 : 0);
+        return static_cast<te_type>((static_cast<bool>(val1) && static_cast<bool>(val2)) ? 1 : 0);
         }
 
     [[nodiscard]]
     constexpr static te_type _te_or(te_type val1, te_type val2) noexcept
         {
-        return static_cast<te_type>((val1 || val2) ? 1 : 0);
+        return static_cast<te_type>((static_cast<bool>(val1) || static_cast<bool>(val2)) ? 1 : 0);
         }
 
     [[nodiscard]]
     constexpr static te_type _te_not(te_type val1) noexcept
         {
-        return !val1;
+        return static_cast<te_type>(!static_cast<bool>(val1));
         }
 
     [[nodiscard]]
@@ -556,7 +556,10 @@ namespace te_builtins
     [[nodiscard]]
     static te_type _te_and_maybe_nan(te_type val1, te_type val2MaybeNan) noexcept
         {
-        return std::isnan(val2MaybeNan) ? val1 : (val1 && val2MaybeNan);
+        return std::isnan(val2MaybeNan) ?
+                   val1 :
+                   static_cast<te_type>(static_cast<bool>(val1) &&
+                                        static_cast<bool>(val2MaybeNan));
         }
 
     [[nodiscard]]
@@ -577,7 +580,10 @@ namespace te_builtins
     [[nodiscard]]
     static te_type _te_or_maybe_nan(te_type val1, te_type val2MaybeNan) noexcept
         {
-        return std::isnan(val2MaybeNan) ? val1 : (val1 || val2MaybeNan);
+        return std::isnan(val2MaybeNan) ?
+                   val1 :
+                   static_cast<te_type>(static_cast<bool>(val1) ||
+                                        static_cast<bool>(val2MaybeNan));
         }
 
     [[nodiscard]]
