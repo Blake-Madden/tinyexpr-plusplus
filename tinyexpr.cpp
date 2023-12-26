@@ -919,7 +919,8 @@ void te_parser::next_token(te_parser::state* theState)
             else
                 {
                 /* Look for an operator or special character. */
-                const auto tok = theState->m_next++[0];
+                const auto tok = *theState->m_next;
+                std::advance(theState->m_next, 1);
                 if (tok == '+')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
