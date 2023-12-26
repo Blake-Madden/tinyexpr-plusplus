@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Options:
 # - USE_ADDRESS_SANITIZE to use ASAN
+# - USE_CLANG_TIDY to run clang-tidy
 # - TE_FLOAT and TE_POW_FROM_RIGHT to enable the respective preprocessors
 #   when compiling
 
@@ -32,8 +33,12 @@ find_program(CLANG_TIDY_COMMAND
       NAMES
          clang-tidy
       NO_CACHE)
-if(CLANG_TIDY_COMMAND AND MSVC)
-    set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND} --extra-arg=/EHsc)
+if(CLANG_TIDY_COMMAND AND USE_CLANG_TIDY)
+    if(MSVC)
+        set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND} --extra-arg=/EHsc)
+    else()
+        set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND})
+    endif()
 endif()
 
 if(TE_FLOAT)
