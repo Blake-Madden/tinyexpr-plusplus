@@ -546,16 +546,7 @@ class te_parser
     [[nodiscard]]
     static bool double_to_bool(te_type val)
         {
-        return is_double_valid(val) ? static_cast<bool>(val) : false;
-        }
-
-    /// @brief Helper function to see if a double value is valid
-    ///     (not NaN or infinite).
-    /// @private
-    [[nodiscard]]
-    static bool is_double_valid(te_type val)
-        {
-        return !(std::isnan(val) || std::isinf(val));
+        return std::isfinite(val) ? static_cast<bool>(val) : false;
         }
 
   private:

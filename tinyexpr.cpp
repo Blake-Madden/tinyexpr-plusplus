@@ -92,7 +92,7 @@ namespace te_builtins
     constexpr static te_type te_and(te_type val1, te_type val2)
         {
         // clang-format off
-        return (!te_parser::is_double_valid(val1) && !te_parser::is_double_valid(val2)) ?
+        return (!std::isfinite(val1) && !std::isfinite(val2)) ?
             te_parser::te_nan :
             static_cast<te_type>(
                 (te_parser::double_to_bool(val1) && te_parser::double_to_bool(val2)) ? 1 : 0);
@@ -103,7 +103,7 @@ namespace te_builtins
     constexpr static te_type te_or(te_type val1, te_type val2)
         {
         // clang-format off
-        return (!te_parser::is_double_valid(val1) && !te_parser::is_double_valid(val2)) ?
+        return (!std::isfinite(val1) && !std::isfinite(val2)) ?
             te_parser::te_nan :
             static_cast<te_type>(
                 (te_parser::double_to_bool(val1) || te_parser::double_to_bool(val2)) ? 1 : 0);
@@ -113,7 +113,7 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_not(te_type val)
         {
-        return te_parser::is_double_valid(val) ?
+        return std::isfinite(val) ?
             static_cast<te_type>(!te_parser::double_to_bool(val)) :
                    te_parser::te_nan;
         }
@@ -133,7 +133,7 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_fac(te_type val) noexcept
         { /* simplest version of factorial */
-        if (!te_parser::is_double_valid(val) || val < 0.0)
+        if (!std::isfinite(val) || val < 0.0)
             {
             return te_parser::te_nan;
             }
@@ -315,20 +315,20 @@ namespace te_builtins
     static te_type te_sum(te_type val1, te_type val2, te_type val3, te_type val4, te_type val5,
                           te_type val6, te_type val7)
         {
-        return (!te_parser::is_double_valid(val1) ? 0 : val1) + (!te_parser::is_double_valid(val2) ? 0 : val2) +
-               (!te_parser::is_double_valid(val3) ? 0 : val3) + (!te_parser::is_double_valid(val4) ? 0 : val4) +
-               (!te_parser::is_double_valid(val5) ? 0 : val5) + (!te_parser::is_double_valid(val6) ? 0 : val6) +
-               (!te_parser::is_double_valid(val7) ? 0 : val7);
+        return (!std::isfinite(val1) ? 0 : val1) + (!std::isfinite(val2) ? 0 : val2) +
+               (!std::isfinite(val3) ? 0 : val3) + (!std::isfinite(val4) ? 0 : val4) +
+               (!std::isfinite(val5) ? 0 : val5) + (!std::isfinite(val6) ? 0 : val6) +
+               (!std::isfinite(val7) ? 0 : val7);
         }
 
     [[nodiscard]]
     static te_type te_average(te_type val1, te_type val2, te_type val3, te_type val4, te_type val5,
                               te_type val6, te_type val7)
         {
-        const auto validN = (!te_parser::is_double_valid(val1) ? 0 : 1) + (!te_parser::is_double_valid(val2) ? 0 : 1) +
-                            (!te_parser::is_double_valid(val3) ? 0 : 1) + (!te_parser::is_double_valid(val4) ? 0 : 1) +
-                            (!te_parser::is_double_valid(val5) ? 0 : 1) + (!te_parser::is_double_valid(val6) ? 0 : 1) +
-                            (!te_parser::is_double_valid(val7) ? 0 : 1);
+        const auto validN = (!std::isfinite(val1) ? 0 : 1) + (!std::isfinite(val2) ? 0 : 1) +
+                            (!std::isfinite(val3) ? 0 : 1) + (!std::isfinite(val4) ? 0 : 1) +
+                            (!std::isfinite(val5) ? 0 : 1) + (!std::isfinite(val6) ? 0 : 1) +
+                            (!std::isfinite(val7) ? 0 : 1);
         const auto total = te_sum(val1, val2, val3, val4, val5, val6, val7);
         return te_divide(total, static_cast<te_type>(validN));
         }
@@ -340,7 +340,7 @@ namespace te_builtins
     static te_type te_round(te_type val, te_type decimalPlaces) // NOLINT
         {
         const bool useNegativeRound{ decimalPlaces < 0 };
-        const size_t adjustedDecimalPlaces{ !te_parser::is_double_valid(decimalPlaces) ?
+        const size_t adjustedDecimalPlaces{ !std::isfinite(decimalPlaces) ?
                                                 0 :
                                                 static_cast<size_t>(std::abs(decimalPlaces)) };
 
@@ -379,7 +379,7 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_ncr(te_type val1, te_type val2) noexcept
         {
-        if (!te_parser::is_double_valid(val1) || !te_parser::is_double_valid(val2) || val1 < 0.0 ||
+        if (!std::isfinite(val1) || !std::isfinite(val2) || val1 < 0.0 ||
             val2 < 0.0 || val1 < val2)
             {
             return te_parser::te_nan;
@@ -526,7 +526,7 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_max_maybe_nan(te_type val1, te_type val2MaybeNan) noexcept
         {
-        return (std::max)(val1, !te_parser::is_double_valid(val2MaybeNan) ? val1 : val2MaybeNan);
+        return (std::max)(val1, !std::isfinite(val2MaybeNan) ? val1 : val2MaybeNan);
         }
 
     [[nodiscard]]
@@ -547,7 +547,7 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_min_maybe_nan(te_type val1, te_type val2MaybeNan) noexcept
         {
-        return (std::min)(val1, !te_parser::is_double_valid(val2MaybeNan) ? val1 : val2MaybeNan);
+        return (std::min)(val1, !std::isfinite(val2MaybeNan) ? val1 : val2MaybeNan);
         }
 
     [[nodiscard]]
@@ -568,7 +568,7 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_and_maybe_nan(te_type val1, te_type val2MaybeNan)
         {
-        return !te_parser::is_double_valid(val2MaybeNan) ?
+        return !std::isfinite(val2MaybeNan) ?
                    static_cast<te_type>(te_parser::double_to_bool(val1)) :
                    static_cast<te_type>(te_parser::double_to_bool(val1) &&
                                         te_parser::double_to_bool(val2MaybeNan));
@@ -579,7 +579,7 @@ namespace te_builtins
                                    te_type val5, te_type val6, te_type val7)
         {
         // at least val1 must be legit, rest can be NaN
-        if (!te_parser::is_double_valid(val1))
+        if (!std::isfinite(val1))
             {
             return te_parser::te_nan;
             }
@@ -596,7 +596,7 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_or_maybe_nan(te_type val1, te_type val2MaybeNan)
         {
-        return !te_parser::is_double_valid(val2MaybeNan) ?
+        return !std::isfinite(val2MaybeNan) ?
                    static_cast<te_type>(te_parser::double_to_bool(val1)) :
                    static_cast<te_type>(te_parser::double_to_bool(val1) ||
                                         te_parser::double_to_bool(val2MaybeNan));
@@ -607,7 +607,7 @@ namespace te_builtins
                                   te_type val5, te_type val6, te_type val7)
         {
         // at least val1 must be legit, rest can be NaN
-        if (!te_parser::is_double_valid(val1))
+        if (!std::isfinite(val1))
             {
             return te_parser::te_nan;
             }
@@ -848,7 +848,7 @@ void te_parser::next_token(te_parser::state* theState)
                                 {
                                 const auto retUsrVal =
                                     std::get<1>(m_unknownSymbolResolve)(currentVarToken);
-                                if (te_parser::is_double_valid(retUsrVal))
+                                if (std::isfinite(retUsrVal))
                                     {
                                     add_variable_or_function(
                                         { te_variable::name_type{ currentVarToken }, retUsrVal });
@@ -869,7 +869,7 @@ void te_parser::next_token(te_parser::state* theState)
                                 {
                                 const auto retUsrVal = std::get<2>(m_unknownSymbolResolve)(
                                     currentVarToken, m_lastErrorMessage);
-                                if (te_parser::is_double_valid(retUsrVal))
+                                if (std::isfinite(retUsrVal))
                                     {
                                     add_variable_or_function(
                                         { te_variable::name_type{ currentVarToken }, retUsrVal });
