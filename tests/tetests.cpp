@@ -406,6 +406,8 @@ TEST_CASE("Main tests", "[main]")
         // garbage values
         CHECK_FALSE(tep.evaluate("NAN & 5"));
         CHECK_FALSE(tep.evaluate("1 & NAN"));
+        CHECK(std::isnan(tep.evaluate("NAN & NAN")));
+        CHECK(std::isnan(tep.evaluate("NAN | NAN")));
         CHECK(tep.evaluate("NAN | 5") == 1);
         CHECK(tep.evaluate("1 | NAN") == 1);
 

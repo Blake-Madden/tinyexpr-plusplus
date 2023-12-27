@@ -91,15 +91,23 @@ namespace te_builtins
     [[nodiscard]]
     constexpr static te_type te_and(te_type val1, te_type val2)
         {
-        return static_cast<te_type>(
-            (te_parser::double_to_bool(val1) && te_parser::double_to_bool(val2)) ? 1 : 0);
+        // clang-format off
+        return (!te_parser::is_double_valid(val1) && !te_parser::is_double_valid(val2)) ?
+            te_parser::te_nan :
+            static_cast<te_type>(
+                (te_parser::double_to_bool(val1) && te_parser::double_to_bool(val2)) ? 1 : 0);
+        // clang-format on
         }
 
     [[nodiscard]]
     constexpr static te_type te_or(te_type val1, te_type val2)
         {
-        return static_cast<te_type>(
-            (te_parser::double_to_bool(val1) || te_parser::double_to_bool(val2)) ? 1 : 0);
+        // clang-format off
+        return (!te_parser::is_double_valid(val1) && !te_parser::is_double_valid(val2)) ?
+            te_parser::te_nan :
+            static_cast<te_type>(
+                (te_parser::double_to_bool(val1) || te_parser::double_to_bool(val2)) ? 1 : 0);
+        // clang-format on
         }
 
     [[nodiscard]]
