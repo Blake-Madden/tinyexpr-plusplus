@@ -538,6 +538,26 @@ class te_parser
         return m_expression;
         }
 
+    /// @brief Helper function to see if a double value is boolean.
+    /// @param val The value to examine.
+    /// @returns @c if the value is non-zero and also a valid double
+    ///     (not NaN or infinite).
+    /// @private
+    [[nodiscard]]
+    static bool double_to_bool(te_type val) noexcept
+        {
+        return is_double_valid(val) ? static_cast<bool>(val) : false;
+        }
+
+    /// @brief Helper function to see if a double value is valid
+    ///     (not NaN or infinite).
+    /// @private
+    [[nodiscard]]
+    static bool is_double_valid(te_type val) noexcept
+        {
+        return !(std::isnan(val) || std::isinf(val));
+        }
+
   private:
     /// @brief Resets any resolved variables from USR if not being cached.
     void reset_usr_resolved_if_necessary()

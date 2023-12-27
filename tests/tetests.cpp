@@ -358,6 +358,13 @@ TEST_CASE("Main tests", "[main]")
 
     SECTION("logical")
         {
+        CHECK(te_parser::double_to_bool(2));
+        CHECK(te_parser::double_to_bool(22.1));
+        CHECK(te_parser::double_to_bool(-2));
+        CHECK_FALSE(te_parser::double_to_bool(0));
+        CHECK_FALSE(te_parser::double_to_bool(0.0));
+        CHECK_FALSE(te_parser::double_to_bool(te_parser::te_nan));
+
         CHECK(tep.evaluate("if(1, 9, 7)") == 9);
         CHECK(tep.evaluate("if(0, 9, 7)") == 7);
         CHECK(tep.evaluate("if(0.000001 /* non-zero means true */, 9, 7)") == 9);
