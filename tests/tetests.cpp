@@ -401,6 +401,7 @@ TEST_CASE("Main tests", "[main]")
         CHECK(tep.evaluate("not(0.0)") == 1);
         CHECK(tep.evaluate("NOT(0)") == 1);
         CHECK_FALSE(tep.evaluate("NOT(5)"));
+        CHECK(std::isnan(tep.evaluate("NOT(NAN)")));
 
         // garbage values
         CHECK_FALSE(tep.evaluate("NAN & 5"));

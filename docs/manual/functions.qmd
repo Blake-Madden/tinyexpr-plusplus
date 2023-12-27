@@ -65,3 +65,8 @@ Table: Statistical Functions\index{functions!statistical}
 
 Table: Logic Functions\index{functions!logical}
 :::
+
+::: {.notesection data-latex=""}
+The first argument to any logic function must be valid (i.e., not NaN). If the first argument evaluates to NaN, then NaN will be returned.
+Any subsequent arguments that evaluate to NaN will be ignored.
+:::

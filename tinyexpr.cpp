@@ -103,9 +103,11 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    constexpr static te_type te_not(te_type val) noexcept
+    static te_type te_not(te_type val) noexcept
         {
-        return static_cast<te_type>(!static_cast<bool>(val));
+        return te_parser::is_double_valid(val) ?
+            static_cast<te_type>(!te_parser::double_to_bool(val)) :
+                   te_parser::te_nan;
         }
 
     [[nodiscard]]
