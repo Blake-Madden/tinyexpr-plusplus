@@ -89,21 +89,21 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    constexpr static te_type te_and(te_type val1, te_type val2) noexcept
+    constexpr static te_type te_and(te_type val1, te_type val2)
         {
         return static_cast<te_type>(
             (te_parser::double_to_bool(val1) && te_parser::double_to_bool(val2)) ? 1 : 0);
         }
 
     [[nodiscard]]
-    constexpr static te_type te_or(te_type val1, te_type val2) noexcept
+    constexpr static te_type te_or(te_type val1, te_type val2)
         {
         return static_cast<te_type>(
             (te_parser::double_to_bool(val1) || te_parser::double_to_bool(val2)) ? 1 : 0);
         }
 
     [[nodiscard]]
-    static te_type te_not(te_type val) noexcept
+    static te_type te_not(te_type val)
         {
         return te_parser::is_double_valid(val) ?
             static_cast<te_type>(!te_parser::double_to_bool(val)) :
@@ -557,7 +557,7 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    static te_type te_and_maybe_nan(te_type val1, te_type val2MaybeNan) noexcept
+    static te_type te_and_maybe_nan(te_type val1, te_type val2MaybeNan)
         {
         return std::isnan(val2MaybeNan) ?
                    te_parser::double_to_bool(val1) :
@@ -567,7 +567,7 @@ namespace te_builtins
 
     [[nodiscard]]
     static te_type te_and_variadic(te_type val1, te_type val2, te_type val3, te_type val4,
-                                   te_type val5, te_type val6, te_type val7) noexcept
+                                   te_type val5, te_type val6, te_type val7)
         {
         // at least val1 must be legit, rest can be NaN
         if (!te_parser::is_double_valid(val1))
@@ -585,7 +585,7 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    static te_type te_or_maybe_nan(te_type val1, te_type val2MaybeNan) noexcept
+    static te_type te_or_maybe_nan(te_type val1, te_type val2MaybeNan)
         {
         return std::isnan(val2MaybeNan) ?
                    te_parser::double_to_bool(val1) :
@@ -595,7 +595,7 @@ namespace te_builtins
 
     [[nodiscard]]
     static te_type te_or_variadic(te_type val1, te_type val2, te_type val3, te_type val4,
-                                  te_type val5, te_type val6, te_type val7) noexcept
+                                  te_type val5, te_type val6, te_type val7)
         {
         // at least val1 must be legit, rest can be NaN
         if (!te_parser::is_double_valid(val1))
@@ -613,14 +613,14 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    constexpr static te_type te_if(te_type val1, te_type val2, te_type val3) noexcept
+    constexpr static te_type te_if(te_type val1, te_type val2, te_type val3)
         {
         return te_parser::double_to_bool(val1) ? val2 : val3;
         }
 
     [[nodiscard]]
     constexpr static te_type te_ifs(te_type if1, te_type if1True, te_type if2, te_type if2True,
-                                    te_type if3, te_type if3True) noexcept
+                                    te_type if3, te_type if3True)
         {
         return te_parser::double_to_bool(if1) ? if1True :
                te_parser::double_to_bool(if2) ? if2True :

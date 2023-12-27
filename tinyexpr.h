@@ -544,7 +544,7 @@ class te_parser
     ///     (not NaN or infinite).
     /// @private
     [[nodiscard]]
-    static bool double_to_bool(te_type val) noexcept
+    static bool double_to_bool(te_type val)
         {
         return is_double_valid(val) ? static_cast<bool>(val) : false;
         }
@@ -553,7 +553,7 @@ class te_parser
     ///     (not NaN or infinite).
     /// @private
     [[nodiscard]]
-    static bool is_double_valid(te_type val) noexcept
+    static bool is_double_valid(te_type val)
         {
         return !(std::isnan(val) || std::isinf(val));
         }
