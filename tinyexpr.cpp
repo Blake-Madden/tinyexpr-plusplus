@@ -560,7 +560,7 @@ namespace te_builtins
     static te_type te_and_maybe_nan(te_type val1, te_type val2MaybeNan)
         {
         return std::isnan(val2MaybeNan) ?
-                   te_parser::double_to_bool(val1) :
+                   static_cast<te_type>(te_parser::double_to_bool(val1)) :
                    static_cast<te_type>(te_parser::double_to_bool(val1) &&
                                         te_parser::double_to_bool(val2MaybeNan));
         }
@@ -588,7 +588,7 @@ namespace te_builtins
     static te_type te_or_maybe_nan(te_type val1, te_type val2MaybeNan)
         {
         return std::isnan(val2MaybeNan) ?
-                   te_parser::double_to_bool(val1) :
+                   static_cast<te_type>(te_parser::double_to_bool(val1)) :
                    static_cast<te_type>(te_parser::double_to_bool(val1) ||
                                         te_parser::double_to_bool(val2MaybeNan));
         }
@@ -670,8 +670,8 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    constexpr static te_type te_comma([[maybe_unused]] te_type unusedVal,
-                                      te_type val2) noexcept // NOLINT
+    constexpr static te_type te_comma([[maybe_unused]] te_type unusedVal, // NOLINT
+                                      te_type val2) noexcept
         {
         return val2;
         }
