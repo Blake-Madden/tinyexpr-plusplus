@@ -303,7 +303,7 @@ namespace te_builtins
 
     [[nodiscard]]
     static te_type te_sum(te_type val1, te_type val2, te_type val3, te_type val4, te_type val5,
-                           te_type val6, te_type val7)
+                          te_type val6, te_type val7)
         {
         return (std::isnan(val1) ? 0 : val1) + (std::isnan(val2) ? 0 : val2) +
                (std::isnan(val3) ? 0 : val3) + (std::isnan(val4) ? 0 : val4) +
@@ -313,7 +313,7 @@ namespace te_builtins
 
     [[nodiscard]]
     static te_type te_average(te_type val1, te_type val2, te_type val3, te_type val4, te_type val5,
-                               te_type val6, te_type val7)
+                              te_type val6, te_type val7)
         {
         const auto validN = (std::isnan(val1) ? 0 : 1) + (std::isnan(val2) ? 0 : 1) +
                             (std::isnan(val3) ? 0 : 1) + (std::isnan(val4) ? 0 : 1) +
@@ -351,18 +351,18 @@ namespace te_builtins
                                decimalPostition;
                 }
             return (decimalPostition == 0) ?
-                        std::floor(val + ROUND_EPSILON) :
+                       std::floor(val + ROUND_EPSILON) :
                        std::floor(static_cast<te_type>(val * decimalPostition) + ROUND_EPSILON) /
-                            decimalPostition;
+                           decimalPostition;
             }
         // ROUND(21.5, -1) = 20
         if (val < 0)
             {
             return std::ceil(static_cast<te_type>(val / decimalPostition) - ROUND_EPSILON) *
-                    decimalPostition;
+                   decimalPostition;
             }
         return std::floor(static_cast<te_type>(val / decimalPostition) + ROUND_EPSILON) *
-                decimalPostition;
+               decimalPostition;
         }
 
     // Combinations (without repetition)
@@ -520,7 +520,7 @@ namespace te_builtins
 
     [[nodiscard]]
     static te_type te_max(te_type val1, te_type val2, te_type val3, te_type val4, te_type val5,
-                           te_type val6, te_type val7) noexcept
+                          te_type val6, te_type val7) noexcept
         {
         // assumes that at least val1 is a number, rest can be NaN
         // NOLINTBEGIN
@@ -541,7 +541,7 @@ namespace te_builtins
 
     [[nodiscard]]
     static te_type te_min(te_type val1, te_type val2, te_type val3, te_type val4, te_type val5,
-                           te_type val6, te_type val7) noexcept
+                          te_type val6, te_type val7) noexcept
         {
         // assumes that at least val1 is legit, rest can be NaN
         // NOLINTBEGIN
@@ -565,9 +565,13 @@ namespace te_builtins
 
     [[nodiscard]]
     static te_type te_and_variadic(te_type val1, te_type val2, te_type val3, te_type val4,
-                                    te_type val5, te_type val6, te_type val7) noexcept
+                                   te_type val5, te_type val6, te_type val7) noexcept
         {
-        // assumes that at least val1 is legit, rest can be NaN
+        // at least val1 must be legit, rest can be NaN
+        if (!te_parser::is_double_valid(val1))
+            {
+            return te_parser::te_nan;
+            }
         // NOLINTBEGIN
         auto andVal = te_and_maybe_nan(val1, val2);
         andVal = te_and_maybe_nan(andVal, val3);
@@ -589,9 +593,13 @@ namespace te_builtins
 
     [[nodiscard]]
     static te_type te_or_variadic(te_type val1, te_type val2, te_type val3, te_type val4,
-                                   te_type val5, te_type val6, te_type val7) noexcept
+                                  te_type val5, te_type val6, te_type val7) noexcept
         {
-        // assumes that at least val1 is legit, rest can be NaN
+        // at least val1 must be legit, rest can be NaN
+        if (!te_parser::is_double_valid(val1))
+            {
+            return te_parser::te_nan;
+            }
         // NOLINTBEGIN
         auto orVal = te_or_maybe_nan(val1, val2);
         orVal = te_or_maybe_nan(orVal, val3);
@@ -610,12 +618,12 @@ namespace te_builtins
 
     [[nodiscard]]
     constexpr static te_type te_ifs(te_type if1, te_type if1True, te_type if2, te_type if2True,
-                                     te_type if3, te_type if3True) noexcept
+                                    te_type if3, te_type if3True) noexcept
         {
         return te_parser::double_to_bool(if1) ? if1True :
                te_parser::double_to_bool(if2) ? if2True :
                te_parser::double_to_bool(if3) ? if3True :
-                                                  te_parser::te_nan;
+                                                te_parser::te_nan;
         }
 
     [[nodiscard]]

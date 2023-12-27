@@ -408,6 +408,17 @@ TEST_CASE("Main tests", "[main]")
         CHECK(tep.evaluate("NAN | 5") == 1);
         CHECK(tep.evaluate("1 | NAN") == 1);
 
+        CHECK(tep.evaluate("IF(NAN, 9, 7)") == 7);
+
+        CHECK(tep.evaluate("OR(NAN, NAN)"));
+        CHECK(tep.evaluate("OR(NAN, 5)"));
+
+        // at least first value must be legit
+        CHECK(std::isnan(tep.evaluate("AND(NAN, NAN)")));
+        // NaN values are ignored
+        CHECK(tep.evaluate("AND(5, NAN)") == 1);
+        CHECK(tep.evaluate("AND(5, 1, NAN, 5)") == 1);
+        CHECK_FALSE(tep.evaluate("AND(5, 0, NAN)"));
         }
 
     SECTION("operators")
