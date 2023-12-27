@@ -622,13 +622,13 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    constexpr static te_type te_if(te_type val1, te_type val2, te_type val3)
+    static te_type te_if(te_type val1, te_type val2, te_type val3)
         {
         return te_parser::double_to_bool(val1) ? val2 : val3;
         }
 
     [[nodiscard]]
-    constexpr static te_type te_ifs(te_type if1, te_type if1True, te_type if2, te_type if2True,
+    static te_type te_ifs(te_type if1, te_type if1True, te_type if2, te_type if2True,
                                     te_type if3, te_type if3True)
         {
         return te_parser::double_to_bool(if1) ? if1True :
