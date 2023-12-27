@@ -91,19 +91,21 @@ namespace te_builtins
     [[nodiscard]]
     constexpr static te_type te_and(te_type val1, te_type val2) noexcept
         {
-        return static_cast<te_type>((static_cast<bool>(val1) && static_cast<bool>(val2)) ? 1 : 0);
+        return static_cast<te_type>(
+            (te_parser::double_to_bool(val1) && te_parser::double_to_bool(val2)) ? 1 : 0);
         }
 
     [[nodiscard]]
     constexpr static te_type te_or(te_type val1, te_type val2) noexcept
         {
-        return static_cast<te_type>((static_cast<bool>(val1) || static_cast<bool>(val2)) ? 1 : 0);
+        return static_cast<te_type>(
+            (te_parser::double_to_bool(val1) || te_parser::double_to_bool(val2)) ? 1 : 0);
         }
 
     [[nodiscard]]
-    constexpr static te_type te_not(te_type val1) noexcept
+    constexpr static te_type te_not(te_type val) noexcept
         {
-        return static_cast<te_type>(!static_cast<bool>(val1));
+        return static_cast<te_type>(!static_cast<bool>(val));
         }
 
     [[nodiscard]]
@@ -350,8 +352,7 @@ namespace te_builtins
                 }
             return (decimalPostition == 0) ?
                         std::floor(val + ROUND_EPSILON) :
-                        std::floor(static_cast<te_type>(val * decimalPostition) +
-                                    ROUND_EPSILON) /
+                       std::floor(static_cast<te_type>(val * decimalPostition) + ROUND_EPSILON) /
                             decimalPostition;
             }
         // ROUND(21.5, -1) = 20
@@ -557,9 +558,9 @@ namespace te_builtins
     static te_type te_and_maybe_nan(te_type val1, te_type val2MaybeNan) noexcept
         {
         return std::isnan(val2MaybeNan) ?
-                   val1 :
-                   static_cast<te_type>(static_cast<bool>(val1) &&
-                                        static_cast<bool>(val2MaybeNan));
+                   te_parser::double_to_bool(val1) :
+                   static_cast<te_type>(te_parser::double_to_bool(val1) &&
+                                        te_parser::double_to_bool(val2MaybeNan));
         }
 
     [[nodiscard]]
@@ -581,9 +582,9 @@ namespace te_builtins
     static te_type te_or_maybe_nan(te_type val1, te_type val2MaybeNan) noexcept
         {
         return std::isnan(val2MaybeNan) ?
-                   val1 :
-                   static_cast<te_type>(static_cast<bool>(val1) ||
-                                        static_cast<bool>(val2MaybeNan));
+                   te_parser::double_to_bool(val1) :
+                   static_cast<te_type>(te_parser::double_to_bool(val1) ||
+                                        te_parser::double_to_bool(val2MaybeNan));
         }
 
     [[nodiscard]]
@@ -604,16 +605,16 @@ namespace te_builtins
     [[nodiscard]]
     constexpr static te_type te_if(te_type val1, te_type val2, te_type val3) noexcept
         {
-        return (val1 != 0.0) ? val2 : val3;
+        return te_parser::double_to_bool(val1) ? val2 : val3;
         }
 
     [[nodiscard]]
     constexpr static te_type te_ifs(te_type if1, te_type if1True, te_type if2, te_type if2True,
                                      te_type if3, te_type if3True) noexcept
         {
-        return (!std::isnan(if1) && if1 != 0.0) ? if1True :
-               (!std::isnan(if2) && if2 != 0.0) ? if2True :
-               (!std::isnan(if3) && if3 != 0.0) ? if3True :
+        return te_parser::double_to_bool(if1) ? if1True :
+               te_parser::double_to_bool(if2) ? if2True :
+               te_parser::double_to_bool(if3) ? if3True :
                                                   te_parser::te_nan;
         }
 
@@ -659,8 +660,8 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    constexpr static te_type te_comma(
-        [[maybe_unused]] te_type unusedVal,te_type val2) noexcept // NOLINT
+    constexpr static te_type te_comma([[maybe_unused]] te_type unusedVal,
+                                      te_type val2) noexcept // NOLINT
         {
         return val2;
         }
@@ -1325,8 +1326,7 @@ te_expr* te_parser::factor(te_parser::state* theState)
         if (insertion)
             {
             /* Make exponentiation go right-to-left. */
-            te_expr* insert = new_expr(TE_PURE, t,
-                                       { insertion->m_parameters[1], power(theState) });
+            te_expr* insert = new_expr(TE_PURE, t, { insertion->m_parameters[1], power(theState) });
             insertion->m_parameters[1] = insert;
             insertion = insert;
             }
@@ -1441,11 +1441,11 @@ te_type te_parser::te_eval(const te_expr* texp)
     case 15:
         return get_closure5(texp->m_value)(texp->m_parameters[5], M(0), M(1), M(2), M(3), M(4));
     case 16:
-        return get_closure6(texp->m_value)(
-            texp->m_parameters[6], M(0), M(1), M(2), M(3), M(4), M(5));
+        return get_closure6(texp->m_value)(texp->m_parameters[6], M(0), M(1), M(2), M(3), M(4),
+                                           M(5));
     case 17:
-        return get_closure7(texp->m_value)(
-            texp->m_parameters[7], M(0), M(1), M(2), M(3), M(4), M(5), M(6));
+        return get_closure7(texp->m_value)(texp->m_parameters[7], M(0), M(1), M(2), M(3), M(4),
+                                           M(5), M(6));
     default:
         return te_nan;
         };
@@ -1627,7 +1627,8 @@ te_type te_parser::evaluate()
     }
 
 //--------------------------------------------------
-te_type te_parser::evaluate(const std::string_view expression) // NOLINT(-readability-identifier-naming)
+te_type
+te_parser::evaluate(const std::string_view expression) // NOLINT(-readability-identifier-naming)
     {
     if (compile(expression))
         {

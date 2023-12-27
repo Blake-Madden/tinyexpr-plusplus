@@ -387,19 +387,27 @@ TEST_CASE("Main tests", "[main]")
         // NaN "condition" returns NaN
         CHECK(std::isnan(tep.evaluate("IFS(NAN, 9)")));
 
-        CHECK(tep.evaluate("and(0.0, 5)") == 0);
-        CHECK(tep.evaluate("and(0.0, 0)") == 0);
+        CHECK_FALSE(tep.evaluate("and(0.0, 5)"));
+        CHECK_FALSE(tep.evaluate("and(0.0, 0)"));
         CHECK(tep.evaluate("AND(-1, 5)") == 1);
         CHECK(tep.evaluate("AND(1, 1)") == 1);
+        CHECK(tep.evaluate("AND(5, 2)") == 1);
         CHECK(tep.evaluate("or(-1, 0.0)") == 1);
         CHECK(tep.evaluate("or(0.0, 5)") == 1);
-        CHECK(tep.evaluate("or(0.0, 0)") == 0);
+        CHECK_FALSE(tep.evaluate("or(0.0, 0)"));
         CHECK(tep.evaluate("OR(-1, 5)") == 1);
         CHECK(tep.evaluate("OR(1, 1)") == 1);
-        CHECK(tep.evaluate("not(-1)") == 0);
+        CHECK_FALSE(tep.evaluate("not(-1)"));
         CHECK(tep.evaluate("not(0.0)") == 1);
         CHECK(tep.evaluate("NOT(0)") == 1);
-        CHECK(tep.evaluate("NOT(5)") == 0);
+        CHECK_FALSE(tep.evaluate("NOT(5)"));
+
+        // garbage values
+        CHECK_FALSE(tep.evaluate("NAN & 5"));
+        CHECK_FALSE(tep.evaluate("1 & NAN"));
+        CHECK(tep.evaluate("NAN | 5") == 1);
+        CHECK(tep.evaluate("1 | NAN") == 1);
+
         }
 
     SECTION("operators")
