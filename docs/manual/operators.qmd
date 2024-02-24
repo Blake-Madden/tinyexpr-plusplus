@@ -20,8 +20,12 @@ The following operators\index{operators} are supported within math expressions:
 | \>= | Greater than or equal to. |
 | <= | Less than or equal to. |
 | & | Logical conjunction (AND). |
+| && | Logical conjunction (AND). |
 | \| | Logical alternative (OR). |
+| \|\| | Logical alternative (OR). |
 | ( ) | Groups sub-expressions, overriding the order of operations. |
+| << | Bitwise left shift. |
+| >> | Bitwise right shift. |
 
 Table: Operators
 :::

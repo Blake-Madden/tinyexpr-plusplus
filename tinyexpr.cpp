@@ -1048,10 +1048,22 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_greater_than);
                     }
+                else if (tok == '&' && (*theState->m_next == '&'))
+                    {
+                    theState->m_type = te_parser::state::token_type::TOK_INFIX;
+                    theState->m_value = static_cast<te_fun2>(te_builtins::te_and);
+                    std::advance(theState->m_next, 1);
+                    }
                 else if (tok == '&')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_and);
+                    }
+                else if (tok == '|' && (*theState->m_next == '|'))
+                    {
+                    theState->m_type = te_parser::state::token_type::TOK_INFIX;
+                    theState->m_value = static_cast<te_fun2>(te_builtins::te_or);
+                    std::advance(theState->m_next, 1);
                     }
                 else if (tok == '|')
                     {

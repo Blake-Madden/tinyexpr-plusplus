@@ -435,6 +435,16 @@ TEST_CASE("Main tests", "[main]")
         CHECK(tep.evaluate("-1 | 5") == 1);
         CHECK(tep.evaluate("1 | 1") == 1);
         CHECK(tep.evaluate("-1 | 0.0") == 1);
+
+        CHECK(tep.evaluate("0.0 && 5") == 0);
+        CHECK(tep.evaluate("0.0 && 0") == 0);
+        CHECK(tep.evaluate("-1 && 5") == 1);
+        CHECK(tep.evaluate("1 && 1") == 1);
+        CHECK(tep.evaluate("0.0 || 5") == 1);
+        CHECK(tep.evaluate("0.0 || 0") == 0);
+        CHECK(tep.evaluate("-1 || 5") == 1);
+        CHECK(tep.evaluate("1 || 1") == 1);
+        CHECK(tep.evaluate("-1 || 0.0") == 1);
         }
     }
 

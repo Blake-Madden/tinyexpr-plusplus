@@ -66,6 +66,8 @@ The following are changes from the original TinyExpr C library:
 - Added new operators:
   - `&`    logical AND.
   - `|`    logical OR.
+  - `&&`   logical AND.
+  - `||`   logical OR.
   - `=`    equal to.
   - `==`   equal to.
   - `<>`   not equal to.
