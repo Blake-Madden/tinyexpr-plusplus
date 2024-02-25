@@ -1032,7 +1032,9 @@ class te_parser
     te_expr* expr_level1(state* theState);
     [[nodiscard]]
     te_expr* expr_level2(state* theState);
-    // levels 3-7 open for possible future extensions
+    // levels 3-6 open for possible future extensions
+    [[nodiscard]]
+    te_expr* expr_level7(state* theState);
     [[nodiscard]]
     te_expr* expr_level8(state* theState);
     [[nodiscard]]

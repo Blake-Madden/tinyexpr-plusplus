@@ -1251,11 +1251,32 @@ te_expr* te_parser::expr_level2(te_parser::state* theState)
     {
     /* <expr>      =    <term> {(logic operations) <term>} */
     // next to lowest in precedence...
-    te_expr* ret = expr_level8(theState);
+    te_expr* ret = expr_level7(theState);
 
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
            is_function2(theState->m_value) &&
            get_function2(theState->m_value) == te_builtins::te_and)
+        {
+        const te_fun2 func = get_function2(theState->m_value);
+        next_token(theState);
+        ret = new_expr(TE_PURE, func, { ret, expr_level7(theState) });
+        }
+
+    return ret;
+    }
+
+// levels 3-6 open for possible future extensions
+//--------------------------------------------------
+te_expr* te_parser::expr_level7(te_parser::state* theState)
+    {
+    /* <expr>      =    <term> {(logic operations) <term>} */
+    // next to lowest in precedence...
+    te_expr* ret = expr_level8(theState);
+
+    while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
+           is_function2(theState->m_value) &&
+           (get_function2(theState->m_value) == te_builtins::te_equal ||
+            get_function2(theState->m_value) == te_builtins::te_not_equal))
         {
         const te_fun2 func = get_function2(theState->m_value);
         next_token(theState);
@@ -1265,7 +1286,6 @@ te_expr* te_parser::expr_level2(te_parser::state* theState)
     return ret;
     }
 
-// levels 3-7 open for possible future extensions
 //--------------------------------------------------
 te_expr* te_parser::expr_level8(te_parser::state* theState)
     {
@@ -1274,9 +1294,7 @@ te_expr* te_parser::expr_level8(te_parser::state* theState)
 
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
            is_function2(theState->m_value) &&
-           (get_function2(theState->m_value) == te_builtins::te_equal ||
-            get_function2(theState->m_value) == te_builtins::te_not_equal ||
-            get_function2(theState->m_value) == te_builtins::te_less_than ||
+           (get_function2(theState->m_value) == te_builtins::te_less_than ||
             get_function2(theState->m_value) == te_builtins::te_less_than_equal_to ||
             get_function2(theState->m_value) == te_builtins::te_greater_than ||
             get_function2(theState->m_value) == te_builtins::te_greater_than_equal_to))
