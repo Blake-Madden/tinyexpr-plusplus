@@ -1029,7 +1029,7 @@ class te_parser
     [[nodiscard]]
     te_expr* term(state* theState);
     [[nodiscard]]
-    te_expr* expr(state* theState);
+    te_expr* expr_level1(state* theState);
     [[nodiscard]]
     te_expr* expr_level2(state* theState);
     [[nodiscard]]
