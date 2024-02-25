@@ -1232,12 +1232,30 @@ te_expr* te_parser::expr_level1(te_parser::state* theState)
     /* <expr>      =    <term> {(logic operations) <term>} */
     // These are the lowest of operator precedence
     // (once we have split tokens into arguments)
+    te_expr* ret = expr_level2(theState);
+
+    while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
+           is_function2(theState->m_value) &&
+           get_function2(theState->m_value) == te_builtins::te_or)
+        {
+        const te_fun2 func = get_function2(theState->m_value);
+        next_token(theState);
+        ret = new_expr(TE_PURE, func, { ret, expr_level2(theState) });
+        }
+
+    return ret;
+    }
+
+//--------------------------------------------------
+te_expr* te_parser::expr_level2(te_parser::state* theState)
+    {
+    /* <expr>      =    <term> {(logic operations) <term>} */
+    // next to lowest in precedence...
     te_expr* ret = expr_level8(theState);
 
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
            is_function2(theState->m_value) &&
-           (get_function2(theState->m_value) == te_builtins::te_and ||
-            get_function2(theState->m_value) == te_builtins::te_or))
+           get_function2(theState->m_value) == te_builtins::te_and)
         {
         const te_fun2 func = get_function2(theState->m_value);
         next_token(theState);
@@ -1247,7 +1265,7 @@ te_expr* te_parser::expr_level1(te_parser::state* theState)
     return ret;
     }
 
-// levels 2-7 open for possible future extensions
+// levels 3-7 open for possible future extensions
 //--------------------------------------------------
 te_expr* te_parser::expr_level8(te_parser::state* theState)
     {
