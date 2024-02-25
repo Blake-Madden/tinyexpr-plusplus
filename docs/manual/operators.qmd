@@ -12,13 +12,14 @@ The following operators\index{operators} are supported within math expressions:
 | \- | Subtraction. |
 | ^ | Exponentiation. The number in front of ^ is the base, the number after it is the power to raise it to. |
 | ** | Exponentiation. (This is an alias for ^) |
-| \= | Equals. |
 | < | Less than. |
 | \> | Greater than. |
-| <> | Not equal to. |
-| \!= | Not equal to. (This is an alias for <>) |
 | \>= | Greater than or equal to. |
 | <= | Less than or equal to. |
+| \= | Equals. |
+| \=\= | Equals. (This is an alias for \=) |
+| <> | Not equal to. |
+| \!\= | Not equal to. (This is an alias for <>) |
 | & | Logical conjunction (AND). |
 | && | Logical conjunction (AND). |
 | \| | Logical alternative (OR). |
@@ -36,9 +37,15 @@ For operators, the order of precedence is:
 | Operator | Description |
 | :-- | :-- |
 | ( ) | Instructions in parentheses are executed first. |
+| \+ and - | Positive or negative sign for a value. |
 | ^   | Exponentiation. |
 | \*, /, and % | Multiplication, division, and modulus. |
 | \+ and - | Addition and subtraction. |
+| << and >> | Bitwise left and right shift. |
+| <, \>, \>=, <= | Relational comparisons. |
+| \= and \!\= | Equality comparisons. |
+| && | Logical conjunction (AND). |
+| \|\| | Logical alternative (OR). |
 :::
 
 For example, the following:
