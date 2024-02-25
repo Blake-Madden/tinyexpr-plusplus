@@ -1030,12 +1030,13 @@ class te_parser
     te_expr* term(state* theState);
     [[nodiscard]]
     te_expr* expr_level1(state* theState);
+    // levels 2-7 open for possible future extensions
     [[nodiscard]]
-    te_expr* expr_level2(state* theState);
+    te_expr* expr_level8(state* theState);
     [[nodiscard]]
-    te_expr* expr_level3(state* theState);
+    te_expr* expr_level9(state* theState);
     [[nodiscard]]
-    te_expr* expr_level4(state* theState);
+    te_expr* expr_level10(state* theState);
     [[nodiscard]]
     te_expr* list(state* theState);
 

@@ -1225,13 +1225,14 @@ te_expr* te_parser::list(te_parser::state* theState)
     return ret;
     }
 
+// Operator precedence, lowest to highest:
 //--------------------------------------------------
 te_expr* te_parser::expr_level1(te_parser::state* theState)
     {
     /* <expr>      =    <term> {(logic operations) <term>} */
     // These are the lowest of operator precedence
     // (once we have split tokens into arguments)
-    te_expr* ret = expr_level2(theState);
+    te_expr* ret = expr_level8(theState);
 
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
            is_function2(theState->m_value) &&
@@ -1240,18 +1241,18 @@ te_expr* te_parser::expr_level1(te_parser::state* theState)
         {
         const te_fun2 func = get_function2(theState->m_value);
         next_token(theState);
-        ret = new_expr(TE_PURE, func, { ret, expr_level2(theState) });
+        ret = new_expr(TE_PURE, func, { ret, expr_level8(theState) });
         }
 
     return ret;
     }
 
+// levels 2-7 open for possible future extensions
 //--------------------------------------------------
-te_expr* te_parser::expr_level2(te_parser::state* theState)
+te_expr* te_parser::expr_level8(te_parser::state* theState)
     {
     /* <expr>      =    <term> {(comparison operators) <term>} */
-    // Second from the lowest of operator precedence
-    te_expr* ret = expr_level3(theState);
+    te_expr* ret = expr_level9(theState);
 
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
            is_function2(theState->m_value) &&
@@ -1264,18 +1265,17 @@ te_expr* te_parser::expr_level2(te_parser::state* theState)
         {
         const te_fun2 func = get_function2(theState->m_value);
         next_token(theState);
-        ret = new_expr(TE_PURE, func, { ret, expr_level3(theState) });
+        ret = new_expr(TE_PURE, func, { ret, expr_level9(theState) });
         }
 
     return ret;
     }
 
 //--------------------------------------------------
-te_expr* te_parser::expr_level3(te_parser::state* theState)
+te_expr* te_parser::expr_level9(te_parser::state* theState)
     {
     /* <expr>      =    <term> {("<<" | ">>") <term>} */
-    // Third from the lowest level of operator precendence
-    te_expr* ret = expr_level4(theState);
+    te_expr* ret = expr_level10(theState);
 
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
            is_function2(theState->m_value) &&
@@ -1284,17 +1284,16 @@ te_expr* te_parser::expr_level3(te_parser::state* theState)
         {
         const te_fun2 func = get_function2(theState->m_value);
         next_token(theState);
-        ret = new_expr(TE_PURE, func, { ret, expr_level4(theState) });
+        ret = new_expr(TE_PURE, func, { ret, expr_level10(theState) });
         }
 
     return ret;
     }
 
 //--------------------------------------------------
-te_expr* te_parser::expr_level4(te_parser::state* theState)
+te_expr* te_parser::expr_level10(te_parser::state* theState)
     {
     /* <expr>      =    <term> {("+" | "-") <term>} */
-    // Fourth from the lowest level of operator precendence
     te_expr* ret = term(theState);
 
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
@@ -1310,11 +1309,12 @@ te_expr* te_parser::expr_level4(te_parser::state* theState)
     return ret;
     }
 
+// Higher levels of operator precendence:
 //--------------------------------------------------
 te_expr* te_parser::term(te_parser::state* theState)
     {
     /* <term>      =    <factor> {("*" | "/" | "%") <factor>} */
-    // Fifth from the lowest level of operator precendence
+    // third from highest level of operator precendence
     te_expr* ret = factor(theState);
 
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
@@ -1331,11 +1331,12 @@ te_expr* te_parser::term(te_parser::state* theState)
     return ret;
     }
 
+//--------------------------------------------------
 #ifdef TE_POW_FROM_RIGHT
 te_expr* te_parser::factor(te_parser::state* theState)
     {
     /* <factor>    =    <power> {"^" <power>} */
-    // Sixth from the lowest level of operator precendence
+    // second from highest level of operator precendence
     te_expr* ret = power(theState);
 
     int neg{ 0 };
@@ -1382,7 +1383,7 @@ te_expr* te_parser::factor(te_parser::state* theState)
 te_expr* te_parser::factor(te_parser::state* theState)
     {
     /* <factor>    =    <power> {"^" <power>} */
-    // Sixth from the lowest level of operator precendence
+    // second from highest level of operator precendence
     te_expr* ret = power(theState);
 
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
@@ -1402,7 +1403,7 @@ te_expr* te_parser::factor(te_parser::state* theState)
 te_expr* te_parser::power(te_parser::state* theState)
     {
     /* <power>     =    {("-" | "+")} <base> */
-    // Seventh from the lowest level of operator precendence
+    // highest level of operator precendence
     int theSign{ 1 };
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
            is_function2(theState->m_value) &&
