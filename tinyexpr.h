@@ -1032,8 +1032,12 @@ class te_parser
     te_expr* expr_level1(state* theState);
     [[nodiscard]]
     te_expr* expr_level2(state* theState);
-    // levels 3-5 open for possible future extensions
-    // of bitwise OR, XOR, and AND
+    [[nodiscard]]
+    te_expr* expr_level3(state* theState);
+    [[nodiscard]]
+    te_expr* expr_level4(state* theState);
+    [[nodiscard]]
+    te_expr* expr_level5(state* theState);
     [[nodiscard]]
     te_expr* expr_level6(state* theState);
     [[nodiscard]]

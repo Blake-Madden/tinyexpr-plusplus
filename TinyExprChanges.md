@@ -33,10 +33,13 @@ The following are changes from the original TinyExpr C library:
 - Added new built-in functions:
   - `and`: returns true (i.e., non-zero) if all conditions are true (accepts 1-7 arguments).
   - `average`: returns the mean for a range of values (accepts 1-7 arguments).
+  - `bitand`: bitwise AND.
   - `bitlshift`: left shift operator.
      Negative shift amount arguments (similar to *Excel*) is supported.
+  - `bitor`: bitwise OR.
   - `bitrshift`: right shift operator.
      Negative shift amount arguments (similar to *Excel*) is supported.
+  - `bitxor`: bitwise XOR.
   - `cot`: returns the cotangent of an angle.
   - `combin`: alias for `ncr()`, like the *Excel* function.
   - `clamp`: constrains a value to a range.

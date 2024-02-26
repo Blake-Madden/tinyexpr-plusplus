@@ -47,6 +47,9 @@ endif(TE_FLOAT)
 if(TE_POW_FROM_RIGHT)
     add_definitions(-DTE_POW_FROM_RIGHT)
 endif(TE_POW_FROM_RIGHT)
+if(TE_BITWISE_OPERATIONS)
+    add_definitions(-TE_BITWISE_OPERATIONS)
+endif(TE_BITWISE_OPERATIONS)
 
 # place Catch2 at the same folder level as this repo if it isn't installed
 # (you will need to do this on Windows or macOS or if version 3 of Catch2 isn't installed)

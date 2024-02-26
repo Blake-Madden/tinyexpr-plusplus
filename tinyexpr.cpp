@@ -433,6 +433,60 @@ namespace te_builtins
         return val1 * val2;
         }
 
+    //--------------------------------------------------
+    [[nodiscard]]
+    static te_type te_bitwise_or(te_type val1, te_type val2)
+        {
+        if (std::floor(val1) != val1 || std::floor(val2) != val2)
+            {
+            throw std::runtime_error("Bitwise OR operation must use integers.");
+            }
+        // negative technically should be allowed, but spreadsheet programs do
+        // not allow them; hence, we won't either
+        else if (val1 < 0 || val2 < 0)
+            {
+            throw std::runtime_error("Bitwise OR operation must use positive integers.");
+            }
+
+        return static_cast<te_type>(static_cast<uint64_t>(val1) | static_cast<uint64_t>(val2));
+        }
+
+    //--------------------------------------------------
+    [[nodiscard]]
+    static te_type te_bitwise_xor(te_type val1, te_type val2)
+        {
+        if (std::floor(val1) != val1 || std::floor(val2) != val2)
+            {
+            throw std::runtime_error("Bitwise XOR operation must use integers.");
+            }
+        // negative technically should be allowed, but spreadsheet programs do
+        // not allow them; hence, we won't either
+        else if (val1 < 0 || val2 < 0)
+            {
+            throw std::runtime_error("Bitwise XOR operation must use positive integers.");
+            }
+
+        return static_cast<te_type>(static_cast<uint64_t>(val1) ^ static_cast<uint64_t>(val2));
+        }
+
+    //--------------------------------------------------
+    [[nodiscard]]
+    static te_type te_bitwise_and(te_type val1, te_type val2)
+        {
+        if (std::floor(val1) != val1 || std::floor(val2) != val2)
+            {
+            throw std::runtime_error("Bitwise AND operation must use integers.");
+            }
+        // negative technically should be allowed, but spreadsheet programs do
+        // not allow them; hence, we won't either
+        else if (val1 < 0 || val2 < 0)
+            {
+            throw std::runtime_error("Bitwise AND operation must use positive integers.");
+            }
+
+        return static_cast<te_type>(static_cast<uint64_t>(val1) & static_cast<uint64_t>(val2));
+        }
+
     // Shift operators
     //--------------------------------------------------
     [[nodiscard]]
@@ -725,8 +779,11 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "atan2", static_cast<te_fun2>(te_builtins::te_atan2), TE_PURE },
     { "average", static_cast<te_fun7>(te_builtins::te_average),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
+    { "bitand", static_cast<te_fun2>(te_builtins::te_bitwise_and), TE_PURE },
+    { "bitor", static_cast<te_fun2>(te_builtins::te_bitwise_or), TE_PURE },
     { "bitlshift", static_cast<te_fun2>(te_builtins::te_left_shift_or_right), TE_PURE },
     { "bitrshift", static_cast<te_fun2>(te_builtins::te_right_shift_or_left), TE_PURE },
+    { "bitxor", static_cast<te_fun2>(te_builtins::te_bitwise_xor), TE_PURE },
     { "ceil", static_cast<te_fun1>(te_builtins::te_ceil), TE_PURE },
     { "clamp",
       static_cast<te_fun3>(
@@ -967,11 +1024,19 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = te_builtins::te_divide;
                     }
+#ifdef TE_BITWISE_OPERATIONS
+                else if (tok == '^')
+                    {
+                    theState->m_type = te_parser::state::token_type::TOK_INFIX;
+                    theState->m_value = static_cast<te_fun2>(te_builtins::te_bitwise_xor);
+                    }
+#else
                 else if (tok == '^')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_pow);
                     }
+#endif
                 else if (tok == '%')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
@@ -1054,22 +1119,38 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_and);
                     std::advance(theState->m_next, 1);
                     }
+#ifdef TE_BITWISE_OPERATIONS
+                else if (tok == '&')
+                    {
+                    theState->m_type = te_parser::state::token_type::TOK_INFIX;
+                    theState->m_value = static_cast<te_fun2>(te_builtins::te_bitwise_and);
+                    }
+#else
                 else if (tok == '&')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_and);
                     }
+#endif
                 else if (tok == '|' && (*theState->m_next == '|'))
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_or);
                     std::advance(theState->m_next, 1);
                     }
+#ifdef TE_BITWISE_OPERATIONS
+                else if (tok == '|')
+                    {
+                    theState->m_type = te_parser::state::token_type::TOK_INFIX;
+                    theState->m_value = static_cast<te_fun2>(te_builtins::te_bitwise_or);
+                    }
+#else
                 else if (tok == '|')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_or);
                     }
+#endif
                 else if (tok == ' ' || tok == '\t' || tok == '\n' || tok == '\r')
                     { /*noop*/
                     }
@@ -1251,11 +1332,68 @@ te_expr* te_parser::expr_level2(te_parser::state* theState)
     {
     /* <expr>      =    <term> {(logic operations) <term>} */
     // next to lowest in precedence...
-    te_expr* ret = expr_level6(theState);
+    te_expr* ret = expr_level3(theState);
 
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
            is_function2(theState->m_value) &&
            get_function2(theState->m_value) == te_builtins::te_and)
+        {
+        const te_fun2 func = get_function2(theState->m_value);
+        next_token(theState);
+        ret = new_expr(TE_PURE, func, { ret, expr_level3(theState) });
+        }
+
+    return ret;
+    }
+
+//--------------------------------------------------
+te_expr* te_parser::expr_level3(te_parser::state* theState)
+    {
+    /* <expr>      =    <term> {(logic operations) <term>} */
+    // next to lowest in precedence...
+    te_expr* ret = expr_level4(theState);
+
+    while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
+           is_function2(theState->m_value) &&
+           get_function2(theState->m_value) == te_builtins::te_bitwise_or)
+        {
+        const te_fun2 func = get_function2(theState->m_value);
+        next_token(theState);
+        ret = new_expr(TE_PURE, func, { ret, expr_level4(theState) });
+        }
+
+    return ret;
+    }
+
+//--------------------------------------------------
+te_expr* te_parser::expr_level4(te_parser::state* theState)
+    {
+    /* <expr>      =    <term> {(logic operations) <term>} */
+    // next to lowest in precedence...
+    te_expr* ret = expr_level5(theState);
+
+    while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
+           is_function2(theState->m_value) &&
+           get_function2(theState->m_value) == te_builtins::te_bitwise_xor)
+        {
+        const te_fun2 func = get_function2(theState->m_value);
+        next_token(theState);
+        ret = new_expr(TE_PURE, func, { ret, expr_level5(theState) });
+        }
+
+    return ret;
+    }
+
+//--------------------------------------------------
+te_expr* te_parser::expr_level5(te_parser::state* theState)
+    {
+    /* <expr>      =    <term> {(logic operations) <term>} */
+    // next to lowest in precedence...
+    te_expr* ret = expr_level6(theState);
+
+    while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
+           is_function2(theState->m_value) &&
+           get_function2(theState->m_value) == te_builtins::te_bitwise_and)
         {
         const te_fun2 func = get_function2(theState->m_value);
         next_token(theState);
@@ -1265,8 +1403,6 @@ te_expr* te_parser::expr_level2(te_parser::state* theState)
     return ret;
     }
 
-// levels 3-5 open for possible future extensions
-// of bitwise OR, XOR, and AND
 //--------------------------------------------------
 te_expr* te_parser::expr_level6(te_parser::state* theState)
     {

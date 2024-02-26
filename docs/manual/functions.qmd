@@ -10,8 +10,11 @@ The following built-in functions are available:
 | ASIN(Number) | Returns the arcsine, or inverse sine function, of *Number*, where -1 <= *Number* <= 1. The arcsine is the angle whose sine is *Number*. The returned angle is given in radians where -pi/2 <= angle <= pi/2. |
 | ATAN(x) | Returns the principal value of the arc tangent of *x*, expressed in radians.. |
 | ATAN2(y, x) | Returns the principal value of the arc tangent of *y*,*x*, expressed in radians. |
+| BITAND(Number1, Number2) | Returns a bitwise 'AND' of two (integral) numbers. (Both numbers must be positive.) |
 | BITLSHIFT(Number, ShiftAmount) | Returns *Number* left shifted by the specified number (*ShiftAmount*) of bits. |
-| BITRSHIFT(Number, ShiftAmount) |Returns *Number* right shifted by the specified number (*ShiftAmount*) of bits. |
+| BITRSHIFT(Number, ShiftAmount) | Returns *Number* right shifted by the specified number (*ShiftAmount*) of bits. |
+| BITOR(Number1, Number2) | Returns a bitwise 'OR' of two (integral) numbers. (Both numbers must be positive.) |
+| BITXOR(Number1, Number2) | Returns a bitwise 'XOR' of two (integral) numbers. (Both numbers must be positive.) |
 | CEIL(Number) | Smallest integer not less than *Number*.<br>\linebreak `CEIL(-3.2)` = -3<br>\linebreak `CEIL(3.2)` = 4 |
 | CLAMP(Number, Start, End) | Constrains *Number* within the range of *Start* and *End*. |
 | COMBIN(Number, NumberChosen) | Returns the number of combinations for a given number (*NumberChosen*) of items from *Number* of items. Note that for combinations, order of items is not important. |
@@ -24,8 +27,8 @@ The following built-in functions are available:
 | FLOOR(Number) | Returns the largest integer not greater than *Number*.<br>\linebreak `FLOOR(-3.2)` = -4<br>\linebreak `FLOOR(3.2)` = 3 |
 | LN(Number) | Natural logarithm of *Number* (base Euler). |
 | LOG10(Number) | Common logarithm of *Number* (base 10). |
-| MIN(Value1, Value2, ...) | Returns the lowest value from a specified range of values. |
-| MAX(Value1, Value2, ...) | Returns the highest value from a specified range of values. |
+| MIN(Number1, Number2, ...) | Returns the lowest value from a specified range of values. |
+| MAX(Number1, Number2, ...) | Returns the highest value from a specified range of values. |
 | MOD(Number, Divisor) | Returns the remainder after *Number* is divided by *Divisor*. The result has the same sign as divisor. |
 | NCR(Number, NumberChosen) | Alias for `COMBIN()`. |
 | NPR(Number, NumberChosen) | Alias for `PERMUT()`. |
