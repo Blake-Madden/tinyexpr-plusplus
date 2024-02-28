@@ -27,6 +27,8 @@ The following operators\index{operators} are supported within math expressions:
 | ( ) | Groups sub-expressions, overriding the order of operations. |
 | << | Bitwise left shift. |
 | >> | Bitwise right shift. |
+| <<< | Bitwise left rotate. (Only available if compiled as C++20.) |
+| >>> | Bitwise right rotate. (Only available if compiled as C++20.) |
 
 Table: Operators
 :::
@@ -41,7 +43,7 @@ For operators, the order of precedence is:
 | ^   | Exponentiation. |
 | \*, /, and % | Multiplication, division, and modulus. |
 | \+ and - | Addition and subtraction. |
-| << and >> | Bitwise left and right shift. |
+| <<, >>, <<<, >>> | Bitwise left and right shift and rotation. |
 | <, \>, \>=, <= | Relational comparisons. |
 | \= and \!\= | Equality comparisons. |
 | && | Logical conjunction (AND). |

@@ -68,6 +68,9 @@
 #include <utility>
 #include <variant>
 #include <vector>
+#if __has_include(<bit>)
+#include <bit>
+#endif
 
 class te_parser;
 

@@ -34,11 +34,13 @@ The following are changes from the original TinyExpr C library:
   - `and`: returns true (i.e., non-zero) if all conditions are true (accepts 1-7 arguments).
   - `average`: returns the mean for a range of values (accepts 1-7 arguments).
   - `bitand`: bitwise AND.
-  - `bitlshift`: left shift operator.
-     Negative shift amount arguments (similar to *Excel*) is supported.
+  - `bitlrotate64`: bitwise (`uint64_t`) left rotate. (Only available if compiled as C++20.)
+  - `bitlshift`: left shift.
+     Negative shift amount arguments (similar to *Excel*) are supported.
   - `bitor`: bitwise OR.
-  - `bitrshift`: right shift operator.
-     Negative shift amount arguments (similar to *Excel*) is supported.
+  - `bitrrotate64`: bitwise (`uint64_t`) right rotate. (Only available if compiled as C++20.)
+  - `bitrshift`: right shift.
+     Negative shift amount arguments (similar to *Excel*) are supported.
   - `bitxor`: bitwise XOR.
   - `cot`: returns the cotangent of an angle.
   - `combin`: alias for `ncr()`, like the *Excel* function.
@@ -81,6 +83,8 @@ The following are changes from the original TinyExpr C library:
   - `>=`   greater than or equal to.
   - `<<`   left shift operator.
   - `>>`   right shift operator.
+  - `<<<`  left (`uint64_t`) rotation operator.
+  - `>>>`  right (`uint64_t`) rotation operator.
   - `**`   exponentiation (alias for `^`).
 - `round` now supports negative number of digit arguments, similar to *Excel*.
   For example, `ROUND(-50.55,-2)` will yield `-100`.

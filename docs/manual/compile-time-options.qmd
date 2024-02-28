@@ -40,3 +40,18 @@ That will match how many scripting languages do it (e.g., Python, Ruby).
 
 Note that symbols can be defined by passing them to your compiler's
 command line (or in a Cmake configuration) as such: `-DTE_POW_FROM_RIGHT`
+
+## C++20 Features
+
+If compiling as C++20, then the following functions and operators will be available:
+
+- `BITLROTATE8`
+- `BITLROTATE16`
+- `BITLROTATE32`
+- `BITLROTATE64`
+- `BITRROTATE8`
+- `BITRROTATE16`
+- `BITRROTATE32`
+- `BITRROTATE64`
+- `<<<` (unsigned 64-bit left rotation)
+- `>>>` (unsigned 64-bit right rotation)

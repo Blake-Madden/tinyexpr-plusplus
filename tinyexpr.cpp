@@ -433,6 +433,136 @@ namespace te_builtins
         return val1 * val2;
         }
 
+#if __cplusplus >= 202002L
+    //--------------------------------------------------
+    [[nodiscard]]
+    static te_type te_right_rotate8(te_type val1, te_type val2)
+        {
+        if (std::floor(val1) != val1 || std::floor(val2) != val2)
+            {
+            throw std::runtime_error("Bitwise RIGHT ROTATE operation must use integers.");
+            }
+        else if (val1 < 0)
+            {
+            throw std::runtime_error("Bitwise RIGHT ROTATE value must be positive.");
+            }
+
+        return static_cast<te_type>(std::rotr(static_cast<uint8_t>(val1), static_cast<int>(val2)));
+        }
+
+    //--------------------------------------------------
+    [[nodiscard]]
+    static te_type te_left_rotate8(te_type val1, te_type val2)
+        {
+        if (std::floor(val1) != val1 || std::floor(val2) != val2)
+            {
+            throw std::runtime_error("Bitwise LEFT ROTATE operation must use integers.");
+            }
+        else if (val1 < 0)
+            {
+            throw std::runtime_error("Bitwise LEFT ROTATE value must be positive.");
+            }
+
+        return static_cast<te_type>(std::rotl(static_cast<uint8_t>(val1), static_cast<int>(val2)));
+        }
+
+    //--------------------------------------------------
+    [[nodiscard]]
+    static te_type te_right_rotate16(te_type val1, te_type val2)
+        {
+        if (std::floor(val1) != val1 || std::floor(val2) != val2)
+            {
+            throw std::runtime_error("Bitwise RIGHT ROTATE operation must use integers.");
+            }
+        else if (val1 < 0)
+            {
+            throw std::runtime_error("Bitwise RIGHT ROTATE value must be positive.");
+            }
+
+        return static_cast<te_type>(std::rotr(static_cast<uint16_t>(val1), static_cast<int>(val2)));
+        }
+
+    //--------------------------------------------------
+    [[nodiscard]]
+    static te_type te_left_rotate16(te_type val1, te_type val2)
+        {
+        if (std::floor(val1) != val1 || std::floor(val2) != val2)
+            {
+            throw std::runtime_error("Bitwise LEFT ROTATE operation must use integers.");
+            }
+        else if (val1 < 0)
+            {
+            throw std::runtime_error("Bitwise LEFT ROTATE value must be positive.");
+            }
+
+        return static_cast<te_type>(std::rotl(static_cast<uint16_t>(val1), static_cast<int>(val2)));
+        }
+
+    //--------------------------------------------------
+    [[nodiscard]]
+    static te_type te_right_rotate32(te_type val1, te_type val2)
+        {
+        if (std::floor(val1) != val1 || std::floor(val2) != val2)
+            {
+            throw std::runtime_error("Bitwise RIGHT ROTATE operation must use integers.");
+            }
+        else if (val1 < 0)
+            {
+            throw std::runtime_error("Bitwise RIGHT ROTATE value must be positive.");
+            }
+
+        return static_cast<te_type>(std::rotr(static_cast<uint32_t>(val1), static_cast<int>(val2)));
+        }
+
+    //--------------------------------------------------
+    [[nodiscard]]
+    static te_type te_left_rotate32(te_type val1, te_type val2)
+        {
+        if (std::floor(val1) != val1 || std::floor(val2) != val2)
+            {
+            throw std::runtime_error("Bitwise LEFT ROTATE operation must use integers.");
+            }
+        else if (val1 < 0)
+            {
+            throw std::runtime_error("Bitwise LEFT ROTATE value must be positive.");
+            }
+
+        return static_cast<te_type>(std::rotl(static_cast<uint32_t>(val1), static_cast<int>(val2)));
+        }
+
+    //--------------------------------------------------
+    [[nodiscard]]
+    static te_type te_right_rotate64(te_type val1, te_type val2)
+        {
+        if (std::floor(val1) != val1 || std::floor(val2) != val2)
+            {
+            throw std::runtime_error("Bitwise RIGHT ROTATE operation must use integers.");
+            }
+        else if (val1 < 0)
+            {
+            throw std::runtime_error("Bitwise RIGHT ROTATE value must be positive.");
+            }
+
+        return static_cast<te_type>(std::rotr(static_cast<uint64_t>(val1), static_cast<int>(val2)));
+        }
+
+    //--------------------------------------------------
+    [[nodiscard]]
+    static te_type te_left_rotate64(te_type val1, te_type val2)
+        {
+        if (std::floor(val1) != val1 || std::floor(val2) != val2)
+            {
+            throw std::runtime_error("Bitwise LEFT ROTATE operation must use integers.");
+            }
+        else if (val1 < 0)
+            {
+            throw std::runtime_error("Bitwise LEFT ROTATE value must be positive.");
+            }
+
+        return static_cast<te_type>(std::rotl(static_cast<uint64_t>(val1), static_cast<int>(val2)));
+        }
+#endif
+
     //--------------------------------------------------
     [[nodiscard]]
     static te_type te_bitwise_or(te_type val1, te_type val2)
@@ -781,6 +911,16 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "bitand", static_cast<te_fun2>(te_builtins::te_bitwise_and), TE_PURE },
     { "bitor", static_cast<te_fun2>(te_builtins::te_bitwise_or), TE_PURE },
+#if __cplusplus >= 202002L
+    { "bitlrotate8", static_cast<te_fun2>(te_builtins::te_left_rotate8), TE_PURE },
+    { "bitrrotate8", static_cast<te_fun2>(te_builtins::te_right_rotate8), TE_PURE },
+    { "bitlrotate16", static_cast<te_fun2>(te_builtins::te_left_rotate16), TE_PURE },
+    { "bitrrotate16", static_cast<te_fun2>(te_builtins::te_right_rotate16), TE_PURE },
+    { "bitlrotate32", static_cast<te_fun2>(te_builtins::te_left_rotate32), TE_PURE },
+    { "bitrrotate32", static_cast<te_fun2>(te_builtins::te_right_rotate32), TE_PURE },
+    { "bitlrotate64", static_cast<te_fun2>(te_builtins::te_left_rotate64), TE_PURE },
+    { "bitrrotate64", static_cast<te_fun2>(te_builtins::te_right_rotate64), TE_PURE },
+#endif
     { "bitlshift", static_cast<te_fun2>(te_builtins::te_left_shift_or_right), TE_PURE },
     { "bitrshift", static_cast<te_fun2>(te_builtins::te_right_shift_or_left), TE_PURE },
     { "bitxor", static_cast<te_fun2>(te_builtins::te_bitwise_xor), TE_PURE },
@@ -1054,6 +1194,23 @@ void te_parser::next_token(te_parser::state* theState)
                     {
                     theState->m_type = te_parser::state::token_type::TOK_SEP;
                     }
+#if __cplusplus >= 202002L
+                // rotate (circular shift) operators (uses the 64-bit integer version)
+                else if (tok == '<' && (*theState->m_next == '<') &&
+                         (*std::next(theState->m_next) == '<'))
+                    {
+                    theState->m_type = te_parser::state::token_type::TOK_INFIX;
+                    theState->m_value = static_cast<te_fun2>(te_builtins::te_left_rotate64);
+                    std::advance(theState->m_next, 2);
+                    }
+                else if (tok == '>' && (*theState->m_next == '>') &&
+                         (*std::next(theState->m_next) == '>'))
+                    {
+                    theState->m_type = te_parser::state::token_type::TOK_INFIX;
+                    theState->m_value = static_cast<te_fun2>(te_builtins::te_right_rotate64);
+                    std::advance(theState->m_next, 2);
+                    }
+#endif
                 // shift operators
                 else if (tok == '<' && (*theState->m_next == '<'))
                     {
@@ -1453,7 +1610,19 @@ te_expr* te_parser::expr_level8(te_parser::state* theState)
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
            is_function2(theState->m_value) &&
            (get_function2(theState->m_value) == te_builtins::te_left_shift ||
-            get_function2(theState->m_value) == te_builtins::te_right_shift))
+            get_function2(theState->m_value) == te_builtins::te_right_shift
+#if __cplusplus >= 202002L
+            ||
+            get_function2(theState->m_value) == te_builtins::te_left_rotate64 ||
+            get_function2(theState->m_value) == te_builtins::te_right_rotate64 ||
+            get_function2(theState->m_value) == te_builtins::te_left_rotate32 ||
+            get_function2(theState->m_value) == te_builtins::te_right_rotate32 ||
+            get_function2(theState->m_value) == te_builtins::te_left_rotate16 ||
+            get_function2(theState->m_value) == te_builtins::te_right_rotate16 ||
+            get_function2(theState->m_value) == te_builtins::te_left_rotate8 ||
+            get_function2(theState->m_value) == te_builtins::te_right_rotate8
+#endif
+            ))
         {
         const te_fun2 func = get_function2(theState->m_value);
         next_token(theState);

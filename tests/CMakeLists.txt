@@ -8,14 +8,14 @@
 #############################################################################
 
 cmake_minimum_required(VERSION 3.12)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Options:
 # - USE_ADDRESS_SANITIZE to use ASAN
 # - USE_CLANG_TIDY to run clang-tidy
 # - TE_FLOAT and TE_POW_FROM_RIGHT to enable the respective preprocessors
-#   when compiling
+# - TE_BITWISE_OPERATIONS to parse ^, &, and | as bitwise operators
 
 project(TETestRunner)
 
@@ -68,10 +68,10 @@ if(MSVC)
     target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION
                                $<$<CONFIG:Release>:NDEBUG>)
     if(USE_ADDRESS_SANITIZE)
-        target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /MP /W3 /WX /wd4554
+        target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /Zc:__cplusplus /MP /W3 /WX /wd4554
                            $<$<CONFIG:Debug>:/Od /fsanitize=address> $<$<CONFIG:Release>:/O2>)
     else()
-        target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /MP /W3 /WX /wd4554
+        target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /Zc:__cplusplus /MP /W3 /WX /wd4554
                            $<$<CONFIG:Debug>:/Od> $<$<CONFIG:Release>:/O2>)
     endif()
 endif()
