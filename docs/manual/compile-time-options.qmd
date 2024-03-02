@@ -16,6 +16,13 @@ This flag will also disable all bitwise functions and operators.
 By default, the operators `&`, `|`, and `^` represent logical AND, logical OR, and exponentiation. If `TE_BITWISE_OPERATORS` is defined,
 then they will represent bitwise AND, OR, and XOR.
 
+## `TE_BRACKETS_AS_PARENS` {-}
+
+Define this flag to treat `[]` pairs the same as `()`.
+This can be useful if using the parser for a debugger's watch window.
+For example, an expression such as `[rsp+1000]` would be evaluated as `1000` being added with the variable `rsp`.
+In this context, `rsp` could represent a memory address in the debugger.
+
 ## `TE_NO_BOOKKEEPING` {-}
 
 By default, the parser will keep track of all functions and variables used in the last expression it evaluated.

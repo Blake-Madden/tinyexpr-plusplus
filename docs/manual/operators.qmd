@@ -38,7 +38,7 @@ For operators, the order of precedence is:
 
 | Operator | Description |
 | :-- | :-- |
-| ( ) | Instructions in parentheses are executed first. |
+| ( ) | Instructions in parentheses are executed first. (If `TE_BRACKETS_AS_PARENS` is defined, then `[]` are treated the same way.) |
 | \+ and - | Positive or negative sign for a value. |
 | ^   | Exponentiation. |
 | \*, /, and % | Multiplication, division, and modulus. |

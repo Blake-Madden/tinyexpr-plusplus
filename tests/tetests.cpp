@@ -758,6 +758,20 @@ TEST_CASE("Zeros", "[zeros]")
     CHECK(std::isnan(tep.evaluate("(1%0)%1")));
     }
 
+
+TEST_CASE("Braces", "[braces]")
+    {
+    te_type x{ 100 };
+
+    te_parser tep;
+    tep.set_variables_and_functions({ {"x", &x} });
+#ifdef TE_BRACKETS_AS_PARENS
+    CHECK(tep.evaluate("[x+86]") == 186);
+#else
+    CHECK(std::isnan(tep.evaluate("[x+86]")));
+#endif
+    }
+
 TEST_CASE("Functions", "[functions]")
     {
     te_type x{ 0 }, y{ 0 };
@@ -2307,7 +2321,9 @@ TEST_CASE("Rotate operators", "[rotate]")
         CHECK(tep.evaluate("BITRROTATE64(4294967295, -1)") == std::rotr(i, -1));
         }
     }
+#endif
 
+#ifndef TE_FLOAT
 TEST_CASE("Shift operators", "[shift]")
     {
     te_parser tep;
@@ -2403,7 +2419,7 @@ TEST_CASE("Shift operators", "[shift]")
         CHECK(tep.get_last_error_message().empty());
         }
     }
-#else
+#elif defined(TE_FLOAT)
     // just make sure bitwise operators cause an error as they aren't supported for float
     TEST_CASE("Bitwise operators null", "[shift,rotate]")
         {

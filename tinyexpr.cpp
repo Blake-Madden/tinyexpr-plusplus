@@ -1195,11 +1195,19 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = te_builtins::te_modulus;
                     }
+#ifdef TE_BRACKETS_AS_PARENS
+                else if (tok == '(' || tok == '[')
+#else
                 else if (tok == '(')
+#endif
                     {
                     theState->m_type = te_parser::state::token_type::TOK_OPEN;
                     }
+#ifdef TE_BRACKETS_AS_PARENS
+                else if (tok == ')' || tok == ']')
+#else
                 else if (tok == ')')
+#endif
                     {
                     theState->m_type = te_parser::state::token_type::TOK_CLOSE;
                     }

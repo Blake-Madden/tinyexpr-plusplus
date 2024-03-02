@@ -63,6 +63,13 @@ else()
     message(STATUS "Extended bitwise operators: disabled")
 endif(TE_BITWISE_OPERATORS)
 
+if(TE_BRACKETS_AS_PARENS)
+    message(STATUS "[] being treats as (): enabled")
+    add_definitions(-DTE_BRACKETS_AS_PARENS)
+else()
+    message(STATUS "[] being treats as (): disabled")
+endif(TE_BRACKETS_AS_PARENS)
+
 # place Catch2 at the same folder level as this repo if it isn't installed
 # (you will need to do this on Windows or macOS or if version 3 of Catch2 isn't installed)
 get_filename_component(_fullpath "${_dir}" REALPATH)
