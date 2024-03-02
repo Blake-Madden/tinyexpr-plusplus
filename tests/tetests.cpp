@@ -758,6 +758,38 @@ TEST_CASE("Zeros", "[zeros]")
     CHECK(std::isnan(tep.evaluate("(1%0)%1")));
     }
 
+TEST_CASE("UINT support", "[uint]")
+    {
+    te_parser tep;
+
+    if constexpr(te_parser::supports_32bit())
+        {
+        INFO("Checking for handling of large value: " +
+             std::to_string(std::numeric_limits<uint32_t>::max()));
+        CHECK(tep.evaluate(std::to_string(std::numeric_limits<uint32_t>::max())) ==
+              std::numeric_limits<uint32_t>::max());
+        CHECK(tep.evaluate(
+            "(" + std::to_string(std::numeric_limits<uint32_t>::max()) + " - 100) + 100") ==
+            std::numeric_limits<uint32_t>::max());
+        CHECK(tep.evaluate(
+            std::to_string(std::numeric_limits<uint32_t>::max()) + " - 700") ==
+            std::numeric_limits<uint32_t>::max() - 700);
+        }
+
+    if constexpr(te_parser::supports_64bit())
+        {
+        INFO("Checking for handling of large value: " +
+             std::to_string(std::numeric_limits<uint64_t>::max()));
+        CHECK(tep.evaluate(std::to_string(std::numeric_limits<uint64_t>::max())) ==
+              std::numeric_limits<uint64_t>::max());
+        CHECK(tep.evaluate(
+            "(" + std::to_string(std::numeric_limits<uint64_t>::max()) + " - 100) + 100") ==
+            std::numeric_limits<uint64_t>::max());
+        CHECK(tep.evaluate(
+            std::to_string(std::numeric_limits<uint64_t>::max()) + " - 700") ==
+            std::numeric_limits<uint64_t>::max() - 700);
+        }
+    }
 
 TEST_CASE("Braces", "[braces]")
     {

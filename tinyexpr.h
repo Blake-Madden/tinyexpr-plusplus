@@ -254,6 +254,16 @@ class te_parser
     /// @brief No position, which is what get_last_error_position() returns
     ///     when there was no parsing error.
     constexpr static int64_t npos = -1;
+    /// @returns @c true if the parser's internal type can hold `uint32_t` without truncation.
+    constexpr static bool supports_32bit() noexcept
+        {
+        return std::numeric_limits<te_type>::digits >= std::numeric_limits<uint32_t>::digits;
+        }
+    /// @returns @c true if the parser's internal type can hold `uint64_t` without truncation.
+    constexpr static bool supports_64bit() noexcept
+        {
+        return std::numeric_limits<te_type>::digits >= std::numeric_limits<uint64_t>::digits;
+        }
     /** @brief Parses the input @c expression.
         @param expression The formula to compile.
         @returns Whether the expression compiled or not. (This can be checked

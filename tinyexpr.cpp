@@ -848,6 +848,18 @@ namespace te_builtins
         return te_parser::te_max_value;
         }
 
+    [[nodiscard]]
+    constexpr static te_type te_supports_32bit() noexcept
+        {
+        return te_parser::supports_32bit() ? 1.0 : 0.0;
+        }
+
+    [[nodiscard]]
+    constexpr static te_type te_supports_64bit() noexcept
+        {
+        return te_parser::supports_64bit() ? 1.0 : 0.0;
+        }
+
     // cotangent
     [[nodiscard]]
     static te_type te_cot(te_type val) noexcept
@@ -986,6 +998,8 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "sqrt", static_cast<te_fun1>(te_builtins::te_sqrt), TE_PURE },
     { "sum", static_cast<te_fun7>(te_builtins::te_sum),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
+    { "supports32bit", static_cast<te_fun0>(te_builtins::te_supports_32bit), TE_PURE },
+    { "supports64bit", static_cast<te_fun0>(te_builtins::te_supports_64bit), TE_PURE },
     { "tan", static_cast<te_fun1>(te_builtins::te_tan), TE_PURE },
     { "tanh", static_cast<te_fun1>(te_builtins::te_tanh), TE_PURE },
     { "tgamma", static_cast<te_fun1>(te_builtins::te_tgamma), TE_PURE },
