@@ -739,6 +739,14 @@ TEST_CASE("NaN", "[nan]")
     CHECK(tep.success());
     }
 
+TEST_CASE("Max and min values", "[max,min]")
+    {
+    te_parser tep;
+
+    CHECK_THAT(tep.evaluate("MINVALUE()"), Catch::Matchers::WithinRel(std::numeric_limits<te_type>::min()));
+    CHECK_THAT(tep.evaluate("MAXVALUE()"), Catch::Matchers::WithinRel(std::numeric_limits<te_type>::max()));
+    }
+
 TEST_CASE("Zeros", "[zeros]")
     {
     te_parser tep;
@@ -1164,6 +1172,7 @@ TEST_CASE("Precedence", "[precedence]")
     CHECK_THAT(-12.75,
         Catch::Matchers::WithinRel(tep.evaluate("5+2**3-1*31/2**2-20+ 21% 2*2")));
 
+#ifndef TE_FLOAT
     // The precedence that C++ compiler use for << and >>
     // Excel doesn't have operators for these, although there are
     // related functions like BITLSHIFT().
@@ -1173,6 +1182,9 @@ TEST_CASE("Precedence", "[precedence]")
     CHECK_THAT((32 >> 1 + 2 * 2),
         Catch::Matchers::WithinRel(
             tep.evaluate("(32 >> 1 + 2 * 2)")));
+#else
+    CHECK(std::isnan(tep.evaluate("(1 << 1 + 2 * 2)")));
+#endif
 #ifndef TE_BITWISE_OPERATIONS
     CHECK_THAT(27, // this is what Excel does
                Catch::Matchers::WithinRel(
@@ -2086,10 +2098,11 @@ TEST_CASE("Random", "[random]")
 TEST_CASE("Available functions", "[available]")
     {
     te_parser tep;
-    // nothing to really test, just call it and make sur it doesn't crash
+    // nothing to really test, just call it and make sure it doesn't crash
     CHECK_NOTHROW(tep.list_available_functions_and_variables());
     }
 
+#ifndef TE_FLOAT
 TEST_CASE("Bitwise operators", "[bitwise]")
     {
     te_parser tep;
@@ -2104,7 +2117,7 @@ TEST_CASE("Bitwise operators", "[bitwise]")
         // do not allow them, so we don't either
         CHECK(std::isnan(tep.evaluate("-15 | 17")));
         CHECK(std::isnan(tep.evaluate("17 | -15")));
-        // max int 32-bit (64-bit int won't be support if long double can't hold it)
+        // max int 32-bit (64-bit int won't be supported if long double can't hold it)
         CHECK(tep.evaluate("4294967295 | 8000") ==
             (4294967295 | 8000));
         CHECK(tep.evaluate("8000 | 4294967295") ==
@@ -2117,7 +2130,7 @@ TEST_CASE("Bitwise operators", "[bitwise]")
         // do not allow them, so we don't either
         CHECK(std::isnan(tep.evaluate("BITOR(-15, 17)")));
         CHECK(std::isnan(tep.evaluate("BITOR(17, -15)")));
-        // max int 32-bit (64-bit int won't be support if long double can't hold it)
+        // max int 32-bit (64-bit int won't be supported if long double can't hold it)
         CHECK(tep.evaluate("BITOR(4294967295, 8000)") ==
             (4294967295 | 8000));
         CHECK(tep.evaluate("BITOR(8000, 4294967295)") ==
@@ -2135,7 +2148,7 @@ TEST_CASE("Bitwise operators", "[bitwise]")
         // do not allow them, so we don't either
         CHECK(std::isnan(tep.evaluate("-15 ^ 17")));
         CHECK(std::isnan(tep.evaluate("17 ^ -15")));
-        // max int 32-bit (64-bit int won't be support if long double can't hold it)
+        // max int 32-bit (64-bit int won't be supported if long double can't hold it)
         CHECK(tep.evaluate("4294967295^8000") ==
             (4294967295 ^ 8000));
         CHECK(tep.evaluate("8000  ^ 4294967295") ==
@@ -2149,7 +2162,7 @@ TEST_CASE("Bitwise operators", "[bitwise]")
         // do not allow them, so we don't either
         CHECK(std::isnan(tep.evaluate("BITXOR(-15, 17)")));
         CHECK(std::isnan(tep.evaluate("BITXOR(17, -15)")));
-        // max int 32-bit (64-bit int won't be support if long double can't hold it)
+        // max int 32-bit (64-bit int won't be supported if long double can't hold it)
         CHECK(tep.evaluate("BITXOR(4294967295, 8000)") ==
             (4294967295 ^ 8000));
         CHECK(tep.evaluate("BITXOR(8000, 4294967295)") ==
@@ -2159,25 +2172,29 @@ TEST_CASE("Bitwise operators", "[bitwise]")
     SECTION("BITAND")
         {
 #ifdef TE_BITWISE_OPERATIONS
+        CHECK(tep.evaluate("1 & 5") == 1);
+        CHECK(tep.evaluate("13 & 25") == 9);
+        CHECK(tep.evaluate("23 & 0") == (23 & 0));
+        CHECK(tep.evaluate("0 & 10") == (0 & 10));
 #endif
-        CHECK(tep.evaluate("BITAND(1,5)") == 1);
-        CHECK(tep.evaluate("BITAND(13,25)") == 9);
+        CHECK(tep.evaluate("BITAND(1, 5)") == 1);
+        CHECK(tep.evaluate("BITAND(13, 25)") == 9);
         CHECK(tep.evaluate("BITAND(23, 0)") == (23 & 0));
         CHECK(tep.evaluate("BITAND(0, 10)") == (0 & 10));
         // technical, negative should be OK, but Excel and LibreOffice
         // do not allow them, so we don't either
         CHECK(std::isnan(tep.evaluate("BITAND(-15, 17)")));
         CHECK(std::isnan(tep.evaluate("BITAND(17, -15)")));
-        // max int 32-bit (64-bit int won't be support if long double can't hold it)
+        // max int 32-bit (64-bit int won't be supported if long double can't hold it)
         CHECK(tep.evaluate("BITAND(4294967295, 8000)") ==
             (4294967295 & 8000));
         CHECK(tep.evaluate("BITAND(8000, 4294967295)") ==
             (8000 & 4294967295));
         }
     }
+#endif
 
-#if __cplusplus >= 202002L
-
+#if __cplusplus >= 202002L && !defined(TE_FLOAT)
 TEST_CASE("Rotate operators", "[rotate]")
     {
     te_parser tep;
@@ -2290,7 +2307,6 @@ TEST_CASE("Rotate operators", "[rotate]")
         CHECK(tep.evaluate("BITRROTATE64(4294967295, -1)") == std::rotr(i, -1));
         }
     }
-#endif
 
 TEST_CASE("Shift operators", "[shift]")
     {
@@ -2387,6 +2403,18 @@ TEST_CASE("Shift operators", "[shift]")
         CHECK(tep.get_last_error_message().empty());
         }
     }
+#else
+    // just make sure bitwise operators cause an error as they aren't supported for float
+    TEST_CASE("Bitwise operators null", "[shift,rotate]")
+        {
+        te_parser tep;
+
+        CHECK(std::isnan(tep.evaluate("0 >> 4")));
+        CHECK(std::isnan(tep.evaluate("0 >>> 4")));
+        CHECK(std::isnan(tep.evaluate("0 << 4")));
+        CHECK(std::isnan(tep.evaluate("0 <<< 4")));
+        }
+#endif
 
 te_type ResolveResolutionSymbols(std::string_view str)
     {

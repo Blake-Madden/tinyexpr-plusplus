@@ -53,6 +53,10 @@ For operators, the order of precedence is:
 | \| | Bitwise OR (if `TE_BITWISE_OPERATIONS` is defined). |
 :::
 
+::: {.notesection data-latex=""}
+Defining `TE_FLOAT` will disable all bitwise functions and operators.
+:::
+
 For example, the following:
 
 $$

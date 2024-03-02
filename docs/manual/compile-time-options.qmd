@@ -7,6 +7,10 @@ Compile with `TE_FLOAT` defined to use `float` instead.
 
 Refer to [floating-point numbers](#fp-numbers) for more information.
 
+::: {.warningsection data-latex=""}
+This flag will also disable all bitwise functions and operators.
+:::
+
 ## `TE_BITWISE_OPERATIONS` {-#te-bitwise-ops}
 
 By default, the operators `&`, `|`, and `^` represent logical AND, logical OR, and exponentiation. If `TE_BITWISE_OPERATIONS` is defined,
@@ -43,7 +47,7 @@ command line (or in a Cmake configuration) as such: `-DTE_POW_FROM_RIGHT`
 
 ## C++20 Features
 
-If compiling as C++20, then the following functions and operators will be available:
+If compiling as C++20 (and `TE_FLOAT` is not defined), then the following functions and operators will be available:
 
 - `BITLROTATE8`
 - `BITLROTATE16`

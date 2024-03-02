@@ -433,7 +433,7 @@ namespace te_builtins
         return val1 * val2;
         }
 
-#if __cplusplus >= 202002L
+#if __cplusplus >= 202002L && !defined(TE_FLOAT)
     //--------------------------------------------------
     [[nodiscard]]
     static te_type te_right_rotate8(te_type val1, te_type val2)
@@ -577,7 +577,6 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise OR operation must use positive integers.");
             }
-
         return static_cast<te_type>(static_cast<uint64_t>(val1) | static_cast<uint64_t>(val2));
         }
 
@@ -595,7 +594,6 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise XOR operation must use positive integers.");
             }
-
         return static_cast<te_type>(static_cast<uint64_t>(val1) ^ static_cast<uint64_t>(val2));
         }
 
@@ -613,7 +611,6 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise AND operation must use positive integers.");
             }
-
         return static_cast<te_type>(static_cast<uint64_t>(val1) & static_cast<uint64_t>(val2));
         }
 
@@ -839,6 +836,18 @@ namespace te_builtins
         return te_parser::te_nan;
         }
 
+    [[nodiscard]]
+    constexpr static te_type te_min_value() noexcept
+        {
+        return te_parser::te_min_value;
+        }
+
+    [[nodiscard]]
+    constexpr static te_type te_max_value() noexcept
+        {
+        return te_parser::te_max_value;
+        }
+
     // cotangent
     [[nodiscard]]
     static te_type te_cot(te_type val) noexcept
@@ -909,6 +918,7 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "atan2", static_cast<te_fun2>(te_builtins::te_atan2), TE_PURE },
     { "average", static_cast<te_fun7>(te_builtins::te_average),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
+#ifndef TE_FLOAT
     { "bitand", static_cast<te_fun2>(te_builtins::te_bitwise_and), TE_PURE },
     { "bitor", static_cast<te_fun2>(te_builtins::te_bitwise_or), TE_PURE },
 #if __cplusplus >= 202002L
@@ -924,6 +934,7 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "bitlshift", static_cast<te_fun2>(te_builtins::te_left_shift_or_right), TE_PURE },
     { "bitrshift", static_cast<te_fun2>(te_builtins::te_right_shift_or_left), TE_PURE },
     { "bitxor", static_cast<te_fun2>(te_builtins::te_bitwise_xor), TE_PURE },
+#endif
     { "ceil", static_cast<te_fun1>(te_builtins::te_ceil), TE_PURE },
     { "clamp",
       static_cast<te_fun3>(
@@ -950,8 +961,10 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "log10", static_cast<te_fun1>(te_builtins::te_log10), TE_PURE },
     { "max", static_cast<te_fun7>(te_builtins::te_max),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
+    { "maxvalue", static_cast<te_fun0>(te_builtins::te_max_value), TE_PURE },
     { "min", static_cast<te_fun7>(te_builtins::te_min),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
+    { "minvalue", static_cast<te_fun0>(te_builtins::te_min_value), TE_PURE },
     { "mod", static_cast<te_fun2>(te_builtins::te_modulus), TE_PURE },
     { "nan", static_cast<te_fun0>(te_builtins::te_nan_value), TE_PURE },
     { "ncr", static_cast<te_fun2>(te_builtins::te_ncr), TE_PURE },
@@ -1164,7 +1177,7 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = te_builtins::te_divide;
                     }
-#ifdef TE_BITWISE_OPERATIONS
+#if defined(TE_BITWISE_OPERATIONS) && !defined(TE_FLOAT)
                 else if (tok == '^')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
@@ -1194,7 +1207,7 @@ void te_parser::next_token(te_parser::state* theState)
                     {
                     theState->m_type = te_parser::state::token_type::TOK_SEP;
                     }
-#if __cplusplus >= 202002L
+#if __cplusplus >= 202002L && !defined(TE_FLOAT)
                 // rotate (circular shift) operators (uses the 64-bit integer version)
                 else if (tok == '<' && (*theState->m_next == '<') &&
                          (*std::next(theState->m_next) == '<'))
@@ -1210,7 +1223,17 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_right_rotate64);
                     std::advance(theState->m_next, 2);
                     }
+#else
+                // if rotation is not availble, error if used in formula
+                else if ((tok == '<' && (*theState->m_next == '<') &&
+                          (*std::next(theState->m_next) == '<')) ||
+                         (tok == '>' && (*theState->m_next == '>') &&
+                          (*std::next(theState->m_next) == '>')) )
+                    {
+                    theState->m_type = te_parser::state::token_type::TOK_ERROR;
+                    }
 #endif
+#ifndef TE_FLOAT
                 // shift operators
                 else if (tok == '<' && (*theState->m_next == '<'))
                     {
@@ -1224,6 +1247,14 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_right_shift);
                     std::advance(theState->m_next, 1);
                     }
+#else
+                // shift operators that will be disabled for float types
+                else if ((tok == '<' && (*theState->m_next == '<')) ||
+                         (tok == '>' && (*theState->m_next == '>')) )
+                    {
+                    theState->m_type = te_parser::state::token_type::TOK_ERROR;
+                    }
+#endif
                 // logical operators
                 else if (tok == '=' && (*theState->m_next == '='))
                     {
@@ -1276,7 +1307,7 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_and);
                     std::advance(theState->m_next, 1);
                     }
-#ifdef TE_BITWISE_OPERATIONS
+#if defined(TE_BITWISE_OPERATIONS) && !defined(TE_FLOAT)
                 else if (tok == '&')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
@@ -1295,7 +1326,7 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_or);
                     std::advance(theState->m_next, 1);
                     }
-#ifdef TE_BITWISE_OPERATIONS
+#if defined(TE_BITWISE_OPERATIONS) && !defined(TE_FLOAT)
                 else if (tok == '|')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
@@ -1611,7 +1642,7 @@ te_expr* te_parser::expr_level8(te_parser::state* theState)
            is_function2(theState->m_value) &&
            (get_function2(theState->m_value) == te_builtins::te_left_shift ||
             get_function2(theState->m_value) == te_builtins::te_right_shift
-#if __cplusplus >= 202002L
+#if __cplusplus >= 202002L && !defined(TE_FLOAT)
             ||
             get_function2(theState->m_value) == te_builtins::te_left_rotate64 ||
             get_function2(theState->m_value) == te_builtins::te_right_rotate64 ||

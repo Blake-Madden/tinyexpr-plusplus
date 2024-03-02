@@ -83,6 +83,10 @@ using te_type = float;
 using te_type = double;
 #endif
 
+#if defined(TE_FLOAT) && defined(TE_BITWISE_OPERATIONS)
+    #error TE_FLOAT and TE_BITWISE_OPERATIONS compile options cannot be combined. TE_FLOAT will not support bitwise operations.
+#endif
+
 class te_expr;
 
 // regular functions
@@ -243,6 +247,10 @@ class te_parser
 
     /// @brief NaN (not-a-number) constant to indicate an invalid value.
     constexpr static auto te_nan = std::numeric_limits<te_type>::quiet_NaN();
+    /// @brief Minimum value that can be used.
+    constexpr static auto te_min_value = std::numeric_limits<te_type>::min();
+    /// @brief Maximum value that can be used.
+    constexpr static auto te_max_value = std::numeric_limits<te_type>::max();
     /// @brief No position, which is what get_last_error_position() returns
     ///     when there was no parsing error.
     constexpr static int64_t npos = -1;
