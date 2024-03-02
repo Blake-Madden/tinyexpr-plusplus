@@ -14,7 +14,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Options:
 # - USE_ADDRESS_SANITIZE to use ASAN
 # - USE_CLANG_TIDY to run clang-tidy
-# - TE_FLOAT and TE_POW_FROM_RIGHT to enable the respective preprocessors
+# - TE_FLOAT to use float as the internal datatype
+# - TE_POW_FROM_RIGHT to enable parsing exponents from the right
 # - TE_BITWISE_OPERATIONS to parse ^, &, and | as bitwise operators
 
 project(TETestRunner)
@@ -42,13 +43,24 @@ if(CLANG_TIDY_COMMAND AND USE_CLANG_TIDY)
 endif()
 
 if(TE_FLOAT)
+    message(STATUS "Datatype: float")
     add_definitions(-DTE_FLOAT)
+else()
+    message(STATUS "Datatype: double")
 endif(TE_FLOAT)
+
 if(TE_POW_FROM_RIGHT)
+    message(STATUS "Power from right: enabled")
     add_definitions(-DTE_POW_FROM_RIGHT)
+else()
+    message(STATUS "Power from right: disabled")
 endif(TE_POW_FROM_RIGHT)
+
 if(TE_BITWISE_OPERATIONS)
-    add_definitions(-TE_BITWISE_OPERATIONS)
+    message(STATUS "Extended bitwise operators: enabled")
+    add_definitions(-DTE_BITWISE_OPERATIONS)
+else()
+    message(STATUS "Extended bitwise operators: disabled")
 endif(TE_BITWISE_OPERATIONS)
 
 # place Catch2 at the same folder level as this repo if it isn't installed
