@@ -10,7 +10,7 @@ The following operators\index{operators} are supported within math expressions:
 | % | Modulus: Divides two values and returns the remainder. |
 | + | Addition. |
 | \- | Subtraction. |
-| ^ | Either exponentiation or bitwise XOR. Exponentiation is the default; define `TE_BITWISE_OPERATIONS` to enable bitwise behavior. For exponentiation, the number in front of ^ is the base, the number after it is the power to raise it to. |
+| ^ | Either exponentiation or bitwise XOR. Exponentiation is the default; define `TE_BITWISE_OPERATORS` to enable bitwise behavior. For exponentiation, the number in front of ^ is the base, the number after it is the power to raise it to. |
 | ** | Exponentiation. (This is an alias for ^) |
 | < | Less than. |
 | \> | Greater than. |
@@ -20,9 +20,9 @@ The following operators\index{operators} are supported within math expressions:
 | \=\= | Equals. (This is an alias for \=) |
 | <> | Not equal to. |
 | \!\= | Not equal to. (This is an alias for <>) |
-| & | Either logical or bitwise conjunction (AND). Logical is the default, define `TE_BITWISE_OPERATIONS` to enable bitwise behavior. |
+| & | Either logical or bitwise conjunction (AND). Logical is the default, define `TE_BITWISE_OPERATORS` to enable bitwise behavior. |
 | && | Either logical conjunction (AND). |
-| \| | Logical  or bitwise alternative (OR). Logical is the default, define `TE_BITWISE_OPERATIONS` to enable bitwise behavior. |
+| \| | Logical  or bitwise alternative (OR). Logical is the default, define `TE_BITWISE_OPERATORS` to enable bitwise behavior. |
 | \|\| | Logical alternative (OR). |
 | ( ) | Groups sub-expressions, overriding the order of operations. |
 | << | Bitwise left shift. |
@@ -48,9 +48,9 @@ For operators, the order of precedence is:
 | \= and \!\= | Equality comparisons. |
 | && | Logical conjunction (AND). |
 | \|\| | Logical alternative (OR). |
-| & | Bitwise AND (if `TE_BITWISE_OPERATIONS` is defined). |
-| ^ | Bitwise XOR (if `TE_BITWISE_OPERATIONS` is defined). |
-| \| | Bitwise OR (if `TE_BITWISE_OPERATIONS` is defined). |
+| & | Bitwise AND (if `TE_BITWISE_OPERATORS` is defined). |
+| ^ | Bitwise XOR (if `TE_BITWISE_OPERATORS` is defined). |
+| \| | Bitwise OR (if `TE_BITWISE_OPERATORS` is defined). |
 :::
 
 ::: {.notesection data-latex=""}

@@ -11,9 +11,9 @@ Refer to [floating-point numbers](#fp-numbers) for more information.
 This flag will also disable all bitwise functions and operators.
 :::
 
-## `TE_BITWISE_OPERATIONS` {-#te-bitwise-ops}
+## `TE_BITWISE_OPERATORS` {-#te-bitwise-ops}
 
-By default, the operators `&`, `|`, and `^` represent logical AND, logical OR, and exponentiation. If `TE_BITWISE_OPERATIONS` is defined,
+By default, the operators `&`, `|`, and `^` represent logical AND, logical OR, and exponentiation. If `TE_BITWISE_OPERATORS` is defined,
 then they will represent bitwise AND, OR, and XOR.
 
 ## `TE_NO_BOOKKEEPING` {-}

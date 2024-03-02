@@ -1177,7 +1177,7 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
                     theState->m_value = te_builtins::te_divide;
                     }
-#if defined(TE_BITWISE_OPERATIONS) && !defined(TE_FLOAT)
+#if defined(TE_BITWISE_OPERATORS) && !defined(TE_FLOAT)
                 else if (tok == '^')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
@@ -1307,7 +1307,7 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_and);
                     std::advance(theState->m_next, 1);
                     }
-#if defined(TE_BITWISE_OPERATIONS) && !defined(TE_FLOAT)
+#if defined(TE_BITWISE_OPERATORS) && !defined(TE_FLOAT)
                 else if (tok == '&')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
@@ -1326,7 +1326,7 @@ void te_parser::next_token(te_parser::state* theState)
                     theState->m_value = static_cast<te_fun2>(te_builtins::te_or);
                     std::advance(theState->m_next, 1);
                     }
-#if defined(TE_BITWISE_OPERATIONS) && !defined(TE_FLOAT)
+#if defined(TE_BITWISE_OPERATORS) && !defined(TE_FLOAT)
                 else if (tok == '|')
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;

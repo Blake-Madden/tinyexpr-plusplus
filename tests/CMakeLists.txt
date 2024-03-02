@@ -16,7 +16,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # - USE_CLANG_TIDY to run clang-tidy
 # - TE_FLOAT to use float as the internal datatype
 # - TE_POW_FROM_RIGHT to enable parsing exponents from the right
-# - TE_BITWISE_OPERATIONS to parse ^, &, and | as bitwise operators
+# - TE_BITWISE_OPERATORS to parse ^, &, and | as bitwise operators
 
 project(TETestRunner)
 
@@ -56,12 +56,12 @@ else()
     message(STATUS "Power from right: disabled")
 endif(TE_POW_FROM_RIGHT)
 
-if(TE_BITWISE_OPERATIONS)
+if(TE_BITWISE_OPERATORS)
     message(STATUS "Extended bitwise operators: enabled")
-    add_definitions(-DTE_BITWISE_OPERATIONS)
+    add_definitions(-DTE_BITWISE_OPERATORS)
 else()
     message(STATUS "Extended bitwise operators: disabled")
-endif(TE_BITWISE_OPERATIONS)
+endif(TE_BITWISE_OPERATORS)
 
 # place Catch2 at the same folder level as this repo if it isn't installed
 # (you will need to do this on Windows or macOS or if version 3 of Catch2 isn't installed)

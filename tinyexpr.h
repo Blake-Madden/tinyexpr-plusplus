@@ -83,8 +83,8 @@ using te_type = float;
 using te_type = double;
 #endif
 
-#if defined(TE_FLOAT) && defined(TE_BITWISE_OPERATIONS)
-    #error TE_FLOAT and TE_BITWISE_OPERATIONS compile options cannot be combined. TE_FLOAT will not support bitwise operations.
+#if defined(TE_FLOAT) && defined(TE_BITWISE_OPERATORS)
+    #error TE_FLOAT and TE_BITWISE_OPERATORS compile options cannot be combined. TE_FLOAT will not support bitwise operations.
 #endif
 
 class te_expr;

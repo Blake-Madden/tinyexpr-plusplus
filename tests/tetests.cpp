@@ -261,7 +261,7 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("log10(1000)") == 3);
     CHECK(tep.evaluate("log10(1e3)") == 3);
     CHECK(tep.evaluate("log10 1.0e3") == 3);
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK(tep.evaluate("10^5*5e-5") == 5);
 #endif
     CHECK(tep.evaluate("10**5*5e-5") == 5);
@@ -271,7 +271,7 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("ln(exp(3))") == 3);
     CHECK_THAT(tep.evaluate("ln(2.7182818)"), Catch::Matchers::WithinRel(1.0, 0.00001));
     CHECK_THAT(tep.evaluate("ln(86)"), Catch::Matchers::WithinRel(4.454373, 0.00001));
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK(tep.evaluate("ln (e^10)") == 10);
     CHECK(tep.evaluate("ln (e^10)") == 10);
     CHECK(tep.evaluate("100^.5+1") == 11);
@@ -315,7 +315,7 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("1,(2,3)") == 3);
     CHECK(tep.evaluate("-(1,(2,3))") == -3);
 
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK(tep.evaluate("2^2") == 4);
 #endif
     CHECK(tep.evaluate("2**2") == 4);
@@ -342,16 +342,16 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("sign(0)") == 0);
     CHECK(tep.evaluate("trunc(9.57878423)") == 9);
     CHECK(tep.evaluate("trunc(9.3)") == 9);
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK(tep.evaluate("2**4") == 16);
 #endif
     CHECK(tep.evaluate("1+2**4") == 17);
 
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK(tep.evaluate("1+2^4") == 17);
 #endif
     CHECK(tep.evaluate("(1+2)**4") == 81);
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK(tep.evaluate("(1+2)^4") == 81);
 #endif
     CHECK(tep.evaluate("(1+2)**4") == 81);
@@ -431,7 +431,7 @@ TEST_CASE("Main tests", "[main]")
         CHECK(std::isnan(tep.evaluate("NOT(NAN)")));
 
         // garbage values
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
         CHECK_FALSE(tep.evaluate("NAN & 5"));
         CHECK_FALSE(tep.evaluate("1 & NAN"));
         CHECK(std::isnan(tep.evaluate("NAN & NAN")));
@@ -461,7 +461,7 @@ TEST_CASE("Main tests", "[main]")
 
     SECTION("operators")
         {
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
         CHECK(tep.evaluate("0.0 & 5") == 0);
         CHECK(tep.evaluate("0.0 & 0") == 0);
         CHECK(tep.evaluate("-1 & 5") == 1);
@@ -646,7 +646,7 @@ TEST_CASE("Variables", "[variables]")
 
             ev = tep.evaluate("x+x+x-y");
             CHECK_THAT(ev, Catch::Matchers::WithinRel(x+x+x-y));
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
             ev = tep.evaluate("x*y^3");
             CHECK_THAT(ev, Catch::Matchers::WithinRel(x*y*y*y));
 #endif
@@ -864,7 +864,7 @@ TEST_CASE("Power", "[power]")
     {"(-1)^0", "1"},
     {"(-5)^0", "1"},
     {"-2^-3^-4", "-(2^(-(3^-4)))"}*/
-#elif defined(TE_BITWISE_OPERATIONS)
+#elif defined(TE_BITWISE_OPERATORS)
     CHECK(tep.evaluate("2**3**4") == tep.evaluate("(2**3)**4"));
     CHECK(tep.success());
 
@@ -1161,7 +1161,7 @@ TEST_CASE("Precedence", "[precedence]")
         Catch::Matchers::WithinRel(tep.evaluate("5+2-1*31/2-20+21%2*2")));
     CHECK_THAT(-26.5,
         Catch::Matchers::WithinRel(tep.evaluate("5+2-1*31/2-20+MOD(21,2)*2")));
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK_THAT(-12.75,
         Catch::Matchers::WithinRel(tep.evaluate("5+2^3-1*31/2^2-20+MOD(21,2)*2")));
     CHECK_THAT(-12.75,
@@ -1185,7 +1185,7 @@ TEST_CASE("Precedence", "[precedence]")
 #else
     CHECK(std::isnan(tep.evaluate("(1 << 1 + 2 * 2)")));
 #endif
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK_THAT(27, // this is what Excel does
                Catch::Matchers::WithinRel(
                    tep.evaluate("5 ^ 2 + 2")));
@@ -1318,7 +1318,7 @@ TEST_CASE("Logical operators", "[logic]")
     CHECK(p.evaluate("1 + 1 - 2 < 1 + 1") == 1);
     CHECK(p.evaluate("1 + 1 - 2 = 1 + 1 - 2") == 1);
     CHECK(p.evaluate("1 + 1 - 2 <> 1 + 1 - 7") == 1);
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK(p.evaluate("1 - 1 & 2") == 0);
     CHECK(p.evaluate("1 - 1 | 2 - 2") == 0);
     CHECK(p.evaluate("1 - 1 | 2*4 - 2") == 1);
@@ -1333,7 +1333,7 @@ TEST_CASE("Logical operators", "[logic]")
     // examples from manual
     CHECK_THAT(12.5, Catch::Matchers::WithinRel(p.evaluate("5+5+5/2")));
     CHECK_THAT(7.5, Catch::Matchers::WithinRel(p.evaluate("(5+5+5)/2")));
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK_THAT(49, Catch::Matchers::WithinRel(p.evaluate("(2+5)^2")));
     CHECK_THAT(27, Catch::Matchers::WithinRel(p.evaluate("2+5^2")));
 #endif
@@ -1479,7 +1479,7 @@ TEST_CASE("Math operators", "[math]")
     CHECK_THAT(19.5, Catch::Matchers::WithinRel(p.evaluate()));
     p.compile(("9*((3/2)+(8-2))")); // change up the order of operations
     CHECK_THAT(67.5, Catch::Matchers::WithinRel(p.evaluate()));
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     p.compile(("9*3^3/2+8-(11%2)"));
     CHECK_THAT(128.5, Catch::Matchers::WithinRel(p.evaluate()));
     p.compile(("9.2*3.4^3/2+8.7-(11%2)"));
@@ -1814,13 +1814,13 @@ NAN)
     CHECK(std::isnan(tep.get_result()));
 
     // complicated formula
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK_THAT(4.5, Catch::Matchers::WithinRel(tep.evaluate("ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2")));
 #endif
     CHECK_THAT(4.5, Catch::Matchers::WithinRel(tep.evaluate("ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5**2")));
 
     // make it look like an Excel function
-#ifndef TE_BITWISE_OPERATIONS
+#ifndef TE_BITWISE_OPERATORS
     CHECK_THAT(4.5, Catch::Matchers::WithinRel(tep.evaluate("=ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2")));
 #endif
     CHECK_THAT(4.5, Catch::Matchers::WithinRel(tep.evaluate("=ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5**2")));
@@ -2109,7 +2109,7 @@ TEST_CASE("Bitwise operators", "[bitwise]")
 
     SECTION("BITOR")
         {
-#ifdef TE_BITWISE_OPERATIONS
+#ifdef TE_BITWISE_OPERATORS
         CHECK(tep.evaluate("23 | 10") == 31);
         CHECK(tep.evaluate("23 | 0") == (23 | 0));
         CHECK(tep.evaluate("0 | 10") == (0 | 10));
@@ -2139,7 +2139,7 @@ TEST_CASE("Bitwise operators", "[bitwise]")
 
     SECTION("BITXOR")
         {
-#ifdef TE_BITWISE_OPERATIONS
+#ifdef TE_BITWISE_OPERATORS
         CHECK(tep.evaluate("5 ^ 3") == 6);
         CHECK(tep.evaluate("5 ^ 9") == 12);
         CHECK(tep.evaluate("23^ 0") == (23 ^ 0));
@@ -2171,7 +2171,7 @@ TEST_CASE("Bitwise operators", "[bitwise]")
 
     SECTION("BITAND")
         {
-#ifdef TE_BITWISE_OPERATIONS
+#ifdef TE_BITWISE_OPERATORS
         CHECK(tep.evaluate("1 & 5") == 1);
         CHECK(tep.evaluate("13 & 25") == 9);
         CHECK(tep.evaluate("23 & 0") == (23 & 0));
