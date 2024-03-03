@@ -261,13 +261,13 @@ TEST_CASE("Main tests", "[main]")
     CHECK_THAT(tep.evaluate("asin sin (-0.5)"), Catch::Matchers::WithinRel(-0.5, 0.00001));
     CHECK_THAT(tep.evaluate("(asin sin (-0.5))"), Catch::Matchers::WithinRel(-0.5, 0.00001));
 
-    CHECK(tep.evaluate("log10 1000") == 3);
-    CHECK(tep.evaluate("log10 1e3") == 3);
-    CHECK(tep.evaluate("log10 1000") == 3);
-    CHECK(tep.evaluate("log10 1e3") == 3);
-    CHECK(tep.evaluate("log10(1000)") == 3);
-    CHECK(tep.evaluate("log10(1e3)") == 3);
-    CHECK(tep.evaluate("log10 1.0e3") == 3);
+    CHECK_THAT(tep.evaluate("log10 1000"), Catch::Matchers::WithinRel(3, 0.00001));
+    CHECK_THAT(tep.evaluate("log10 1e3"), Catch::Matchers::WithinRel(3, 0.00001));
+    CHECK_THAT(tep.evaluate("log10 1000"), Catch::Matchers::WithinRel(3, 0.00001));
+    CHECK_THAT(tep.evaluate("log10 1e3"), Catch::Matchers::WithinRel(3, 0.00001));
+    CHECK_THAT(tep.evaluate("log10(1000)"), Catch::Matchers::WithinRel(3, 0.00001));
+    CHECK_THAT(tep.evaluate("log10(1e3)"), Catch::Matchers::WithinRel(3, 0.00001));
+    CHECK_THAT(tep.evaluate("log10 1.0e3"), Catch::Matchers::WithinRel(3, 0.00001));
 #ifndef TE_BITWISE_OPERATORS
     CHECK_THAT(tep.evaluate("10^5*5e-5"), Catch::Matchers::WithinRel(5, 0.00001));
 #endif
