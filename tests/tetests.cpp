@@ -287,11 +287,11 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("100^--.5+1") == 11);
     CHECK(tep.evaluate("100^---+-++---++-+-+-.5+1") == 11);
 
-    CHECK_THAT(tep.evaluate("100^-.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
-    CHECK_THAT(tep.evaluate("100^---.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
-    CHECK_THAT(tep.evaluate("100^+---.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
-    CHECK_THAT(tep.evaluate("1e2^+---.5e0+1e0"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
-    CHECK_THAT(tep.evaluate("--(1e2^(+(-(-(-.5e0))))+1e0)"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
+    CHECK_THAT(tep.evaluate("100^-.5+1"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(static_cast<te_type>(1.1)), WITHIN_TYPE(0.00001)));
+    CHECK_THAT(tep.evaluate("100^---.5+1"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(static_cast<te_type>(1.1)), WITHIN_TYPE(0.00001)));
+    CHECK_THAT(tep.evaluate("100^+---.5+1"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(static_cast<te_type>(1.1)), WITHIN_TYPE(0.00001)));
+    CHECK_THAT(tep.evaluate("1e2^+---.5e0+1e0"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(static_cast<te_type>(1.1)), WITHIN_TYPE(0.00001)));
+    CHECK_THAT(tep.evaluate("--(1e2^(+(-(-(-.5e0))))+1e0)"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(static_cast<te_type>(1.1)), WITHIN_TYPE(0.00001)));
 #endif
     CHECK_THAT(tep.evaluate("ln (e**10)"), Catch::Matchers::WithinRel(10, 0.00001));
     CHECK_THAT(tep.evaluate("ln (e**10)"), Catch::Matchers::WithinRel(10, 0.00001));
@@ -301,11 +301,11 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("100**--.5+1") == 11);
     CHECK(tep.evaluate("100**---+-++---++-+-+-.5+1") == 11);
 
-    CHECK_THAT(tep.evaluate("100**-.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
-    CHECK_THAT(tep.evaluate("100**---.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
-    CHECK_THAT(tep.evaluate("100**+---.5+1") , Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
-    CHECK_THAT(tep.evaluate("1e2**+---.5e0+1e0"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
-    CHECK_THAT(tep.evaluate("--(1e2**(+(-(-(-.5e0))))+1e0)"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
+    CHECK_THAT(tep.evaluate("100**-.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), WITHIN_TYPE(0.00001)));
+    CHECK_THAT(tep.evaluate("100**---.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), WITHIN_TYPE(0.00001)));
+    CHECK_THAT(tep.evaluate("100**+---.5+1") , Catch::Matchers::WithinRel(static_cast<te_type>(1.1), WITHIN_TYPE(0.00001)));
+    CHECK_THAT(tep.evaluate("1e2**+---.5e0+1e0"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), WITHIN_TYPE(0.00001)));
+    CHECK_THAT(tep.evaluate("--(1e2**(+(-(-(-.5e0))))+1e0)"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), WITHIN_TYPE(0.00001)));
 
     CHECK(tep.evaluate("sqrt 100 + 7") == 17);
     CHECK(tep.evaluate("sqrt 100 * 7") == 70);
@@ -369,9 +369,9 @@ TEST_CASE("Main tests", "[main]")
         CHECK(tep.evaluate("round(9.57878423)") == 10);
         CHECK(tep.evaluate("round(pow(2,2))") == 4);
         // non-variadic function inside of variadic
-        CHECK_THAT(tep.evaluate("round(9.57878423, 1)"), Catch::Matchers::WithinRel(static_cast<te_type>(9.6), 0.0001));
-        CHECK_THAT(tep.evaluate("round(9.57878423, 2)"), Catch::Matchers::WithinRel(static_cast<te_type>(9.58), 0.0001));
-        CHECK_THAT(tep.evaluate("round(9.57878423, 3)"), Catch::Matchers::WithinRel(static_cast<te_type>(9.579), 0.0001));
+        CHECK_THAT(tep.evaluate("round(9.57878423, 1)"), Catch::Matchers::WithinRel(static_cast<te_type>(9.6), WITHIN_TYPE(0.0001)));
+        CHECK_THAT(tep.evaluate("round(9.57878423, 2)"), Catch::Matchers::WithinRel(static_cast<te_type>(9.58), WITHIN_TYPE(0.0001)));
+        CHECK_THAT(tep.evaluate("round(9.57878423, 3)"), Catch::Matchers::WithinRel(static_cast<te_type>(9.579), WITHIN_TYPE(0.0001)));
         CHECK(tep.evaluate("sum(9)") == 9);
         CHECK(tep.evaluate("sum(9,9)") == 18);
         CHECK(tep.evaluate("sum(9,9,9)") == 27);
@@ -1492,7 +1492,7 @@ TEST_CASE("Round higher precision", "[round]")
     CHECK_THAT(3.141568, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(3.14156785, 7)"));
-    CHECK_THAT(3.1415679, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), 0.0000001));
+    CHECK_THAT(3.1415679, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), WITHIN_TYPE(0.0000001)));
 
     p.compile(("round(3.141567854, 8)"));
     CHECK_THAT(3.14156785, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
