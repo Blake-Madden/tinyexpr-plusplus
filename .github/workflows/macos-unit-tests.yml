@@ -65,3 +65,39 @@ jobs:
              if [ "$failures" -gt 0 ]; then
                exit 1
              fi
+
+             cd ..
+             cmake --build . --target clean
+             cmake -DTE_LONG_DOUBLE=1 ./
+             make -j4
+             cd bin
+             ./TETestRunner --reporter JUnit::out=TE-junit2.xml
+             cat TE-junit2.xml
+             errors=$(cat TE-junit2.xml | ggrep -Po '(errors)="\K[^"]*')
+             failures=$(cat TE-junit2.xml | ggrep -Po '(failures)="\K[^"]*')
+             echo "Error count is: ${errors}"
+             echo "Failure count is: ${failures}"
+             if [ "$errors" -gt 0 ]; then
+               exit 1
+             fi
+             if [ "$failures" -gt 0 ]; then
+               exit 1
+             fi
+
+             cd ..
+             cmake --build . --target clean
+             cmake -DTE_BITWISE_OPERATORS=1 ./
+             make -j4
+             cd bin
+             ./TETestRunner --reporter JUnit::out=TE-junit2.xml
+             cat TE-junit2.xml
+             errors=$(cat TE-junit2.xml | ggrep -Po '(errors)="\K[^"]*')
+             failures=$(cat TE-junit2.xml | ggrep -Po '(failures)="\K[^"]*')
+             echo "Error count is: ${errors}"
+             echo "Failure count is: ${failures}"
+             if [ "$errors" -gt 0 ]; then
+               exit 1
+             fi
+             if [ "$failures" -gt 0 ]; then
+               exit 1
+             fi
