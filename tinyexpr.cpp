@@ -2099,3 +2099,56 @@ std::string te_parser::list_available_functions_and_variables()
         }
     return report;
     }
+
+//--------------------------------------------------
+// cppcheck-suppress unusedFunction
+std::string te_parser::info()
+    {
+    std::string sysInfo{ "tinyexpr++ system info:\n=======================\n" };
+#ifdef TE_FLOAT
+    sysInfo += "Data type:                float\n";
+#elif defined(TE_LONG_DOUBLE)
+    sysInfo += "Data type:                long double\n";
+#else
+    sysInfo += "Data type:                double\n";
+#endif
+    if constexpr (supports_32bit())
+        {
+        sysInfo += "Supports 32-bit integers: yes\n";
+        }
+    else
+        {
+        sysInfo += "Supports 32-bit integers: no\n";
+        }
+    if constexpr (supports_64bit())
+        {
+        sysInfo += "Supports 64-bit integers: yes\n";
+        }
+    else
+        {
+        sysInfo += "Supports 64-bit integers: no\n";
+        }
+    sysInfo += "Max supported integer:    " +
+        std::to_string(static_cast<uint64_t>(get_max_integer())) + "\n";
+#ifdef TE_BITWISE_OPERATORS
+    sysInfo += "^, &, | operators:        bitwise XOR, bitwise AND, and bitwise OR\n";
+#else
+    sysInfo += "^, &, | operators:        exponentiation, logical AND, and logical OR\n";
+#endif
+#ifdef TE_BRACKETS_AS_PARENS
+    sysInfo += "[] are treated as ():     yes\n";
+#else
+    sysInfo += "[] are treated as ():     no\n";
+#endif
+#ifdef TE_POW_FROM_RIGHT
+    sysInfo += "Exponentiation:           performed right-to-left\n";
+#else
+    sysInfo += "Exponentiation:           performed left-to-right\n";
+#endif
+#ifdef TE_NO_BOOKKEEPING
+    sysInfo += "Function-use tracking:    disabled\n";
+#else
+    sysInfo += "Function-use tracking:    enabled\n";
+#endif
+    return sysInfo;
+    }

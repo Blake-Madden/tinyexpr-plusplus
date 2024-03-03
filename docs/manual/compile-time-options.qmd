@@ -49,15 +49,15 @@ This is by design; it's the way that spreadsheets do it
 (e.g., *LibreOffice Calc*, *Excel*, *Google Sheets*).
 
 If you would rather have exponentiation work from right to left, you need to
-define `TE_POW_FROM_RIGHT`\index{compiling!options} when compiling. With `TE_POW_FROM_RIGHT` defined, the
-behavior is:
+define `TE_POW_FROM_RIGHT`\index{compiling!options} when compiling.
+With `TE_POW_FROM_RIGHT` defined, the behavior is:
 
 `a^b^c == a^(b^c)` and `-a^b == -(a^b)`
 
 That will match how many scripting languages do it (e.g., Python, Ruby).
 
 Note that symbols can be defined by passing them to your compiler's
-command line (or in a Cmake configuration) as such: `-DTE_POW_FROM_RIGHT`
+command line (or in a CMake configuration) as such: `-DTE_POW_FROM_RIGHT`
 
 ## C++20 Features
 

@@ -8,6 +8,8 @@
 
 int main(int argc, char** argv)
     {
+    std::cout << te_parser::info();
+
     Catch::Session session;
 
     session.applyCommandLine(argc, argv);

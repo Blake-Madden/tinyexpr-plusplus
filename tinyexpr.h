@@ -592,6 +592,10 @@ class te_parser
         return std::isfinite(val) ? static_cast<bool>(val) : false;
         }
 
+    /// @returns Information about how the parser is configured, its capabilities, etc.
+    [[nodiscard]]
+    static std::string info();
+
   private:
     /// @brief Resets any resolved variables from USR if not being cached.
     void reset_usr_resolved_if_necessary()
