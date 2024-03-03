@@ -835,19 +835,7 @@ namespace te_builtins
         {
         return te_parser::te_nan;
         }
-
-    [[nodiscard]]
-    constexpr static te_type te_min_value() noexcept
-        {
-        return te_parser::te_min_value;
-        }
-
-    [[nodiscard]]
-    constexpr static te_type te_max_value() noexcept
-        {
-        return te_parser::te_max_value;
-        }
-    
+  
     [[nodiscard]]
     static te_type te_max_integer() noexcept
         {
@@ -980,10 +968,8 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "max", static_cast<te_fun7>(te_builtins::te_max),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "maxint", static_cast<te_fun0>(te_builtins::te_max_integer), TE_PURE },
-    { "maxvalue", static_cast<te_fun0>(te_builtins::te_max_value), TE_PURE },
     { "min", static_cast<te_fun7>(te_builtins::te_min),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
-    { "minvalue", static_cast<te_fun0>(te_builtins::te_min_value), TE_PURE },
     { "mod", static_cast<te_fun2>(te_builtins::te_modulus), TE_PURE },
     { "nan", static_cast<te_fun0>(te_builtins::te_nan_value), TE_PURE },
     { "ncr", static_cast<te_fun2>(te_builtins::te_ncr), TE_PURE },

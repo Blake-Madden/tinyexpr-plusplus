@@ -36,10 +36,8 @@ The following built-in functions are available:
 | LN(Number) | Natural logarithm of *Number* (base Euler). |
 | LOG10(Number) | Common logarithm of *Number* (base 10). |
 | MIN(Number1, Number2, ...) | Returns the smallest value from a specified range of values. |
-| MINVALUE() | Returns the smallest value that the parser can process. |
 | MAX(Number1, Number2, ...) | Returns the largest value from a specified range of values. |
 | MAXINT() | Returns the largest integer that the parser can process. |
-| MAXVALUE() | Returns the largest value that the parser can process. |
 | MOD(Number, Divisor) | Returns the remainder after *Number* is divided by *Divisor*. The result has the same sign as divisor. |
 | NAN | Returns an invalid value (i.e., Not-a-number). |
 | NCR(Number, NumberChosen) | Alias for `COMBIN()`. |
