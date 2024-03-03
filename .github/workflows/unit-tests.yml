@@ -35,6 +35,7 @@ jobs:
              fi
              
              cd ..
+             rm ./CMakeCache.txt
              cmake --build . --target clean
              cmake -DTE_POW_FROM_RIGHT=1 ./
              make -j4
@@ -53,6 +54,7 @@ jobs:
              fi
 
              cd ..
+             rm ./CMakeCache.txt
              cmake --build . --target clean
              cmake -DTE_FLOAT=1 ./
              make -j4
@@ -71,6 +73,7 @@ jobs:
              fi
 
              cd ..
+             rm ./CMakeCache.txt
              cmake --build . --target clean
              cmake -DTE_LONG_DOUBLE=1 ./
              make -j4
@@ -89,6 +92,7 @@ jobs:
              fi
 
              cd ..
+             rm ./CMakeCache.txt
              cmake --build . --target clean
              cmake -DTE_BITWISE_OPERATORS=1 ./
              make -j4
