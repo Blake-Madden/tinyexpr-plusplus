@@ -262,16 +262,19 @@ class te_parser
     ///     when there was no parsing error.
     constexpr static int64_t npos = -1;
     /// @returns @c true if the parser's internal type can hold `uint32_t` without truncation.
+    [[nodiscard]]
     constexpr static bool supports_32bit() noexcept
         {
         return std::numeric_limits<te_type>::digits >= std::numeric_limits<uint32_t>::digits;
         }
     /// @returns @c true if the parser's internal type can hold `uint64_t` without truncation.
+    [[nodiscard]]
     constexpr static bool supports_64bit() noexcept
         {
         return std::numeric_limits<te_type>::digits >= std::numeric_limits<uint64_t>::digits;
         }
     /// @returns The largest integer value that the parser can handle without truncation.
+    [[nodiscard]]
     static te_type get_max_integer()
         {
 #ifdef TE_FLOAT
