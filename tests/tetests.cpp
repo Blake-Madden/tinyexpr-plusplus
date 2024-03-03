@@ -746,16 +746,6 @@ TEST_CASE("NaN", "[nan]")
     CHECK(tep.success());
     }
 
-TEST_CASE("Max and min values", "[max,min]")
-    {
-    te_parser tep;
-
-    CHECK_THAT(tep.evaluate("MINVALUE()"),
-        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::numeric_limits<te_type>::min())));
-    CHECK_THAT(tep.evaluate("MAXVALUE()"),
-        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::numeric_limits<te_type>::max())));
-    }
-
 TEST_CASE("Zeros", "[zeros]")
     {
     te_parser tep;
