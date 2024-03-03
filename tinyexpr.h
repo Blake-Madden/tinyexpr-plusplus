@@ -74,10 +74,16 @@
 
 class te_parser;
 
+#if defined(TE_FLOAT) && defined(TE_LONG_DOUBLE)
+    #error TE_FLOAT and TE_LONG_DOUBLE compile options cannot be combined. Only one data type can be specified.
+#endif
+
 /// @brief Define this to use @c float instead of @c double for the parser's data type.
 #ifdef TE_FLOAT
 /// @brief The parameter and return type for parser and its functions.
 using te_type = float;
+#elif defined(TE_LONG_DOUBLE)
+using te_type = long double;
 #else
 /// @brief The parameter and return type for parser and its functions.
 using te_type = double;

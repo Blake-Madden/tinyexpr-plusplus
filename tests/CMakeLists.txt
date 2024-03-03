@@ -14,7 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Options:
 # - USE_ADDRESS_SANITIZE to use ASAN
 # - USE_CLANG_TIDY to run clang-tidy
-# - TE_FLOAT to use float as the internal datatype
+# - TE_FLOAT, TE_LONG_DOUBLE to use float or long double as the internal datatype
 # - TE_POW_FROM_RIGHT to enable parsing exponents from the right
 # - TE_BITWISE_OPERATORS to parse ^, &, and | as bitwise operators
 
@@ -45,6 +45,9 @@ endif()
 if(TE_FLOAT)
     message(STATUS "Datatype: float")
     add_definitions(-DTE_FLOAT)
+elseif(TE_LONG_DOUBLE)
+    message(STATUS "Datatype: long double")
+    add_definitions(-DTE_LONG_DOUBLE)
 else()
     message(STATUS "Datatype: double")
 endif(TE_FLOAT)

@@ -11,6 +11,13 @@ Refer to [floating-point numbers](#fp-numbers) for more information.
 This flag will also disable all bitwise functions and operators.
 :::
 
+## `TE_LONG_DOUBLE` {-}
+
+Compile with `TE_LONG_DOUBLE` defined to use `long double` as the default data type.
+
+Depending on the compiler, this may provide support for handling `uint64_t` values. Call `te_parser::supports_64bit()`
+(or `SUPPORTS64BIT()` in an expression at runtime) to confirm this.
+
 ## `TE_BITWISE_OPERATORS` {-#te-bitwise-ops}
 
 By default, the operators `&`, `|`, and `^` represent logical AND, logical OR, and exponentiation. If `TE_BITWISE_OPERATORS` is defined,

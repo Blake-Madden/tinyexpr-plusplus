@@ -851,13 +851,13 @@ namespace te_builtins
     [[nodiscard]]
     constexpr static te_type te_supports_32bit() noexcept
         {
-        return te_parser::supports_32bit() ? 1.0 : 0.0;
+        return te_parser::supports_32bit() ? te_true_value() : te_false_value();
         }
 
     [[nodiscard]]
     constexpr static te_type te_supports_64bit() noexcept
         {
-        return te_parser::supports_64bit() ? 1.0 : 0.0;
+        return te_parser::supports_64bit() ? te_true_value() : te_false_value();
         }
 
     // cotangent
@@ -1031,7 +1031,13 @@ void te_parser::next_token(te_parser::state* theState)
             (*theState->m_next == get_decimal_separator()))
             {
             char* nEnd{ nullptr };
+#ifdef TE_FLOAT
+            theState->m_value = static_cast<te_type>(std::strtof(theState->m_next, &nEnd));
+#elif defined(TE_LONG_DOUBLE)
+            theState->m_value = static_cast<te_type>(std::strtold(theState->m_next, &nEnd));
+#else
             theState->m_value = static_cast<te_type>(std::strtod(theState->m_next, &nEnd));
+#endif
             theState->m_next = nEnd;
             theState->m_type = te_parser::state::token_type::TOK_NUMBER;
             }

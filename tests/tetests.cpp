@@ -54,6 +54,13 @@
 
 // clang-format off
 // NOLINTBEGIN
+#ifdef TE_LONG_DOUBLE
+    #define WITHIN_TYPE_CAST(x) (double)((x))
+    #define WITHIN_TYPE double
+#else
+    #define WITHIN_TYPE_CAST(x) ((x))
+    #define WITHIN_TYPE te_type
+#endif
 namespace TETesting
 {
 te_type sum0() {
@@ -199,7 +206,7 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("(1)") == 1);
 
     CHECK_THAT(tep.evaluate("pi"), Catch::Matchers::WithinRel(3.14159, 0.00001));
-    CHECK(tep.evaluate("atan(1)*4 - pi") == 0);
+    CHECK((int)tep.evaluate("atan(1)*4 - pi") == 0);
     CHECK_THAT(tep.evaluate("e"), Catch::Matchers::WithinRel(2.71828, 0.00001));
 
     CHECK(tep.evaluate("2+1") == 2 + 1);
@@ -262,9 +269,9 @@ TEST_CASE("Main tests", "[main]")
     CHECK(tep.evaluate("log10(1e3)") == 3);
     CHECK(tep.evaluate("log10 1.0e3") == 3);
 #ifndef TE_BITWISE_OPERATORS
-    CHECK(tep.evaluate("10^5*5e-5") == 5);
+    CHECK_THAT(tep.evaluate("10^5*5e-5"), Catch::Matchers::WithinRel(5, 0.00001));
 #endif
-    CHECK(tep.evaluate("10**5*5e-5") == 5);
+    CHECK_THAT(tep.evaluate("10**5*5e-5"), Catch::Matchers::WithinRel(5, 0.00001));
 
     CHECK_THAT(tep.evaluate("ln 1000"), Catch::Matchers::WithinRel(6.9078, 0.00001));
     CHECK_THAT(tep.evaluate("ln e"), Catch::Matchers::WithinRel(1.0, 0.00001));
@@ -272,33 +279,33 @@ TEST_CASE("Main tests", "[main]")
     CHECK_THAT(tep.evaluate("ln(2.7182818)"), Catch::Matchers::WithinRel(1.0, 0.00001));
     CHECK_THAT(tep.evaluate("ln(86)"), Catch::Matchers::WithinRel(4.454373, 0.00001));
 #ifndef TE_BITWISE_OPERATORS
-    CHECK(tep.evaluate("ln (e^10)") == 10);
-    CHECK(tep.evaluate("ln (e^10)") == 10);
+    CHECK_THAT(tep.evaluate("ln (e^10)"), Catch::Matchers::WithinRel(10, 0.00001));
+    CHECK_THAT(tep.evaluate("ln (e^10)"), Catch::Matchers::WithinRel(10, 0.00001));
     CHECK(tep.evaluate("100^.5+1") == 11);
     CHECK(tep.evaluate("100 ^.5+1") == 11);
     CHECK(tep.evaluate("100^+.5+1") == 11);
     CHECK(tep.evaluate("100^--.5+1") == 11);
     CHECK(tep.evaluate("100^---+-++---++-+-+-.5+1") == 11);
 
-    CHECK(tep.evaluate("100^-.5+1") == static_cast<te_type>(1.1));
-    CHECK(tep.evaluate("100^---.5+1") == static_cast<te_type>(1.1));
-    CHECK(tep.evaluate("100^+---.5+1") == static_cast<te_type>(1.1));
-    CHECK(tep.evaluate("1e2^+---.5e0+1e0") == static_cast<te_type>(1.1));
-    CHECK(tep.evaluate("--(1e2^(+(-(-(-.5e0))))+1e0)") == static_cast<te_type>(1.1));
+    CHECK_THAT(tep.evaluate("100^-.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
+    CHECK_THAT(tep.evaluate("100^---.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
+    CHECK_THAT(tep.evaluate("100^+---.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
+    CHECK_THAT(tep.evaluate("1e2^+---.5e0+1e0"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
+    CHECK_THAT(tep.evaluate("--(1e2^(+(-(-(-.5e0))))+1e0)"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
 #endif
-    CHECK(tep.evaluate("ln (e**10)") == 10);
-    CHECK(tep.evaluate("ln (e**10)") == 10);
+    CHECK_THAT(tep.evaluate("ln (e**10)"), Catch::Matchers::WithinRel(10, 0.00001));
+    CHECK_THAT(tep.evaluate("ln (e**10)"), Catch::Matchers::WithinRel(10, 0.00001));
     CHECK(tep.evaluate("100**.5+1") == 11);
     CHECK(tep.evaluate("100 **.5+1") == 11);
     CHECK(tep.evaluate("100**+.5+1") == 11);
     CHECK(tep.evaluate("100**--.5+1") == 11);
     CHECK(tep.evaluate("100**---+-++---++-+-+-.5+1") == 11);
 
-    CHECK(tep.evaluate("100**-.5+1") == static_cast<te_type>(1.1));
-    CHECK(tep.evaluate("100**---.5+1") == static_cast<te_type>(1.1));
-    CHECK(tep.evaluate("100**+---.5+1") == static_cast<te_type>(1.1));
-    CHECK(tep.evaluate("1e2**+---.5e0+1e0") == static_cast<te_type>(1.1));
-    CHECK(tep.evaluate("--(1e2**(+(-(-(-.5e0))))+1e0)") == static_cast<te_type>(1.1));
+    CHECK_THAT(tep.evaluate("100**-.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
+    CHECK_THAT(tep.evaluate("100**---.5+1"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
+    CHECK_THAT(tep.evaluate("100**+---.5+1") , Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
+    CHECK_THAT(tep.evaluate("1e2**+---.5e0+1e0"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
+    CHECK_THAT(tep.evaluate("--(1e2**(+(-(-(-.5e0))))+1e0)"), Catch::Matchers::WithinRel(static_cast<te_type>(1.1), 0.00001));
 
     CHECK(tep.evaluate("sqrt 100 + 7") == 17);
     CHECK(tep.evaluate("sqrt 100 * 7") == 70);
@@ -362,9 +369,9 @@ TEST_CASE("Main tests", "[main]")
         CHECK(tep.evaluate("round(9.57878423)") == 10);
         CHECK(tep.evaluate("round(pow(2,2))") == 4);
         // non-variadic function inside of variadic
-        CHECK(tep.evaluate("round(9.57878423, 1)") == static_cast<te_type>(9.6));
-        CHECK(tep.evaluate("round(9.57878423, 2)") == static_cast<te_type>(9.58));
-        CHECK(tep.evaluate("round(9.57878423, 3)") == static_cast<te_type>(9.579));
+        CHECK_THAT(tep.evaluate("round(9.57878423, 1)"), Catch::Matchers::WithinRel(static_cast<te_type>(9.6), 0.0001));
+        CHECK_THAT(tep.evaluate("round(9.57878423, 2)"), Catch::Matchers::WithinRel(static_cast<te_type>(9.58), 0.0001));
+        CHECK_THAT(tep.evaluate("round(9.57878423, 3)"), Catch::Matchers::WithinRel(static_cast<te_type>(9.579), 0.0001));
         CHECK(tep.evaluate("sum(9)") == 9);
         CHECK(tep.evaluate("sum(9,9)") == 18);
         CHECK(tep.evaluate("sum(9,9,9)") == 27);
@@ -386,7 +393,7 @@ TEST_CASE("Main tests", "[main]")
     SECTION("logical")
         {
         CHECK(te_parser::double_to_bool(2));
-        CHECK(te_parser::double_to_bool(22.1));
+        CHECK(te_parser::double_to_bool((WITHIN_TYPE)22.1));
         CHECK(te_parser::double_to_bool(-2));
         CHECK_FALSE(te_parser::double_to_bool(0));
         CHECK_FALSE(te_parser::double_to_bool(0.0));
@@ -642,20 +649,20 @@ TEST_CASE("Variables", "[variables]")
             te_type ev{ 0 };
 
             ev = tep.evaluate("cos x + sin y");
-            CHECK_THAT(ev, Catch::Matchers::WithinRel(std::cos(x) + std::sin(y)));
+            CHECK_THAT(ev, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::cos(x) + std::sin(y))));
 
             ev = tep.evaluate("x+x+x-y");
-            CHECK_THAT(ev, Catch::Matchers::WithinRel(x+x+x-y));
+            CHECK_THAT(ev, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(x+x+x-y)));
 #ifndef TE_BITWISE_OPERATORS
             ev = tep.evaluate("x*y^3");
-            CHECK_THAT(ev, Catch::Matchers::WithinRel(x*y*y*y));
+            CHECK_THAT(ev, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(x*y*y*y)));
 #endif
             ev = tep.evaluate("x*y**3");
-            CHECK_THAT(ev, Catch::Matchers::WithinRel(x * y * y * y));
+            CHECK_THAT(ev, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(x * y * y * y)));
 
             test = x;
             ev = tep.evaluate("te_st+5");
-            CHECK_THAT(ev, Catch::Matchers::WithinRel(x+5));
+            CHECK_THAT(ev, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(x+5)));
             }
         }
     }
@@ -743,8 +750,10 @@ TEST_CASE("Max and min values", "[max,min]")
     {
     te_parser tep;
 
-    CHECK_THAT(tep.evaluate("MINVALUE()"), Catch::Matchers::WithinRel(std::numeric_limits<te_type>::min()));
-    CHECK_THAT(tep.evaluate("MAXVALUE()"), Catch::Matchers::WithinRel(std::numeric_limits<te_type>::max()));
+    CHECK_THAT(tep.evaluate("MINVALUE()"),
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::numeric_limits<te_type>::min())));
+    CHECK_THAT(tep.evaluate("MAXVALUE()"),
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::numeric_limits<te_type>::max())));
     }
 
 TEST_CASE("Zeros", "[zeros]")
@@ -774,20 +783,27 @@ TEST_CASE("UINT support", "[uint]")
         CHECK(tep.evaluate(
             std::to_string(std::numeric_limits<uint32_t>::max()) + " - 700") ==
             std::numeric_limits<uint32_t>::max() - 700);
+        CHECK_FALSE(tep.evaluate(
+            std::to_string(std::numeric_limits<uint32_t>::max()) + " - 700") ==
+            std::numeric_limits<uint32_t>::max() - 699);
         }
 
     if constexpr(te_parser::supports_64bit())
         {
+        // should be 18446744073709551615
         INFO("Checking for handling of large value: " +
              std::to_string(std::numeric_limits<uint64_t>::max()));
-        CHECK(tep.evaluate(std::to_string(std::numeric_limits<uint64_t>::max())) ==
+        CHECK((uint64_t)tep.evaluate(std::to_string(std::numeric_limits<uint64_t>::max())) ==
               std::numeric_limits<uint64_t>::max());
-        CHECK(tep.evaluate(
+        CHECK((uint64_t)tep.evaluate(
             "(" + std::to_string(std::numeric_limits<uint64_t>::max()) + " - 100) + 100") ==
             std::numeric_limits<uint64_t>::max());
-        CHECK(tep.evaluate(
+        CHECK((uint64_t)tep.evaluate(
             std::to_string(std::numeric_limits<uint64_t>::max()) + " - 700") ==
             std::numeric_limits<uint64_t>::max() - 700);
+        CHECK_FALSE((uint64_t)tep.evaluate(
+            std::to_string(std::numeric_limits<uint64_t>::max()) + " - 700") ==
+            std::numeric_limits<uint64_t>::max() - 699);
         }
     }
 
@@ -813,44 +829,44 @@ TEST_CASE("Functions", "[functions]")
 
     for (x = -5; x < 5; x += (te_type)0.1)
         {
-        CHECK_THAT(tep.evaluate("abs x"), Catch::Matchers::WithinRel(std::fabs(x)));
+        CHECK_THAT(tep.evaluate("abs x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::fabs(x))));
         if (!std::isnan(std::acos(x)))
-            CHECK_THAT(tep.evaluate("acos x"), Catch::Matchers::WithinRel(std::acos(x)));
+            CHECK_THAT(tep.evaluate("acos x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::acos(x))));
         else
             CHECK(std::isnan(tep.evaluate("acos x")));
         if (!std::isnan(std::asin(x)))
-            CHECK_THAT(tep.evaluate("asin x"), Catch::Matchers::WithinRel(std::asin(x)));
+            CHECK_THAT(tep.evaluate("asin x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::asin(x))));
         else
             CHECK(std::isnan(tep.evaluate("asin x")));
-        CHECK_THAT(tep.evaluate("atan x"), Catch::Matchers::WithinRel(std::atan(x)));
-        CHECK_THAT(tep.evaluate("ceil x"), Catch::Matchers::WithinRel(std::ceil(x)));
-        CHECK_THAT(tep.evaluate("cos x"), Catch::Matchers::WithinRel(std::cos(x)));
-        CHECK_THAT(tep.evaluate("cosh x"), Catch::Matchers::WithinRel(std::cosh(x)));
-        CHECK_THAT(tep.evaluate("exp x"), Catch::Matchers::WithinRel(std::exp(x)));
-        CHECK_THAT(tep.evaluate("floor x"), Catch::Matchers::WithinRel(std::floor(x)));
+        CHECK_THAT(tep.evaluate("atan x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::atan(x))));
+        CHECK_THAT(tep.evaluate("ceil x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::ceil(x))));
+        CHECK_THAT(tep.evaluate("cos x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::cos(x))));
+        CHECK_THAT(tep.evaluate("cosh x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::cosh(x))));
+        CHECK_THAT(tep.evaluate("exp x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::exp(x))));
+        CHECK_THAT(tep.evaluate("floor x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::floor(x))));
         if (!std::isnan(log(x)))
-            CHECK_THAT(tep.evaluate("ln x"), Catch::Matchers::WithinRel(std::log(x)));
+            CHECK_THAT(tep.evaluate("ln x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::log(x))));
         else
             CHECK(std::isnan(tep.evaluate("ln x")));
         if (!std::isnan(std::log10(x)))
-            CHECK_THAT(tep.evaluate("log10 x"), Catch::Matchers::WithinRel(std::log10(x)));
+            CHECK_THAT(tep.evaluate("log10 x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::log10(x))));
         else
             CHECK(std::isnan(tep.evaluate("log10 x")));
-        CHECK_THAT(tep.evaluate("sin x"), Catch::Matchers::WithinRel(std::sin(x)));
-        CHECK_THAT(tep.evaluate("sinh x"), Catch::Matchers::WithinRel(std::sinh(x)));
+        CHECK_THAT(tep.evaluate("sin x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::sin(x))));
+        CHECK_THAT(tep.evaluate("sinh x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::sinh(x))));
         if (!std::isnan(std::sqrt(x)))
-            CHECK_THAT(tep.evaluate("sqrt x"), Catch::Matchers::WithinRel(std::sqrt(x)));
+            CHECK_THAT(tep.evaluate("sqrt x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::sqrt(x))));
         else
             CHECK(std::isnan(tep.evaluate("sqrt x")));
-        CHECK_THAT(tep.evaluate("tan x"), Catch::Matchers::WithinRel(std::tan(x)));
-        CHECK_THAT(tep.evaluate("tanh x"), Catch::Matchers::WithinRel(std::tanh(x)));
+        CHECK_THAT(tep.evaluate("tan x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::tan(x))));
+        CHECK_THAT(tep.evaluate("tanh x"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::tanh(x))));
 
         for (y = -2; y < 2; y += (te_type)0.2)
             {
             if (std::abs(x) < 0.01) break;
-            CHECK_THAT(tep.evaluate("atan2(x,y)"), Catch::Matchers::WithinRel(std::atan2(x, y)));
+            CHECK_THAT(tep.evaluate("atan2(x,y)"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::atan2(x, y))));
             if (!std::isnan(std::pow(x, y)))
-                CHECK_THAT(tep.evaluate("pow(x,y)"), Catch::Matchers::WithinRel(std::pow(x, y)));
+                CHECK_THAT(tep.evaluate("pow(x,y)"), Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(std::pow(x, y))));
             else
                 CHECK(std::isnan(tep.evaluate("pow(x,y)")));
             }
@@ -1204,19 +1220,19 @@ TEST_CASE("Precedence", "[precedence]")
     te_parser tep;
 
     CHECK_THAT(-26.5, // "5+2-1*31/2-20+MOD(21,2)*2" in Excel
-        Catch::Matchers::WithinRel(tep.evaluate("5+2-1*31/2-20+21%2*2")));
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("5+2-1*31/2-20+21%2*2"))));
     CHECK_THAT(-26.5,
-        Catch::Matchers::WithinRel(tep.evaluate("5+2-1*31/2-20+MOD(21,2)*2")));
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("5+2-1*31/2-20+MOD(21,2)*2"))));
 #ifndef TE_BITWISE_OPERATORS
     CHECK_THAT(-12.75,
-        Catch::Matchers::WithinRel(tep.evaluate("5+2^3-1*31/2^2-20+MOD(21,2)*2")));
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("5+2^3-1*31/2^2-20+MOD(21,2)*2"))));
     CHECK_THAT(-12.75,
-        Catch::Matchers::WithinRel(tep.evaluate("5+2^3-1*31/2^2-20+ 21% 2*2")));
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("5+2^3-1*31/2^2-20+ 21% 2*2"))));
 #endif
     CHECK_THAT(-12.75,
-        Catch::Matchers::WithinRel(tep.evaluate("5+2**3-1*31/2**2-20+MOD(21,2)*2")));
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("5+2**3-1*31/2**2-20+MOD(21,2)*2"))));
     CHECK_THAT(-12.75,
-        Catch::Matchers::WithinRel(tep.evaluate("5+2**3-1*31/2**2-20+ 21% 2*2")));
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("5+2**3-1*31/2**2-20+ 21% 2*2"))));
 
 #ifndef TE_FLOAT
     // The precedence that C++ compiler use for << and >>
@@ -1224,21 +1240,21 @@ TEST_CASE("Precedence", "[precedence]")
     // related functions like BITLSHIFT().
     CHECK_THAT((1 << 1 + 2 * 2),
         Catch::Matchers::WithinRel(
-            tep.evaluate("(1 << 1 + 2 * 2)")));
+            WITHIN_TYPE_CAST(tep.evaluate("(1 << 1 + 2 * 2)"))));
     CHECK_THAT((32 >> 1 + 2 * 2),
         Catch::Matchers::WithinRel(
-            tep.evaluate("(32 >> 1 + 2 * 2)")));
+            WITHIN_TYPE_CAST(tep.evaluate("(32 >> 1 + 2 * 2)"))));
 #else
     CHECK(std::isnan(tep.evaluate("(1 << 1 + 2 * 2)")));
 #endif
 #ifndef TE_BITWISE_OPERATORS
     CHECK_THAT(27, // this is what Excel does
                Catch::Matchers::WithinRel(
-                   tep.evaluate("5 ^ 2 + 2")));
+                   WITHIN_TYPE_CAST(tep.evaluate("5 ^ 2 + 2"))));
 #endif
     CHECK_THAT(27, // this is what Excel does
         Catch::Matchers::WithinRel(
-            tep.evaluate("5 ** 2 + 2")));
+            WITHIN_TYPE_CAST(tep.evaluate("5 ** 2 + 2"))));
     }
 
 TEST_CASE("Round", "[round]")
@@ -1377,14 +1393,14 @@ TEST_CASE("Logical operators", "[logic]")
 
     CHECK(p.evaluate("1 - 1 < 1 && 2") == 1);
     // examples from manual
-    CHECK_THAT(12.5, Catch::Matchers::WithinRel(p.evaluate("5+5+5/2")));
-    CHECK_THAT(7.5, Catch::Matchers::WithinRel(p.evaluate("(5+5+5)/2")));
+    CHECK_THAT(12.5, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate("5+5+5/2"))));
+    CHECK_THAT(7.5, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate("(5+5+5)/2"))));
 #ifndef TE_BITWISE_OPERATORS
-    CHECK_THAT(49, Catch::Matchers::WithinRel(p.evaluate("(2+5)^2")));
-    CHECK_THAT(27, Catch::Matchers::WithinRel(p.evaluate("2+5^2")));
+    CHECK_THAT(49, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate("(2+5)^2"))));
+    CHECK_THAT(27, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate("2+5^2"))));
 #endif
-    CHECK_THAT(49, Catch::Matchers::WithinRel(p.evaluate("(2+5)**2")));
-    CHECK_THAT(27, Catch::Matchers::WithinRel(p.evaluate("2+5**2")));
+    CHECK_THAT(49, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate("(2+5)**2"))));
+    CHECK_THAT(27, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate("2+5**2"))));
     }
 
 TEST_CASE("Statistics", "[stats]")
@@ -1394,107 +1410,107 @@ TEST_CASE("Statistics", "[stats]")
     p.compile(("sum(1, 2, 3, 4)"));
     CHECK(10 == p.evaluate());
     p.compile(("SUM(1.1, 2.7, 3, 4.9)"));
-    CHECK_THAT(11.7, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(11.7, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("AVERAGE(1, 2, 3, 4, 5)"));
     CHECK(3 == p.evaluate());
     p.compile(("AVERAGE(1.1, 2.7, 3.2, 4, 5.7)"));
-    CHECK_THAT(3.34, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.34, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MIN(1.1)"));
-    CHECK_THAT(1.1, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(1.1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MIN(1.1, 1.2)"));
-    CHECK_THAT(1.1, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(1.1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MIN(-1, 2)"));
-    CHECK_THAT(-1, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MIN(-1, 2, 0, -5.8, 9)"));
-    CHECK_THAT(-5.8, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-5.8, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MIN(-9, 2, 0, -5.8, 9)"));
-    CHECK_THAT(-9, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-9, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MIN(-9, -87)"));
-    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MIN(-9, 2, -87)"));
-    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MIN(-9, 2, 0, -87)"));
-    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MIN(-9, 2, 0, -5.8, -87)"));
-    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MIN(-9, 2, 0, -5.8, 9, -87)"));
-    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MIN(-9, 2, 0, -5.8, 9, 8, -87)"));
-    CHECK_THAT(-87, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-87, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MAX(1.1)"));
-    CHECK_THAT(1.1, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(1.1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MAX(1.1, 1.2)"));
-    CHECK_THAT(1.2, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(1.2, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MAX(-1, 2)"));
-    CHECK_THAT(2, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(2, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MAX(1.1, 1.2, 0, 5.8)"));
-    CHECK_THAT(5.8, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(5.8, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MAX(9.1, 1.2, 0, 5.8)"));
-    CHECK_THAT(9.1, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(9.1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MAX(9.1, 127)"));
-    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MAX(9.1, 1.2, 127)"));
-    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MAX(9.1, 1.2, 0, 127)"));
-    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MAX(9.1, 1.2, 0, 5.8, 127)"));
-    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MAX(9.1, 1.2, 0, 5.8, 80, 127)"));
-    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("MAX(9.1, 1.2, 0, 5.8, 80, -1, 127)"));
-    CHECK_THAT(127, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(127, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     }
 
 TEST_CASE("Round higher precision", "[round]")
     {
     te_parser p;
 
-    CHECK_THAT(23.78, Catch::Matchers::WithinRel(p.evaluate("round(23.7825, 2)")));
+    CHECK_THAT(23.78, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate("round(23.7825, 2)"))));
 
     p.compile(("ROUND(-1.475, 2)"));
-    CHECK_THAT(-1.48, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-1.48, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(1.55, 1)"));
-    CHECK_THAT(1.6, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(1.6, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("ROUND(-1.55, 1)"));
-    CHECK_THAT(-1.6, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-1.6, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(3.1415678, 2)"));
-    CHECK_THAT(3.14, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.14, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(3.1415678, 3)"));
-    CHECK_THAT(3.142, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.142, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(3.1415678, 4)"));
-    CHECK_THAT(3.1416, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.1416, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(3.1415678, 5)"));
-    CHECK_THAT(3.14157, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.14157, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(3.1415678, 6)"));
-    CHECK_THAT(3.141568, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.141568, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(3.14156785, 7)"));
-    CHECK_THAT(3.1415679, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.1415679, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), 0.0000001));
 
     p.compile(("round(3.141567854, 8)"));
-    CHECK_THAT(3.14156785, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.14156785, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(3.1415678546, 9)"));
-    CHECK_THAT(3.141567855, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.141567855, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(3.14156785467, 10)"));
-    CHECK_THAT(3.1415678547, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.1415678547, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(3.141567854672, 11)"));
-    CHECK_THAT(3.14156785467, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.14156785467, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(3.1415678546727, 12)"));
-    CHECK_THAT(3.141567854673, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3.141567854673, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("round(-3.1415678, 6)"));
-    CHECK_THAT(-3.141568, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-3.141568, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     }
 
 TEST_CASE("Round negative", "[round]")
@@ -1522,19 +1538,19 @@ TEST_CASE("Math operators", "[math]")
     te_parser p;
 
     p.compile(("9*3/2+8-2"));
-    CHECK_THAT(19.5, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(19.5, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("9*((3/2)+(8-2))")); // change up the order of operations
-    CHECK_THAT(67.5, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(67.5, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 #ifndef TE_BITWISE_OPERATORS
     p.compile(("9*3^3/2+8-(11%2)"));
-    CHECK_THAT(128.5, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(128.5, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("9.2*3.4^3/2+8.7-(11%2)"));
-    CHECK_THAT(188.4984, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(188.4984, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 #endif
     p.compile(("9*3**3/2+8-(11%2)"));
-    CHECK_THAT(128.5, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(128.5, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("9.2*3.4**3/2+8.7-(11%2)"));
-    CHECK_THAT(188.4984, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(188.4984, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     }
 
 TEST_CASE("Division", "[math]")
@@ -1542,7 +1558,7 @@ TEST_CASE("Division", "[math]")
     te_parser p;
 
     p.compile("4/2.2");
-    CHECK_THAT(1.81818, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(1.81818, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
     CHECK(std::isnan(p.evaluate("5 / 0")));
     CHECK_FALSE(p.success());
     CHECK(p.get_last_error_message() == "Division by zero.");
@@ -1641,28 +1657,28 @@ TEST_CASE("Custom test", "[functions]")
         {
         p.set_variables_and_functions({ {"Return5", return5} });
         p.compile("Return5()");
-        CHECK_THAT(5, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(5, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         }
     SECTION("1 Parameter")
         {
         p.set_variables_and_functions({ { "value", __value} });
         p.compile("value(2.1)");
-        CHECK_THAT(2.1, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(2.1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         }
     SECTION("2 Parameters")
         {
         p.set_variables_and_functions({ { "AddEm", AddEm} });
         p.compile("ADDEM(2.1, 86.8)");
-        CHECK_THAT(88.9, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(88.9, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         }
     SECTION("3 Parameters")
         {
         p.set_variables_and_functions({ {"AddEm3", AddEm3} });
         p.compile("ADDEM3(2.1, 86.8, 2)");
-        CHECK_THAT(90.9, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(90.9, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         p.remove_variable_or_function("Bogus"); // nothing should happen
         p.compile(("ADDEM3(2.1, 86.8, 2)"));
-        CHECK_THAT(90.9, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(90.9, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         // remove function
         p.remove_variable_or_function("addem3");
         CHECK_FALSE(p.compile(("ADDEM3(2.1, 86.8, 2)")));
@@ -1672,9 +1688,9 @@ TEST_CASE("Custom test", "[functions]")
         p.set_variables_and_functions({ {"STRESS_L", static_cast<te_type>(10.1) },
             {"P_LEVEL", static_cast<te_type>(.5) } });
         p.compile("STRESS_L*P_LEVEL");
-        CHECK_THAT(5.05, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(5.05, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         p.set_constant("P_LEVEL", static_cast<te_type>(.9));
-        CHECK_THAT(9.09, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(9.09, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         p.compile(("IF(STRESS_L >= P_LEVEL, 1, 0)"));
         CHECK(1 == p.evaluate());
         }
@@ -1711,22 +1727,22 @@ TEST_CASE("Funcs and vars with period", "[functions]")
         {
         p.set_variables_and_functions({ {"MATH.Return5", return5} });
         p.compile(("math.Return5()"));
-        CHECK_THAT(5, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(5, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         }
     SECTION("2 Parameters")
         {
         p.set_variables_and_functions({ { "MATH.AddEm", AddEm} });
         p.compile(("math.ADDEM(2.1, 86.8)"));
-        CHECK_THAT(88.9, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(88.9, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         }
     SECTION("Custom variables")
         {
         p.set_variables_and_functions({ {"STATS.STRESS_L", static_cast<te_type>(10.1) },
             {"stats.REGRESSION.P_LEVEL", static_cast<te_type>(.5) } });
         p.compile(("statS.STRESS_L*StAts.REGRESSION.P_LEVEL"));
-        CHECK_THAT(5.05, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(5.05, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         p.set_constant("statS.REGRESSION.P_LEVEL", static_cast<te_type>(.9));
-        CHECK_THAT(9.09, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(9.09, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         p.compile(("IF(StAts.STRESS_L >= Stats.REGRESSION.P_LEVEL, 1, 0)"));
         CHECK(1 == p.evaluate());
         // comma (instead of period) will cause a syntax error
@@ -1755,22 +1771,22 @@ TEST_CASE("Funcs and vars start with underscore", "[functions]")
         {
         p.set_variables_and_functions({ {"_MATH.Return5", return5} });
         p.compile(("_math.Return5()"));
-        CHECK_THAT(5, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(5, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         }
     SECTION("2 Parameters")
         {
         p.set_variables_and_functions({ { "_MATH.AddEm", AddEm} });
         p.compile(("_math.ADDEM(2.1, 86.8)"));
-        CHECK_THAT(88.9, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(88.9, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         }
     SECTION("Custom variables")
         {
         p.set_variables_and_functions({ {"_STATS.STRESS_L", static_cast<te_type>(10.1) },
             {"_stats.REGRESSION.P_LEVEL", static_cast<te_type>(.5) } });
         p.compile(("_statS.STRESS_L*_StAts.REGRESSION.P_LEVEL"));
-        CHECK_THAT(5.05, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(5.05, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         p.set_constant("_statS.REGRESSION.P_LEVEL", static_cast<te_type>(.9));
-        CHECK_THAT(9.09, Catch::Matchers::WithinRel(p.evaluate()));
+        CHECK_THAT(9.09, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
         p.compile(("IF(_StAts.STRESS_L >= _Stats.REGRESSION.P_LEVEL, 1, 0)"));
         CHECK(1 == p.evaluate());
         // comma (instead of period) will cause a syntax error
@@ -1802,7 +1818,7 @@ NAN)
 
     // we have enough observations now
     tep.set_constant("N_OBS", 31);
-    CHECK_THAT(.049, Catch::Matchers::WithinRel(tep.evaluate()));
+    CHECK_THAT(.049, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate())));
 
     // try it with some comments
     res = tep.evaluate(R"(
@@ -1819,7 +1835,7 @@ P_LEVEL,
 NAN)
 )");
     CHECK(tep.success());
-    CHECK_THAT(.049, Catch::Matchers::WithinRel(tep.evaluate()));
+    CHECK_THAT(.049, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate())));
 
     // same, but with & operator
     res = tep.evaluate(R"(
@@ -1828,7 +1844,7 @@ P_LEVEL,
 NAN)
 )");
     tep.set_constant("N_OBS", 31);
-    CHECK_THAT(.049, Catch::Matchers::WithinRel(tep.evaluate()));
+    CHECK_THAT(.049, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate())));
 
     tep.set_constant("P_LEVEL", static_cast<te_type>(.06));
     res = tep.evaluate(R"(
@@ -1846,14 +1862,14 @@ IF(P_LEVEL < .05 | N_OBS >= 30,
 P_LEVEL,
 NAN)
 )");
-    CHECK_THAT(.06, Catch::Matchers::WithinRel(tep.evaluate()));
+    CHECK_THAT(.06, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate())));
 
     res = tep.evaluate(R"(
 IF(OR(P_LEVEL < .05, N_OBS >= 30),
 P_LEVEL,
 NAN)
 )");
-    CHECK_THAT(.06, Catch::Matchers::WithinRel(tep.evaluate()));
+    CHECK_THAT(.06, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate())));
 
     res = tep.evaluate(R"(/*Nothing but comments*/)");
     // no expression
@@ -1861,15 +1877,19 @@ NAN)
 
     // complicated formula
 #ifndef TE_BITWISE_OPERATORS
-    CHECK_THAT(4.5, Catch::Matchers::WithinRel(tep.evaluate("ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2")));
+    CHECK_THAT(4.5,
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2"))));
 #endif
-    CHECK_THAT(4.5, Catch::Matchers::WithinRel(tep.evaluate("ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5**2")));
+    CHECK_THAT(4.5,
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5**2"))));
 
     // make it look like an Excel function
 #ifndef TE_BITWISE_OPERATORS
-    CHECK_THAT(4.5, Catch::Matchers::WithinRel(tep.evaluate("=ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2")));
+    CHECK_THAT(4.5,
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("=ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5^2"))));
 #endif
-    CHECK_THAT(4.5, Catch::Matchers::WithinRel(tep.evaluate("=ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5**2")));
+    CHECK_THAT(4.5,
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("=ABS(((5+2) / (ABS(-2))) * -9 + 2) - 5**2"))));
     }
 
 TEST_CASE("Permutation & Combination", "[math]")
@@ -1904,96 +1924,96 @@ TEST_CASE("Additional math functions", "[math]")
     te_parser p;
 
     p.compile(("SQR(3)"));
-    CHECK_THAT(9, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(9, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("SIN(3)"));
-    CHECK_THAT(0.141120008, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(0.141120008, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
 
     p.compile(("COS(7)"));
-    CHECK_THAT(.7539, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(.7539, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
 
     p.compile(("TAN(7)"));
-    CHECK_THAT(.871447983, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(.871447983, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
 
     p.compile(("ATAN(7)"));
-    CHECK_THAT(1.42889927, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(1.42889927, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
 
     p.compile(("SINH(7)"));
-    CHECK_THAT(548.316123, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(548.316123, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
 
     p.compile(("COSH(1)"));
-    CHECK_THAT(1.54308, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(1.54308, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
 
     p.compile(("FLOOR(-3.2)"));
-    CHECK_THAT(-4, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-4, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("FLOOR(3.2)"));
-    CHECK_THAT(3, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("CEIL(-3.2)"));
-    CHECK_THAT(-3, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-3, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("CEIL(3.2)"));
-    CHECK_THAT(4, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(4, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("TRUNC(-3.2)"));
-    CHECK_THAT(-3, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-3, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("TRUNC(3.2)"));
-    CHECK_THAT(3, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("LOG10(10)"));
-    CHECK_THAT(1, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("LOG10(100)"));
-    CHECK_THAT(2, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(2, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("LN(10)"));
-    CHECK_THAT(2.30258509, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(2.30258509, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
 
     p.compile(("LN(100)"));
-    CHECK_THAT(4.60517019, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(4.60517019, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
 
     p.compile(("ABS(-2.7)"));
-    CHECK_THAT(2.7, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(2.7, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("ABS(68.84)"));
-    CHECK_THAT(68.84, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(68.84, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("IF(0, 1, -1)"));
-    CHECK_THAT(-1, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("IF(1, 1, -1)"));
-    CHECK_THAT(1, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("POW(3, 3)"));
-    CHECK_THAT(27, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(27, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("POW(3, 0)"));
-    CHECK_THAT(1, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("POW(-4, 2)"));
-    CHECK_THAT(16, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(16, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("SIGN(-85.6)"));
-    CHECK_THAT(-1, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(-1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("SIGN(89.0)"));
-    CHECK_THAT(1, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(1, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("SIGN(0)"));
-    CHECK_THAT(0, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(0, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
 
     p.compile(("COT(0.1)"));
-    CHECK_THAT(9.9666, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(9.9666, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
 
     p.compile(("COT(1.57)"));
-    CHECK_THAT(0.0007963, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(0.0007963, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
 
     p.compile(("EXP(3)"));
-    CHECK_THAT(20.085540, Catch::Matchers::WithinRel(p.evaluate(), (te_type)0.0001));
+    CHECK_THAT(20.085540, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate()), (WITHIN_TYPE)0.0001));
 
     p.compile(("SQRT(9)"));
-    CHECK_THAT(3, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(3, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     p.compile(("SQRT(27.04)"));
-    CHECK_THAT(5.2, Catch::Matchers::WithinRel(p.evaluate()));
+    CHECK_THAT(5.2, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(p.evaluate())));
     }
 
 TEST_CASE("Logical functions", "[logic]")
@@ -2799,10 +2819,10 @@ TEST_CASE("Volatile", "[volatile]")
         { {"STRESS_L", static_cast<te_type>(10.1) },
           {"P_LEVEL", static_cast<te_type>(.5) } });
     const_cast<te_parser&>(vTep).compile(("STRESS_L*P_LEVEL"));
-    CHECK_THAT(5.05, Catch::Matchers::WithinRel(const_cast<te_parser&>(vTep).evaluate()));
-    CHECK_THAT(5.05, Catch::Matchers::WithinRel(const_cast<te_parser&>(vTep).evaluate("STRESS_L*P_LEVEL")));
+    CHECK_THAT(5.05, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(const_cast<te_parser&>(vTep).evaluate())));
+    CHECK_THAT(5.05, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(const_cast<te_parser&>(vTep).evaluate("STRESS_L*P_LEVEL"))));
     const_cast<te_parser&>(vTep).set_constant("P_LEVEL", static_cast<te_type>(.9));
-    CHECK_THAT(9.09, Catch::Matchers::WithinRel(const_cast<te_parser&>(vTep).evaluate()));
+    CHECK_THAT(9.09, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(const_cast<te_parser&>(vTep).evaluate())));
     const_cast<te_parser&>(vTep).compile(("IF(STRESS_L >= P_LEVEL, 1, 0)"));
     CHECK(const_cast<te_parser&>(vTep).evaluate() == 1);
     CHECK(vTep.get_result() == 1);
