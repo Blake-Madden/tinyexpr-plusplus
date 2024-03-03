@@ -847,6 +847,12 @@ namespace te_builtins
         {
         return te_parser::te_max_value;
         }
+    
+    [[nodiscard]]
+    static te_type te_max_integer() noexcept
+        {
+        return te_parser::get_max_integer();
+        }
 
     [[nodiscard]]
     constexpr static te_type te_supports_32bit() noexcept
@@ -973,6 +979,7 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "log10", static_cast<te_fun1>(te_builtins::te_log10), TE_PURE },
     { "max", static_cast<te_fun7>(te_builtins::te_max),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
+    { "maxint", static_cast<te_fun0>(te_builtins::te_max_integer), TE_PURE },
     { "maxvalue", static_cast<te_fun0>(te_builtins::te_max_value), TE_PURE },
     { "min", static_cast<te_fun7>(te_builtins::te_min),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },

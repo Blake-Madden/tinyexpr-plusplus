@@ -53,6 +53,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cctype>
+#include <cfloat>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -269,6 +270,18 @@ class te_parser
     constexpr static bool supports_64bit() noexcept
         {
         return std::numeric_limits<te_type>::digits >= std::numeric_limits<uint64_t>::digits;
+        }
+    /// @returns The largest integer value that the parser can handle without truncation.
+    static te_type get_max_integer()
+        {
+#ifdef TE_FLOAT
+        const te_type maxBit = std::ldexp(1, FLT_MANT_DIG - 1);
+#elif defined(TE_LONG_DOUBLE)
+        const te_type maxBit = std::ldexp(1, LDBL_MANT_DIG - 1);
+#else
+        const te_type maxBit = std::ldexp(1, DBL_MANT_DIG - 1);
+#endif
+        return maxBit + (maxBit - 1);
         }
     /** @brief Parses the input @c expression.
         @param expression The formula to compile.
