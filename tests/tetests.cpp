@@ -1313,7 +1313,7 @@ TEST_CASE("Logical operators", "[logic]")
     CHECK(0 == p.evaluate());
     // AND and OR
     p.compile(("0 || 1 && 1 || 0 && 1"));
-    constexpr double result{ (0 || 1 & 1 || 0 & 1) };
+    constexpr double result{ (0 | 1 & 1 | 0 & 1) };
     CHECK(result == p.evaluate());
     // equality
     p.compile(("5=5"));
