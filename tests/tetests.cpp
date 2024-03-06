@@ -2179,6 +2179,9 @@ TEST_CASE("Bitwise operators", "[bitwise]")
         CHECK(tep.evaluate("8000 | 4294967295") ==
             (8000 | 4294967295));
 #endif
+        CHECK(tep.evaluate("=BITOR((2^48)-1, 1)") == 281474976710655);
+        CHECK(tep.evaluate("=BITOR((2^48)-1, (2^48)-1)") == 281474976710655);
+        CHECK(std::isnan(tep.evaluate("=BITOR((2^48)-1, (2^48))")));
         CHECK(tep.evaluate("BITOR(23, 10)") == 31);
         CHECK(tep.evaluate("BITOR(23, 0)") == (23 | 0));
         CHECK(tep.evaluate("BITOR(0, 10)") == (0 | 10));
@@ -2210,6 +2213,10 @@ TEST_CASE("Bitwise operators", "[bitwise]")
         CHECK(tep.evaluate("8000  ^ 4294967295") ==
             (8000 ^ 4294967295));
 #endif
+        CHECK(tep.evaluate("=BITXOR((2^48)-1, 1)") == 281474976710654);
+        CHECK(tep.evaluate("=BITXOR((2^48)-1, (2^48)-1)") == 0);
+        CHECK(tep.evaluate("=BITXOR((2^48)-1, 1587)") == 281474976709068);
+        CHECK(std::isnan(tep.evaluate("=BITXOR((2^48)-1, (2^48))")));
         CHECK(tep.evaluate("BITXOR(5,3)") == 6);
         CHECK(tep.evaluate("BITXOR(5,9)") == 12);
         CHECK(tep.evaluate("BITXOR(23, 0)") == (23 ^ 0));
@@ -2233,6 +2240,10 @@ TEST_CASE("Bitwise operators", "[bitwise]")
         CHECK(tep.evaluate("23 & 0") == (23 & 0));
         CHECK(tep.evaluate("0 & 10") == (0 & 10));
 #endif
+        CHECK(tep.evaluate("=BITAND((2^48)-1, 1)") == 1);
+        CHECK(tep.evaluate("=BITAND((2^48)-1, (2^48)-1)") == 281474976710655);
+        CHECK(tep.evaluate("=BITAND((2^48)-1, 1587)") == 1587);
+        CHECK(std::isnan(tep.evaluate("=BITAND((2^48)-1, (2^48))")));
         CHECK(tep.evaluate("BITAND(1, 5)") == 1);
         CHECK(tep.evaluate("BITAND(13, 25)") == 9);
         CHECK(tep.evaluate("BITAND(23, 0)") == (23 & 0));
@@ -2262,7 +2273,7 @@ TEST_CASE("Rotate operators", "[rotate]")
         CHECK(tep.evaluate("BITLROTATE8(255, 0)") == std::rotl(i, 0));
         CHECK(tep.evaluate("BITLROTATE8(255, 1)") == std::rotl(i, 1));
         CHECK(tep.evaluate("BITLROTATE8(255, 4)") == std::rotl(i, 4));
-        CHECK(tep.evaluate("BITLROTATE8(255, 9)") == std::rotl(i, 9));
+        CHECK(std::isnan(tep.evaluate("BITLROTATE8(255, 9)")));
         CHECK(tep.evaluate("BITLROTATE8(255, -1)") == std::rotl(i, -1));
         }
     SECTION("BITLROTATE16")
@@ -2285,7 +2296,7 @@ TEST_CASE("Rotate operators", "[rotate]")
         CHECK(tep.evaluate("BITLROTATE32(4294967295, 9)") == std::rotl(i, 9));
         CHECK(tep.evaluate("BITLROTATE32(4294967295, -1)") == std::rotl(i, -1));
         }
-    SECTION("BITLROTATE64")
+    SECTION("BITLROTATE")
         {
         // malformed
         CHECK(std::isnan(tep.evaluate("5 <")));
@@ -2300,12 +2311,12 @@ TEST_CASE("Rotate operators", "[rotate]")
         CHECK(tep.evaluate("4294967295 <<< 9") == std::rotl(i, 9));
         CHECK(tep.evaluate("4294967295 <<< -1") == std::rotl(i, -1));
 
-        CHECK(tep.evaluate("BITLROTATE64(0, 0)") == std::rotl((uint64_t)0, 0));
-        CHECK(tep.evaluate("BITLROTATE64(4294967295, 0)") == std::rotl(i, 0));
-        CHECK(tep.evaluate("BITLROTATE64(4294967295, 1)") == std::rotl(i, 1));
-        CHECK(tep.evaluate("BITLROTATE64(4294967295, 4)") == std::rotl(i, 4));
-        CHECK(tep.evaluate("BITLROTATE64(4294967295, 9)") == std::rotl(i, 9));
-        CHECK(tep.evaluate("BITLROTATE64(4294967295, -1)") == std::rotl(i, -1));
+        CHECK(tep.evaluate("BITLROTATE(0, 0)") == std::rotl((uint64_t)0, 0));
+        CHECK(tep.evaluate("BITLROTATE(4294967295, 0)") == std::rotl(i, 0));
+        CHECK(tep.evaluate("BITLROTATE(4294967295, 1)") == std::rotl(i, 1));
+        CHECK(tep.evaluate("BITLROTATE(4294967295, 4)") == std::rotl(i, 4));
+        CHECK(tep.evaluate("BITLROTATE(4294967295, 9)") == std::rotl(i, 9));
+        CHECK(tep.evaluate("BITLROTATE(4294967295, -1)") == std::rotl(i, -1));
         }
 
     SECTION("BITRROTATE8")
@@ -2315,7 +2326,7 @@ TEST_CASE("Rotate operators", "[rotate]")
         CHECK(tep.evaluate("BITRROTATE8(255, 0)") == std::rotr(i, 0));
         CHECK(tep.evaluate("BITRROTATE8(255, 1)") == std::rotr(i, 1));
         CHECK(tep.evaluate("BITRROTATE8(255, 4)") == std::rotr(i, 4));
-        CHECK(tep.evaluate("BITRROTATE8(255, 9)") == std::rotr(i, 9));
+        CHECK(std::isnan(tep.evaluate("BITRROTATE8(255, 9)")));
         CHECK(tep.evaluate("BITRROTATE8(255, -1)") == std::rotr(i, -1));
         }
     SECTION("BITRROTATE16")
@@ -2338,7 +2349,7 @@ TEST_CASE("Rotate operators", "[rotate]")
         CHECK(tep.evaluate("BITRROTATE32(4294967295, 9)") == std::rotr(i, 9));
         CHECK(tep.evaluate("BITRROTATE32(4294967295, -1)") == std::rotr(i, -1));
         }
-    SECTION("BITRROTATE64")
+    SECTION("BITRROTATE")
         {
         // malformed
         CHECK(std::isnan(tep.evaluate("5 >")));
@@ -2355,12 +2366,12 @@ TEST_CASE("Rotate operators", "[rotate]")
         CHECK(tep.evaluate("4294967295 >>> 9") == std::rotr(i, 9));
         CHECK(tep.evaluate("4294967295 >>> -1") == std::rotr(i, -1));
 
-        CHECK(tep.evaluate("BITRROTATE64(0, 0)") == std::rotr((uint64_t)0, 0));
-        CHECK(tep.evaluate("BITRROTATE64(4294967295, 0)") == std::rotr(i, 0));
-        CHECK(tep.evaluate("BITRROTATE64(4294967295, 1)") == std::rotr(i, 1));
-        CHECK(tep.evaluate("BITRROTATE64(4294967295, 4)") == std::rotr(i, 4));
-        CHECK(tep.evaluate("BITRROTATE64(4294967295, 9)") == std::rotr(i, 9));
-        CHECK(tep.evaluate("BITRROTATE64(4294967295, -1)") == std::rotr(i, -1));
+        CHECK(tep.evaluate("BITRROTATE(0, 0)") == std::rotr((uint64_t)0, 0));
+        CHECK(tep.evaluate("BITRROTATE(4294967295, 0)") == std::rotr(i, 0));
+        CHECK(tep.evaluate("BITRROTATE(4294967295, 1)") == std::rotr(i, 1));
+        CHECK(tep.evaluate("BITRROTATE(4294967295, 4)") == std::rotr(i, 4));
+        CHECK(tep.evaluate("BITRROTATE(4294967295, 9)") == std::rotr(i, 9));
+        CHECK(tep.evaluate("BITRROTATE(4294967295, -1)") == std::rotr(i, -1));
         }
     }
 #endif
@@ -2370,12 +2381,12 @@ TEST_CASE("Shift operators", "[shift]")
     {
     te_parser tep;
 
-    for (uint64_t i = 0; i < 63; ++i)
+    for (uint64_t i = 0; i < te_parser::get_max_integer_bitness()+1; ++i)
         {
         CHECK(tep.evaluate((std::string("1 << ") + std::to_string(i)).c_str()) == ((uint64_t)1 << i));
         CHECK(tep.evaluate((std::string("1 >> ") + std::to_string(i)).c_str()) == ((uint64_t)1 >> i));
         }
-    for (uint64_t i = 0; i < 62; ++i)
+    for (uint64_t i = 0; i < te_parser::get_max_integer_bitness()+1; ++i)
         {
         CHECK(tep.evaluate((std::string("2 << ") + std::to_string(i)).c_str()) == ((uint64_t)2 << i));
         CHECK(tep.evaluate((std::string("2 >> ") + std::to_string(i)).c_str()) == ((uint64_t)2 >> i));
@@ -2401,17 +2412,14 @@ TEST_CASE("Shift operators", "[shift]")
         }
     SECTION("Left")
         {
-        CHECK_FALSE(tep.compile("1 << 64"));
+        CHECK_FALSE(tep.compile("1 << 54"));
         CHECK(std::isnan(tep.evaluate()));
-        CHECK(tep.get_last_error_message() == "Additive expression of left shift (<<) operation must be between 0-63.");
         CHECK(tep.evaluate("0 << 4") == ((uint64_t)0 << 4));
         CHECK(std::isnan(tep.evaluate("1 << 64")));
         CHECK(std::isnan(tep.evaluate("1 << -5")));
-        CHECK(tep.get_last_error_message() == "Additive expression of left shift (<<) operation must be between 0-63.");
-        CHECK(tep.evaluate("31 << 59") == ((uint64_t)31 << 59));
+        CHECK(tep.evaluate("31 << 53") == ((uint64_t)31 << 53));
         // overflow
         CHECK(std::isnan(tep.evaluate("32 << 59")));
-        CHECK(tep.get_last_error_message() == "Overflow in left shift (<<) operation; base number is too large.");
         CHECK(std::isnan(tep.evaluate("2 << 63")));
         CHECK(std::isnan(tep.evaluate("-1 << 2")));
         CHECK(tep.evaluate("1.0 << 4.0") == ((uint64_t)1 << 4));
@@ -2436,7 +2444,6 @@ TEST_CASE("Shift operators", "[shift]")
         CHECK(std::isnan(tep.evaluate("1 >> 64")));
         CHECK(std::isnan(tep.get_result()));
         CHECK(std::isnan(tep.evaluate("1 >> -5")));
-        CHECK(tep.get_last_error_message() == "Additive expression of right shift (>>) operation must be between 0-63.");
         CHECK(std::isnan(tep.get_result()));
         CHECK(tep.evaluate("32 >> 4") == ((uint64_t)32 >> 4));
         CHECK(tep.evaluate("32 >> 5") == ((uint64_t)32 >> 5));

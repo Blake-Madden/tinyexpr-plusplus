@@ -257,6 +257,9 @@ class te_parser
     /// @brief No position, which is what get_last_error_position() returns
     ///     when there was no parsing error.
     constexpr static int64_t npos = -1;
+    /// @private
+    // (2^48)-1
+    constexpr static double MAX_BITOPS_VAL{ 281474976710655 }; // NOLINT
     /// @returns @c true if the parser's internal type can hold `uint32_t` without truncation.
     [[nodiscard]]
     constexpr static bool supports_32bit() noexcept
@@ -268,6 +271,13 @@ class te_parser
     constexpr static bool supports_64bit() noexcept
         {
         return std::numeric_limits<te_type>::digits >= std::numeric_limits<uint64_t>::digits;
+        }
+    /// @returns The bits available in the internal data type.\n
+    ///     This will affect the largest integer size that can be used in bitwise operations.
+    [[nodiscard]]
+    constexpr static int get_max_integer_bitness() noexcept
+        {
+        return std::numeric_limits<te_type>::digits;
         }
     /// @returns The largest integer value that the parser can handle without truncation.
     [[nodiscard]]

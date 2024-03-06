@@ -446,6 +446,10 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise RIGHT ROTATE value must be positive.");
             }
+        else if (val2 > 8)
+            {
+            throw std::runtime_error("Rotation operation must be between 0-8.");
+            }
 
         return static_cast<te_type>(std::rotr(static_cast<uint8_t>(val1), static_cast<int>(val2)));
         }
@@ -461,6 +465,10 @@ namespace te_builtins
         else if (val1 < 0)
             {
             throw std::runtime_error("Bitwise LEFT ROTATE value must be positive.");
+            }
+        else if (val2 > 8)
+            {
+            throw std::runtime_error("Rotation operation must be between 0-8.");
             }
 
         return static_cast<te_type>(std::rotl(static_cast<uint8_t>(val1), static_cast<int>(val2)));
@@ -478,6 +486,10 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise RIGHT ROTATE value must be positive.");
             }
+        else if (val2 > 16)
+            {
+            throw std::runtime_error("Rotation operation must be between 0-16.");
+            }
 
         return static_cast<te_type>(std::rotr(static_cast<uint16_t>(val1), static_cast<int>(val2)));
         }
@@ -493,6 +505,10 @@ namespace te_builtins
         else if (val1 < 0)
             {
             throw std::runtime_error("Bitwise LEFT ROTATE value must be positive.");
+            }
+        else if (val2 > 16)
+            {
+            throw std::runtime_error("Rotation operation must be between 0-16.");
             }
 
         return static_cast<te_type>(std::rotl(static_cast<uint16_t>(val1), static_cast<int>(val2)));
@@ -510,6 +526,10 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise RIGHT ROTATE value must be positive.");
             }
+        else if (val2 > 32)
+            {
+            throw std::runtime_error("Rotation operation must be between 0-32.");
+            }
 
         return static_cast<te_type>(std::rotr(static_cast<uint32_t>(val1), static_cast<int>(val2)));
         }
@@ -526,13 +546,17 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise LEFT ROTATE value must be positive.");
             }
+        else if (val2 > 32)
+            {
+            throw std::runtime_error("Rotation operation must be between 0-32.");
+            }
 
         return static_cast<te_type>(std::rotl(static_cast<uint32_t>(val1), static_cast<int>(val2)));
         }
 
     //--------------------------------------------------
     [[nodiscard]]
-    static te_type te_right_rotate64(te_type val1, te_type val2)
+    static te_type te_right_rotate(te_type val1, te_type val2)
         {
         if (std::floor(val1) != val1 || std::floor(val2) != val2)
             {
@@ -542,13 +566,18 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise RIGHT ROTATE value must be positive.");
             }
+        else if (val2 > te_parser::get_max_integer_bitness())
+            {
+            throw std::runtime_error("Rotation operation must be between 0-" +
+                std::to_string(te_parser::get_max_integer_bitness()));
+            }
 
         return static_cast<te_type>(std::rotr(static_cast<uint64_t>(val1), static_cast<int>(val2)));
         }
 
     //--------------------------------------------------
     [[nodiscard]]
-    static te_type te_left_rotate64(te_type val1, te_type val2)
+    static te_type te_left_rotate(te_type val1, te_type val2)
         {
         if (std::floor(val1) != val1 || std::floor(val2) != val2)
             {
@@ -557,6 +586,11 @@ namespace te_builtins
         else if (val1 < 0)
             {
             throw std::runtime_error("Bitwise LEFT ROTATE value must be positive.");
+            }
+        else if (val2 > te_parser::get_max_integer_bitness())
+            {
+            throw std::runtime_error("Rotation operation must be between 0-" +
+                std::to_string(te_parser::get_max_integer_bitness()));
             }
 
         return static_cast<te_type>(std::rotl(static_cast<uint64_t>(val1), static_cast<int>(val2)));
@@ -577,6 +611,10 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise OR operation must use positive integers.");
             }
+        else if (val1 > te_parser::MAX_BITOPS_VAL || val2 > te_parser::MAX_BITOPS_VAL)
+            {
+            throw std::runtime_error("Value is too large for bitwise operation.");
+            }
         return static_cast<te_type>(static_cast<uint64_t>(val1) | static_cast<uint64_t>(val2));
         }
 
@@ -593,6 +631,10 @@ namespace te_builtins
         else if (val1 < 0 || val2 < 0)
             {
             throw std::runtime_error("Bitwise XOR operation must use positive integers.");
+            }
+        else if (val1 > te_parser::MAX_BITOPS_VAL || val2 > te_parser::MAX_BITOPS_VAL)
+            {
+            throw std::runtime_error("Value is too large for bitwise operation.");
             }
         return static_cast<te_type>(static_cast<uint64_t>(val1) ^ static_cast<uint64_t>(val2));
         }
@@ -611,6 +653,10 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise AND operation must use positive integers.");
             }
+        else if (val1 > te_parser::MAX_BITOPS_VAL || val2 > te_parser::MAX_BITOPS_VAL)
+            {
+            throw std::runtime_error("Value is too large for bitwise operation.");
+            }
         return static_cast<te_type>(static_cast<uint64_t>(val1) & static_cast<uint64_t>(val2));
         }
 
@@ -619,27 +665,30 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_left_shift(te_type val1, te_type val2)
         {
-        constexpr int BITNESS_64BIT{ 64 }; // NOLINT
-
         if (std::floor(val1) != val1)
             {
             throw std::runtime_error("Left side of left shift (<<) operation must be an integer.");
             }
-        if (std::floor(val2) != val2)
+        else if (std::floor(val2) != val2)
             {
             throw std::runtime_error(
                 "Additive expression of left shift (<<) operation must be an integer.");
             }
-        if (val1 < 0)
+        else if (val1 < 0)
             {
             throw std::runtime_error("Left side of left shift (<<) operation cannot be negative.");
             }
-        // bitness is limited to 64-bit, so ensure shift doesn't go beyond that
+        else if (val1 > te_parser::MAX_BITOPS_VAL)
+            {
+            throw std::runtime_error("Value is too large for bitwise operation.");
+            }
+        // bitness is limited to 53-bit, so ensure shift doesn't go beyond that
         // and cause undefined behavior
-        if (val2 < 0 || val2 >= BITNESS_64BIT)
+        else if (val2 < 0 || val2 > te_parser::get_max_integer_bitness())
             {
             throw std::runtime_error(
-                "Additive expression of left shift (<<) operation must be between 0-63.");
+                "Additive expression of left shift (<<) operation must be between 0-" +
+                    std::to_string(te_parser::get_max_integer_bitness()));
             }
 
         const auto multipler = (static_cast<uint64_t>(1) << static_cast<uint64_t>(val2));
@@ -656,25 +705,28 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_right_shift(te_type val1, te_type val2)
         {
-        constexpr int BITNESS_64BIT{ 64 }; // NOLINT
-
         if (std::floor(val1) != val1)
             {
             throw std::runtime_error("Left side of right shift (>>) operation must be an integer.");
             }
-        if (std::floor(val2) != val2)
+        else if (std::floor(val2) != val2)
             {
             throw std::runtime_error(
-                "Additive expression of right shift (>>)operation must be an integer.");
+                "Additive expression of right shift (>>) operation must be an integer.");
             }
-        if (val1 < 0)
+        else if (val1 < 0)
             {
             throw std::runtime_error("Left side of right shift (<<) operation cannot be negative.");
             }
-        if (val2 < 0 || val2 >= BITNESS_64BIT)
+        else if (val1 > te_parser::MAX_BITOPS_VAL)
+            {
+            throw std::runtime_error("Value is too large for bitwise operation.");
+            }
+        else if (val2 < 0 || val2 > te_parser::get_max_integer_bitness())
             {
             throw std::runtime_error(
-                "Additive expression of right shift (>>) operation must be between 0-63.");
+                "Additive expression of right shift (>>) operation must be between 0-" +
+                    std::to_string(te_parser::get_max_integer_bitness()));
             }
 
         return static_cast<te_type>(static_cast<uint64_t>(val1) >> static_cast<uint64_t>(val2));
@@ -934,8 +986,8 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "bitrrotate16", static_cast<te_fun2>(te_builtins::te_right_rotate16), TE_PURE },
     { "bitlrotate32", static_cast<te_fun2>(te_builtins::te_left_rotate32), TE_PURE },
     { "bitrrotate32", static_cast<te_fun2>(te_builtins::te_right_rotate32), TE_PURE },
-    { "bitlrotate64", static_cast<te_fun2>(te_builtins::te_left_rotate64), TE_PURE },
-    { "bitrrotate64", static_cast<te_fun2>(te_builtins::te_right_rotate64), TE_PURE },
+    { "bitlrotate", static_cast<te_fun2>(te_builtins::te_left_rotate), TE_PURE },
+    { "bitrrotate", static_cast<te_fun2>(te_builtins::te_right_rotate), TE_PURE },
 #endif
     { "bitlshift", static_cast<te_fun2>(te_builtins::te_left_shift_or_right), TE_PURE },
     { "bitrshift", static_cast<te_fun2>(te_builtins::te_right_shift_or_left), TE_PURE },
@@ -1234,14 +1286,14 @@ void te_parser::next_token(te_parser::state* theState)
                          (*std::next(theState->m_next) == '<'))
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
-                    theState->m_value = static_cast<te_fun2>(te_builtins::te_left_rotate64);
+                    theState->m_value = static_cast<te_fun2>(te_builtins::te_left_rotate);
                     std::advance(theState->m_next, 2);
                     }
                 else if (tok == '>' && (*theState->m_next == '>') &&
                          (*std::next(theState->m_next) == '>'))
                     {
                     theState->m_type = te_parser::state::token_type::TOK_INFIX;
-                    theState->m_value = static_cast<te_fun2>(te_builtins::te_right_rotate64);
+                    theState->m_value = static_cast<te_fun2>(te_builtins::te_right_rotate);
                     std::advance(theState->m_next, 2);
                     }
 #else
@@ -1665,8 +1717,8 @@ te_expr* te_parser::expr_level8(te_parser::state* theState)
             get_function2(theState->m_value) == te_builtins::te_right_shift
 #if __cplusplus >= 202002L && !defined(TE_FLOAT)
             ||
-            get_function2(theState->m_value) == te_builtins::te_left_rotate64 ||
-            get_function2(theState->m_value) == te_builtins::te_right_rotate64 ||
+            get_function2(theState->m_value) == te_builtins::te_left_rotate ||
+            get_function2(theState->m_value) == te_builtins::te_right_rotate ||
             get_function2(theState->m_value) == te_builtins::te_left_rotate32 ||
             get_function2(theState->m_value) == te_builtins::te_right_rotate32 ||
             get_function2(theState->m_value) == te_builtins::te_left_rotate16 ||
