@@ -2050,9 +2050,9 @@ te_expr* te_parser::power(te_parser::state* theState)
               get_function2(theState->m_value) == te_builtins::te_sub)) ||
 #ifndef TE_FLOAT
             (is_function1(theState->m_value) &&
-             (get_function1(theState->m_value) == te_builtins::te_bitwise_not)) )
+             (get_function1(theState->m_value) == te_builtins::te_bitwise_not))
 #endif
-        )
+        ) )
         {
         if (is_function2(theState->m_value) &&
             get_function2(theState->m_value) == te_builtins::te_sub)
