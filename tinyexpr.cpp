@@ -2047,8 +2047,9 @@ te_expr* te_parser::power(te_parser::state* theState)
     while (theState->m_type == te_parser::state::token_type::TOK_INFIX &&
            ((is_function2(theState->m_value) &&
              (get_function2(theState->m_value) == te_builtins::te_add ||
-              get_function2(theState->m_value) == te_builtins::te_sub)) ||
+              get_function2(theState->m_value) == te_builtins::te_sub))
 #ifndef TE_FLOAT
+            ||
             (is_function1(theState->m_value) &&
              (get_function1(theState->m_value) == te_builtins::te_bitwise_not))
 #endif
