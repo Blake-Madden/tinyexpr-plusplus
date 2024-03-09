@@ -52,19 +52,26 @@ Table: Math Functions\index{functions!math}
 | BITLROTATE8(Number, RotateAmount) | Returns *Number* left rotated left to the most significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as an unsigned 8-bit integer.<br>\linebreak (Only available if compiled as C++20.) |
 | BITLROTATE16(Number, RotateAmount) | Returns *Number* left rotated left to the most significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as an unsigned 16-bit integer.<br>\linebreak (Only available if compiled as C++20.) |
 | BITLROTATE32(Number, RotateAmount) | Returns *Number* left rotated left to the most significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as an unsigned 32-bit integer.<br>\linebreak (Only available if compiled as C++20.) |
-| BITLROTATE(Number, RotateAmount) | Returns *Number* left rotated left to the most significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as an unsigned 53-bit (or 64-bit) integer.<br>\linebreak Note, however, that values beyond the range of `double` should not be used as they will wrap around.<br>\linebreak (Only available if compiled as C++20.) |
-| BITLSHIFT(Number, ShiftAmount) | Returns *Number* left shifted by the specified number (*ShiftAmount*) of bits.<br>\linebreak *Number* cannot exceed `(2^48)-1` and *ShiftAmount* cannot exceed `53` (or `64`, if supported). |
+| BITLROTATE64(Number, RotateAmount) | Returns *Number* left rotated left to the most significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as an unsigned 64-bit integer.<br>\linebreak (Only available if compiled as C++20.) |
+| BITLROTATE(Number, RotateAmount) | Returns *Number* left rotated left to the most significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as either a 32- or 64-bit integer (depending on what is supported by the compiler).<br>\linebreak (Only available if compiled as C++20.) |
+| BITLSHIFT(Number, ShiftAmount) | Returns *Number* left shifted by the specified number (*ShiftAmount*) of bits.<br>\linebreak *Number* cannot exceed `(2^48)-1` and *ShiftAmount* cannot exceed `53` (or `63`, if 64-bit is supported). |
+| BITNOT8(Number) | Returns a bitwise 'NOT' of a 8-bit integer. |
+| BITNOT16(Number) | Returns a bitwise 'NOT' of a 16-bit integer. |
+| BITNOT32(Number) | Returns a bitwise 'NOT' of a 32-bit integer. |
+| BITNOT64(Number) | Returns a bitwise 'NOT' of a 64-bit integer (if 64-bit integers are supported). |
+| BITNOT(Number) | Returns a bitwise 'NOT' of a 32- or 64-bit integer (depending on whether 64-bit is supported). |
 | BITOR(Number1, Number2) | Returns a bitwise 'OR' of two (integral) numbers. (Both numbers must be positive and cannot exceed `(2^48)-1`.) |
 | BITRROTATE8(Number, RotateAmount) | Returns *Number* right rotated right to the least significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as an unsigned 8-bit integer.<br>\linebreak (Only available if compiled as C++20.) |
 | BITRROTATE16(Number, RotateAmount) | Returns *Number* right rotated right to the least significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as an unsigned 16-bit integer.<br>\linebreak (Only available if compiled as C++20.) |
 | BITRROTATE32(Number, RotateAmount) | Returns *Number* right rotated right to the least significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as an unsigned 32-bit integer.<br>\linebreak (Only available if compiled as C++20.) |
-| BITRROTATE(Number, RotateAmount) | Returns *Number* right rotated right to the least significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as an unsigned 53-bit (or 64-bit) integer.<br>\linebreak Note, however, that values beyond the range of `double` should not be used as they will wrap around.<br>\linebreak (Only available if compiled as C++20.) |
-| BITRSHIFT(Number, ShiftAmount) | Returns *Number* right shifted by the specified number (*ShiftAmount*) of bits.<br>\linebreak *Number* cannot exceed `(2^48)-1` and *ShiftAmount* cannot exceed `53` (or `64`, if supported). |
+| BITRROTATE64(Number, RotateAmount) | Returns *Number* right rotated right to the least significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as an unsigned 64-bit integer.<br>\linebreak (Only available if compiled as C++20.) |
+| BITRROTATE(Number, RotateAmount) | Returns *Number* right rotated right to the least significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak *Number* is rotated as either a 32- or 64-bit integer (depending on what is supported by the compiler).<br>\linebreak (Only available if compiled as C++20.) |
+| BITRSHIFT(Number, ShiftAmount) | Returns *Number* right shifted by the specified number (*ShiftAmount*) of bits.<br>\linebreak *Number* cannot exceed `(2^48)-1` and *ShiftAmount* cannot exceed `53` (or `63`, if 64-bit is supported). |
 | BITXOR(Number1, Number2) | Returns a bitwise 'XOR' of two (integral) numbers. (Both numbers must be positive and cannot exceed `(2^48)-1`.) |
 | SUPPORTS32BIT() | Returns true if 32-bit integers are supported. This will affect the supported range of values for bitwise operations. |
 | SUPPORTS64BIT() | Returns true if 64-bit integers are supported. This will affect the supported range of values for bitwise operations. |
 
-Table: Bitwise Functions\index{functions!bitwise}
+Table: Engineering Functions\index{functions!engineering}
 :::
 
 ::: {.notesection data-latex=""}
@@ -96,3 +103,8 @@ Table: Logic Functions\index{functions!logical}
 The first argument to any logic function must be valid (i.e., not NaN). If the first argument evaluates to NaN, then NaN will be returned.
 Any subsequent arguments that evaluate to NaN will be ignored.
 :::
+
+## Compatibility Note {-}
+
+`BITNOT` will call either `BITNOT32` or `BITNOT64`, depending on whether 64-bit integers are supported.
+This differs from *Excel*, which only works with 16-bit integers. To match the behavior of *Excel*, explicitly call `BITNOT16`.

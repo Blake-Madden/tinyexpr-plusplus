@@ -10,7 +10,7 @@ The following operators\index{operators} are supported within math expressions:
 | % | Modulus: Divides two values and returns the remainder. |
 | + | Addition. |
 | \- | Subtraction. |
-| ^ | Either exponentiation or bitwise XOR. Exponentiation is the default; define `TE_BITWISE_OPERATORS` to enable bitwise behavior. For exponentiation, the number in front of ^ is the base, the number after it is the power to raise it to. |
+| ^ | Either exponentiation (the default) or bitwise XOR. For exponentiation, the number in front of ^ is the base, the number after it is the power to raise it to. |
 | ** | Exponentiation. (This is an alias for ^) |
 | < | Less than. |
 | \> | Greater than. |
@@ -20,17 +20,22 @@ The following operators\index{operators} are supported within math expressions:
 | \=\= | Equals. (This is an alias for \=) |
 | <> | Not equal to. |
 | \!\= | Not equal to. (This is an alias for <>) |
-| & | Either logical or bitwise conjunction (AND). Logical is the default, define `TE_BITWISE_OPERATORS` to enable bitwise behavior. |
-| && | Either logical conjunction (AND). |
-| \| | Logical  or bitwise alternative (OR). Logical is the default, define `TE_BITWISE_OPERATORS` to enable bitwise behavior. |
-| \|\| | Logical alternative (OR). |
+| &   | Either logical (the default) or bitwise conjunction (AND). |
+| &&  | Logical conjunction (AND). |
+| \|  | Either Logical (the default) or bitwise alternative (OR). |
+| \|\ | | Logical alternative (OR). |
 | ( ) | Groups sub-expressions, overriding the order of operations. |
-| << | Bitwise left shift. |
-| >> | Bitwise right shift. |
+| ~   | Bitwise NOT. |
+| <<  | Bitwise left shift. |
+| >>  | Bitwise right shift. |
 | <<< | Bitwise left rotate. (Only available if compiled as C++20.) |
 | >>> | Bitwise right rotate. (Only available if compiled as C++20.) |
 
 Table: Operators
+:::
+
+::: {.tipsection data-latex=""}
+Define `TE_BITWISE_OPERATORS` to enable bitwise behavior for `&`, `|`, and `^`.
 :::
 
 ::: {.minipage data-latex="{\textwidth}"}
@@ -39,7 +44,7 @@ For operators, the order of precedence is:
 | Operator | Description |
 | :-- | :-- |
 | ( ) | Instructions in parentheses are executed first. (If `TE_BRACKETS_AS_PARENS` is defined, then `[]` are treated the same way.) |
-| \+ and - | Positive or negative sign for a value. |
+| \+, -, ~ | Positive or negative sign for a value, and bitwise NOT. |
 | ^   | Exponentiation. |
 | \*, /, and % | Multiplication, division, and modulus. |
 | \+ and - | Addition and subtraction. |

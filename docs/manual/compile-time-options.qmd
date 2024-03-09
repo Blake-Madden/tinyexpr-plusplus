@@ -67,9 +67,11 @@ If compiling as C++20 (and `TE_FLOAT` is not defined), then the following functi
 - `BITLROTATE16`
 - `BITLROTATE32`
 - `BITLROTATE64`
+- `BITLROTATE`
 - `BITRROTATE8`
 - `BITRROTATE16`
 - `BITRROTATE32`
 - `BITRROTATE64`
+- `BITRROTATE`
 - `<<<` (unsigned 64-bit left rotation)
 - `>>>` (unsigned 64-bit right rotation)

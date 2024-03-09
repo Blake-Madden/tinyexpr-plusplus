@@ -2179,9 +2179,9 @@ TEST_CASE("Bitwise operators", "[bitwise]")
         CHECK(tep.evaluate("8000 | 4294967295") ==
             (8000 | 4294967295));
 #endif
-        CHECK(tep.evaluate("=BITOR((2^48)-1, 1)") == 281474976710655);
-        CHECK(tep.evaluate("=BITOR((2^48)-1, (2^48)-1)") == 281474976710655);
-        CHECK(std::isnan(tep.evaluate("=BITOR((2^48)-1, (2^48))")));
+        CHECK(tep.evaluate("=BITOR((2**48)-1, 1)") == 281474976710655);
+        CHECK(tep.evaluate("=BITOR((2**48)-1, (2**48)-1)") == 281474976710655);
+        CHECK(std::isnan(tep.evaluate("=BITOR((2**48)-1, (2**48))")));
         CHECK(tep.evaluate("BITOR(23, 10)") == 31);
         CHECK(tep.evaluate("BITOR(23, 0)") == (23 | 0));
         CHECK(tep.evaluate("BITOR(0, 10)") == (0 | 10));
@@ -2213,10 +2213,10 @@ TEST_CASE("Bitwise operators", "[bitwise]")
         CHECK(tep.evaluate("8000  ^ 4294967295") ==
             (8000 ^ 4294967295));
 #endif
-        CHECK(tep.evaluate("=BITXOR((2^48)-1, 1)") == 281474976710654);
-        CHECK(tep.evaluate("=BITXOR((2^48)-1, (2^48)-1)") == 0);
-        CHECK(tep.evaluate("=BITXOR((2^48)-1, 1587)") == 281474976709068);
-        CHECK(std::isnan(tep.evaluate("=BITXOR((2^48)-1, (2^48))")));
+        CHECK(tep.evaluate("=BITXOR((2**48)-1, 1)") == 281474976710654);
+        CHECK(tep.evaluate("=BITXOR((2**48)-1, (2**48)-1)") == 0);
+        CHECK(tep.evaluate("=BITXOR((2**48)-1, 1587)") == 281474976709068);
+        CHECK(std::isnan(tep.evaluate("=BITXOR((2**48)-1, (2**48))")));
         CHECK(tep.evaluate("BITXOR(5,3)") == 6);
         CHECK(tep.evaluate("BITXOR(5,9)") == 12);
         CHECK(tep.evaluate("BITXOR(23, 0)") == (23 ^ 0));
@@ -2240,10 +2240,10 @@ TEST_CASE("Bitwise operators", "[bitwise]")
         CHECK(tep.evaluate("23 & 0") == (23 & 0));
         CHECK(tep.evaluate("0 & 10") == (0 & 10));
 #endif
-        CHECK(tep.evaluate("=BITAND((2^48)-1, 1)") == 1);
-        CHECK(tep.evaluate("=BITAND((2^48)-1, (2^48)-1)") == 281474976710655);
-        CHECK(tep.evaluate("=BITAND((2^48)-1, 1587)") == 1587);
-        CHECK(std::isnan(tep.evaluate("=BITAND((2^48)-1, (2^48))")));
+        CHECK(tep.evaluate("=BITAND((2**48)-1, 1)") == 1);
+        CHECK(tep.evaluate("=BITAND((2**48)-1, (2**48)-1)") == 281474976710655);
+        CHECK(tep.evaluate("=BITAND((2**48)-1, 1587)") == 1587);
+        CHECK(std::isnan(tep.evaluate("=BITAND((2**48)-1, (2**48))")));
         CHECK(tep.evaluate("BITAND(1, 5)") == 1);
         CHECK(tep.evaluate("BITAND(13, 25)") == 9);
         CHECK(tep.evaluate("BITAND(23, 0)") == (23 & 0));
@@ -2257,6 +2257,84 @@ TEST_CASE("Bitwise operators", "[bitwise]")
             (4294967295 & 8000));
         CHECK(tep.evaluate("BITAND(8000, 4294967295)") ==
             (8000 & 4294967295));
+        }
+
+    SECTION("BITNOT8")
+        {
+        for (uint8_t i = 0; i < std::numeric_limits<decltype(i)>::max(); ++i)
+            {
+            decltype(i) res = ~i;
+            REQUIRE(tep.evaluate("=BITNOT8(" + std::to_string(i) + ")") == res);
+            }
+        }
+
+    SECTION("BITNOT16")
+        {
+        for (uint16_t i = 0; i < std::numeric_limits<decltype(i)>::max(); ++i)
+            {
+            decltype(i) res = ~i;
+            REQUIRE(tep.evaluate("=BITNOT16(" + std::to_string(i) + ")") == res);
+            }
+        // Excel example
+        REQUIRE(tep.evaluate("=BITNOT16(6)") == 65529);
+        }
+
+    SECTION("BITNOT32")
+        {
+        // not practical to check every possible value, so do the extremes and middle
+        uint32_t val{ std::numeric_limits<uint32_t>::max() };
+        decltype(val) res = ~val;
+        CHECK(tep.evaluate("=BITNOT32(" + std::to_string(val) + ")") == res);
+
+        val /= 2;
+        res = ~val;
+        CHECK(tep.evaluate("=BITNOT32(" + std::to_string(val) + ")") == res);
+
+        val = 0;
+        res = ~val;
+        CHECK(tep.evaluate("=BITNOT32(" + std::to_string(val) + ")") == res);
+
+        // ~ falling back to 32-bit
+        if constexpr(!te_parser::supports_64bit() &&
+            te_parser::supports_32bit())
+            {
+            val = std::numeric_limits<uint32_t>::max();
+            decltype(val) res = ~val;
+            CHECK(tep.evaluate("~" + std::to_string(val)) == res);
+
+            val /= 2;
+            res = ~val;
+            CHECK(tep.evaluate("~" + std::to_string(val)) == res);
+
+            val = 1986;
+            res = ~val;
+            CHECK(tep.evaluate("~" + std::to_string(val)) == res);
+            CHECK(tep.evaluate("+~1986") == res);
+            CHECK(tep.evaluate("~+1986") == res);
+            }
+        }
+
+    SECTION("BITNOT64")
+        {
+        if constexpr(te_parser::supports_64bit())
+            {
+            // not practical to check every possible value, so do the extremes and middle
+            uint64_t val{ std::numeric_limits<uint64_t>::max() };
+            decltype(val) res = ~val;
+            CHECK(tep.evaluate("=BITNOT64(" + std::to_string(val) + ")") == res);
+
+            val /= 2;
+            res = ~val;
+            CHECK(tep.evaluate("=BITNOT64(" + std::to_string(val) + ")") == res);
+
+            val = 0;
+            res = ~val;
+            CHECK(tep.evaluate("=BITNOT64(" + std::to_string(val) + ")") == res);
+            }
+        else
+            {
+            CHECK(std::isnan(tep.evaluate("=BITNOT64(0)")));
+            }
         }
     }
 #endif
@@ -2303,20 +2381,40 @@ TEST_CASE("Rotate operators", "[rotate]")
         CHECK(std::isnan(tep.evaluate("5 <<")));
         CHECK(std::isnan(tep.evaluate("5 <<<")));
 
-        std::uint64_t i = 4294967295;
-        CHECK(tep.evaluate("0 <<< 0") == std::rotl((uint64_t)0, 0));
-        CHECK(tep.evaluate("4294967295 <<< 0") == std::rotl(i, 0));
-        CHECK(tep.evaluate("4294967295 <<< 1") == std::rotl(i, 1));
-        CHECK(tep.evaluate("4294967295 <<< 4") == std::rotl(i, 4));
-        CHECK(tep.evaluate("4294967295 <<< 9") == std::rotl(i, 9));
-        CHECK(tep.evaluate("4294967295 <<< -1") == std::rotl(i, -1));
+        if constexpr(te_parser::supports_64bit())
+            {
+            const std::uint64_t i = 4294967295;
+            CHECK(tep.evaluate("0 <<< 0") == std::rotl((uint64_t)0, 0));
+            CHECK(tep.evaluate("4294967295 <<< 0") == std::rotl(i, 0));
+            CHECK(tep.evaluate("4294967295 <<< 1") == std::rotl(i, 1));
+            CHECK(tep.evaluate("4294967295 <<< 4") == std::rotl(i, 4));
+            CHECK(tep.evaluate("4294967295 <<< 9") == std::rotl(i, 9));
+            CHECK(tep.evaluate("4294967295 <<< -1") == std::rotl(i, -1));
 
-        CHECK(tep.evaluate("BITLROTATE(0, 0)") == std::rotl((uint64_t)0, 0));
-        CHECK(tep.evaluate("BITLROTATE(4294967295, 0)") == std::rotl(i, 0));
-        CHECK(tep.evaluate("BITLROTATE(4294967295, 1)") == std::rotl(i, 1));
-        CHECK(tep.evaluate("BITLROTATE(4294967295, 4)") == std::rotl(i, 4));
-        CHECK(tep.evaluate("BITLROTATE(4294967295, 9)") == std::rotl(i, 9));
-        CHECK(tep.evaluate("BITLROTATE(4294967295, -1)") == std::rotl(i, -1));
+            CHECK(tep.evaluate("BITLROTATE(0, 0)") == std::rotl((uint64_t)0, 0));
+            CHECK(tep.evaluate("BITLROTATE(4294967295, 0)") == std::rotl(i, 0));
+            CHECK(tep.evaluate("BITLROTATE(4294967295, 1)") == std::rotl(i, 1));
+            CHECK(tep.evaluate("BITLROTATE(4294967295, 4)") == std::rotl(i, 4));
+            CHECK(tep.evaluate("BITLROTATE(4294967295, 9)") == std::rotl(i, 9));
+            CHECK(tep.evaluate("BITLROTATE(4294967295, -1)") == std::rotl(i, -1));
+            }
+        else if constexpr (te_parser::supports_32bit())
+            {
+            const std::uint32_t i = 4294967295;
+            CHECK(tep.evaluate("0 <<< 0") == std::rotl((uint32_t)0, 0));
+            CHECK(tep.evaluate("4294967295 <<< 0") == std::rotl(i, 0));
+            CHECK(tep.evaluate("4294967295 <<< 1") == std::rotl(i, 1));
+            CHECK(tep.evaluate("4294967295 <<< 4") == std::rotl(i, 4));
+            CHECK(tep.evaluate("4294967295 <<< 9") == std::rotl(i, 9));
+            CHECK(tep.evaluate("4294967295 <<< -1") == std::rotl(i, -1));
+
+            CHECK(tep.evaluate("BITLROTATE(0, 0)") == std::rotl((uint32_t)0, 0));
+            CHECK(tep.evaluate("BITLROTATE(4294967295, 0)") == std::rotl(i, 0));
+            CHECK(tep.evaluate("BITLROTATE(4294967295, 1)") == std::rotl(i, 1));
+            CHECK(tep.evaluate("BITLROTATE(4294967295, 4)") == std::rotl(i, 4));
+            CHECK(tep.evaluate("BITLROTATE(4294967295, 9)") == std::rotl(i, 9));
+            CHECK(tep.evaluate("BITLROTATE(4294967295, -1)") == std::rotl(i, -1));
+            }
         }
 
     SECTION("BITRROTATE8")
@@ -2356,22 +2454,46 @@ TEST_CASE("Rotate operators", "[rotate]")
         CHECK(std::isnan(tep.evaluate("5 >>")));
         CHECK(std::isnan(tep.evaluate("5 >>>")));
 
-        // TODO limited to 32-bit int until possible long double support
-        // can be added (at least for some compilers)
-        constexpr std::uint64_t i = std::numeric_limits<uint32_t>::max();;
-        CHECK(tep.evaluate("0 >>> 0") == std::rotr((uint64_t)0, 0));
-        CHECK(tep.evaluate("4294967295 >>> 0") == std::rotr(i, 0));
-        CHECK(tep.evaluate("4294967295 >>> 1") == std::rotr(i, 1));
-        CHECK(tep.evaluate("4294967295 >>> 4") == std::rotr(i, 4));
-        CHECK(tep.evaluate("4294967295 >>> 9") == std::rotr(i, 9));
-        CHECK(tep.evaluate("4294967295 >>> -1") == std::rotr(i, -1));
+        if constexpr (te_parser::supports_64bit())
+            {
+            constexpr std::uint64_t i = std::numeric_limits<uint64_t>::max();
+            CHECK(tep.evaluate("0 >>> 0") == std::rotr((uint64_t)0, 0));
+            CHECK(tep.evaluate(std::to_string(i) + " >>> 0") == std::rotr(i, 0));
+            CHECK(tep.evaluate(std::to_string(i) + " >>> 1") == std::rotr(i, 1));
+            CHECK(tep.evaluate(std::to_string(i) + " >>> 4") == std::rotr(i, 4));
+            CHECK(tep.evaluate(std::to_string(i) + " >>> 9") == std::rotr(i, 9));
+            CHECK(tep.evaluate(std::to_string(i) + " >>> -1") == std::rotr(i, -1));
 
-        CHECK(tep.evaluate("BITRROTATE(0, 0)") == std::rotr((uint64_t)0, 0));
-        CHECK(tep.evaluate("BITRROTATE(4294967295, 0)") == std::rotr(i, 0));
-        CHECK(tep.evaluate("BITRROTATE(4294967295, 1)") == std::rotr(i, 1));
-        CHECK(tep.evaluate("BITRROTATE(4294967295, 4)") == std::rotr(i, 4));
-        CHECK(tep.evaluate("BITRROTATE(4294967295, 9)") == std::rotr(i, 9));
-        CHECK(tep.evaluate("BITRROTATE(4294967295, -1)") == std::rotr(i, -1));
+            CHECK(tep.evaluate("BITRROTATE64(" + std::to_string(i) + ", 0)") == std::rotr(i, 0));
+            CHECK(tep.evaluate("BITRROTATE64(" + std::to_string(i) + ", 1)") == std::rotr(i, 1));
+            CHECK(tep.evaluate("BITRROTATE64(" + std::to_string(i) + ", 4)") == std::rotr(i, 4));
+            CHECK(tep.evaluate("BITRROTATE64(" + std::to_string(i) + ", 9)") == std::rotr(i, 9));
+            CHECK(tep.evaluate("BITRROTATE64(" + std::to_string(i) + ", -1)") == std::rotr(i, -1));
+
+            CHECK(tep.evaluate("BITRROTATE(0, 0)") == std::rotr((uint64_t)0, 0));
+            CHECK(tep.evaluate("BITRROTATE(" + std::to_string(i) + ", 0)") == std::rotr(i, 0));
+            CHECK(tep.evaluate("BITRROTATE(" + std::to_string(i) + ", 1)") == std::rotr(i, 1));
+            CHECK(tep.evaluate("BITRROTATE(" + std::to_string(i) + ", 4)") == std::rotr(i, 4));
+            CHECK(tep.evaluate("BITRROTATE(" + std::to_string(i) + ", 9)") == std::rotr(i, 9));
+            CHECK(tep.evaluate("BITRROTATE(" + std::to_string(i) + ", -1)") == std::rotr(i, -1));
+            }
+        else if constexpr (te_parser::supports_32bit())
+            {
+            constexpr std::uint32_t i = std::numeric_limits<uint32_t>::max();
+            CHECK(tep.evaluate("0 >>> 0") == std::rotr((uint32_t)0, 0));
+            CHECK(tep.evaluate("4294967295 >>> 0") == std::rotr(i, 0));
+            CHECK(tep.evaluate("4294967295 >>> 1") == std::rotr(i, 1));
+            CHECK(tep.evaluate("4294967295 >>> 4") == std::rotr(i, 4));
+            CHECK(tep.evaluate("4294967295 >>> 9") == std::rotr(i, 9));
+            CHECK(tep.evaluate("4294967295 >>> -1") == std::rotr(i, -1));
+
+            CHECK(tep.evaluate("BITRROTATE(0, 0)") == std::rotr((uint32_t)0, 0));
+            CHECK(tep.evaluate("BITRROTATE(4294967295, 0)") == std::rotr(i, 0));
+            CHECK(tep.evaluate("BITRROTATE(4294967295, 1)") == std::rotr(i, 1));
+            CHECK(tep.evaluate("BITRROTATE(4294967295, 4)") == std::rotr(i, 4));
+            CHECK(tep.evaluate("BITRROTATE(4294967295, 9)") == std::rotr(i, 9));
+            CHECK(tep.evaluate("BITRROTATE(4294967295, -1)") == std::rotr(i, -1));
+            }
         }
     }
 #endif
@@ -2381,16 +2503,20 @@ TEST_CASE("Shift operators", "[shift]")
     {
     te_parser tep;
 
-    for (uint64_t i = 0; i < te_parser::get_max_integer_bitness()+1; ++i)
+    for (uint64_t i = 0; i < te_parser::get_max_integer_bitness() + (te_parser::supports_64bit() ? 0 : 1); ++i)
         {
+        INFO("Shift: " + std::to_string(i));
         CHECK(tep.evaluate((std::string("1 << ") + std::to_string(i)).c_str()) == ((uint64_t)1 << i));
         CHECK(tep.evaluate((std::string("1 >> ") + std::to_string(i)).c_str()) == ((uint64_t)1 >> i));
         }
-    for (uint64_t i = 0; i < te_parser::get_max_integer_bitness()+1; ++i)
+    for (uint64_t i = 0; i < te_parser::get_max_integer_bitness() + (te_parser::supports_64bit() ? -1 : 1); ++i)
         {
+        INFO("Shift: " + std::to_string(i));
         CHECK(tep.evaluate((std::string("2 << ") + std::to_string(i)).c_str()) == ((uint64_t)2 << i));
         CHECK(tep.evaluate((std::string("2 >> ") + std::to_string(i)).c_str()) == ((uint64_t)2 >> i));
         }
+    // will be too large, even for 64-bit
+    CHECK(std::isnan(tep.evaluate("2 << 63")));
     SECTION("BITLSHIFT")
         {
         CHECK(tep.evaluate("BITLSHIFT(2, 25)") == 67108864);
@@ -2412,10 +2538,18 @@ TEST_CASE("Shift operators", "[shift]")
         }
     SECTION("Left")
         {
-        CHECK_FALSE(tep.compile("1 << 54"));
-        CHECK(std::isnan(tep.evaluate()));
         CHECK(tep.evaluate("0 << 4") == ((uint64_t)0 << 4));
-        CHECK(std::isnan(tep.evaluate("1 << 64")));
+        if constexpr(te_parser::supports_64bit())
+            {
+            CHECK(tep.compile("1 << 54"));
+            CHECK(tep.evaluate("1 << 63") == ((uint64_t)1 << 63));
+            }
+        else
+            {
+            CHECK_FALSE(tep.compile("1 << 54"));
+            CHECK(std::isnan(tep.evaluate()));
+            CHECK(std::isnan(tep.evaluate("1 << 63")));
+            }
         CHECK(std::isnan(tep.evaluate("1 << -5")));
         CHECK(tep.evaluate("31 << 53") == ((uint64_t)31 << 53));
         // overflow
@@ -2441,8 +2575,14 @@ TEST_CASE("Shift operators", "[shift]")
     SECTION("Right")
         {
         CHECK(tep.evaluate("0 >> 4") == ((uint64_t)0 >> 4));
-        CHECK(std::isnan(tep.evaluate("1 >> 64")));
-        CHECK(std::isnan(tep.get_result()));
+        if constexpr (te_parser::supports_64bit())
+            {
+            CHECK(tep.evaluate("1 >> 63") == ((uint64_t)1 >> 63));
+            }
+        else
+            {
+            CHECK(std::isnan(tep.evaluate("1 >> 63")));
+            }
         CHECK(std::isnan(tep.evaluate("1 >> -5")));
         CHECK(std::isnan(tep.get_result()));
         CHECK(tep.evaluate("32 >> 4") == ((uint64_t)32 >> 4));

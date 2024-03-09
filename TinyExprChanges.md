@@ -34,11 +34,12 @@ The following are changes from the original TinyExpr C library:
   - `and`: returns true (i.e., non-zero) if all conditions are true (accepts 1-7 arguments).
   - `average`: returns the mean for a range of values (accepts 1-7 arguments).
   - `bitand`: bitwise AND.
-  - `bitlrotate64`: bitwise (`uint64_t`) left rotate. (Only available if compiled as C++20.)
+  - `bitlrotate`: bitwise left rotate. Versions of this are available for 8-, 16-, 32-, and 64-bit integers (if supported by the platform). (Only available if compiled as C++20.)
   - `bitlshift`: left shift.
      Negative shift amount arguments (similar to *Excel*) are supported.
+  - `bitnot`: bitwise NOT. Versions of this are available for 8-, 16-, 32-, and 64-bit integers (if supported by the platform).
   - `bitor`: bitwise OR.
-  - `bitrrotate64`: bitwise (`uint64_t`) right rotate. (Only available if compiled as C++20.)
+  - `bitrrotate`: bitwise right rotate. Versions of this are available for 8-, 16-, 32-, and 64-bit integers (if supported by the platform). (Only available if compiled as C++20.)
   - `bitrshift`: right shift.
      Negative shift amount arguments (similar to *Excel*) are supported.
   - `bitxor`: bitwise XOR.
@@ -87,6 +88,7 @@ The following are changes from the original TinyExpr C library:
   - `<<<`  left (`uint64_t`) rotation operator.
   - `>>>`  right (`uint64_t`) rotation operator.
   - `**`   exponentiation (alias for `^`).
+  - `~`    bitwise NOT.
 - `round` now supports negative number of digit arguments, similar to *Excel*.
   For example, `ROUND(-50.55,-2)` will yield `-100`.
 - Custom variables and functions are now stored in a `std::set`
