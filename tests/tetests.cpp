@@ -757,6 +757,19 @@ TEST_CASE("Zeros", "[zeros]")
     CHECK(std::isnan(tep.evaluate("(1%0)%1")));
     }
 
+TEST_CASE("Hex", "[hex]")
+    {
+    te_parser tep;
+
+    CHECK(tep.evaluate("0x0") == 0);
+    CHECK(tep.evaluate("0x8") == 8);
+    CHECK(tep.evaluate("0x1FFFFFFFFFFFFF") == 9007199254740991);
+    CHECK(tep.evaluate("0x57CEF7") == 5754615);
+    CHECK(tep.evaluate("0x57CEF7") == 5754615);
+    CHECK(tep.evaluate("-0X57CEF7") == -5754615);
+    CHECK(std::isnan(tep.evaluate("0X")));
+    }
+
 TEST_CASE("UINT support", "[uint]")
     {
     te_parser tep;

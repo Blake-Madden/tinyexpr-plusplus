@@ -430,9 +430,9 @@ In addition, whitespace between tokens is ignored.
 
 Valid variable names consist of a letter or underscore followed by any combination
 of: letters `a`–`z` or `A`–`Z`, digits `0`–`9`, periods, and
-underscores. Constants can be integers, decimal numbers, or in scientific
-notation (e.g., `1e3` for `1000`). A leading zero is not required (e.g., `.5`
-for `0.5`).
+underscores. Constants can be integers or floating-point numbers, and can be in decimal,
+hexadecimal (e.g., `0x57CEF7`), or scientific notation (e.g., `1e3` for `1000`).
+A leading zero is not required (e.g., `.5` for `0.5`).
 
 ## Supported Functions
 
