@@ -46,8 +46,11 @@ The following are changes from the original TinyExpr C library:
   - `cot`: returns the cotangent of an angle.
   - `combin`: alias for `ncr()`, like the *Excel* function.
   - `clamp`: constrains a value to a range.
+  - `even`: returns a value rounded up to the nearest even integer.
   - `fact`: alias for `fac()`, like the *Excel* function.
   - `false`: returns `false` (i.e., `0`) in a boolean expression.
+  - `iseven`: returns true if a number is even, false if odd.
+  - `isodd`: returns true if a number is odd, false if even.
   - `if`: if a value is true (i.e., non-zero), then returns the second argument; otherwise, returns the third argument.
   - `ifs`: checks up to three conditions, returning the value corresponding to the first met condition.
   - `max`: returns the maximum of a range of values (accepts 1-7 arguments).
@@ -55,6 +58,7 @@ The following are changes from the original TinyExpr C library:
   - `min`: returns the minimum of a range of values (accepts 1-7 arguments).
   - `mod`: returns remainder from a division.
   - `nan`: returns `NaN` (i.e., Not-a-Number) in a boolean expression.
+  - `odd`: returns a value rounded up to the nearest odd integer.
   - `or`: returns true (i.e., non-zero) if any condition is true (accepts 1-7 arguments).
   - `not`: returns logical negation of value.
   - `permut`: alias for `npr()`, like the *Excel* function.

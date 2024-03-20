@@ -17,9 +17,12 @@ The following built-in functions are available:
 | COSH(Number) | Hyperbolic cosine of *Number*. |
 | COT(Number) | Cotangent of *Number*. |
 | EXP(Number) | Euler to the power of *Number*. |
+| EVEN(Number) | Returns *Number* rounded up to the nearest even integer.<br>\linebreak *Number* is always rounded away from zero (e.g., `EVEN(-3)` = -4). |
 | FAC(Number) | Returns the factorial of *Number*. The factorial of *Number* is equal to 1\*2\*3\*...\* *Number* |
 | FACT(Number) | Alias for `FAC()` |
 | FLOOR(Number) | Returns the largest integer not greater than *Number*.<br>\linebreak `FLOOR(-3.2)` = -4<br>\linebreak `FLOOR(3.2)` = 3 |
+| ISEVEN(Number) | Returns true if *Number* is even, false if odd. |
+| ISODD(Number) | Returns true if *Number* is odd, false if even. |
 | LN(Number) | Natural logarithm of *Number* (base Euler). |
 | LOG10(Number) | Common logarithm of *Number* (base 10). |
 | MIN(Number1, Number2, ...) | Returns the smallest value from a specified range of values. |
@@ -29,6 +32,7 @@ The following built-in functions are available:
 | NAN | Returns an invalid value (i.e., Not-a-number). |
 | NCR(Number, NumberChosen) | Alias for `COMBIN()`. |
 | NPR(Number, NumberChosen) | Alias for `PERMUT()`. |
+| ODD(Number) | Returns *Number* rounded up to the nearest odd integer.<br>\linebreak *Number* is always rounded away from zero (e.g., `ODD(-4)` = -5). |
 | PERMUT(Number, NumberChosen) | Returns the number of permutations for a given number (*NumberChosen*) of items that can be selected *Number* of items. A permutation is any set of items where order is important. (This differs from combinations, where order is not important). |
 | POW(Base, Exponent) | Raises *Base* to any power. For fractional exponents, *Base* must be greater than 0. |
 | POWER(Base, Exponent) | Alias for `POW()`. |

@@ -746,6 +746,48 @@ TEST_CASE("NaN", "[nan]")
     CHECK(tep.success());
     }
 
+TEST_CASE("Even", "[even]")
+    {
+    te_parser tep;
+
+    CHECK(tep.evaluate("=EVEN(1.5)") == 2);
+    CHECK(tep.evaluate("=EVEN(3)") == 4);
+    CHECK(tep.evaluate("=EVEN(2)") == 2);
+    CHECK(tep.evaluate("=EVEN(-1)") == -2);
+    CHECK(tep.evaluate("=EVEN(-3)") == -4);
+    CHECK(tep.evaluate("=EVEN(-3.7)") == -4);
+    CHECK(tep.evaluate("=EVEN(-3.1)") == -4);
+    CHECK(tep.evaluate("=EVEN(0)") == 0);
+    CHECK(std::isnan(tep.evaluate("=EVEN(NAN)")));
+
+    CHECK_FALSE(tep.evaluate("ISEVEN(-1)"));
+    CHECK(tep.evaluate("=ISEVEN(2.5)"));
+    CHECK_FALSE(tep.evaluate("=ISEVEN(5)"));
+    CHECK(tep.evaluate("=ISEVEN(0)"));
+    CHECK(tep.evaluate("=ISEVEN(40900)"));
+    CHECK(std::isnan(tep.evaluate("=ISEVEN(NAN)")));
+    }
+
+TEST_CASE("Odd", "[odd]")
+    {
+    te_parser tep;
+
+    CHECK(tep.evaluate("=ODD(1.5)") == 3);
+    CHECK(tep.evaluate("=ODD(3)") == 3);
+    CHECK(tep.evaluate("=ODD(2)") == 3);
+    CHECK(tep.evaluate("=ODD(-1)") == -1);
+    CHECK(tep.evaluate("=ODD(-2)") == -3);
+    CHECK(tep.evaluate("=ODD(-4)") == -5);
+    CHECK(tep.evaluate("=ODD(0)") == 1);
+    CHECK(std::isnan(tep.evaluate("=ODD(NAN)")));
+
+    CHECK(tep.evaluate("ISODD(-1)"));
+    CHECK_FALSE(tep.evaluate("=ISODD(2.5)"));
+    CHECK_FALSE(tep.evaluate("=ISODD(0)"));
+    CHECK(tep.evaluate("=ISODD(5)"));
+    CHECK(std::isnan(tep.evaluate("=ISODD(NAN)")));
+    }
+
 TEST_CASE("Zeros", "[zeros]")
     {
     te_parser tep;

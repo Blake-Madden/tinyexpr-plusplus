@@ -53,6 +53,82 @@
 namespace te_builtins
     {
     [[nodiscard]]
+    constexpr static te_type te_false_value() noexcept
+        {
+        return 0;
+        }
+
+    [[nodiscard]]
+    constexpr static te_type te_true_value() noexcept
+        {
+        return 1;
+        }
+
+    [[nodiscard]]
+    constexpr static te_type te_nan_value() noexcept
+        {
+        return te_parser::te_nan;
+        }
+  
+    [[nodiscard]]
+    static te_type te_max_integer() noexcept
+        {
+        return te_parser::get_max_integer();
+        }
+
+    [[nodiscard]]
+    static te_type te_even(te_type val)
+        {
+        if (!std::isfinite(val))
+            {
+            return te_parser::te_nan;
+            }
+        int64_t rounded{ static_cast<int64_t>(std::ceil(std::abs(val))) };
+        if ((rounded % 2) != 0)
+            {
+            ++rounded;
+            }
+        return (val < 0 ? -(static_cast<te_type>(rounded)) : static_cast<te_type>(rounded));
+        }
+
+    [[nodiscard]]
+    static te_type te_odd(te_type val)
+        {
+        if (!std::isfinite(val))
+            {
+            return te_parser::te_nan;
+            }
+        int64_t rounded{ static_cast<int64_t>(std::ceil(std::abs(val))) };
+        if ((rounded % 2) == 0)
+            {
+            ++rounded;
+            }
+        return (val < 0 ? -(static_cast<te_type>(rounded)) : static_cast<te_type>(rounded));
+        }
+
+    [[nodiscard]]
+    static te_type te_is_even(te_type val)
+        {
+        if (!std::isfinite(val))
+            {
+            return te_parser::te_nan;
+            }
+        const int64_t floored{ static_cast<int64_t>(std::floor(val)) };
+        return ((floored % 2) == 0 ? te_true_value() : te_false_value());
+        }
+
+    [[nodiscard]]
+    static te_type te_is_odd(te_type val)
+        {
+        if (!std::isfinite(val))
+            {
+            return te_parser::te_nan;
+            }
+        const int64_t floored{ static_cast<int64_t>(std::floor(val)) };
+        return ((floored % 2) != 0 ? te_true_value() : te_false_value());
+        }
+
+    [[nodiscard]]
     constexpr static te_type te_equal(te_type val1, te_type val2) noexcept
         {
         return static_cast<te_type>((val1 == val2) ? 1 : 0);
@@ -1044,30 +1120,6 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    constexpr static te_type te_false_value() noexcept
-        {
-        return 0;
-        }
-
-    [[nodiscard]]
-    constexpr static te_type te_true_value() noexcept
-        {
-        return 1;
-        }
-
-    [[nodiscard]]
-    constexpr static te_type te_nan_value() noexcept
-        {
-        return te_parser::te_nan;
-        }
-  
-    [[nodiscard]]
-    static te_type te_max_integer() noexcept
-        {
-        return te_parser::get_max_integer();
-        }
-
-    [[nodiscard]]
     constexpr static te_type te_supports_32bit() noexcept
         {
         return te_parser::supports_32bit() ? te_true_value() : te_false_value();
@@ -1187,11 +1239,14 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "cosh", static_cast<te_fun1>(te_builtins::te_cosh), TE_PURE },
     { "cot", static_cast<te_fun1>(te_builtins::te_cot), TE_PURE },
     { "e", static_cast<te_fun0>(te_builtins::te_e), TE_PURE },
+    { "even", static_cast<te_fun1>(te_builtins::te_even), TE_PURE },
     { "exp", static_cast<te_fun1>(te_builtins::te_exp), TE_PURE },
     { "fac", static_cast<te_fun1>(te_builtins::te_fac), TE_PURE },
     { "fact", static_cast<te_fun1>(te_builtins::te_fac), TE_PURE },
     { "false", static_cast<te_fun0>(te_builtins::te_false_value), TE_PURE },
     { "floor", static_cast<te_fun1>(te_builtins::te_floor), TE_PURE },
+    { "iseven", static_cast<te_fun1>(te_builtins::te_is_even), TE_PURE },
+    { "isodd", static_cast<te_fun1>(te_builtins::te_is_odd), TE_PURE },
     { "if", static_cast<te_fun3>(te_builtins::te_if), TE_PURE },
     { "ifs", static_cast<te_fun6>(te_builtins::te_ifs),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
@@ -1207,6 +1262,7 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "ncr", static_cast<te_fun2>(te_builtins::te_ncr), TE_PURE },
     { "not", static_cast<te_fun1>(te_builtins::te_not), TE_PURE },
     { "npr", static_cast<te_fun2>(te_builtins::te_npr), TE_PURE },
+    { "odd", static_cast<te_fun1>(te_builtins::te_odd), TE_PURE },
     { "or", static_cast<te_fun7>(te_builtins::te_or_variadic),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "permut", static_cast<te_fun2>(te_builtins::te_npr), TE_PURE },
