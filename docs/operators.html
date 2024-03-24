@@ -272,7 +272,7 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#compatability-note" id="toc-compatability-note" class="nav-link active" data-scroll-target="#compatability-note">Compatability Note</a></li>
+  <li><a href="#compatibility-note" id="toc-compatibility-note" class="nav-link active" data-scroll-target="#compatibility-note">Compatibility Note</a></li>
   </ul>
 </nav>
     </div>
@@ -333,58 +333,97 @@ div.csl-indent {
 </tr>
 <tr class="even">
 <td style="text-align: left;">^</td>
-<td style="text-align: left;">Exponentiation. The number in front of ^ is the base, the number after it is the power to raise it to.</td>
+<td style="text-align: left;">Either exponentiation (the default) or bitwise XOR. For exponentiation, the number in front of ^ is the base, the number after it is the power to raise it to.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">**</td>
 <td style="text-align: left;">Exponentiation. (This is an alias for ^)</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">&lt;</td>
+<td style="text-align: left;">Less than.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&gt;</td>
+<td style="text-align: left;">Greater than.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">&gt;=</td>
+<td style="text-align: left;">Greater than or equal to.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&lt;=</td>
+<td style="text-align: left;">Less than or equal to.</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">=</td>
 <td style="text-align: left;">Equals.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">&lt;</td>
-<td style="text-align: left;">Less than.</td>
+<td style="text-align: left;">==</td>
+<td style="text-align: left;">Equals. (This is an alias for =)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">&gt;</td>
-<td style="text-align: left;">Greater than.</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">&lt;&gt;</td>
 <td style="text-align: left;">Not equal to.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">!=</td>
 <td style="text-align: left;">Not equal to. (This is an alias for &lt;&gt;)</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">&gt;=</td>
-<td style="text-align: left;">Greater than or equal to.</td>
-</tr>
 <tr class="even">
-<td style="text-align: left;">&lt;=</td>
-<td style="text-align: left;">Less than or equal to.</td>
+<td style="text-align: left;">&amp;</td>
+<td style="text-align: left;">Either logical (the default) or bitwise conjunction (AND).</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">&amp;</td>
+<td style="text-align: left;">&amp;&amp;</td>
 <td style="text-align: left;">Logical conjunction (AND).</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">|</td>
-<td style="text-align: left;">Logical alternative (OR).</td>
+<td style="text-align: left;">Either Logical (the default) or bitwise alternative (OR).</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">||</td>
+<td style="text-align: left;">Logical alternative (OR).</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">( )</td>
 <td style="text-align: left;">Groups sub-expressions, overriding the order of operations.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">~</td>
+<td style="text-align: left;">Bitwise NOT.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>&lt;&lt;</code></td>
+<td style="text-align: left;">Bitwise left shift.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>&gt;&gt;</code></td>
+<td style="text-align: left;">Bitwise right shift.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>&lt;&lt;&lt;</code></td>
+<td style="text-align: left;">Bitwise left rotate. (Only available if compiled as C++20.)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>&gt;&gt;&gt;</code></td>
+<td style="text-align: left;">Bitwise right rotate. (Only available if compiled as C++20.)</td>
 </tr>
 </tbody>
 </table>
 </div>
+<div class="tipsection">
+<p>Define <code>TE_BITWISE_OPERATORS</code> to enable bitwise behavior for <code>&amp;</code>, <code>|</code>, and <code>^</code>.</p>
+</div>
 <div class="minipage">
 <p>For operators, the order of precedence is:</p>
 <table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Operator</th>
@@ -394,22 +433,61 @@ div.csl-indent {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">( )</td>
-<td style="text-align: left;">Instructions in parentheses are executed first.</td>
+<td style="text-align: left;">Instructions in parentheses are executed first. (If <code>TE_BRACKETS_AS_PARENS</code> is defined, then <code>[]</code> are treated the same way.)</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">+, -, ~</td>
+<td style="text-align: left;">Positive or negative sign for a value, and bitwise NOT.</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">^</td>
 <td style="text-align: left;">Exponentiation.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">*, /, and %</td>
 <td style="text-align: left;">Multiplication, division, and modulus.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">+ and -</td>
 <td style="text-align: left;">Addition and subtraction.</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;"><code>&lt;&lt;</code>, <code>&gt;&gt;</code>, <code>&lt;&lt;&lt;</code>, <code>&gt;&gt;&gt;</code></td>
+<td style="text-align: left;">Bitwise left and right shift and rotation.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&lt;, &gt;, &gt;=, &lt;=</td>
+<td style="text-align: left;">Relational comparisons.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">= and !=</td>
+<td style="text-align: left;">Equality comparisons.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&amp;&amp;</td>
+<td style="text-align: left;">Logical conjunction (AND).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">||</td>
+<td style="text-align: left;">Logical alternative (OR).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&amp;</td>
+<td style="text-align: left;">Bitwise AND (if <code>TE_BITWISE_OPERATORS</code> is defined).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">^</td>
+<td style="text-align: left;">Bitwise XOR (if <code>TE_BITWISE_OPERATORS</code> is defined).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|</td>
+<td style="text-align: left;">Bitwise OR (if <code>TE_BITWISE_OPERATORS</code> is defined).</td>
+</tr>
 </tbody>
 </table>
+</div>
+<div class="warningsection">
+<p>Defining <code>TE_FLOAT</code> will disable all bitwise functions and operators.</p>
 </div>
 <p>For example, the following:</p>
 <p><span class="math display">
@@ -420,8 +498,8 @@ div.csl-indent {
 (5+5+5)/2
 </span></p>
 <p>You can override it so that the additions happen first (resulting in <code>15</code>), followed by the division (finally yielding <code>7.5</code>). Likewise, <code>(2+5)^2</code> will yield <code>49</code> (<code>7</code> squared), while <code>2+5^2</code> will yield <code>27</code> (<code>5</code> squared, plus <code>2</code>).</p>
-<section id="compatability-note" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="compatability-note">Compatability Note</h2>
+<section id="compatibility-note" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="compatibility-note">Compatibility Note</h2>
 <p>The <code>%</code> character acts as a modulus operator in <em>TinyExpr++</em>, which is different from most spreadsheet programs. In programs such as <em>LibreOffice Calc</em> and <em>Excel</em>, <code>%</code> is used to convert a number to a percentage. For example, <code>=20%</code> would yield <code>0.20</code> in <em>Excel</em>. In <em>TinyExpr++</em>, however, <code>20%</code> will result in a syntax error as it is expecting a binary (modulus) operation.</p>
 
 

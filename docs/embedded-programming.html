@@ -321,7 +321,7 @@ div.csl-indent {
 <p>The following section discusses topics related to using <em>TinyExpr++</em> in an embedded environment.</p>
 <section id="performance" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="performance">Performance</h2>
-<p><em>TinyExpr++</em> is fairly fast compared to compiled C when the expression is short, when the expression does hard calculations (e.g., exponentiation), and when some of the work can be simplified by <code>evaluate()</code>. <em>TinyExpr++</em> is slower compared to C when the expression is long and involves only basic arithmetic.</p>
+<p><em>TinyExpr++</em> is fairly fast compared to compiled C when the expression is short or does hard calculations (e.g., exponentiation). <em>TinyExpr++</em> is slower compared to C when the expression is long and involves only basic arithmetic.</p>
 <p>Here are some example benchmarks:</p>
 <table class="table">
 <thead>
@@ -353,7 +353,8 @@ div.csl-indent {
 </tr>
 </tbody>
 </table>
-<p>Note that <em>TinyExpr++</em> is slower compared to <em>TinyExpr</em> because of additional type safety checks (e.g., the use of <code>std::variant</code> instead of unions).</p>
+<p>Note that <em>TinyExpr++</em> is slower compared to <em>TinyExpr</em> because of additional type safety checks (e.g., the use of <code>std::variant</code> instead of unions), case insensitivity, and bookkeeping operations.</p>
+<p>Refer to <a href="#compile-time-options">compile-time options</a> for flags that can provide optimization.</p>
 </section>
 <section id="volatility" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="volatility">Volatility</h2>

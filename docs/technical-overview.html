@@ -71,10 +71,10 @@ div.csl-indent {
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
 <script src="site_libs/viz-1.8.2/viz.js"></script>
 <link href="site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
-<script src="site_libs/grViz-binding-1.0.10/grViz.js"></script>
+<script src="site_libs/grViz-binding-1.0.11/grViz.js"></script>
 
 
 <link rel="stylesheet" href="style.css">
@@ -287,15 +287,15 @@ div.csl-indent {
 <p><code>te_parser::evaluate()</code> uses a simple recursive descent parser to compile your expression into a syntax tree. For example, the expression <code>"sin x + 1/4"</code> parses as:</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-f27d6a9844e3f3c66fbc" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-f27d6a9844e3f3c66fbc">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"÷\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n  node5 [label = \"1\", style=filled, fillcolor = \"#add8e6\"]\n  node6 [label = \"4\", style=filled, fillcolor = \"#add8e6\"]\n  \n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  node3 -> node5\n  node3 -> node6\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-fb1e78fc9ec3ed01a369" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-fb1e78fc9ec3ed01a369">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"÷\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n  node5 [label = \"1\", style=filled, fillcolor = \"#add8e6\"]\n  node6 [label = \"4\", style=filled, fillcolor = \"#add8e6\"]\n  \n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  node3 -> node5\n  node3 -> node6\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p><code>te_parser::evaluate()</code> also automatically prunes constant branches. In this example, the compiled expression returned by <code>compile()</code> would become:</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-63a5afeb1b5c018852c0" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-63a5afeb1b5c018852c0">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"0.25\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n\n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-937cef420e89abc92bd3" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-937cef420e89abc92bd3">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"0.25\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n\n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <section id="grammar" class="level2 unnumbered">

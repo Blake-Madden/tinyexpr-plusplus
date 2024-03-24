@@ -321,7 +321,8 @@ div.csl-indent {
 <h2 class="unnumbered anchored" data-anchor-id="data-types">Data Types</h2>
 <p>The following data types and constants are used throughout <em>TinyExpr++</em>:</p>
 <p><code>te_parser</code>: The main class for defining an evaluation engine and solving expressions.</p>
-<p><code>te_type</code>: The data type for variables, function parameters, and results. By default this is <code>double</code>, but can be <code>float</code> when <a href="compile-time-options.html#te-float"><code>TE_FLOAT</code></a> is defined.</p>
+<p><code>te_type</code>: The data type for variables, function parameters, and results. By default this is <code>double</code>, but can be <code>float</code> (when <a href="compile-time-options.html#te-float"><code>TE_FLOAT</code></a> is defined) or <code>long double</code> (when <code>TE_LONG_DOUBLE</code> is defined).</p>
+<p>If <code>long double</code> is in use, then various bitwise functions (<code>BITNOT()</code>, <code>BITRROTATE()</code>) may be able to support 64-bit integers. This will depend on the compiler used to build the library and can be verified by calling <code>te_parser::supports_64bit()</code> in your code or <code>SUPPORTS64BIT()</code> in an expression at runtime.</p>
 <p><code>te_variable</code>: A user-defined variable or function that can be embedded into a <code>te_parser</code>. (Refer to <a href="custom-extensions.html#custom-variables">custom variables</a>.)</p>
 <p><code>te_expr</code>: The base class for a compiled expression. Classes that derive from this can be bound to custom functions. In turn, this allows for connecting more complex, class-based objects to the parser. (Refer to <a href="custom-extensions.html#custom-classes">custom classes</a>.)</p>
 <p><code>te_parser::te_nan</code>: An invalid numeric value. This should be returned from user-defined functions to signal a failed calculation.</p>

@@ -252,7 +252,13 @@ div.csl-indent {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#compatibility-note" id="toc-compatibility-note" class="nav-link active" data-scroll-target="#compatibility-note">Compatibility Note</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -310,14 +316,6 @@ div.csl-indent {
 <td style="text-align: left;">Returns the principal value of the arc tangent of <em>y</em>,<em>x</em>, expressed in radians.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">BITLSHIFT(Number, ShiftAmount)</td>
-<td style="text-align: left;">Returns <em>Number</em> left shifted by the specified number (<em>ShiftAmount</em>) of bits.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">BITRSHIFT(Number, ShiftAmount)</td>
-<td style="text-align: left;">Returns <em>Number</em> right shifted by the specified number (<em>ShiftAmount</em>) of bits.</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">CEIL(Number)</td>
 <td style="text-align: left;">Smallest integer not less than <em>Number</em>.<br><code>CEIL(-3.2)</code> = -3<br><code>CEIL(3.2)</code> = 4</td>
 </tr>
@@ -346,44 +344,68 @@ div.csl-indent {
 <td style="text-align: left;">Euler to the power of <em>Number</em>.</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">EVEN(Number)</td>
+<td style="text-align: left;">Returns <em>Number</em> rounded up to the nearest even integer.<br>Values are always rounded away from zero (e.g., <code>EVEN(-3)</code> = -4).</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">FAC(Number)</td>
 <td style="text-align: left;">Returns the factorial of <em>Number</em>. The factorial of <em>Number</em> is equal to 1*2*3*…* <em>Number</em></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">FACT(Number)</td>
 <td style="text-align: left;">Alias for <code>FAC()</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">FLOOR(Number)</td>
 <td style="text-align: left;">Returns the largest integer not greater than <em>Number</em>.<br><code>FLOOR(-3.2)</code> = -4<br><code>FLOOR(3.2)</code> = 3</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">ISEVEN(Number)</td>
+<td style="text-align: left;">Returns true if <em>Number</em> is even, false if odd.</td>
+</tr>
 <tr class="even">
+<td style="text-align: left;">ISODD(Number)</td>
+<td style="text-align: left;">Returns true if <em>Number</em> is odd, false if even.</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">LN(Number)</td>
 <td style="text-align: left;">Natural logarithm of <em>Number</em> (base Euler).</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">LOG10(Number)</td>
 <td style="text-align: left;">Common logarithm of <em>Number</em> (base 10).</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">MIN(Number1, Number2, …)</td>
+<td style="text-align: left;">Returns the smallest value from a specified range of values.</td>
+</tr>
 <tr class="even">
-<td style="text-align: left;">MIN(Value1, Value2, …)</td>
-<td style="text-align: left;">Returns the lowest value from a specified range of values.</td>
+<td style="text-align: left;">MAX(Number1, Number2, …)</td>
+<td style="text-align: left;">Returns the largest value from a specified range of values.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">MAX(Value1, Value2, …)</td>
-<td style="text-align: left;">Returns the highest value from a specified range of values.</td>
+<td style="text-align: left;">MAXINT()</td>
+<td style="text-align: left;">Returns the largest integer that the parser can process.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">MOD(Number, Divisor)</td>
 <td style="text-align: left;">Returns the remainder after <em>Number</em> is divided by <em>Divisor</em>. The result has the same sign as divisor.</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">NAN</td>
+<td style="text-align: left;">Returns an invalid value (i.e., Not-a-number).</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">NCR(Number, NumberChosen)</td>
 <td style="text-align: left;">Alias for <code>COMBIN()</code>.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">NPR(Number, NumberChosen)</td>
 <td style="text-align: left;">Alias for <code>PERMUT()</code>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ODD(Number)</td>
+<td style="text-align: left;">Returns <em>Number</em> rounded up to the nearest odd integer.<br>Values are always rounded away from zero (e.g., <code>ODD(-4)</code> = -5).</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">PERMUT(Number, NumberChosen)</td>
@@ -436,6 +458,114 @@ div.csl-indent {
 </tbody>
 </table>
 </div>
+<div style="page-break-after: always;"></div>
+<table class="table">
+<caption>Engineering Functions</caption>
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">BITAND(Number1, Number2)</td>
+<td style="text-align: left;">Returns a bitwise ‘AND’ of two (integral) numbers. (Both numbers must be positive and cannot exceed <code>(2^48)-1</code>.)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BITLROTATE8(Number, RotateAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> left rotated left to the most significant bit by the specified number (<em>RotateAmount</em>) of bits.<br>Numbers are rotated as an unsigned 8-bit integer.<br>(Only available if compiled as C++20.)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BITLROTATE16(Number, RotateAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> left rotated left to the most significant bit by the specified number (<em>RotateAmount</em>) of bits.<br>Numbers are rotated as an unsigned 16-bit integer.<br>(Only available if compiled as C++20.)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BITLROTATE32(Number, RotateAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> left rotated left to the most significant bit by the specified number (<em>RotateAmount</em>) of bits.<br>Numbers are rotated as an unsigned 32-bit integer.<br>(Only available if compiled as C++20.)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BITLROTATE64(Number, RotateAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> left rotated left to the most significant bit by the specified number (<em>RotateAmount</em>) of bits.<br>Numbers are rotated as an unsigned 64-bit integer.<br>(Only available if compiled as C++20.)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BITLROTATE(Number, RotateAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> left rotated left to the most significant bit by the specified number (<em>RotateAmount</em>) of bits.<br>Numbers are rotated as either a 32- or 64-bit integer (depending on what is supported by the compiler).<br>(Only available if compiled as C++20.)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BITLSHIFT(Number, ShiftAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> left shifted by the specified number (<em>ShiftAmount</em>) of bits.<br>Numbers cannot exceed <code>(2^48)-1</code> and <em>ShiftAmount</em> cannot exceed <code>53</code> (or <code>63</code>, if 64-bit is supported).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BITNOT8(Number)</td>
+<td style="text-align: left;">Returns a bitwise ‘NOT’ of a 8-bit integer.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BITNOT16(Number)</td>
+<td style="text-align: left;">Returns a bitwise ‘NOT’ of a 16-bit integer.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BITNOT32(Number)</td>
+<td style="text-align: left;">Returns a bitwise ‘NOT’ of a 32-bit integer.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BITNOT64(Number)</td>
+<td style="text-align: left;">Returns a bitwise ‘NOT’ of a 64-bit integer (if 64-bit integers are supported).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BITNOT(Number)</td>
+<td style="text-align: left;">Returns a bitwise ‘NOT’ of a 32- or 64-bit integer (depending on whether 64-bit is supported).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BITOR(Number1, Number2)</td>
+<td style="text-align: left;">Returns a bitwise ‘OR’ of two (integral) numbers. (Both numbers must be positive and cannot exceed <code>(2^48)-1</code>.)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BITRROTATE8(Number, RotateAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> right rotated right to the least significant bit by the specified number (<em>RotateAmount</em>) of bits.<br>Numbers are rotated as an unsigned 8-bit integer.<br>(Only available if compiled as C++20.)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BITRROTATE16(Number, RotateAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> right rotated right to the least significant bit by the specified number (<em>RotateAmount</em>) of bits.<br>Numbers are rotated as an unsigned 16-bit integer.<br>(Only available if compiled as C++20.)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BITRROTATE32(Number, RotateAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> right rotated right to the least significant bit by the specified number (<em>RotateAmount</em>) of bits.<br>Numbers are rotated as an unsigned 32-bit integer.<br>(Only available if compiled as C++20.)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BITRROTATE64(Number, RotateAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> right rotated right to the least significant bit by the specified number (<em>RotateAmount</em>) of bits.<br>Numbers are rotated as an unsigned 64-bit integer.<br>(Only available if compiled as C++20.)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BITRROTATE(Number, RotateAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> right rotated right to the least significant bit by the specified number (<em>RotateAmount</em>) of bits.<br>Numbers are rotated as either a 32- or 64-bit integer (depending on what is supported by the compiler).<br>(Only available if compiled as C++20.)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BITRSHIFT(Number, ShiftAmount)</td>
+<td style="text-align: left;">Returns <em>Number</em> right shifted by the specified number (<em>ShiftAmount</em>) of bits.<br>Numbers cannot exceed <code>(2^48)-1</code> and <em>ShiftAmount</em> cannot exceed <code>53</code> (or <code>63</code>, if 64-bit is supported).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BITXOR(Number1, Number2)</td>
+<td style="text-align: left;">Returns a bitwise ‘XOR’ of two (integral) numbers. (Both numbers must be positive and cannot exceed <code>(2^48)-1</code>.)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SUPPORTS32BIT()</td>
+<td style="text-align: left;">Returns true if 32-bit integers are supported. This will affect the supported range of values for bitwise operations.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SUPPORTS64BIT()</td>
+<td style="text-align: left;">Returns true if 64-bit integers are supported. This will affect the supported range of values for bitwise operations.</td>
+</tr>
+</tbody>
+</table>
+<div class="warningsection">
+<p>Defining <code>TE_FLOAT</code> will disable all bitwise functions and operators.</p>
+</div>
+<div style="page-break-after: always;"></div>
 <div class="minipage">
 <table class="table">
 <caption>Statistical Functions</caption>
@@ -498,6 +628,12 @@ div.csl-indent {
 </tbody>
 </table>
 </div>
+<div class="notesection">
+<p>The first argument to any logic function must be valid (i.e., not NaN). If the first argument evaluates to NaN, then NaN will be returned. Any subsequent arguments that evaluate to NaN will be ignored.</p>
+</div>
+<section id="compatibility-note" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="compatibility-note">Compatibility Note</h2>
+<p><code>BITNOT</code> will call either <code>BITNOT32</code> or <code>BITNOT64</code>, depending on whether 64-bit integers are supported. This differs from <em>Excel</em>, which only works with 16-bit integers. To match the behavior of <em>Excel</em>, explicitly call <code>BITNOT16</code>.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list" style="display: none">
@@ -508,6 +644,7 @@ Alexander, Michael, and Dick Kusleika. <em>Microsoft Excel 365 Bible</em>. Wiley
 Winkle, Lewis Van. <em>C Math Evaluation Library: TinyExpr</em>. 2016, <a href="https://codeplea.com/tinyexpr">https://codeplea.com/tinyexpr</a>.
 </div>
 </div>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

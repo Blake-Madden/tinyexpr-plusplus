@@ -257,7 +257,12 @@ div.csl-indent {
    
   <ul class="collapse">
   <li><a href="#te-float" id="toc-te-float" class="nav-link active" data-scroll-target="#te-float"><code>TE_FLOAT</code></a></li>
+  <li><a href="#te_long_double" id="toc-te_long_double" class="nav-link" data-scroll-target="#te_long_double"><code>TE_LONG_DOUBLE</code></a></li>
+  <li><a href="#te-bitwise-ops" id="toc-te-bitwise-ops" class="nav-link" data-scroll-target="#te-bitwise-ops"><code>TE_BITWISE_OPERATORS</code></a></li>
+  <li><a href="#te_brackets_as_parens" id="toc-te_brackets_as_parens" class="nav-link" data-scroll-target="#te_brackets_as_parens"><code>TE_BRACKETS_AS_PARENS</code></a></li>
+  <li><a href="#te_no_bookkeeping" id="toc-te_no_bookkeeping" class="nav-link" data-scroll-target="#te_no_bookkeeping"><code>TE_NO_BOOKKEEPING</code></a></li>
   <li><a href="#te_pow_from_right" id="toc-te_pow_from_right" class="nav-link" data-scroll-target="#te_pow_from_right"><code>TE_POW_FROM_RIGHT</code></a></li>
+  <li><a href="#c20-features" id="toc-c20-features" class="nav-link" data-scroll-target="#c20-features">C++20 Features</a></li>
   </ul>
 </nav>
     </div>
@@ -285,6 +290,27 @@ div.csl-indent {
 <h2 class="unnumbered anchored" data-anchor-id="te-float"><code>TE_FLOAT</code></h2>
 <p><code>double</code> is the default data type used for the parser’s variable types, parameters, and return types. Compile with <code>TE_FLOAT</code> defined to use <code>float</code> instead.</p>
 <p>Refer to <a href="embedded-programming.html#fp-numbers">floating-point numbers</a> for more information.</p>
+<div class="warningsection">
+<p>This flag will also disable all bitwise functions and operators.</p>
+</div>
+</section>
+<section id="te_long_double" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="te_long_double"><code>TE_LONG_DOUBLE</code></h2>
+<p>Compile with <code>TE_LONG_DOUBLE</code> defined to use <code>long double</code> as the default data type.</p>
+<p>Depending on the compiler, this may provide support for handling <code>uint64_t</code> values. Call <code>te_parser::supports_64bit()</code> (or <code>SUPPORTS64BIT()</code> in an expression at runtime) to confirm this.</p>
+</section>
+<section id="te-bitwise-ops" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="te-bitwise-ops"><code>TE_BITWISE_OPERATORS</code></h2>
+<p>By default, the operators <code>&amp;</code>, <code>|</code>, and <code>^</code> represent logical AND, logical OR, and exponentiation. If <code>TE_BITWISE_OPERATORS</code> is defined, then they will represent bitwise AND, OR, and XOR.</p>
+</section>
+<section id="te_brackets_as_parens" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="te_brackets_as_parens"><code>TE_BRACKETS_AS_PARENS</code></h2>
+<p>Define this flag to treat <code>[]</code> pairs the same as <code>()</code>. This can be useful if using the parser for a debugger’s watch window. For example, an expression such as <code>[rsp+1000]</code> would be evaluated as <code>1000</code> being added with the variable <code>rsp</code>. In this context, <code>rsp</code> could represent a memory address in the debugger.</p>
+</section>
+<section id="te_no_bookkeeping" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="te_no_bookkeeping"><code>TE_NO_BOOKKEEPING</code></h2>
+<p>By default, the parser will keep track of all functions and variables used in the last expression it evaluated. From this, the presence of a function or variable in the expression can be verified via <code>is_function_used()</code> and <code>is_variable_used()</code>.</p>
+<p>Turning this option off can provide a small optimization, as it will result in less heap allocations and search operations. Defining <code>TE_NO_BOOKKEEPING</code> will disable this feature.</p>
 </section>
 <section id="te_pow_from_right" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="te_pow_from_right"><code>TE_POW_FROM_RIGHT</code></h2>
@@ -294,7 +320,25 @@ div.csl-indent {
 <p>If you would rather have exponentiation work from right to left, you need to define <code>TE_POW_FROM_RIGHT</code> when compiling. With <code>TE_POW_FROM_RIGHT</code> defined, the behavior is:</p>
 <p><code>a^b^c == a^(b^c)</code> and <code>-a^b == -(a^b)</code></p>
 <p>That will match how many scripting languages do it (e.g., Python, Ruby).</p>
-<p>Note that symbols can be defined by passing them to your compiler’s command line (or in a Cmake configuration) as such: <code>-DTE_POW_FROM_RIGHT</code></p>
+<p>Note that symbols can be defined by passing them to your compiler’s command line (or in a CMake configuration) as such: <code>-DTE_POW_FROM_RIGHT</code></p>
+</section>
+<section id="c20-features" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="c20-features">C++20 Features</h2>
+<p>If compiling as C++20 (and <code>TE_FLOAT</code> is not defined), then the following functions and operators will be available:</p>
+<ul>
+<li><code>BITLROTATE8</code></li>
+<li><code>BITLROTATE16</code></li>
+<li><code>BITLROTATE32</code></li>
+<li><code>BITLROTATE64</code></li>
+<li><code>BITLROTATE</code></li>
+<li><code>BITRROTATE8</code></li>
+<li><code>BITRROTATE16</code></li>
+<li><code>BITRROTATE32</code></li>
+<li><code>BITRROTATE64</code></li>
+<li><code>BITRROTATE</code></li>
+<li><code>&lt;&lt;&lt;</code> (unsigned 64-bit left rotation)</li>
+<li><code>&gt;&gt;&gt;</code> (unsigned 64-bit right rotation)</li>
+</ul>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list" style="display: none">
