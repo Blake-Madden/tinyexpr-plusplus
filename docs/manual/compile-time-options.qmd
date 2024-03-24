@@ -59,7 +59,7 @@ That will match how many scripting languages do it (e.g., Python, Ruby).
 Note that symbols can be defined by passing them to your compiler's
 command line (or in a CMake configuration) as such: `-DTE_POW_FROM_RIGHT`
 
-## C++20 Features
+## C++20 Features {-}
 
 If compiling as C++20 (and `TE_FLOAT` is not defined), then the following functions and operators will be available:
 
