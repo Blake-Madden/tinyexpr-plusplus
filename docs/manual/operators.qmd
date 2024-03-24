@@ -23,13 +23,13 @@ The following operators\index{operators} are supported within math expressions:
 | &   | Either logical (the default) or bitwise conjunction (AND). |
 | &&  | Logical conjunction (AND). |
 | \|  | Either Logical (the default) or bitwise alternative (OR). |
-| \|\ | | Logical alternative (OR). |
+| \|\| | Logical alternative (OR). |
 | ( ) | Groups sub-expressions, overriding the order of operations. |
 | ~   | Bitwise NOT. |
-| <<  | Bitwise left shift. |
-| >>  | Bitwise right shift. |
-| <<< | Bitwise left rotate. (Only available if compiled as C++20.) |
-| >>> | Bitwise right rotate. (Only available if compiled as C++20.) |
+| `<<`  | Bitwise left shift. |
+| `>>`  | Bitwise right shift. |
+| `<<<` | Bitwise left rotate. (Only available if compiled as C++20.) |
+| `>>>` | Bitwise right rotate. (Only available if compiled as C++20.) |
 
 Table: Operators
 :::
@@ -48,8 +48,8 @@ For operators, the order of precedence is:
 | ^   | Exponentiation. |
 | \*, /, and % | Multiplication, division, and modulus. |
 | \+ and - | Addition and subtraction. |
-| <<, >>, <<<, >>> | Bitwise left and right shift and rotation. |
-| <, \>, \>=, <= | Relational comparisons. |
+| `<<`, `>>`, `<<<`, `>>>` | Bitwise left and right shift and rotation. |
+| \<, \>, \>=, <= | Relational comparisons. |
 | \= and \!\= | Equality comparisons. |
 | && | Logical conjunction (AND). |
 | \|\| | Logical alternative (OR). |
@@ -58,7 +58,7 @@ For operators, the order of precedence is:
 | \| | Bitwise OR (if `TE_BITWISE_OPERATORS` is defined). |
 :::
 
-::: {.notesection data-latex=""}
+::: {.warningsection data-latex=""}
 Defining `TE_FLOAT` will disable all bitwise functions and operators.
 :::
 

@@ -7,7 +7,12 @@ The following data types and constants are used throughout *TinyExpr++*:
 `te_parser`: The main class for defining an evaluation engine and solving expressions.
 
 `te_type`: The data type for variables, function parameters, and results.
-By default this is `double`, but can be `float` when [`TE_FLOAT`](#te-float) is defined.
+By default this is `double`, but can be `float` (when [`TE_FLOAT`](#te-float) is defined)
+or `long double` (when `TE_LONG_DOUBLE` is defined).
+
+If `long double`\index{data types!\texttt{long double}} is in use, then various bitwise functions (`BITNOT()`, `BITRROTATE()`)
+may be able to support 64-bit integers\index{data types!\texttt{64-bit integer}}. This will depend on the compiler used to build the library and can be verified by calling
+`te_parser::supports_64bit()` in your code or `SUPPORTS64BIT()` in an expression at runtime.
 
 `te_variable`: A user-defined variable or function that can be embedded into a `te_parser`.
 (Refer to [custom variables](#custom-variables).)
