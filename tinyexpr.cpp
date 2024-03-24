@@ -69,7 +69,7 @@ namespace te_builtins
         {
         return te_parser::te_nan;
         }
-  
+
     [[nodiscard]]
     static te_type te_max_integer() noexcept
         {
@@ -189,9 +189,8 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_not(te_type val)
         {
-        return std::isfinite(val) ?
-            static_cast<te_type>(!te_parser::double_to_bool(val)) :
-                   te_parser::te_nan;
+        return std::isfinite(val) ? static_cast<te_type>(!te_parser::double_to_bool(val)) :
+                                    te_parser::te_nan;
         }
 
     [[nodiscard]]
@@ -455,8 +454,7 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_ncr(te_type val1, te_type val2) noexcept
         {
-        if (!std::isfinite(val1) || !std::isfinite(val2) || val1 < 0.0 ||
-            val2 < 0.0 || val1 < val2)
+        if (!std::isfinite(val1) || !std::isfinite(val2) || val1 < 0.0 || val2 < 0.0 || val1 < val2)
             {
             return te_parser::te_nan;
             }
@@ -741,7 +739,7 @@ namespace te_builtins
 
         // force the bit manipulation to stay unsigned, like what Excel does
         const uint8_t intVal{ static_cast<uint8_t>(val) };
-        const decltype(intVal) result{ static_cast<decltype(intVal)>(~intVal)};
+        const decltype(intVal) result{ static_cast<decltype(intVal)>(~intVal) };
         return static_cast<te_type>(result);
         }
 
@@ -907,9 +905,9 @@ namespace te_builtins
         {
         // For 64-bit, you can shift 63 bits.
         // If we are limited to something like 53 bits, then we can use that (same as Excel)
-        constexpr static auto MAX_BITNESS_PARAM = (te_parser::supports_64bit() ?
-            te_parser::get_max_integer_bitness() - 1 :
-            te_parser::get_max_integer_bitness());
+        constexpr static auto MAX_BITNESS_PARAM =
+            (te_parser::supports_64bit() ? te_parser::get_max_integer_bitness() - 1 :
+                                           te_parser::get_max_integer_bitness());
         if (std::floor(val1) != val1)
             {
             throw std::runtime_error("Left side of left shift (<<) operation must be an integer.");
@@ -933,7 +931,7 @@ namespace te_builtins
             {
             throw std::runtime_error(
                 "Additive expression of left shift (<<) operation must be between 0-" +
-                    std::to_string(MAX_BITNESS_PARAM));
+                std::to_string(MAX_BITNESS_PARAM));
             }
 
         const auto multipler = (static_cast<uint64_t>(1) << static_cast<uint64_t>(val2));
@@ -950,9 +948,9 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_right_shift(te_type val1, te_type val2)
         {
-        constexpr static auto MAX_BITNESS_PARAM = (te_parser::supports_64bit() ?
-            te_parser::get_max_integer_bitness() - 1 :
-            te_parser::get_max_integer_bitness());
+        constexpr static auto MAX_BITNESS_PARAM =
+            (te_parser::supports_64bit() ? te_parser::get_max_integer_bitness() - 1 :
+                                           te_parser::get_max_integer_bitness());
 
         if (std::floor(val1) != val1)
             {
@@ -975,7 +973,7 @@ namespace te_builtins
             {
             throw std::runtime_error(
                 "Additive expression of right shift (>>) operation must be between 0-" +
-                    std::to_string(MAX_BITNESS_PARAM));
+                std::to_string(MAX_BITNESS_PARAM));
             }
 
         return static_cast<te_type>(static_cast<uint64_t>(val1) >> static_cast<uint64_t>(val2));
@@ -1110,8 +1108,8 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    static te_type te_ifs(te_type if1, te_type if1True, te_type if2, te_type if2True,
-                                    te_type if3, te_type if3True)
+    static te_type te_ifs(te_type if1, te_type if1True, te_type if2, te_type if2True, te_type if3,
+                          te_type if3True)
         {
         return te_parser::double_to_bool(if1) ? if1True :
                te_parser::double_to_bool(if2) ? if2True :
@@ -1549,7 +1547,7 @@ void te_parser::next_token(te_parser::state* theState)
                 else if ((tok == '<' && (*theState->m_next == '<') &&
                           (*std::next(theState->m_next) == '<')) ||
                          (tok == '>' && (*theState->m_next == '>') &&
-                          (*std::next(theState->m_next) == '>')) )
+                          (*std::next(theState->m_next) == '>')))
                     {
                     theState->m_type = te_parser::state::token_type::TOK_ERROR;
                     }
@@ -1571,7 +1569,7 @@ void te_parser::next_token(te_parser::state* theState)
 #else
                 // shift operators that will be disabled for float types
                 else if ((tok == '<' && (*theState->m_next == '<')) ||
-                         (tok == '>' && (*theState->m_next == '>')) )
+                         (tok == '>' && (*theState->m_next == '>')))
                     {
                     theState->m_type = te_parser::state::token_type::TOK_ERROR;
                     }
@@ -1809,7 +1807,8 @@ te_expr* te_parser::list(te_parser::state* theState)
     while (theState->m_type == te_parser::state::token_type::TOK_SEP)
         {
         next_token(theState);
-        ret = new_expr(TE_PURE, te_variant_type(te_builtins::te_comma), { ret, expr_level1(theState) });
+        ret = new_expr(TE_PURE, te_variant_type(te_builtins::te_comma),
+                       { ret, expr_level1(theState) });
         }
 
     return ret;
@@ -1964,8 +1963,7 @@ te_expr* te_parser::expr_level8(te_parser::state* theState)
            (get_function2(theState->m_value) == te_builtins::te_left_shift ||
             get_function2(theState->m_value) == te_builtins::te_right_shift
 #if __cplusplus >= 202002L && !defined(TE_FLOAT)
-            ||
-            get_function2(theState->m_value) == te_builtins::te_left_rotate ||
+            || get_function2(theState->m_value) == te_builtins::te_left_rotate ||
             get_function2(theState->m_value) == te_builtins::te_right_rotate ||
             get_function2(theState->m_value) == te_builtins::te_left_rotate32 ||
             get_function2(theState->m_value) == te_builtins::te_right_rotate32 ||
@@ -2105,11 +2103,10 @@ te_expr* te_parser::power(te_parser::state* theState)
              (get_function2(theState->m_value) == te_builtins::te_add ||
               get_function2(theState->m_value) == te_builtins::te_sub))
 #ifndef TE_FLOAT
-            ||
-            (is_function1(theState->m_value) &&
-             (get_function1(theState->m_value) == te_builtins::te_bitwise_not))
+            || (is_function1(theState->m_value) &&
+                (get_function1(theState->m_value) == te_builtins::te_bitwise_not))
 #endif
-        ) )
+                ))
         {
         if (is_function2(theState->m_value) &&
             get_function2(theState->m_value) == te_builtins::te_sub)
@@ -2117,7 +2114,7 @@ te_expr* te_parser::power(te_parser::state* theState)
             theSign = -theSign;
             }
         else if (is_function1(theState->m_value) &&
-            get_function1(theState->m_value) == te_builtins::te_bitwise_not)
+                 get_function1(theState->m_value) == te_builtins::te_bitwise_not)
             {
             bitwiseNot = true;
             }
@@ -2431,8 +2428,9 @@ std::string te_parser::info()
         {
         sysInfo += "Supports 64-bit integers: no\n";
         }
-    sysInfo += "Max supported integer:    " +
-        std::to_string(static_cast<uint64_t>(get_max_integer())) + "\n";
+    sysInfo +=
+        "Max supported integer:    " + std::to_string(static_cast<uint64_t>(get_max_integer())) +
+        "\n";
 #ifdef TE_BITWISE_OPERATORS
     sysInfo += "^, &, | operators:        bitwise XOR, bitwise AND, and bitwise OR\n";
 #else

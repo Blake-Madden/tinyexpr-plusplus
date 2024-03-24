@@ -76,7 +76,7 @@
 class te_parser;
 
 #if defined(TE_FLOAT) && defined(TE_LONG_DOUBLE)
-    #error TE_FLOAT and TE_LONG_DOUBLE compile options cannot be combined. Only one data type can be specified.
+#error TE_FLOAT and TE_LONG_DOUBLE compile options cannot be combined. Only one data type can be specified.
 #endif
 
 /// @brief Define this to use @c float instead of @c double for the parser's data type.
@@ -91,7 +91,7 @@ using te_type = double;
 #endif
 
 #if defined(TE_FLOAT) && defined(TE_BITWISE_OPERATORS)
-    #error TE_FLOAT and TE_BITWISE_OPERATORS compile options cannot be combined. TE_FLOAT will not support bitwise operations.
+#error TE_FLOAT and TE_BITWISE_OPERATORS compile options cannot be combined. TE_FLOAT will not support bitwise operations.
 #endif
 
 class te_expr;
@@ -260,18 +260,21 @@ class te_parser
     /// @private
     // (2^48)-1
     constexpr static double MAX_BITOPS_VAL{ 281474976710655 }; // NOLINT
+
     /// @returns @c true if the parser's internal type can hold `uint32_t` without truncation.
     [[nodiscard]]
     constexpr static bool supports_32bit() noexcept
         {
         return std::numeric_limits<te_type>::digits >= std::numeric_limits<uint32_t>::digits;
         }
+
     /// @returns @c true if the parser's internal type can hold `uint64_t` without truncation.
     [[nodiscard]]
     constexpr static bool supports_64bit() noexcept
         {
         return std::numeric_limits<te_type>::digits >= std::numeric_limits<uint64_t>::digits;
         }
+
     /// @returns The bits available in the internal data type.\n
     ///     This will affect the largest integer size that can be used in bitwise operations.
     [[nodiscard]]
@@ -279,6 +282,7 @@ class te_parser
         {
         return std::numeric_limits<te_type>::digits;
         }
+
     /// @returns The largest integer value that the parser can handle without truncation.
     [[nodiscard]]
     static te_type get_max_integer()
@@ -292,6 +296,7 @@ class te_parser
 #endif
         return maxBit + (maxBit - 1);
         }
+
     /** @brief Parses the input @c expression.
         @param expression The formula to compile.
         @returns Whether the expression compiled or not. (This can be checked
