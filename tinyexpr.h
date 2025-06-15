@@ -26,7 +26,7 @@
 /*
  * TINYEXPR++ - Tiny recursive descent parser and evaluation engine in C++
  *
- * Copyright (c) 2020-2024 Blake Madden
+ * Copyright (c) 2020-2025 Blake Madden
  *
  * C++ version of the TinyExpr library.
  *
@@ -82,6 +82,7 @@ constexpr int TINYEXPR_CPP_MAJOR_VERSION = 1;
 constexpr int TINYEXPR_CPP_MINOR_VERSION = 0;
 constexpr int TINYEXPR_CPP_PATCH_VERSION = 0;
 constexpr int TINYEXPR_CPP_TWEAK_VERSION = 0;
+constexpr wchar_t TINYEXPR_CPP_COPYRIGHT[] = L"TinyExpr: Copyright (c) 2015-2020 Lewis Van Winkle\nTinyExpr++: Copyright (c) 2020-2025 Blake Madden";
 
 class te_parser;
 
