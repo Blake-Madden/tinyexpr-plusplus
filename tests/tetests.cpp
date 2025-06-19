@@ -2425,6 +2425,101 @@ TEST_CASE("Is variable used", "[functions]")
     CHECK_FALSE(p.is_variable_used(("zz")));
     CHECK_FALSE(p.is_variable_used(("TRESS_L")));
     }
+
+TEST_CASE("Remove unused variables", "[variables]")
+    {
+    te_parser p;
+    // nothing in here yet
+    p.remove_unused_variables_and_functions();
+
+    p.set_variables_and_functions({
+        {"STRESS_L", static_cast<te_type>(10.1) },
+        {"P_LEVEL", static_cast<te_type>(.5) },
+        {"z", static_cast<te_type>(.75) } });
+    CHECK(p.get_variables_and_functions().size() == 3);
+
+    p.compile(("z + P_LEVEL"));
+    CHECK(p.is_variable_used(("Z")));
+    CHECK_FALSE(p.is_variable_used(("STRESS_L")));
+    CHECK(p.is_variable_used(("P_LEVEL")));
+    CHECK(p.success());
+    CHECK(p.get_variables_and_functions().size() == 3);
+    p.remove_unused_variables_and_functions();
+    CHECK(p.get_variables_and_functions().size() == 2);
+
+    p.compile(("P_LEVEL"));
+    CHECK(p.success());
+    CHECK_FALSE(p.is_variable_used(("Z")));
+    CHECK_FALSE(p.is_variable_used(("STRESS_L")));
+    CHECK(p.is_variable_used(("P_LEVEL")));
+    p.remove_unused_variables_and_functions();
+    CHECK(p.get_variables_and_functions().size() == 1);
+
+    p.compile(("5 + 2"));
+    p.remove_unused_variables_and_functions();
+    CHECK(p.get_variables_and_functions().empty());
+
+    // remove all at once
+    p.set_variables_and_functions({
+        {"STRESS_L", static_cast<te_type>(10.1) },
+        {"P_LEVEL", static_cast<te_type>(.5) },
+        {"z", static_cast<te_type>(.75) } });
+    p.compile(("5 + 2"));
+    p.remove_unused_variables_and_functions();
+    CHECK(p.get_variables_and_functions().empty());
+
+    // shouldn't do anything
+    p.remove_unused_variables_and_functions();
+    }
+
+TEST_CASE("Remove unused functions", "[functions]")
+    {
+    te_parser p;
+    // nothing in here yet
+    p.remove_unused_variables_and_functions();
+
+    p.set_variables_and_functions({
+        {"STRESS_L", return5 },
+        {"P_LEVEL", __mult },
+        {"z", AddEm } });
+    CHECK(p.get_variables_and_functions().size() == 3);
+
+    p.compile(("z(2,5) + P_LEVEL(2,30,4,5)"));
+    CHECK(p.is_function_used(("Z")));
+    CHECK_FALSE(p.is_function_used(("STRESS_L")));
+    CHECK(p.is_function_used(("P_LEVEL")));
+    CHECK(p.success());
+    p.remove_unused_variables_and_functions();
+    CHECK(p.get_variables_and_functions().size() == 2);
+
+    p.compile(("P_LEVEL(2,30,4,5)"));
+    CHECK(p.success());
+    CHECK_FALSE(p.is_function_used(("Z")));
+    CHECK_FALSE(p.is_function_used(("STRESS_L")));
+    CHECK(p.is_function_used(("P_LEVEL")));
+    p.remove_unused_variables_and_functions();
+    CHECK(p.get_variables_and_functions().size() == 1);
+
+    p.compile(("5 + 2"));
+    p.remove_unused_variables_and_functions();
+    CHECK(p.get_variables_and_functions().empty());
+
+    // remove all at once
+    p.set_variables_and_functions({
+        {"STRESS_L", return5 },
+        {"P_LEVEL", __mult },
+        {"z", AddEm } });
+    p.compile(("5 + 2"));
+    p.remove_unused_variables_and_functions();
+    CHECK(p.get_variables_and_functions().empty());
+
+    // function shouldn't be recognized now
+    p.compile(("P_LEVEL(2,30,4,5)"));
+    CHECK_FALSE(p.success());
+
+    // shouldn't do anything
+    p.remove_unused_variables_and_functions();
+    }
 #endif
 
 TEST_CASE("Custom test", "[functions]")

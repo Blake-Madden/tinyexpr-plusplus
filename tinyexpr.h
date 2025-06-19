@@ -81,8 +81,9 @@
 constexpr int TINYEXPR_CPP_MAJOR_VERSION = 1;
 constexpr int TINYEXPR_CPP_MINOR_VERSION = 0;
 constexpr int TINYEXPR_CPP_PATCH_VERSION = 0;
-constexpr int TINYEXPR_CPP_TWEAK_VERSION = 0;
-constexpr wchar_t TINYEXPR_CPP_COPYRIGHT[] = L"TinyExpr: Copyright (c) 2015-2020 Lewis Van Winkle\nTinyExpr++: Copyright (c) 2020-2025 Blake Madden";
+constexpr int TINYEXPR_CPP_TWEAK_VERSION = 1;
+constexpr wchar_t TINYEXPR_CPP_COPYRIGHT[] = L"TinyExpr: Copyright (c) 2015-2020 Lewis Van Winkle\n"
+                                             "TinyExpr++: Copyright (c) 2020-2025 Blake Madden";
 
 class te_parser;
 
@@ -566,6 +567,24 @@ class te_parser
             m_customFuncsAndVars.erase(foundVar);
             }
         }
+
+#ifndef TE_NO_BOOKKEEPING
+    /// @brief Removes any custom variables and functions that weren't used in the last compilation.
+    /// @details This can be useful if the parser is pre-loaded with a large number of
+    ///     variables and functions that needs to be pruned after the first expression is parsed.
+    /// @warning After calling this, any custom variables and functions that weren't found
+    ///     in the previously parsed expression will no longer be available.
+    void remove_unused_variables_and_functions()
+        {
+        for (auto funcIter = m_customFuncsAndVars.cbegin(); funcIter != m_customFuncsAndVars.cend();
+             /* in loop*/)
+            {
+            funcIter = (is_function_used(funcIter->m_name) || is_variable_used(funcIter->m_name)) ?
+                           ++funcIter :
+                           m_customFuncsAndVars.erase(funcIter);
+            }
+        }
+#endif
 
     /** @brief Sets a custom function to resolve unknown symbols in an expression.
         @param usr The function to use to resolve unknown symbols.
