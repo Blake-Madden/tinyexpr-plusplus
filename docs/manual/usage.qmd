@@ -53,6 +53,8 @@ std::string get_last_error_message();
 set_variables_and_functions(const std::set<te_variable>& vars); // <3>
 std::set<te_variable>& get_variables_and_functions();
 add_variable_or_function(const te_variable& var);
+remove_variable_or_function(te_variable::name_type var);
+remove_unused_variables_and_functions();
 set_unknown_symbol_resolver(te_usr_variant_type usr);           // <4>
 get_decimal_separator();                                        // <5>
 set_decimal_separator();                                        // <5>
@@ -66,7 +68,8 @@ is a parse error, then it returns NaN (which can be verified by using `std::isna
 2. `get_result()` can be called anytime afterwards to retrieve the result from `evaluate()`.
 
 3. `set_variables_and_functions()`, `get_variables_and_functions()`, and `add_variable_or_function()` are used
-to add custom variables and functions to the parser.
+to add custom variables and functions to the parser. Likewise, `remove_variable_or_function()` and `remove_unused_variables_and_functions()`
+are used to remove them.
 
 4. `set_unknown_symbol_resolver()` is used to provide a custom function to resolve unknown symbols in an expression.
 (Refer to [ch. -@sec-usr] for further details.)
