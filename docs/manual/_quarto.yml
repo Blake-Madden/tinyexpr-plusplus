@@ -22,8 +22,8 @@ book:
   output-file: "TinyExpr++ReferenceManual"
   language: en
   search: false
-  cover-image: "images/cover.png"
-  image: "images/cover.png"
+  cover-image: "manual/images/cover.png"
+  image: "manual/images/cover.png"
   navbar:
     logo: tinyexpr_logo.png
     right:
