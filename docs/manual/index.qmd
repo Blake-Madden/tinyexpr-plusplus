@@ -16,7 +16,7 @@ if (!webshot::is_phantomjs_installed())
 
 This book is the guide to using the *TinyExpr++* library, a C++ formula parsing and evaluation system.
 
-![](manual/images/by-sa.png)
+![](manual/images/by-sa.png){width=20%}
 
 This book is licensed under the [Creative Commons Attribution-Sharealike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/).
 :::
