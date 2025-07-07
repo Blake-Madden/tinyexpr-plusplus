@@ -1,5 +1,5 @@
 name: Windows Build & Unit Tests
-on: [push]
+on: [push, pull_request]
 
 env:
   testrunner: 'TETestRunner'
@@ -9,8 +9,10 @@ jobs:
   build:
     name: unit-tests
     runs-on: windows-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: 'true'
       - run: git config --global core.autocrlf input
@@ -48,9 +50,9 @@ jobs:
              cmake -DTE_POW_FROM_RIGHT = 1 ./
              msbuild ${{ env.testrunner }}.sln
              cd bin\Debug
-             ./${{ env.testrunner }} --reporter JUnit::out=${{ env.outfile }}
-             cat ${{ env.outfile }}
-             $FileContent = Get-Content ${{ env.outfile }}
+             ./${{ env.testrunner }} --reporter JUnit::out=te-junit-pow-from-right.xml
+             cat te-junit-pow-from-right.xml
+             $FileContent = Get-Content te-junit-pow-from-right.xml
              $errors = (Select-String -InputObject $FileContent -Pattern 'errors="([0-9]+)"' | % { $($_.matches.groups[1]) } )
              $failures = (Select-String -InputObject $FileContent -Pattern 'failures="([0-9]+)"' | % { $($_.matches.groups[1]) } )
              if ($errors.Value -gt 0)
@@ -70,9 +72,9 @@ jobs:
              cmake -DTE_FLOAT = 1 ./
              msbuild ${{ env.testrunner }}.sln
              cd bin\Debug
-             ./${{ env.testrunner }} --reporter JUnit::out=${{ env.outfile }}
-             cat ${{ env.outfile }}
-             $FileContent = Get-Content ${{ env.outfile }}
+             ./${{ env.testrunner }} --reporter JUnit::out=te-junit-float.xml
+             cat te-junit-float.xml
+             $FileContent = Get-Content te-junit-float.xml
              $errors = (Select-String -InputObject $FileContent -Pattern 'errors="([0-9]+)"' | % { $($_.matches.groups[1]) } )
              $failures = (Select-String -InputObject $FileContent -Pattern 'failures="([0-9]+)"' | % { $($_.matches.groups[1]) } )
              if ($errors.Value -gt 0)
@@ -92,9 +94,9 @@ jobs:
              cmake -DTE_LONG_DOUBLE = 1 ./
              msbuild ${{ env.testrunner }}.sln
              cd bin\Debug
-             ./${{ env.testrunner }} --reporter JUnit::out=${{ env.outfile }}
-             cat ${{ env.outfile }}
-             $FileContent = Get-Content ${{ env.outfile }}
+             ./${{ env.testrunner }} --reporter JUnit::out=te-junit-long-double.xml
+             cat te-junit-long-double.xml
+             $FileContent = Get-Content te-junit-long-double.xml
              $errors = (Select-String -InputObject $FileContent -Pattern 'errors="([0-9]+)"' | % { $($_.matches.groups[1]) } )
              $failures = (Select-String -InputObject $FileContent -Pattern 'failures="([0-9]+)"' | % { $($_.matches.groups[1]) } )
              if ($errors.Value -gt 0)
@@ -114,9 +116,9 @@ jobs:
              cmake -DTE_BITWISE_OPERATORS = 1 ./
              msbuild ${{ env.testrunner }}.sln
              cd bin\Debug
-             ./${{ env.testrunner }} --reporter JUnit::out=${{ env.outfile }}
-             cat ${{ env.outfile }}
-             $FileContent = Get-Content ${{ env.outfile }}
+             ./${{ env.testrunner }} --reporter JUnit::out=te-junit-bitwise.xml
+             cat te-junit-bitwise.xml
+             $FileContent = Get-Content te-junit-bitwise.xml
              $errors = (Select-String -InputObject $FileContent -Pattern 'errors="([0-9]+)"' | % { $($_.matches.groups[1]) } )
              $failures = (Select-String -InputObject $FileContent -Pattern 'failures="([0-9]+)"' | % { $($_.matches.groups[1]) } )
              if ($errors.Value -gt 0)
@@ -129,3 +131,9 @@ jobs:
                Write-Host "Failure count is: " + $failures.Value
                exit 1
                }
+
+      - name: Archive test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: MSW unit tests
+          path: ${{ github.workspace }}/tests/bin/Debug/*.xml
