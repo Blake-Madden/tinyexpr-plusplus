@@ -1,0 +1,17 @@
+name: test-clang-format
+on: [push,pull_request]
+
+jobs:
+  clang-format-checking:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DoozyX/clang-format-lint-action@v0.20
+        with:
+          source: "."
+          exclude: "tests"
+          extensions: 'h,cpp'
+          style: file
+          clangFormatVersion: 20
