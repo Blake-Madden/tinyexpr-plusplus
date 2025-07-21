@@ -32,6 +32,7 @@ for a full list of features.
 | ------------- | ------------- |
 | Doxygen | [![doxygen](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/doxygen.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/doxygen.yml) |
 | Spellcheck | [![Spell Check](https://github.com/Blake-Madden/i18n-check/actions/workflows/spell-check.yml/badge.svg)](https://github.com/Blake-Madden/i18n-check/actions/workflows/spell-check.yml) |
+| clang-format | [![clang-format](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/clang-format.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/clang-format.yml) |
 
 ## Compatibility Advisory
 

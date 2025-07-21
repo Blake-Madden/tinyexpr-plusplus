@@ -7,9 +7,9 @@
 
 #include "../tinyexpr.h"
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size)
-  {
-  te_parser tep;
-  tep.compile(std::string(reinterpret_cast<const char*>(Data), Size).c_str());
-  return 0;
-  }
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t* Data, size_t Size)
+    {
+    te_parser tep;
+    tep.compile(std::string(reinterpret_cast<const char*>(Data), Size).c_str());
+    return 0;
+    }
