@@ -1,0 +1,141 @@
+name: clang-tidy
+
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+  
+permissions:
+  contents: read
+
+jobs:
+  clang-tidy:
+    runs-on: ubuntu-latest
+
+    env:
+      BUILD_DIR: build
+      FIXES_DIR: clang_tidy_fixes
+      REPORT_HTML: clang-tidy-report.html
+
+      # Scan these roots for *.cpp
+      INCLUDE_DIRS: |
+        .
+
+      # Exclude these folders (repo-root relative).
+      # Tip: list the folder roots; the step adds '/*' for you.
+      EXCLUDE_DIRS: |
+        tests
+        docs
+        .vs
+        .github
+        .git
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install LLVM/Clang + deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-tidy clang cmake ninja-build python3-yaml
+
+      # Create compile_commands.json for clang-tidy
+      - name: Configure CMake compile_commands.json
+        run: |
+          cmake -S . -B "$BUILD_DIR" -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          # If your project generates headers, you can add a light build:
+          # cmake --build "$BUILD_DIR" -j
+
+      - name: Collect target files (include + prune excludes)
+        id: files
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Build: find <INCLUDE_DIRS> \( -path EX1/* -o -path EX2/* ... \) -prune -o -type f -name '*.cpp' -print
+          readarray -t roots <<<"$(printf "%s\n" "$INCLUDE_DIRS" | sed '/^\s*$/d')"
+          readarray -t exdirs <<<"$(printf "%s\n" "$EXCLUDE_DIRS" | sed '/^\s*$/d')"
+
+          if [[ ${#roots[@]} -eq 0 ]]; then
+            echo "No INCLUDE_DIRS configured"; exit 0
+          fi
+
+          # Assemble prune expression
+          prune=()
+          if [[ ${#exdirs[@]} -gt 0 ]]; then
+            prune+=( "(" )
+            for i in "${!exdirs[@]}"; do
+              d="${exdirs[$i]}"; [[ -z "$d" ]] && continue
+              [[ $i -gt 0 ]] && prune+=( -o )
+              prune+=( -path "$d/*" )
+            done
+            prune+=( ")" -prune -o )
+          fi
+
+          files=$(
+            find "${roots[@]}" "${prune[@]}" -type f -name '*.cpp' -print | sort
+          )
+
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$files" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+          echo "Selected files:"
+          printf '%s\n' $files || true
+
+      - name: Short-circuit if none
+        if: ${{ steps.files.outputs.files == '' }}
+        run: |
+          echo "No matching *.cpp after excludes."
+          echo "No matching *.cpp after excludes." >> $GITHUB_STEP_SUMMARY
+
+      - name: Run clang-tidy
+        if: ${{ steps.files.outputs.files != '' }}
+        shell: bash
+        env:
+          FIXES_DIR: clang_tidy_fixes
+        run: |
+          set -euo pipefail
+          mkdir -p "$FIXES_DIR" logs
+
+          # Read the newline-separated list
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+            echo "=== clang-tidy -> $file ==="
+
+            # POSIX-safe path mangling (avoid ${var//.../...} which is a bashism)
+            base="$(printf '%s' "$file" | sed 's#/#__#g')"
+
+            clang-tidy -p "$BUILD_DIR" -fix=false "$file" \
+              --extra-arg=-fno-color-diagnostics \
+              --extra-arg=-fdiagnostics-color=never \
+              > "logs/${base}.txt" 2>&1 || true
+          done <<< "${{ steps.files.outputs.files }}"
+
+      - name: Generate HTML report
+        if: ${{ steps.files.outputs.files != '' }}
+        run: |
+          python3 .github/scripts/clang_tidy_html_report.py \
+            --logs logs/*.txt \
+            --out "$REPORT_HTML" \
+            --counts ct_counts.json \
+            --fail-on warnings
+          {
+            echo "### Clang-Tidy Report (read-only)";
+            echo;
+            echo "Generated **$REPORT_HTML** (fail-on=warnings after suppressions).";
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: clang-tidy-report
+          path: |
+            ${{ env.REPORT_HTML }}
+            logs/
+            ct_counts.json
+          if-no-files-found: warn
+          retention-days: 14
