@@ -40,7 +40,7 @@ jobs:
       - name: Install LLVM/Clang + deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-tidy clang cmake ninja-build python3-yaml
+          sudo apt-get install -y clang-tidy clang cmake ninja-build python3-yaml lcov
 
       # Create compile_commands.json for clang-tidy
       - name: Configure CMake compile_commands.json
