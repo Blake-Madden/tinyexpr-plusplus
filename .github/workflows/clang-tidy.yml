@@ -138,6 +138,42 @@ jobs:
             echo "Generated **$REPORT_HTML** (fail-on=warnings after suppressions).";
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: workspace file check
+        if: always()
+        run: |
+            echo "=== WORKSPACE TREE (max 4 levels) ==="
+            find . -maxdepth 4 -type f | sort || true
+
+            echo ""
+            echo "=== Checking report HTML ==="
+            echo "REPORT_HTML = $REPORT_HTML"
+            if [ -f "$REPORT_HTML" ]; then
+              echo "FOUND: $REPORT_HTML"
+            else
+              echo "MISSING: $REPORT_HTML"
+            fi
+
+            echo ""
+            echo "=== Checking ct_counts.json ==="
+            if [ -f ct_counts.json ]; then
+              echo "FOUND: ct_counts.json"
+            else
+              echo "MISSING: ct_counts.json"
+            fi
+
+            echo ""
+            echo "=== Checking logs directory ==="
+            if [ -d logs ]; then
+              echo "logs/ exists"
+              ls -al logs
+            else
+              echo "logs directory MISSING"
+            fi
+
+            echo ""
+            echo "=== Checking log files ==="
+            ls logs/*.txt 2>/dev/null || echo "No log files found"
+
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
