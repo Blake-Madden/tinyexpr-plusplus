@@ -4289,5 +4289,6 @@ TEST_CASE("Benchmarks", "[!benchmark]")
         { return bench_al(benchmarkVar); };
     }
 }
+
 // clang-format on
 // NOLINTEND
