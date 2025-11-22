@@ -26,7 +26,7 @@ for a full list of features.
 | MS PREfast | [![Microsoft C++ Code Analysis](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/msvc.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/msvc.yml) |
 | CodeQL | [![CodeQL](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/codeql.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/codeql.yml) |
 | Quneiform | [![i18n-check](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/i18n-check.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/i18n-check.yml) |
-
+| clang-tidy | [![clang-tidy](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/clang-tidy.yml/badge.svg)](https://github.com/Blake-Madden/tinyexpr-plusplus/actions/workflows/clang-tidy.yml) |
 
 | Documentation Checks  | Result |
 | ------------- | ------------- |

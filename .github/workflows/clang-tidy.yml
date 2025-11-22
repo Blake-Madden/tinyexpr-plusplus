@@ -138,7 +138,7 @@ jobs:
             echo "Generated **$REPORT_HTML** (fail-on=warnings after suppressions).";
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: workspace file check
+      - name: Workspace file check
         if: always()
         run: |
             echo "=== WORKSPACE TREE (max 4 levels) ==="
