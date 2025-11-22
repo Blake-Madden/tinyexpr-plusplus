@@ -20,16 +20,12 @@ jobs:
 
       # Scan these roots for *.cpp
       INCLUDE_DIRS: |
-        .
+        src
 
       # Exclude these folders (repo-root relative).
       # Tip: list the folder roots; the step adds '/*' for you.
       EXCLUDE_DIRS: |
-        tests
-        docs
-        .vs
-        .github
-        .git
+        src/tests
 
     steps:
       - name: Checkout
@@ -42,10 +38,24 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y clang-tidy clang cmake ninja-build python3-yaml lcov
 
+      - name: Reorganize sources for clang-tidy
+        run: |
+          mkdir src
+          # Move ONLY your two real source files into src
+          mv tinyexpr.cpp src/
+          mv tinyexpr.h src/ 2>/dev/null || true  # if it exists
+
+          # Move the whole tests folder under src/
+          mv tests src/
+
+          # Recreate symlinks so CMake can still find files at their old locations
+          ln -s src/tinyexpr.cpp tinyexpr.cpp
+          ln -s src/tests tests
+
       # Create compile_commands.json for clang-tidy
       - name: Configure CMake compile_commands.json
         run: |
-          cmake -S tests -B "$BUILD_DIR" -DTE_BUILD_TEST_RUNNER=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -G Ninja
+          cmake -S . -B "$BUILD_DIR" -DTE_BUILD_TEST_RUNNER=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -G Ninja
           # If your project generates headers, you can add a light build:
           # cmake --build "$BUILD_DIR" -j
 
