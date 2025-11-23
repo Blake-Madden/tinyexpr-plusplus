@@ -111,6 +111,16 @@ if(TE_BUILD_TEST_RUNNER)
             target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /Zc:__cplusplus /MP /W3 /WX /wd4554
                                $<$<CONFIG:Debug>:/Od> $<$<CONFIG:Release>:/O2>)
         endif()
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC
+            -Wall -Wextra -Wpedantic -Wshadow -Werror
+            $<$<CONFIG:Debug>:-O0 -g>
+            $<$<CONFIG:Release>:-O3>)
+        if(USE_ADDRESS_SANITIZE)
+            target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC 
+                -fsanitize=address -fno-omit-frame-pointer)
+            target_link_options(${CMAKE_PROJECT_NAME} PUBLIC -fsanitize=address)
+        endif()
     endif()
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Catch2::Catch2)
 
