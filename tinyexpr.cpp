@@ -2384,6 +2384,7 @@ te_type te_parser::te_eval(const te_expr* texp)
         [&, texp]<typename T0>(const T0& var) -> te_type
         {
             using T = std::decay_t<T0>;
+            // cppcheck-suppress-begin internalAstError
             if constexpr (te_is_constant_v<T>)
                 {
                 return var;
@@ -2414,6 +2415,7 @@ te_type te_parser::te_eval(const te_expr* texp)
                 return std::apply(var,
                                   make_function_arg_list(M, std::make_index_sequence<n_args>{}));
                 }
+            // cppcheck-suppress-end internalAstError
             return te_nan;
         },
         texp->m_value);
