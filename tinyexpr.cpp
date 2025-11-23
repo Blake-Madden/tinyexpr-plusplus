@@ -2368,6 +2368,7 @@ auto make_function_arg_list(const F& func, std::index_sequence<Indices...>)
     return std::make_tuple(func(Indices)...);
     }
 
+// cppcheck-suppress-begin all
 te_type te_parser::te_eval(const te_expr* texp)
     {
     if (texp == nullptr)
@@ -2376,7 +2377,6 @@ te_type te_parser::te_eval(const te_expr* texp)
         }
 
     // NOLINTBEGIN
-    // cppcheck-suppress unreadVariable
     const auto M = [&texp = std::as_const(texp)](const size_t e)
     { return (e < texp->m_parameters.size()) ? te_eval(texp->m_parameters[e]) : te_nan; };
 
@@ -2388,19 +2388,19 @@ te_type te_parser::te_eval(const te_expr* texp)
                 {
                 return var;
                 }
-            else if constexpr (te_is_variable_v<T>)
+            if constexpr (te_is_variable_v<T>)
                 {
                 return *var;
                 }
-            else if constexpr (std::is_same_v<T, te_fun0>)
+            if constexpr (std::is_same_v<T, te_fun0>)
                 {
                 return var();
                 }
-            else if constexpr (std::is_same_v<T, te_confun0>)
+            if constexpr (std::is_same_v<T, te_confun0>)
                 {
                 return var(texp->m_parameters[0]);
                 }
-            else if constexpr (te_is_closure_v<T>)
+            if constexpr (te_is_closure_v<T>)
                 {
                 constexpr size_t n_args = te_function_arity<T>;
                 static_assert(n_args > 0);
@@ -2408,7 +2408,7 @@ te_type te_parser::te_eval(const te_expr* texp)
                                   make_closure_arg_list(M, texp->m_parameters[n_args - 1],
                                                         std::make_index_sequence<n_args - 1>{}));
                 }
-            else if constexpr (te_is_function_v<T>)
+            if constexpr (te_is_function_v<T>)
                 {
                 constexpr size_t n_args = te_function_arity<T>;
                 return std::apply(var,
@@ -2419,6 +2419,8 @@ te_type te_parser::te_eval(const te_expr* texp)
         texp->m_value);
     // NOLINTEND
     }
+
+// cppcheck-suppress-end all
 
 //--------------------------------------------------
 void te_parser::optimize(te_expr* texp)
