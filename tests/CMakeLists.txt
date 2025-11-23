@@ -104,8 +104,8 @@ if(TE_BUILD_TEST_RUNNER)
             tetests.cpp
             PROPERTIES
                 COMPILE_OPTIONS
-                    "-Wno-error=parentheses"
-                    "-Wno-error=unused-but-set-variable")
+                    -Wno-error=parentheses
+                    -Wno-error=unused-but-set-variable)
     endif()
     if(MSVC)
         target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION
