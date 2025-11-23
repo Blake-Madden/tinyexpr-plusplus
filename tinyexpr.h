@@ -82,8 +82,9 @@ constexpr int TINYEXPR_CPP_MAJOR_VERSION = 1;
 constexpr int TINYEXPR_CPP_MINOR_VERSION = 0;
 constexpr int TINYEXPR_CPP_PATCH_VERSION = 0;
 constexpr int TINYEXPR_CPP_TWEAK_VERSION = 1;
-constexpr wchar_t TINYEXPR_CPP_COPYRIGHT[] = L"TinyExpr: Copyright (c) 2015-2020 Lewis Van Winkle\n"
-                                             "TinyExpr++: Copyright (c) 2020-2025 Blake Madden";
+#define TINYEXPR_CPP_COPYRIGHT                                                                     \
+    "TinyExpr: Copyright (c) 2015-2020 Lewis Van Winkle\n"                                         \
+    "TinyExpr++: Copyright (c) 2020-2025 Blake Madden"
 
 class te_parser;
 
@@ -229,7 +230,7 @@ using te_usr_fun1 = std::function<te_type(std::string_view, std::string&)>;
 using te_usr_variant_type = std::variant<te_usr_noop, te_usr_fun0, te_usr_fun1>;
 
 // do not change the ordering of these, the indices are used to determine
-// the value type of a te_variable
+// the value type of te_variable
 using te_variant_type =
     std::variant<te_type, const te_type*, // indices 0-1
                  te_fun0, te_fun1, te_fun2, te_fun3, te_fun4, te_fun5, te_fun6, te_fun7, te_fun8,
@@ -248,7 +249,7 @@ enum te_variable_flags
     {
     /// @brief Don't do anything special when evaluating.
     TE_DEFAULT = 0,
-    /// @brief Don't update when simple evaluation is ran
+    /// @brief Don't update when simple evaluation is run
     ///     (i.e., only updated when expression is compiled).
     TE_PURE = (1 << 0),
     /// @brief Function that can take 1-7 argument (unused arguments are set to NaN).
@@ -279,9 +280,9 @@ class te_string_less
     // We can assume that we are only dealing with a-z, A-Z, 0-9, ., or _,
     // so use a branchless tolower.
     [[nodiscard]]
-    constexpr static char tolower(const char ch) noexcept
+    constexpr static char tolower(const char chr) noexcept
         {
-        return ch + (32 * (ch >= 'A' && ch <= 'Z'));
+        return chr + (32 * (chr >= 'A' && chr <= 'Z'));
         }
     };
 
@@ -299,7 +300,7 @@ class te_expr
     explicit te_expr(const te_variable_flags type) noexcept : m_type(type) {}
 
     /// @private
-    te_expr() noexcept {}
+    te_expr() noexcept = default;
 
     /// @private
     te_expr(const te_expr&) = delete;
@@ -307,7 +308,7 @@ class te_expr
     te_expr& operator=(const te_expr&) = delete;
 
     /// @private
-    virtual ~te_expr() {}
+    virtual ~te_expr() = default;
 
     /// @brief The type that m_value represents.
     te_variable_flags m_type{ TE_DEFAULT };
@@ -457,12 +458,12 @@ class te_parser
     /** @brief Parses the input @c expression.
         @param expression The formula to compile.
         @returns Whether the expression compiled or not. (This can be checked
-            by calling success() afterwards as well.)
+            by calling success() afterward as well.)
         @sa success().
         @note Returns NaN if division or modulus by zero occurs.
         @throws std::runtime_error Throws an exception in the case of arithmetic overflows
             (e.g., `1 << 64` would cause an overflow).*/
-    bool compile(const std::string_view expression);
+    bool compile(std::string_view expression);
     /** @brief Evaluates expression passed to compile() previously and returns its result.
         @returns The result, or NaN on error.
         @throws std::runtime_error Throws an exception in the case of arithmetic overflows
@@ -476,7 +477,7 @@ class te_parser
         @throws std::runtime_error Throws an exception in the case of arithmetic overflows
             (e.g., `1 << 64` would cause an overflow).*/
     [[nodiscard]]
-    te_type evaluate(const std::string_view expression);
+    te_type evaluate(std::string_view expression);
 
     /// @returns The last call to evaluate()'s result (which will be NaN on error).
     [[nodiscard]]
@@ -547,7 +548,7 @@ class te_parser
     /// @brief Adds a custom variable or function.
     /// @param var The variable/function to add.
     /// @note Prefer using set_variables_and_functions() as it will be more optimal
-    ///     (less sorts will need to be performed).
+    ///     (fewer sorts will need to be performed).
     /// @throws std::runtime_error Throws an exception if an illegal character is found
     ///     in the variable name.
     void add_variable_or_function(te_variable var)
@@ -560,7 +561,7 @@ class te_parser
     /// @param var The variable/function to remove (by name).
     void remove_variable_or_function(te_variable::name_type var)
         {
-        auto foundVar = m_customFuncsAndVars.find(
+        const auto foundVar = m_customFuncsAndVars.find(
             te_variable{ std::move(var), static_cast<te_type>(0.0), TE_DEFAULT, nullptr });
         if (foundVar != m_customFuncsAndVars.cend())
             {
@@ -570,7 +571,7 @@ class te_parser
 
 #ifndef TE_NO_BOOKKEEPING
     /// @brief Removes any custom variables and functions that weren't used in the last compilation.
-    /// @details This can be useful if the parser is pre-loaded with a large number of
+    /// @details This can be useful if the parser is preloaded with a large number of
     ///     variables and functions that needs to be pruned after the first expression is parsed.
     /// @warning After calling this, any custom variables and functions that weren't found
     ///     in the previously parsed expression will no longer be available.
@@ -598,7 +599,7 @@ class te_parser
     void set_unknown_symbol_resolver(te_usr_variant_type usr,
                                      const bool keepResolvedVariables = true)
         {
-        m_unknownSymbolResolve = usr;
+        m_unknownSymbolResolve = std::move(usr);
         m_keepResolvedVariables = keepResolvedVariables;
         }
 
@@ -673,7 +674,7 @@ class te_parser
             get_variables_and_functions().insert(std::move(nh));
             // if previously compiled, then re-compile since this
             // constant would have been optimized
-            if (m_expression.length())
+            if (!m_expression.empty())
                 {
                 compile(m_expression);
                 }
@@ -691,14 +692,12 @@ class te_parser
             {
             return te_nan;
             }
-        if (const auto val = std::get_if<te_type>(&cvar->m_value); val != nullptr)
+        if (const auto* const val = std::get_if<te_type>(&cvar->m_value); val != nullptr)
             {
             return *val;
             }
-        else
-            {
-            return te_nan;
-            }
+
+        return te_nan;
         }
 
     /// @returns The separator used between function arguments.
@@ -743,7 +742,7 @@ class te_parser
     [[nodiscard]]
     bool is_function_used(const std::string_view name) const
         {
-        return m_usedFunctions.find(te_variable::name_type{ name }) != m_usedFunctions.cend();
+        return m_usedFunctions.contains(te_variable::name_type{ name });
         }
 
     /// @returns @c true if @c name is a variable that had been used in the last parsed formula.
@@ -752,7 +751,7 @@ class te_parser
     [[nodiscard]]
     bool is_variable_used(const std::string_view name) const
         {
-        return m_usedVars.find(te_variable::name_type{ name }) != m_usedVars.cend();
+        return m_usedVars.contains(te_variable::name_type{ name });
         }
 #endif
     /// @returns A report of all available functions and variables.
@@ -805,7 +804,7 @@ class te_parser
     /// @brief Resets any resolved variables from USR if not being cached.
     void reset_usr_resolved_if_necessary()
         {
-        if (!m_keepResolvedVariables && m_resolvedVariables.size())
+        if (!m_keepResolvedVariables && !m_resolvedVariables.empty())
             {
             for (const auto& resolvedVar : m_resolvedVariables)
                 {
@@ -835,7 +834,7 @@ class te_parser
     ///     (and has a valid length).
     /// @param var The variable to validate.
     /// @throws std::runtime_error Throws an exception if an illegal character is found.
-    void validate_name(const te_variable& var) const
+    static void validate_name(const te_variable& var)
         {
         if (var.m_name.empty())
             {
@@ -848,7 +847,7 @@ class te_parser
             }
         const auto varCharPos =
             std::find_if(var.m_name.cbegin(), var.m_name.cend(),
-                         [](const auto ch) noexcept { return !is_name_char_valid(ch); });
+                         [](const auto chr) noexcept { return !is_name_char_valid(chr); });
         if (varCharPos != var.m_name.cend())
             {
             throw std::runtime_error(std::string("Invalid character in variable name: ") +
@@ -857,11 +856,11 @@ class te_parser
         }
 
     /// @returns @c true if character is valid for a function or variable name.
-    /// @param ch The character to review.
+    /// @param chr The character to review.
     [[nodiscard]]
-    constexpr static bool is_name_char_valid(const char ch) noexcept
+    constexpr static bool is_name_char_valid(const char chr) noexcept
         {
-        return (is_letter(ch) || (ch >= '0' && ch <= '9') || (ch == '_') || (ch == '.'));
+        return (is_letter(chr) || (chr >= '0' && chr <= '9') || (chr == '_') || (chr == '.'));
         }
 
     /// @returns An iterator to the custom variable or function with the given @c name,
@@ -909,12 +908,12 @@ class te_parser
 
     /// @returns Number of parameters that a function/variable takes.
     [[nodiscard]]
-    inline static auto get_arity(const te_variant_type& var) noexcept
+    static auto get_arity(const te_variant_type& var)
         {
         return std::visit(
-            [](const auto& var_) -> size_t
+            [](const auto& var) -> size_t
             {
-                using T = std::decay_t<decltype(var_)>;
+                using T = std::decay_t<decltype(var)>;
                 if constexpr (te_is_constant_v<T> || te_is_variable_v<T>)
                     {
                     return 0;
@@ -958,12 +957,12 @@ class te_parser
         }
 
     [[nodiscard]]
-    constexpr static bool is_function(const te_variant_type& var) noexcept
+    constexpr static bool is_function(const te_variant_type& var)
         {
         return std::visit(
-            [](const auto& var_) -> bool
+            [](const auto& var) -> bool
             {
-                using T = std::decay_t<decltype(var_)>;
+                using T = std::decay_t<decltype(var)>;
                 return te_is_function_v<T>;
             },
             var);
@@ -987,12 +986,12 @@ class te_parser
 #undef TE_DEF_FUNCTION
 
     [[nodiscard]]
-    constexpr static bool is_closure(const te_variant_type& var) noexcept
+    constexpr static bool is_closure(const te_variant_type& var)
         {
         return std::visit(
-            [](const auto& var_) -> bool
+            [](const auto& var) -> bool
             {
-                using T = std::decay_t<decltype(var_)>;
+                using T = std::decay_t<decltype(var)>;
                 return te_is_closure<T>::value;
             },
             var);
@@ -1047,34 +1046,34 @@ class te_parser
         };
 
     [[nodiscard]]
-    inline static te_expr* new_expr(const te_variable_flags type, te_variant_type value,
-                                    const std::initializer_list<te_expr*>& parameters)
+    static te_expr* new_expr(const te_variable_flags type, te_variant_type value,
+                             const std::initializer_list<te_expr*>& parameters)
         {
-        te_expr* ret = new te_expr{ type, std::move(value) };
+        auto* ret = new te_expr{ type, value };
         ret->m_parameters.resize(
             std::max<size_t>(std::max<size_t>(parameters.size(), get_arity(ret->m_value)) +
                                  (is_closure(ret->m_value) ? 1 : 0),
                              0));
-        if (parameters.size())
+        if (parameters.size() != 0U)
             {
-            std::copy(parameters.begin(), parameters.end(), ret->m_parameters.begin());
+            std::ranges::copy(parameters, ret->m_parameters.begin());
             }
         return ret;
         }
 
     [[nodiscard]]
-    inline static te_expr* new_expr(const te_variable_flags type, te_variant_type value)
+    static te_expr* new_expr(const te_variable_flags type, te_variant_type value)
         {
-        te_expr* ret = new te_expr{ type, std::move(value) };
+        auto* ret = new te_expr{ type, value };
         ret->m_parameters.resize(static_cast<size_t>(get_arity(ret->m_value)) +
                                  (is_closure(ret->m_value) ? 1 : 0));
         return ret;
         }
 
     [[nodiscard]]
-    constexpr static bool is_letter(const char ch) noexcept
+    constexpr static bool is_letter(const char chr) noexcept
         {
-        return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+        return (chr >= 'a' && chr <= 'z') || (chr >= 'A' && chr <= 'Z');
         }
 
     /** @brief Parses the input expression and binds variables.
@@ -1083,14 +1082,14 @@ class te_parser
             variables to add to the parser.
         @returns null on error.*/
     [[nodiscard]]
-    te_expr* te_compile(const std::string_view expression, std::set<te_variable>& variables);
+    te_expr* te_compile(std::string_view expression, std::set<te_variable>& variables);
     /* Evaluates the expression. */
     [[nodiscard]]
     static te_type te_eval(const te_expr* texp);
 
     /* Frees the expression. */
     /* This is safe to call on null pointers. */
-    inline static void te_free(te_expr* texp)
+    static void te_free(te_expr* texp)
         {
         if (texp == nullptr)
             {
@@ -1111,10 +1110,10 @@ class te_parser
         }
 
     [[nodiscard]]
-    static auto find_lookup(state* s, const std::string_view name)
+    static auto find_lookup(state* ste, const std::string_view name)
         {
-        return s->m_lookup.find(te_variable{ te_variable::name_type{ name },
-                                             static_cast<te_type>(0.0), TE_DEFAULT, nullptr });
+        return ste->m_lookup.find(te_variable{ te_variable::name_type{ name },
+                                               static_cast<te_type>(0.0), TE_DEFAULT, nullptr });
         }
 
     void next_token(state* theState);
