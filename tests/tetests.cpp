@@ -3402,18 +3402,18 @@ TEST_CASE("Bitwise operators", "[bitwise]")
             te_parser::supports_32bit())
             {
             val = std::numeric_limits<uint32_t>::max();
-            decltype(val) res = ~val;
-            CHECK(tep.evaluate("~" + std::to_string(val)) == res);
+            decltype(val) res2 = ~val;
+            CHECK(tep.evaluate("~" + std::to_string(val)) == res2);
 
             val /= 2;
-            res = ~val;
-            CHECK(tep.evaluate("~" + std::to_string(val)) == res);
+            res2 = ~val;
+            CHECK(tep.evaluate("~" + std::to_string(val)) == res2);
 
             val = 1986;
-            res = ~val;
-            CHECK(tep.evaluate("~" + std::to_string(val)) == res);
-            CHECK(tep.evaluate("+~1986") == res);
-            CHECK(tep.evaluate("~+1986") == res);
+            res2 = ~val;
+            CHECK(tep.evaluate("~" + std::to_string(val)) == res2);
+            CHECK(tep.evaluate("+~1986") == res2);
+            CHECK(tep.evaluate("~+1986") == res2);
             }
         }
 
