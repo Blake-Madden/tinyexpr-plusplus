@@ -911,9 +911,9 @@ class te_parser
     static auto get_arity(const te_variant_type& var)
         {
         return std::visit(
-            [](const auto& var) -> size_t
+            [](const auto& var0) -> size_t
             {
-                using T = std::decay_t<decltype(var)>;
+                using T = std::decay_t<decltype(var0)>;
                 if constexpr (te_is_constant_v<T> || te_is_variable_v<T>)
                     {
                     return 0;
@@ -960,9 +960,9 @@ class te_parser
     constexpr static bool is_function(const te_variant_type& var)
         {
         return std::visit(
-            [](const auto& var) -> bool
+            [](const auto& var0) -> bool
             {
-                using T = std::decay_t<decltype(var)>;
+                using T = std::decay_t<decltype(var0)>;
                 return te_is_function_v<T>;
             },
             var);
@@ -989,9 +989,9 @@ class te_parser
     constexpr static bool is_closure(const te_variant_type& var)
         {
         return std::visit(
-            [](const auto& var) -> bool
+            [](const auto& var0) -> bool
             {
-                using T = std::decay_t<decltype(var)>;
+                using T = std::decay_t<decltype(var0)>;
                 return te_is_closure<T>::value;
             },
             var);
