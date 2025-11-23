@@ -49,7 +49,7 @@
 
 #include "tinyexpr.h"
 
-// NOLINTBEGIN(readability-redundant-casting,readability-avoid-nested-conditional-operator)
+// NOLINTBEGIN(readability-redundant-casting,readability-avoid-nested-conditional-operator,hicpp-named-parameter,readability-named-parameter)
 
 // builtin functions
 namespace te_builtins
@@ -2679,4 +2679,4 @@ std::string te_parser::info()
     return sysInfo;
     }
 
-// NOLINTEND(readability-redundant-casting,readability-avoid-nested-conditional-operator)
+// NOLINTEND(readability-redundant-casting,readability-avoid-nested-conditional-operator,hicpp-named-parameter,readability-named-parameter)
