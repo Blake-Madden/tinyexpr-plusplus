@@ -2368,7 +2368,6 @@ auto make_function_arg_list(const F& func, std::index_sequence<Indices...>)
     return std::make_tuple(func(Indices)...);
     }
 
-// cppcheck-suppress-begin all
 te_type te_parser::te_eval(const te_expr* texp)
     {
     if (texp == nullptr)
@@ -2419,8 +2418,6 @@ te_type te_parser::te_eval(const te_expr* texp)
         texp->m_value);
     // NOLINTEND
     }
-
-// cppcheck-suppress-end all
 
 //--------------------------------------------------
 void te_parser::optimize(te_expr* texp)
