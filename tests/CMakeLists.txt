@@ -101,7 +101,7 @@ if(TE_BUILD_TEST_RUNNER)
     # Disable specific -Werror warnings only for tetests.cpp
     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         set_source_files_properties(
-            tetests.cpp PROPERTIES COMPILE_FLAGS "-Wno-error=parentheses -Wno-error=unused-but-set-variable")
+            tetests.cpp PROPERTIES COMPILE_FLAGS "-Wno-parentheses -Wno-unused-but-set-variable")
     endif()
     if(MSVC)
         target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION

@@ -3770,7 +3770,7 @@ TEST_CASE("Unknown symbol resolve lambda with capture", "[usr]")
     std::string str("id.temperature < 51");
     te_type temperature = 49.0;
     te_parser parser;
-    parser.set_unknown_symbol_resolver([&](std::string_view symbol)
+    parser.set_unknown_symbol_resolver([&]([[maybe_unused]] std::string_view symbol)
         {
         return temperature += 1.0;
         }, false);
