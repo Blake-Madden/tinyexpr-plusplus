@@ -938,7 +938,7 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise NOT value must be positive.");
             }
-        if (val > std::numeric_limits<uint64_t>::max())
+        if (val > static_cast<te_type>(std::numeric_limits<uint64_t>::max()))
             {
             throw std::runtime_error("Value is too large for bitwise NOT.");
             }
