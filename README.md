@@ -40,7 +40,7 @@ Note: for current users of *TinyExpr++*, please see the [compatibility advisory]
 
 ## Features
 
-- **C++17 with no dependencies**.
+- **C++20 with no dependencies**.
 - Single source file and header file.
 - Simple and fast.
 - Implements standard operator precedence.
