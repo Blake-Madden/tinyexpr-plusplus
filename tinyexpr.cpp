@@ -2384,24 +2384,23 @@ te_type te_parser::te_eval(const te_expr* texp)
         [&, texp]<typename T0>(const T0& var) -> te_type
         {
             using T = std::decay_t<T0>;
-            // cppcheck-suppress-begin internalAstError
             if constexpr (te_is_constant_v<T>)
                 {
                 return var;
                 }
-            if constexpr (te_is_variable_v<T>)
+            else if constexpr (te_is_variable_v<T>)
                 {
                 return *var;
                 }
-            if constexpr (std::is_same_v<T, te_fun0>)
+            else if constexpr (std::is_same_v<T, te_fun0>)
                 {
                 return var();
                 }
-            if constexpr (std::is_same_v<T, te_confun0>)
+            else if constexpr (std::is_same_v<T, te_confun0>)
                 {
                 return var(texp->m_parameters[0]);
                 }
-            if constexpr (te_is_closure_v<T>)
+            else if constexpr (te_is_closure_v<T>)
                 {
                 constexpr size_t n_args = te_function_arity<T>;
                 static_assert(n_args > 0);
@@ -2409,13 +2408,12 @@ te_type te_parser::te_eval(const te_expr* texp)
                                   make_closure_arg_list(M, texp->m_parameters[n_args - 1],
                                                         std::make_index_sequence<n_args - 1>{}));
                 }
-            if constexpr (te_is_function_v<T>)
+            else if constexpr (te_is_function_v<T>)
                 {
                 constexpr size_t n_args = te_function_arity<T>;
                 return std::apply(var,
                                   make_function_arg_list(M, std::make_index_sequence<n_args>{}));
                 }
-            // cppcheck-suppress-end internalAstError
             return te_nan;
         },
         texp->m_value);
