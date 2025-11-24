@@ -103,6 +103,9 @@ if(TE_BUILD_TEST_RUNNER)
     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         set_source_files_properties(
             tetests.cpp PROPERTIES COMPILE_FLAGS "-Wno-parentheses -Wno-unused-but-set-variable")
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        set_source_files_properties(
+            tinyexpr.cpp PROPERTIES COMPILE_FLAGS "-Werror=unused-function")
     endif()
     if(MSVC)
         target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION
