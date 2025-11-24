@@ -2451,20 +2451,10 @@ void te_parser::optimize(te_expr* texp)
             }
         if (known)
             {
-            try
-                {
-                const auto value = te_eval(texp);
-                te_free_parameters(texp);
-                texp->m_type = TE_DEFAULT;
-                texp->m_value = value;
-                }
-            catch (const std::exception& exp)
-                {
-                te_free_parameters(texp);
-                texp->m_type = TE_DEFAULT;
-                texp->m_value = te_nan;
-                throw exp;
-                }
+            const auto value = te_eval(texp);
+            te_free_parameters(texp);
+            texp->m_type = TE_DEFAULT;
+            texp->m_value = value;
             }
         }
     }
@@ -2479,6 +2469,7 @@ te_expr* te_parser::te_compile(const std::string_view expression, std::set<te_va
 
     if (theState.m_type != state::token_type::TOK_END)
         {
+        // if a parse error, clean up
         te_free(root);
         m_errorPos = (theState.m_next - theState.m_start);
         if (m_errorPos > 0)
@@ -2488,7 +2479,17 @@ te_expr* te_parser::te_compile(const std::string_view expression, std::set<te_va
         return nullptr;
         }
 
-    optimize(root);
+    try
+        {
+        optimize(root);
+        }
+    catch (const std::exception& exp)
+        {
+        // parsed OK, but there was an evaluation error;
+        // clean up and throw the message back up to compile()
+        te_free(root);
+        throw exp;
+        }
     m_errorPos = te_parser::npos;
     return root;
     }
@@ -2564,6 +2565,8 @@ bool te_parser::compile(const std::string_view expression)
         m_parseSuccess = false;
         m_result = te_nan;
         m_lastErrorMessage = expt.what();
+        // not a syntax error in the expression, something threw a math error
+        m_errorPos = te_parser::npos;
         }
 
     reset_usr_resolved_if_necessary();
@@ -2584,11 +2587,11 @@ te_type te_parser::evaluate()
             }
         m_result = (m_compiledExpression != nullptr) ? te_eval(m_compiledExpression) : te_nan;
         }
-    catch (const std::exception& except)
+    catch (const std::exception& exp)
         {
         m_parseSuccess = false;
         m_result = te_nan;
-        m_lastErrorMessage = except.what();
+        m_lastErrorMessage = exp.what();
         }
 
     reset_usr_resolved_if_necessary();
