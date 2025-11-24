@@ -99,13 +99,13 @@ if(TE_BUILD_TEST_RUNNER)
 
     add_executable(${CMAKE_PROJECT_NAME} ../tinyexpr.cpp tetests.cpp testingmain.cpp)
     # Disable specific -Werror warnings only for tetests.cpp
-    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU|AppleClang")
         set_source_files_properties(
             tetests.cpp PROPERTIES COMPILE_FLAGS "-Wno-parentheses -Wno-unused-but-set-variable")
     endif()
-    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU|AppleClang")
         set_source_files_properties(
-            tinyexpr.cpp PROPERTIES COMPILE_FLAGS "-Wno-unused-function")
+            ../tinyexpr.cpp PROPERTIES COMPILE_FLAGS "-Wno-unused-function")
     endif()
     if(MSVC)
         target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION
