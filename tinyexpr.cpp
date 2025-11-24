@@ -2483,7 +2483,8 @@ te_expr* te_parser::te_compile(const std::string_view expression, std::set<te_va
         {
         optimize(root);
         }
-    catch (const std::exception& exp)
+    catch ([[maybe_unused]]
+           const std::exception& exp)
         {
         // parsed OK, but there was an evaluation error;
         // clean up and throw the message back up to compile()

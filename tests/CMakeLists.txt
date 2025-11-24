@@ -115,7 +115,7 @@ if(TE_BUILD_TEST_RUNNER)
         # C4554: check operator precedence for possible error; use parentheses to clarify precedence
         # is suppressed because of unit test, not the code itself.
         if(USE_ADDRESS_SANITIZE)
-            target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /Zc:__cplusplus /MP /W3 /WX- /wd4554
+            target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /Zc:__cplusplus /MP /W3 /WX /wd4554
                                $<$<CONFIG:Debug>:/Od /fsanitize=address> $<$<CONFIG:Release>:/O2>)
         else()
             target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /Zc:__cplusplus /MP /W3 /WX /wd4554
