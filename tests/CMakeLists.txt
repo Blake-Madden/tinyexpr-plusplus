@@ -20,6 +20,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # - TE_BUILD_TEST_RUNNER to toggle running the tests
 
 option(TE_BUILD_TEST_RUNNER "Build test runner" ON)
+option(USE_ADDRESS_SANITIZE "Use ASAN" ON)
 
 project(TETestRunner)
 

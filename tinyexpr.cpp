@@ -2451,10 +2451,20 @@ void te_parser::optimize(te_expr* texp)
             }
         if (known)
             {
-            const auto value = te_eval(texp);
-            te_free_parameters(texp);
-            texp->m_type = TE_DEFAULT;
-            texp->m_value = value;
+            try
+                {
+                const auto value = te_eval(texp);
+                te_free_parameters(texp);
+                texp->m_type = TE_DEFAULT;
+                texp->m_value = value;
+                }
+            catch (const std::exception& exp)
+                {
+                te_free_parameters(texp);
+                texp->m_type = TE_DEFAULT;
+                texp->m_value = te_nan;
+                throw exp;
+                }
             }
         }
     }
