@@ -499,16 +499,15 @@ namespace te_builtins
     static te_type te_random()
         {
 #ifdef TE_RAND_SEED
-        std::mt19937 gen(static_cast<unsigned int>(RAND_SEED));
+        static std::mt19937 gen(static_cast<unsigned int>(TE_RAND_SEED));
 #elif defined(TE_RAND_SEED_TIME)
-        std::mt19937 gen(static_cast<unsigned int>(time(nullptr)));
+        static std::mt19937 gen(static_cast<unsigned int>(std::time(nullptr)));
 #else
-        static std::random_device rdev;
-        std::mt19937 gen(rdev());
+        static std::mt19937 gen(std::random_device{}());
 #endif
 
-        std::uniform_real_distribution<te_type> distr(0, 1);
-        return distr(gen);
+        static std::uniform_real_distribution<te_type> distribute(0, 1);
+        return distribute(gen);
         }
 
     [[nodiscard]]

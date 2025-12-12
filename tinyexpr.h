@@ -81,7 +81,7 @@
 constexpr int TINYEXPR_CPP_MAJOR_VERSION = 1;
 constexpr int TINYEXPR_CPP_MINOR_VERSION = 0;
 constexpr int TINYEXPR_CPP_PATCH_VERSION = 1;
-constexpr int TINYEXPR_CPP_TWEAK_VERSION = 0;
+constexpr int TINYEXPR_CPP_TWEAK_VERSION = 1;
 #define TINYEXPR_CPP_COPYRIGHT                                                                     \
     "TinyExpr: Copyright (c) 2015-2020 Lewis Van Winkle\n"                                         \
     "TinyExpr++: Copyright (c) 2020-2025 Blake Madden"
@@ -252,7 +252,7 @@ enum te_variable_flags
     /// @brief Don't update when simple evaluation is run
     ///     (i.e., only updated when expression is compiled).
     TE_PURE = (1 << 0),
-    /// @brief Function that can take 1-7 argument (unused arguments are set to NaN).
+    /// @brief Function that can take 1-24 argument (unused arguments are set to NaN).
     TE_VARIADIC = (1 << 1)
     };
 
