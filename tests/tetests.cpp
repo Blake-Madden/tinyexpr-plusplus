@@ -24,7 +24,7 @@
 
 /*
  * TINYEXPR++ - Tiny recursive descent parser and evaluation engine in C++
- * Copyright (c) 2020-2023 Blake Madden
+ * Copyright (c) 2020-2026 Blake Madden
  *
  * C++ version of the TinyExpr library.
  *
@@ -4193,6 +4193,84 @@ TEST_CASE("NaN Comparison", "[nan]")
     }
 
 // Financial functions
+// --------------------------------------------------
+// PV
+// --------------------------------------------------
+TEST_CASE("PV", "[finance]")
+    {
+    te_parser tep;
+
+    // Excel: =PV(0.05/12, 60, -200)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05/12, 60, -200)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(10598.14), WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =PV(0.05/12, 60, -200, 0, 1)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05/12, 60, -200, 0, 1)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(10642.30), WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =PV(0.1, 1, -100)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.1, 1, -100)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(90.91), WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =PV(0, 60, -200)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0, 60, -200)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(12000)));
+
+    // Excel: =PV(0, 10, 0, 1000)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0, 10, 0, 1000)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(-1000)));
+
+    // Excel: =PV(0.05, 10, -100)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, 10, -100)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(772.17), WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =PV(0.05, 10, -100, 0)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, 10, -100, 0)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(772.17), WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =PV(0.05, 10, -100, 0, 0)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, 10, -100, 0, 0)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(772.17), WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =PV(0.05, 10, -100, 0, 2)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, 10, -100, 0, 2)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(810.78), WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =PV(0.05, 10, -100, 0, -1)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, 10, -100, 0, -1)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(810.78), WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =PV(-0.5, 5, -100)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(-0.5, 5, -100)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(6200), WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =PV(-1, 10, -100) -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PV(-1, 10, -100)"))));
+
+    // Excel: =PV(0.05, 0, -100) -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, 0, -100)"))));
+
+    // Excel: =PV(0.05, -10, -100) -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, -10, -100)"))));
+
+    // Excel: =PV(NaN, 10, -100) -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PV(NaN, 10, -100)"))));
+
+    // Excel: =PV(0.05, NaN, -100) -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, NaN, -100)"))));
+
+    // Excel: =PV(0.05, 10, NaN) -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, 10, NaN)"))));
+
+    // Excel: =PV(0.08/12, 360, -1000)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.08/12, 360, -1000)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(136283.35), WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =PV(0.03, 1, 0, 1000)
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.03, 1, 0, 1000)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(-970.87), WITHIN_TYPE_CAST(0.0001)));
+    }
+
 TEST_CASE("Nominal", "[finance]")
     {
     te_parser tep;

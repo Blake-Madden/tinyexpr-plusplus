@@ -71,6 +71,7 @@ The following are changes from the original TinyExpr C library:
   - `not`: returns logical negation of value.
   - `permut`: alias for `npr()`, like the *Excel* function.
   - `power`: alias for `pow()`, like the *Excel* function.
+  - `pv`: returns the present value of an investment, like the *Excel* function.
   - `rand`: returns random number between `0` and `1`.
      Note that this implementation uses the Mersenne Twister (`mt19937`) to generate random numbers.
   - `round`: returns a number, rounded to a given decimal point.

@@ -26,7 +26,7 @@
 /*
  * TINYEXPR++ - Tiny recursive descent parser and evaluation engine in C++
  *
- * Copyright (c) 2020-2025 Blake Madden
+ * Copyright (c) 2020-2026 Blake Madden
  *
  * C++ version of the TinyExpr library.
  *
@@ -253,6 +253,52 @@ namespace te_builtins
             }
         return std::floor(static_cast<te_type>(val / decimalPosition) + ROUND_EPSILON) *
                decimalPosition;
+        }
+
+    [[nodiscard]]
+    static te_type te_pv(te_type rate, te_type nper, te_type pmt, te_type fv, te_type type)
+        {
+        if (!std::isfinite(rate) || !std::isfinite(nper) || !std::isfinite(pmt))
+            {
+            return te_parser::te_nan;
+            }
+
+        // optional args default like Excel
+        if (!std::isfinite(fv))
+            {
+            fv = 0;
+            }
+        if (!std::isfinite(type))
+            {
+            type = 0;
+            }
+
+        if (nper <= 0)
+            {
+            return te_parser::te_nan;
+            }
+
+        // Excel: rate <= -1 -> #NUM!
+        if (rate <= -1.0)
+            {
+            return te_parser::te_nan;
+            }
+
+        // coerce type to 0 or 1
+        type = (type != 0) ? 1 : 0;
+
+        if (rate == 0.0)
+            {
+            return -(fv + pmt * nper);
+            }
+
+        const te_type powVal = std::pow(1 + rate, nper);
+        if (!std::isfinite(powVal) || powVal == 0.0)
+            {
+            return te_parser::te_nan;
+            }
+
+        return -(fv + pmt * (1 + rate * type) * (powVal - 1) / rate) / powVal;
         }
 
     [[nodiscard]]
@@ -1499,6 +1545,8 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "pi", static_cast<te_fun0>(te_builtins::te_pi), TE_PURE },
     { "pow", static_cast<te_fun2>(te_builtins::te_pow), TE_PURE },
     { "power", /* Excel alias*/ static_cast<te_fun2>(te_builtins::te_pow), TE_PURE },
+    { "pv", static_cast<te_fun5>(te_builtins::te_pv),
+      static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "rand", static_cast<te_fun0>(te_builtins::te_random), TE_PURE },
     { "round", static_cast<te_fun2>(te_builtins::te_round),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },

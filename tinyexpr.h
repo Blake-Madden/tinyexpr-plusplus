@@ -26,7 +26,7 @@
 /*
  * TINYEXPR++ - Tiny recursive descent parser and evaluation engine in C++
  *
- * Copyright (c) 2020-2025 Blake Madden
+ * Copyright (c) 2020-2026 Blake Madden
  *
  * C++ version of the TinyExpr library.
  *

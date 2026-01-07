@@ -73,7 +73,7 @@ tep.set_unknown_symbol_resolver(ResolveResolutionSymbols);
 
 /* Will resolve to 288, and "RESOLUTION" will be added as a
    variable to the parser with a value of 96.
-   Also, beccause TinyExpr++ is case insensitive,
+   Also, because TinyExpr++ is case insensitive,
    "resolution" will also be seen as 96 once "RESOLUTION" was resolved.*/
 tep.evaluate("RESOLUTION * 3");
 ```
