@@ -7,13 +7,10 @@ The following data types and constants are used throughout *TinyExpr++*:
 `te_parser`: The main class for defining an evaluation engine and solving expressions.
 
 `te_type`: The data type for variables, function parameters, and results.
-By default this is `double`, but can be `float` (when [`TE_FLOAT`](#te-float) is defined)
-or `long double` (when `TE_LONG_DOUBLE` is defined).
+By default this is `double`, but can be `float` (when [`TE_FLOAT`](#te-float) is defined) or `long double` (when `TE_LONG_DOUBLE` is defined).
 
-If `long double`\index{data types!\texttt{long double}} is in use, then various bitwise functions (`BITNOT()`, `BITRROTATE()`)
-may be able to support 64-bit integers\index{data types!\texttt{64-bit integer}}.
-This will depend on the compiler used to build the library and can be verified by calling
-`te_parser::supports_64bit()` at compile time or `SUPPORTS64BIT()` in an expression at runtime.
+If `long double`\index{data types!\texttt{long double}} is in use, then various bitwise functions (`BITNOT()`, `BITRROTATE()`) may be able to support 64-bit integers\index{data types!\texttt{64-bit integer}}.
+This will depend on the compiler used to build the library and can be verified by calling `te_parser::supports_64bit()` at compile time or `SUPPORTS64BIT()` in an expression at runtime.
 
 ::: {.tipsection data-latex=""}
 `te_parser::supports_64bit()` is `constexpr`'ed and thus can be used in `if constexpr()` evaluations.
@@ -23,24 +20,26 @@ This will depend on the compiler used to build the library and can be verified b
 (Refer to [custom variables](#custom-variables).)
 
 `te_expr`: The base class for a compiled expression.
-Classes that derive from this can be bound to custom functions. In turn, this allows for
-connecting more complex, class-based objects to the parser.
+Classes that derive from this can be bound to custom functions.
+In turn, this allows for connecting more complex, class-based objects to the parser.
 (Refer to [custom classes](#custom-classes).)
 
 `te_parser::te_nan`: An invalid numeric value.
 This should be returned from user-defined functions to signal a failed calculation.
 
-`te_parser::npos`: An invalid position. This is returned from `te_parser::get_last_error_position()` when no error occurred.
+`te_parser::npos`: An invalid position.
+This is returned from `te_parser::get_last_error_position()` when no error occurred.
 
-`te_usr_noop`: A no-op function. When passed to `te_parser::set_unknown_symbol_resolver()`, will disable unknown symbol resolution.
+`te_usr_noop`: A no-op function.
+When passed to `te_parser::set_unknown_symbol_resolver()`, will disable unknown symbol resolution.
 (Refer to [ch. -@sec-usr].)
 
 {{< pagebreak >}}
 
 ## Functions {-}
 
-The primary interface to *TinyExpr++* is the class `te_parser`. A `te_parser` is a self-contained parser,
-which stores its own user-defined variables &amp; functions, separators, and state information.
+The primary interface to *TinyExpr++* is the class `te_parser`.
+A `te_parser` is a self-contained parser, which stores its own user-defined variables &amp; functions, separators, and state information.
 
 `te_parser` provides these functions:
 
@@ -56,26 +55,25 @@ add_variable_or_function(const te_variable& var);
 remove_variable_or_function(te_variable::name_type var);
 remove_unused_variables_and_functions();
 set_unknown_symbol_resolver(te_usr_variant_type usr);           // <4>
-get_decimal_separator();                                        // <5>
-set_decimal_separator();                                        // <5>
-get_list_separator();                                           // <5>
-set_list_separator();                                           // <5>
+char get_decimal_separator();                                   // <5>
+set_decimal_separator(char);                                    // <5>
+char get_list_separator();                                      // <5>
+set_list_separator(char);                                       // <5>
 ```
 
-1. `evaluate()` takes an expression and immediately returns the result. If there
-is a parse error, then it returns NaN (which can be verified by using `std::isnan()`). (`success()` will also return false.)
+1. `evaluate()` takes an expression and immediately returns the result.
+If there is a parse error, then it returns NaN (which can be verified by using `std::isnan()`).
+(`success()` will also return false.)
 
 2. `get_result()` can be called anytime afterwards to retrieve the result from `evaluate()`.
 
-3. `set_variables_and_functions()`, `get_variables_and_functions()`, and `add_variable_or_function()` are used
-to add custom variables and functions to the parser. Likewise, `remove_variable_or_function()` and `remove_unused_variables_and_functions()`
-are used to remove them.
+3. `set_variables_and_functions()`, `get_variables_and_functions()`, and `add_variable_or_function()` are used to add custom variables and functions to the parser.
+Likewise, `remove_variable_or_function()` and `remove_unused_variables_and_functions()` are used to remove them.
 
 4. `set_unknown_symbol_resolver()` is used to provide a custom function to resolve unknown symbols in an expression.
 (Refer to [ch. -@sec-usr] for further details.)
 
-5. `get_decimal_separator()`/`set_decimal_separator()` and
-`get_list_separator()`/`set_list_separator()` can be used to parse non-US formatted formulas.
+5. `get_decimal_separator()`/`set_decimal_separator()` and `get_list_separator()`/`set_list_separator()` can be used to parse non-US formatted formulas.
 
 Example:
 
@@ -88,7 +86,8 @@ auto result = tep.evaluate("(5+5)");
 auto result2 = tep.evaluate("(5+5");
 ```
 
-You can also provide `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas. `evaluate()` will then evaluate expressions using these variables and functions.
+You can also provide `set_variables_and_functions()` a list of constants, bound variables, and function pointers/lambdas.
+`evaluate()` will then evaluate expressions using these variables and functions.
 
 ## Error Handling {-}
 
@@ -98,8 +97,7 @@ You can also provide `set_variables_and_functions()` a list of constants, bound 
 - An illegal character is provided as a list or decimal separator.
 - The same character is provided as both the list and decimal separator.
 
-It is recommended to wrap the following functions in `try`/`catch` blocks to handle
-these exceptions:
+It is recommended to wrap the following functions in `try`/`catch` blocks to handle these exceptions:
 
 - `compile()`
 - `evaluate()`
@@ -108,11 +106,11 @@ these exceptions:
 - `set_decimal_separator()`
 - `set_list_separator()`
 
-Syntax and calculation errors are trapped within calls to `compile()` and `evaluate()`. Error information can be retrieved afterwards by calling the following:
+Syntax and calculation errors are trapped within calls to `compile()` and `evaluate()`.
+Error information can be retrieved afterwards by calling the following:
 
 - `success()`: returns whether the last parse was successful or not.
-- `get_last_error_position()`: returns the 0-based index of where in the
-expression the parse failed (useful for syntax errors).
+- `get_last_error_position()`: returns the 0-based index of where in the expression the parse failed (useful for syntax errors).
 If there was no parse error, then this will return `te_parser::npos`.
 - `get_last_error_message()`: returns a more detailed message for some calculation errors (e.g., division by zero).
 

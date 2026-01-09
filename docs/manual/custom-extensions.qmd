@@ -45,7 +45,8 @@ int main(int argc, char* argv[])
 ::: {.minipage data-latex="{\textwidth}"}
 ## Binding to Custom Functions {-}
 
-*TinyExpr++* can call custom functions\index{functions!binding to custom} also. Here is a short example:
+*TinyExpr++* can also call custom functions\index{functions!binding to custom}.
+Here is a short example:
 
 ```{.cpp}
 te_type my_sum(te_type a, te_type b)
@@ -82,8 +83,8 @@ const auto r = tep.evaluate("mysum(5, 6)");
 ::: {.minipage data-latex="{\textwidth}"}
 ## Binding to Custom Classes {-#custom-classes}
 
-A class derived from `te_expr` can be bound to custom functions\index{classes!binding to custom}. This enables you to
-have full access to an object (via these functions) when parsing an expression.
+A class derived from `te_expr` can be bound to custom functions\index{classes!binding to custom}.
+This enables you to have full access to an object (via these functions) when parsing an expression.
 
 The following demonstrates creating a `te_expr`-derived class which contains an array of values:
 
@@ -97,8 +98,8 @@ public:
     };
 ```
 
-Next, create two functions that can accept this object and perform
-actions on it. (Note that proper error handling is not included for brevity.):
+Next, create two functions that can accept this object and perform actions on it.
+(Note that proper error handling is not included for brevity.):
 
 ```{.cpp}
 // Returns the value of a cell from the object's data.
@@ -117,8 +118,7 @@ te_type cell_max(const te_expr* context)
     }
 ```
 
-Finally, create an instance of the class and connect the custom functions to it,
-while also adding them to the parser:
+Finally, create an instance of the class and connect the custom functions to it, while also adding them to the parser:
 
 ```{.cpp}
 te_expr_array teArray{ TE_DEFAULT };
@@ -137,11 +137,10 @@ auto result = tep.evaluate("SUM(CELL 0, CELL 1, CELL 2, CELL 3, CELL 4)");
 
 // call the other function, getting the object's max value
 // (will be 8)
-res = tep.evaluate("CellMax()");
+result = tep.evaluate("CellMax()");
 ```
 
 :::: {.notesection data-latex=""}
-Valid variable and function names consist of a letter or underscore followed by any combination
-of: letters `a–z` or `A–Z`, digits `0–9`, periods, and underscores.
+Valid variable and function names consist of a letter or underscore followed by any combination of: letters `a–z` or `A–Z`, digits `0–9`, periods, and underscores.
 ::::
 :::

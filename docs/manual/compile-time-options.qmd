@@ -15,12 +15,12 @@ This flag will also disable all bitwise functions and operators.
 
 Compile with `TE_LONG_DOUBLE` defined to use `long double` as the default data type.
 
-Depending on the compiler, this may provide support for handling `uint64_t` values. Call `te_parser::supports_64bit()`
-(or `SUPPORTS64BIT()` in an expression at runtime) to confirm this.
+Depending on the compiler, this may provide sufficient mantissa precision to represent ``uint64_t`` values exactly.
+Call `te_parser::supports_64bit()` (or `SUPPORTS64BIT()` in an expression at runtime) to confirm this.
 
 ## `TE_RAND_SEED` {-}
 
-Define this as an unsigned integer to seed the random number generator with.
+Define this as an unsigned integer to seed the random number generator.
 This will affect the function `RAND()`, causing it to produce a deterministic series of numbers.
 
 ## `TE_RAND_SEED_TIME` {-}
@@ -32,8 +32,8 @@ The default is to seed the random number generator with `std::random_device`.
 
 ## `TE_BITWISE_OPERATORS` {-#te-bitwise-ops}
 
-By default, the operators `&`, `|`, and `^` represent logical AND, logical OR, and exponentiation. If `TE_BITWISE_OPERATORS` is defined,
-then they will represent bitwise AND, OR, and XOR.
+By default, the operators `&`, `|`, and `^` represent logical AND, logical OR, and exponentiation.
+If `TE_BITWISE_OPERATORS` is defined, then they will represent bitwise AND, OR, and XOR.
 
 ## `TE_BRACKETS_AS_PARENS` {-}
 
@@ -45,23 +45,21 @@ In this context, `rsp` could represent a memory address in the debugger.
 ## `TE_NO_BOOKKEEPING` {-}
 
 By default, the parser will keep track of all functions and variables used in the last expression it evaluated.
-From this, the presence of a function or variable in the expression can be verified via `is_function_used()`
-and `is_variable_used()`.
+From this, the presence of a function or variable in the expression can be verified via `is_function_used()` and `is_variable_used()`.
 
 Turning this option off can provide a small optimization, as it will result in less heap allocations and search operations.
 Defining `TE_NO_BOOKKEEPING` will disable this feature.
 
 ## `TE_POW_FROM_RIGHT` {-}
 
-By default, *TinyExpr++* does exponentiation from left to right. For example:
+By default, *TinyExpr++* does exponentiation from left to right.
+For example:
 
 `a^b^c == (a^b)^c` and `-a^b == (-a)^b`
 
-This is by design; it's the way that spreadsheets do it
-(e.g., *LibreOffice Calc*, *Excel*, *Google Sheets*).
+This is by design; it's the way that spreadsheets do it (e.g., *LibreOffice Calc*, *Excel*, *Google Sheets*).
 
-If you would rather have exponentiation work from right to left, you need to
-define `TE_POW_FROM_RIGHT`\index{compiling!options} when compiling.
+If you would rather have exponentiation work from right to left, you need to define `TE_POW_FROM_RIGHT`\index{compiling!options} when compiling.
 With `TE_POW_FROM_RIGHT` defined, the behavior is:
 
 `a^b^c == a^(b^c)` and `-a^b == -(a^b)`
@@ -69,13 +67,12 @@ With `TE_POW_FROM_RIGHT` defined, the behavior is:
 That will match how many scripting languages do it (e.g., Python, Ruby).
 
 ::: {.tipsection data-latex=""}
-Symbols can be defined by passing them to your compiler's
-command line (or in a *CMake* configuration) as such: `-DTE_POW_FROM_RIGHT`
+Symbols can be defined by passing them to your compiler's command line (or in a *CMake* configuration) as such: `-DTE_POW_FROM_RIGHT`
 :::
 
-## C++20 Features {-}
+## Rotation Features {-}
 
-If compiling as C++20 (and `TE_FLOAT` is not defined), then the following functions and operators will be available:
+If `TE_FLOAT` is not defined, then the following functions and operators will be available:
 
 - `BITLROTATE8`
 - `BITLROTATE16`

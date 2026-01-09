@@ -1,19 +1,18 @@
 # Handling Unknown Variables {#sec-usr}
 
-Although it is possible to add [variables](#custom-variables) to the parser, there may be times when you can't
-anticipate the exact variable\index{variables!unknown|see{unknown symbols}} names that a user will enter. For example, a user could enter
-variables representing fiscal years in the format of `FY[year]`. From there, they would like to perform operation
-such as getting the range between them. In this situation, their expression may be something like this:
+Although it is possible to add [variables](#custom-variables) to the parser, there may be times when you can't anticipate the exact variable\index{variables!unknown|see{unknown symbols}} names that a user will enter.
+For example, a user could enter variables representing fiscal years in the format of `FY[year]`.
+From there, they would like to perform operation such as getting the range between them.
+In this situation, their expression may be something like this:
 
 ```
 ABS(FY1999 - FY2009)
 ```
 
 Here, one could expect the variables `FY1999` and `FY2009` to be treated as `1999` and `2009`, respectively.
-By subtracting them (and then taking the absolute value of the result), this should yield `10`. The problem
-is that you would need to set up custom variables prior for `FY1999` and `FY2009`.
-Even worse, to handle any additional years the user may enter, you would need to create custom
-variables for every year possible.
+By subtracting them (and then taking the absolute value of the result), this should yield `10`.
+The problem is that you would need to set up custom variables prior for `FY1999` and `FY2009`.
+Even worse, to handle any additional years the user may enter, you would need to create custom variables for every year possible.
 
 Rather than doing that, you can allow the parser to not recognize these variables as usual.
 At this point, it will fall back to a user-defined function that you provide to resolve it.
@@ -31,8 +30,7 @@ Any future evaluations will recognize this name and return the value you previou
 To change the value for a variable that was resolved previously, use `te_parser::set_constant()`.
 :::
 
-This function is set up in the parser by passing it to `te_parser::set_unknown_symbol_resolver()` and can
-take one of the following signatures:
+This function is set up in the parser by passing it to `te_parser::set_unknown_symbol_resolver()` and can take one of the following signatures:
 
 ::: {.minipage data-latex="{\textwidth}"}
 ```
@@ -42,12 +40,11 @@ take one of the following signatures:
 :::
 
 The first version will accept the unknown symbol and either return a resolved value or `te_parser::te_nan`.
-The second version is the same, except that it also accepts a string reference to write a custom message
-to. (This message can later be retrieved by calling `te_parser::get_last_error_message()`.)
+The second version is the same, except that it also accepts a string reference to write a custom message to.
+(This message can later be retrieved by calling `te_parser::get_last_error_message()`.)
 
 ::: {.notesection data-latex=""}
-If your USR throws a `std::runtime_exception` with an error message in it, then that message
-will also be available through `te_parser::get_last_error_message()`.
+If your USR throws a `std::runtime_error` with an error message in it, then that message will also be available through `te_parser::get_last_error_message()`.
 :::
 
 ::: {.minipage data-latex="{\textwidth}"}
@@ -57,7 +54,8 @@ Here is a simple example using a function:
 ```{.cpp}
 te_type ResolveResolutionSymbols(std::string_view str)
     {
-    // Note that this is case sensitive for brevity.
+    // Note: this resolver itself is case-sensitive for brevity;
+    // TinyExpr++ will still treat resolved symbols case-insensitively.
     return (str == "RES" || str == "RESOLUTION") ?
         96 : te_parser::te_nan;
     }
@@ -80,14 +78,12 @@ tep.evaluate("RESOLUTION * 3");
 :::
 
 ::: {.warningsection data-latex=""}
-Although *TinyExpr++* is case insensitive, it is your USR's responsibility to process
-case-insensitively when resolving names. Once a name has been resolved, then the parser
-will recognize it case-insensitively in future evaluations.
+Although *TinyExpr++* is case insensitive, it is your USR's responsibility to process case-insensitively when resolving names.
+Once a name has been resolved, then the parser will recognize it case-insensitively in future evaluations.
 :::
 
 ::: {.minipage data-latex="{\textwidth}"}
-The following is an example using a lambda and demonstrates
-the fiscal-year-variables scenario mentioned earlier:
+The following is an example using a lambda and demonstrates the fiscal-year-variables scenario mentioned earlier:
 
 ```{.cpp}
 te_parser tep;
@@ -120,17 +116,17 @@ tep.set_unknown_symbol_resolver(
         { return te_parser::te_nan; }
     });
 
-// Calculate the range between to fiscal years (will be 10):  
+// Calculate the range between two fiscal years (will be 10):  
 tep.evaluate("ABS(FY1999-FY2009)")
 ```
 :::
 
-By default, the parser's USR is a no-op and will not process anything. If you had provided a USR but then
-need to turn off this feature, then pass a no-op lambda (e.g., `[]{}`) or no-op object (`te_usr_noop{}`) to `set_unknown_symbol_resolver()`.
+By default, the parser's USR is a no-op and will not process anything.
+If you had provided a USR but then need to turn off this feature, then pass a no-op lambda (e.g., `[]{}`) or no-op object (`te_usr_noop{}`) to `set_unknown_symbol_resolver()`.
 
 Also, once a variable has been resolved by your USR, it will be added as a custom variable with the resolved value assigned to it.
 With subsequent evaluations, the previously unrecognized symbols you resolved will be remembered.
-This means that it will not to be resolved again and will result in the value that your USR returned from before.
+This means that it will not be resolved again and will result in the value that your USR returned from before.
 
 If you prefer to not have resolved symbols added to the parser, then pass `false` to the second parameter to `set_unknown_symbol_resolver()`.
 This will force the same unknown symbols to be resolved again with every call to `compile(expression)` or `evaluate(expression)`.
@@ -139,7 +135,8 @@ This can be useful for when your USR's symbol resolutions are dynamic and may ch
 
 ::: {.minipage data-latex="{\textwidth}"}
 For example, say that an end user will enter variables that start with "STRESS," but you are uncertain what the full name will be.
-Additionally, you want to increase the values of these variables with every evaluation. The following demonstrates this:
+Additionally, you want to increase the values of these variables with every evaluation.
+The following demonstrates this:
 
 ```{.cpp}
 te_parser tep;
@@ -153,7 +150,7 @@ tep.set_unknown_symbol_resolver(
     else
         { return te_parser::te_nan; }
     },
-    // purge resolved varialbes after each evaluation
+    // purge resolved variables after each evaluation
     false);
 
 // Initial resolution of STRESS_LEVEL will be 3.

@@ -1,23 +1,13 @@
 # Embedded Programming
 
-The following section discusses topics related to using *TinyExpr++* in an
-embedded environment\index{embedded systems}.
+The following section discusses topics related to using *TinyExpr++* in an embedded environment\index{embedded systems}.
 
 ## Performance {-}
 
 *TinyExpr++* is fairly fast compared to compiled C when the expression is short or does hard calculations (e.g., exponentiation).
-*TinyExpr++* is slower compared to C when the expression is long and involves only basic arithmetic.
+It is slower compared to C when the expression is long and involves only basic arithmetic.
 
-Here are some example benchmarks:
-
-| Expression | *TinyExpr++* | Native C | Comparison  |
-| :------------- |-------------:| -----:|----:|
-| sqrt(a^1.5+a^2.5) | 1,707 ns | 58.25 ns | 29% slower |
-| a+5 | 535 ns | 0.67 ns | 798% slower |
-| (1/(a+1)+2/(a+2)+3/(a+3)) | 3,388 ns | 3.941 ns | 859%  slower |
-
-Note that *TinyExpr++* is slower compared to *TinyExpr* because of additional type safety checks (e.g., the use of `std::variant` instead of unions),
-case insensitivity, and bookkeeping operations.
+Note that *TinyExpr++* is slower compared to *TinyExpr* because of additional type safety checks (e.g., the use of `std::variant` instead of unions), case insensitivity, and bookkeeping operations.
 
 Refer to [compile-time options](#compile-time-options) for flags that can provide optimization.
 
@@ -28,12 +18,9 @@ To instead seed it with the current time, compile with `TE_RAND_SEED_TIME`.
 
 ## Volatility {-}
 
-If needing to use a `te_parser` object as `volatile`
-(e.g., accessing it in a system interrupt), then you will need
-to do the following.
+If needing to use a `te_parser` object as `volatile` (e.g., accessing it in a system interrupt), then you will need to do the following.
 
-First, declare your `te_parser` as a non-`volatile` object outside
-of the interrupt function (e.g., globally):
+First, declare your `te_parser` as a non-`volatile` object outside of the interrupt function (e.g., globally):
 
 ```{.cpp}
 te_parser tep;
@@ -46,8 +33,9 @@ void OnInterrupt()
     volatile te_parser& vTep = tep;
     }
 ```
-Functions in `te_parser` which have `volatile` overloads\index{volatile} can then be
-called directly:
+
+::: {.minipage data-latex="{\textwidth}"}
+Functions in `te_parser` which have `volatile` overloads\index{volatile} can then be called directly:
 
 ```{.cpp}
 void OnInterrupt()
@@ -57,6 +45,8 @@ void OnInterrupt()
     vTep.set_decimal_separator('.');
     }
 ```
+:::
+
 The following functions in the `te_parser` class have `volatile` overloads:
 
 - `get_result()`
@@ -67,8 +57,7 @@ The following functions in the `te_parser` class have `volatile` overloads:
 - `get_list_separator()`
 - `set_list_separator()`
 
-For any other functions, use `const_cast<>` to remove the parser
-reference's volatility:
+For any other functions, use `const_cast<>` to remove the parser reference's volatility:
 
 ```{.cpp}
 void OnInterrupt()
@@ -90,21 +79,18 @@ void OnInterrupt()
     }
 ```
 
-Note that it is required to make the initial declaration of your
-`te_parser` non-`volatile`; otherwise, the `const_cast<>` to the
-`volatile` reference will cause undefined behavior.
+Note that it is required to make the initial declaration of your `te_parser` non-`volatile`; otherwise, the `const_cast<>` to the `volatile` reference will cause undefined behavior.
 
 ## Floating-point Numbers {-#fp-numbers}
 
 `double` is the default data type used for the parser's variable types, parameters, and return types.
-For embedded environments that require `float`\index{data types!\texttt{float} vs. \texttt{double}},
-compile with `TE_FLOAT` defined to use `float` instead.
+For embedded environments that require `float`\index{data types!\texttt{float} vs. \texttt{double}}, compile with `TE_FLOAT` defined to use `float` instead.
 
 When using this option, it is recommended to use the helper typedef `te_type`.
 This will map to either `float` or `double` (depending on whether `TE_FLOAT` is defined).
-By defining your functions and variables with `te_type`,
-you won't need to replace `double` and `float` if needing to change this compiler flag.
+By defining your functions and variables with `te_type`, you won't need to replace `double` and `float` if needing to change this compiler flag.
 
+::: {.minipage data-latex="{\textwidth}"}
 For example, a custom function would be written as such:
 
 ```{.cpp}
@@ -127,26 +113,20 @@ tep.set_variables_and_functions({
             { return a + b; } }
     });
 ```
+:::
 
 ## Exception Handling {-}
 
-*TinyExpr++* requires exception handling\index{exceptions}, although it does attempt to
-minimize the use of exceptions (e.g., `noexcept` is used extensively).
-Syntax errors will be reported without the use of exceptions;
-issues such as division by zero or arithmetic overflows, however,
-will internally use exceptions. The parser will trap these
-exceptions and return NaN (not a number) as the result.
+*TinyExpr++* requires exception handling\index{exceptions}, although it does attempt to minimize the use of exceptions (e.g., `noexcept` is used extensively).
+Syntax errors will be reported without the use of exceptions; issues such as division by zero or arithmetic overflows, however, will internally use exceptions.
+The parser will trap these exceptions and return NaN (not a number) as the result.
 
-Exceptions can also be thrown when defining custom functions or variables
-which do not follow the proper naming convention.
-(Function and variable names may only contain the characters
-`a`-`z`, `A`-`Z`, `0`-`9`, `.`, and `_`, and must begin with a letter.)
+Exceptions can also be thrown when defining custom functions or variables which do not follow the proper naming convention.
+(Function and variable names may only contain the characters `a`-`z`, `A`-`Z`, `0`-`9`, `.`, and `_`, and must begin with a letter.)
 
-Finally, specifying an illegal character for a list or decimal separator
-will also throw.
+Finally, specifying an illegal character for a list or decimal separator will also throw.
 
-The following functions in `te_parser` can throw and should be wrapped
-in `try`/`catch` blocks:
+The following functions in `te_parser` can throw and should be wrapped in `try`/`catch` blocks:
 
 - `compile()`
 - `evaluate()`
@@ -155,13 +135,9 @@ in `try`/`catch` blocks:
 - `set_decimal_separator()`
 - `set_list_separator()`
 
-The caught `std::runtime_error` exception will provide a description
-of the error in its `what()` method.
+The caught `std::runtime_error` exception will provide a description of the error in its `what()` method.
 
 ## Virtual Functions {-}
 
-*TinyExpr++* does not use virtual functions\index{functions!virtual} or derived classes\index{classes!derived},
-unless you create a custom class derived from `te_expr` yourself
-(refer to ["Binding to Custom Classes"](#custom-classes) for an example).
-(`te_expr` defines a virtual destructor that may be implicitly optimized to
-`final` if no derived classes are defined.)
+*TinyExpr++* does not use virtual functions\index{functions!virtual} or derived classes\index{classes!derived}, unless you create a custom class derived from `te_expr` yourself (refer to ["Binding to Custom Classes"](#custom-classes) for an example).
+(`te_expr` defines a virtual destructor that may be implicitly optimized to `final` if no derived classes are defined.)

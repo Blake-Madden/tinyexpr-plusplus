@@ -1,8 +1,7 @@
 # How it Works
 
-`te_parser::evaluate()` uses a simple recursive descent parser to compile your
-expression into a syntax tree. For example, the expression `"sin x + 1/4"`
-parses as:
+`te_parser::evaluate()` uses a simple recursive descent parser to compile your expression into a syntax tree.
+For example, the expression `"sin x + 1/4"` parses as:
 
 ```{r}
 #| echo: false
@@ -28,8 +27,8 @@ DiagrammeR::grViz("digraph {
   }")
 ```
 
-`te_parser::evaluate()` also automatically prunes constant branches. In this example,
-the compiled expression returned by `compile()` would become:
+`te_parser::evaluate()` also automatically prunes constant branches.
+In this example, the compiled expression returned by `compile()` would become:
 
 ```{r}
 #| echo: false
@@ -57,7 +56,7 @@ DiagrammeR::grViz("digraph {
 
     <list>      =    <expr> {(",", ";" [dependent on locale]) <expr>}
     <expr>      =    <term> {("&" | "|") <term>}
-    <expr>      =    <term> {("<>" | "!=" | "=" | "<") | "<=") | ">" | ">=") <term>}
+    <expr>      =    <term> {("<>" | "!=" | "=" | "<") | "<=" | ">" | ">=") <term>}
     <expr>      =    <term> {("<<" | ">>") <term>}
     <expr>      =    <term> {("+" | "-") <term>}
     <term>      =    <factor> {("*" | "/" | "%") <factor>}

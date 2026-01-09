@@ -10,16 +10,16 @@ The following operators\index{operators} are supported within math expressions:
 | % | Modulus: Divides two values and returns the remainder. |
 | + | Addition. |
 | \- | Subtraction. |
-| ^ | Either exponentiation (the default) or bitwise XOR. For exponentiation, the number in front of ^ is the base, the number after it is the power to raise it to. |
-| ** | Exponentiation. (This is an alias for ^) |
+| ^ | Either exponentiation (the default) or bitwise XOR.<br>\linebreak For exponentiation, the number in front of ^ is the base, the number after it is the power to raise it to. |
+| ** | Exponentiation.<br>\linebreak (This is an alias for ^) |
 | < | Less than. |
 | \> | Greater than. |
 | \>= | Greater than or equal to. |
 | <= | Less than or equal to. |
-| \= | Equals. |
-| \=\= | Equals. (This is an alias for \=) |
+| \= | Equality comparison. |
+| \=\= | Equality comparison.<br>\linebreak (This is an alias for \=) |
 | <> | Not equal to. |
-| \!\= | Not equal to. (This is an alias for <>) |
+| \!\= | Not equal to.<br>\linebreak (This is an alias for <>) |
 | &   | Either logical (the default) or bitwise conjunction (AND). |
 | &&  | Logical conjunction (AND). |
 | \|  | Either Logical (the default) or bitwise alternative (OR). |
@@ -28,8 +28,8 @@ The following operators\index{operators} are supported within math expressions:
 | ~   | Bitwise NOT. |
 | `<<`  | Bitwise left shift. |
 | `>>`  | Bitwise right shift. |
-| `<<<` | Bitwise left rotate. (Only available if compiled as C++20.) |
-| `>>>` | Bitwise right rotate. (Only available if compiled as C++20.) |
+| `<<<` | Bitwise left rotate. |
+| `>>>` | Bitwise right rotate. |
 
 Table: Operators
 :::
@@ -48,7 +48,7 @@ For operators, the order of precedence is:
 
 | Operator | Description |
 | :-- | :-- |
-| ( ) | Instructions in parentheses are executed first. (If `TE_BRACKETS_AS_PARENS` is defined, then `[]` are treated the same way.) |
+| ( ) | Instructions in parentheses are executed first.<br>\linebreak (If `TE_BRACKETS_AS_PARENS` is defined, then `[]` are treated the same way.) |
 | \+, -, ~ | Positive or negative sign for a value, and bitwise NOT. |
 | ^   | Exponentiation. |
 | \*, /, and % | Multiplication, division, and modulus. |
@@ -73,7 +73,8 @@ $$
 5+5+5/2
 $$
 
-Will yield `12.5`. `5/2` is executed first, then added to the other fives. However, by using parentheses:
+Will yield `12.5`. `5/2` is executed first, then added to the other fives.
+However, by using parentheses:
 
 $$
 (5+5+5)/2
@@ -84,8 +85,7 @@ Likewise, `(2+5)^2` will yield `49` (`7` squared), while `2+5^2` will yield `27`
 
 ## Compatibility Note {-}
 
-The `%` character acts as a modulus operator in *TinyExpr++*, which is different from most
-spreadsheet programs. In programs such as *LibreOffice Calc* and *Excel*, `%` is used
-to convert a number to a percentage. For example, `=20%` would yield `0.20` in *Excel*.
-In *TinyExpr++*, however, `20%` will result in a syntax error as
-it is expecting a binary (modulus) operation.
+The `%` character acts as a modulus operator in *TinyExpr++*, which is different from most spreadsheet programs.
+In programs such as *LibreOffice Calc* and *Excel*, `%` is used to convert a number to a percentage.
+For example, `=20%` would yield `0.20` in *Excel*.
+In *TinyExpr++*, however, `20%` will result in a syntax error as it is expecting a binary (modulus) operation.
