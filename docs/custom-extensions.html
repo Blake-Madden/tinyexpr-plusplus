@@ -363,7 +363,7 @@ div.csl-indent {
 </section>
 <section id="binding-to-custom-functions" class="level2 unnumbered minipage">
 <h2 class="unnumbered anchored" data-anchor-id="binding-to-custom-functions">Binding to Custom Functions</h2>
-<p><em>TinyExpr++</em> can call custom functions also. Here is a short example:</p>
+<p><em>TinyExpr++</em> can also call custom functions. Here is a short example:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">te_type</span> my_sum<span class="op">(</span><span class="dt">te_type</span> a<span class="op">,</span> <span class="dt">te_type</span> b<span class="op">)</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* Example function that adds two numbers together. */</span></span>
@@ -432,7 +432,7 @@ div.csl-indent {
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">// call the other function, getting the object's max value</span></span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">// (will be 8)</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">"CellMax()"</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">"CellMax()"</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="notesection">
 <p>Valid variable and function names consist of a letter or underscore followed by any combination of: letters <code>a–z</code> or <code>A–Z</code>, digits <code>0–9</code>, periods, and underscores.</p>
 </div>

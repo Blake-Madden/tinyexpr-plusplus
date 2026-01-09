@@ -267,7 +267,7 @@ div.csl-indent {
   <li><a href="#te_brackets_as_parens" id="toc-te_brackets_as_parens" class="nav-link" data-scroll-target="#te_brackets_as_parens"><code>TE_BRACKETS_AS_PARENS</code></a></li>
   <li><a href="#te_no_bookkeeping" id="toc-te_no_bookkeeping" class="nav-link" data-scroll-target="#te_no_bookkeeping"><code>TE_NO_BOOKKEEPING</code></a></li>
   <li><a href="#te_pow_from_right" id="toc-te_pow_from_right" class="nav-link" data-scroll-target="#te_pow_from_right"><code>TE_POW_FROM_RIGHT</code></a></li>
-  <li><a href="#c20-features" id="toc-c20-features" class="nav-link" data-scroll-target="#c20-features">C++20 Features</a></li>
+  <li><a href="#rotation-features" id="toc-rotation-features" class="nav-link" data-scroll-target="#rotation-features">Rotation Features</a></li>
   </ul>
 </nav>
     </div>
@@ -304,11 +304,11 @@ div.csl-indent {
 <section id="te_long_double" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="te_long_double"><code>TE_LONG_DOUBLE</code></h2>
 <p>Compile with <code>TE_LONG_DOUBLE</code> defined to use <code>long double</code> as the default data type.</p>
-<p>Depending on the compiler, this may provide support for handling <code>uint64_t</code> values. Call <code>te_parser::supports_64bit()</code> (or <code>SUPPORTS64BIT()</code> in an expression at runtime) to confirm this.</p>
+<p>Depending on the compiler, this may provide sufficient mantissa precision to represent <code>uint64_t</code> values exactly. Call <code>te_parser::supports_64bit()</code> (or <code>SUPPORTS64BIT()</code> in an expression at runtime) to confirm this.</p>
 </section>
 <section id="te_rand_seed" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="te_rand_seed"><code>TE_RAND_SEED</code></h2>
-<p>Define this as an unsigned integer to seed the random number generator with. This will affect the function <code>RAND()</code>, causing it to produce a deterministic series of numbers.</p>
+<p>Define this as an unsigned integer to seed the random number generator. This will affect the function <code>RAND()</code>, causing it to produce a deterministic series of numbers.</p>
 </section>
 <section id="te_rand_seed_time" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="te_rand_seed_time"><code>TE_RAND_SEED_TIME</code></h2>
@@ -340,9 +340,9 @@ div.csl-indent {
 <p>Symbols can be defined by passing them to your compiler’s command line (or in a <em>CMake</em> configuration) as such: <code>-DTE_POW_FROM_RIGHT</code></p>
 </div>
 </section>
-<section id="c20-features" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="c20-features">C++20 Features</h2>
-<p>If compiling as C++20 (and <code>TE_FLOAT</code> is not defined), then the following functions and operators will be available:</p>
+<section id="rotation-features" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="rotation-features">Rotation Features</h2>
+<p>If <code>TE_FLOAT</code> is not defined, then the following functions and operators will be available:</p>
 <ul>
 <li><code>BITLROTATE8</code></li>
 <li><code>BITLROTATE16</code></li>

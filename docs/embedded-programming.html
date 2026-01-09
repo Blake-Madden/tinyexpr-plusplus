@@ -328,38 +328,7 @@ div.csl-indent {
 <p>The following section discusses topics related to using <em>TinyExpr++</em> in an embedded environment.</p>
 <section id="performance" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="performance">Performance</h2>
-<p><em>TinyExpr++</em> is fairly fast compared to compiled C when the expression is short or does hard calculations (e.g., exponentiation). <em>TinyExpr++</em> is slower compared to C when the expression is long and involves only basic arithmetic.</p>
-<p>Here are some example benchmarks:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Expression</th>
-<th style="text-align: right;"><em>TinyExpr++</em></th>
-<th style="text-align: right;">Native C</th>
-<th style="text-align: right;">Comparison</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">sqrt(a<sup>1.5+a</sup>2.5)</td>
-<td style="text-align: right;">1,707 ns</td>
-<td style="text-align: right;">58.25 ns</td>
-<td style="text-align: right;">29% slower</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">a+5</td>
-<td style="text-align: right;">535 ns</td>
-<td style="text-align: right;">0.67 ns</td>
-<td style="text-align: right;">798% slower</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">(1/(a+1)+2/(a+2)+3/(a+3))</td>
-<td style="text-align: right;">3,388 ns</td>
-<td style="text-align: right;">3.941 ns</td>
-<td style="text-align: right;">859% slower</td>
-</tr>
-</tbody>
-</table>
+<p><em>TinyExpr++</em> is fairly fast compared to compiled C when the expression is short or does hard calculations (e.g., exponentiation). It is slower compared to C when the expression is long and involves only basic arithmetic.</p>
 <p>Note that <em>TinyExpr++</em> is slower compared to <em>TinyExpr</em> because of additional type safety checks (e.g., the use of <code>std::variant</code> instead of unions), case insensitivity, and bookkeeping operations.</p>
 <p>Refer to <a href="#compile-time-options">compile-time options</a> for flags that can provide optimization.</p>
 </section>
@@ -377,6 +346,7 @@ div.csl-indent {
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">volatile</span> te_parser<span class="op">&amp;</span> vTep <span class="op">=</span> tep<span class="op">;</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="minipage">
 <p>Functions in <code>te_parser</code> which have <code>volatile</code> overloads can then be called directly:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> OnInterrupt<span class="op">()</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
@@ -384,6 +354,7 @@ div.csl-indent {
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    vTep<span class="op">.</span>set_list_separator<span class="op">(</span><span class="ch">','</span><span class="op">);</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    vTep<span class="op">.</span>set_decimal_separator<span class="op">(</span><span class="ch">'.'</span><span class="op">);</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>The following functions in the <code>te_parser</code> class have <code>volatile</code> overloads:</p>
 <ul>
 <li><code>get_result()</code></li>
@@ -418,6 +389,7 @@ div.csl-indent {
 <h2 class="unnumbered anchored" data-anchor-id="fp-numbers">Floating-point Numbers</h2>
 <p><code>double</code> is the default data type used for the parser’s variable types, parameters, and return types. For embedded environments that require <code>float</code>, compile with <code>TE_FLOAT</code> defined to use <code>float</code> instead.</p>
 <p>When using this option, it is recommended to use the helper typedef <code>te_type</code>. This will map to either <code>float</code> or <code>double</code> (depending on whether <code>TE_FLOAT</code> is defined). By defining your functions and variables with <code>te_type</code>, you won’t need to replace <code>double</code> and <code>float</code> if needing to change this compiler flag.</p>
+<div class="minipage">
 <p>For example, a custom function would be written as such:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Regular function.</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">te_type</span> my_sum<span class="op">(</span><span class="dt">te_type</span> a<span class="op">,</span> <span class="dt">te_type</span> b<span class="op">)</span></span>
@@ -437,6 +409,7 @@ div.csl-indent {
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">[](</span><span class="dt">te_type</span> a<span class="op">,</span> <span class="dt">te_type</span> b<span class="op">)</span> <span class="kw">noexcept</span></span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span> <span class="cf">return</span> a <span class="op">+</span> b<span class="op">;</span> <span class="op">}</span> <span class="op">}</span></span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="exception-handling" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="exception-handling">Exception Handling</h2>

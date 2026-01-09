@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Blake Madden">
-<meta name="dcterms.date" content="2025-07-07">
+<meta name="dcterms.date" content="2026-01-09">
 
 <title>TinyExpr++</title>
 <style>
@@ -290,7 +290,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 7, 2025</p>
+      <p class="date">January 9, 2026</p>
     </div>
   </div>
   
@@ -315,7 +315,7 @@ div.csl-indent {
 <section id="features" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="features">Features</h2>
 <ul>
-<li>C++17 with no dependencies.</li>
+<li>C++20 with no dependencies.</li>
 <li>Single source file and header file.</li>
 <li>Simple and fast.</li>
 <li>Implements standard operator precedence.</li>
@@ -325,14 +325,14 @@ div.csl-indent {
 <li>Can add custom functions and variables easily.</li>
 <li>Can add a custom handler to resolve unknown variables.</li>
 <li>Can bind constants at eval-time.</li>
-<li>Supports variadic functions (taking between 1-24 arguments).</li>
-<li>Case insensitive.</li>
+<li>Supports variadic functions (taking between 1–24 arguments).</li>
+<li>Case-insensitive formulas. End-user expressions are evaluated without regard to case.</li>
 <li>Supports non-US formulas (e.g., <code>POW(2,2; 2)</code> instead of <code>POW(2.2, 2)</code>).</li>
 <li>Supports C and C++ style comments within math expressions.</li>
 <li>Can be configured to use <code>double</code>, <code>long double</code>, or <a href="compile-time-options.html#te-float"><code>float</code></a> for its calculations.</li>
 <li>Released under the zlib license - free for nearly any use.</li>
 <li>Easy to use and integrate with your code.</li>
-<li>Thread-safe; parser can be constructed as per thread objects.</li>
+<li>Thread-safe when each thread uses its own parser instance.</li>
 </ul>
 
 

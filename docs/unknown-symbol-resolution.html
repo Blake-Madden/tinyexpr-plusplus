@@ -337,16 +337,17 @@ div.csl-indent {
 </div>
 <p>The first version will accept the unknown symbol and either return a resolved value or <code>te_parser::te_nan</code>. The second version is the same, except that it also accepts a string reference to write a custom message to. (This message can later be retrieved by calling <code>te_parser::get_last_error_message()</code>.)</p>
 <div class="notesection">
-<p>If your USR throws a <code>std::runtime_exception</code> with an error message in it, then that message will also be available through <code>te_parser::get_last_error_message()</code>.</p>
+<p>If your USR throws a <code>std::runtime_error</code> with an error message in it, then that message will also be available through <code>te_parser::get_last_error_message()</code>.</p>
 </div>
 <div class="minipage">
 <p><code>te_parser::set_unknown_symbol_resolver()</code> can accept either a function pointer or a lambda. Here is a simple example using a function:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">te_type</span> ResolveResolutionSymbols<span class="op">(</span><span class="bu">std::</span>string_view str<span class="op">)</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Note that this is case sensitive for brevity.</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>str <span class="op">==</span> <span class="st">"RES"</span> <span class="op">||</span> str <span class="op">==</span> <span class="st">"RESOLUTION"</span><span class="op">)</span> <span class="op">?</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="dv">96</span> <span class="op">:</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Note: this resolver itself is case-sensitive for brevity;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// TinyExpr++ will still treat resolved symbols case-insensitively.</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>str <span class="op">==</span> <span class="st">"RES"</span> <span class="op">||</span> str <span class="op">==</span> <span class="st">"RESOLUTION"</span><span class="op">)</span> <span class="op">?</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="dv">96</span> <span class="op">:</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="minipage">
 <p>This can be connected as such:</p>
@@ -355,7 +356,7 @@ div.csl-indent {
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">/* Will resolve to 288, and "RESOLUTION" will be added as a</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">   variable to the parser with a value of 96.</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">   Also, beccause TinyExpr++ is case insensitive,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">   Also, because TinyExpr++ is case insensitive,</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">   "resolution" will also be seen as 96 once "RESOLUTION" was resolved.*/</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">"RESOLUTION * 3"</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -394,11 +395,11 @@ div.csl-indent {
 <span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span> <span class="cf">return</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span> <span class="op">}</span></span>
 <span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">// Calculate the range between to fiscal years (will be 10):  </span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">// Calculate the range between two fiscal years (will be 10):  </span></span>
 <span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>tep<span class="op">.</span>evaluate<span class="op">(</span><span class="st">"ABS(FY1999-FY2009)"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>By default, the parser’s USR is a no-op and will not process anything. If you had provided a USR but then need to turn off this feature, then pass a no-op lambda (e.g., <code>[]{}</code>) or no-op object (<code>te_usr_noop{}</code>) to <code>set_unknown_symbol_resolver()</code>.</p>
-<p>Also, once a variable has been resolved by your USR, it will be added as a custom variable with the resolved value assigned to it. With subsequent evaluations, the previously unrecognized symbols you resolved will be remembered. This means that it will not to be resolved again and will result in the value that your USR returned from before.</p>
+<p>Also, once a variable has been resolved by your USR, it will be added as a custom variable with the resolved value assigned to it. With subsequent evaluations, the previously unrecognized symbols you resolved will be remembered. This means that it will not be resolved again and will result in the value that your USR returned from before.</p>
 <p>If you prefer to not have resolved symbols added to the parser, then pass <code>false</code> to the second parameter to <code>set_unknown_symbol_resolver()</code>. This will force the same unknown symbols to be resolved again with every call to <code>compile(expression)</code> or <code>evaluate(expression)</code>. (The version of <code>evaluate()</code> which does not take any parameters will not force calling the USR again, see below.) This can be useful for when your USR’s symbol resolutions are dynamic and may change with each call.</p>
 <div class="minipage">
 <p>For example, say that an end user will enter variables that start with “STRESS,” but you are uncertain what the full name will be. Additionally, you want to increase the values of these variables with every evaluation. The following demonstrates this:</p>
@@ -413,7 +414,7 @@ div.csl-indent {
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span> <span class="cf">return</span> te_parser<span class="op">::</span>te_nan<span class="op">;</span> <span class="op">}</span></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">},</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// purge resolved varialbes after each evaluation</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// purge resolved variables after each evaluation</span></span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">false</span><span class="op">);</span></span>
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">// Initial resolution of STRESS_LEVEL will be 3.</span></span>
