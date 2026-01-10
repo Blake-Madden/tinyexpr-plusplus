@@ -4269,6 +4269,22 @@ TEST_CASE("PV", "[finance]")
     // Excel: =PV(0.03, 1, 0, 1000)
     CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.03, 1, 0, 1000)")),
                Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(-970.87), WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel example:
+    // Money paid out of an insurance annuity at the end of every month: $500
+    // Interest rate: 8% annually
+    // Term: 20 years
+    //
+    // Excel formula:
+    // =PV(A3/12, 12*A4, A2, , 0)
+    // =PV(0.08/12, 240, 500, 0, 0)
+    //
+    // Excel result = -59,775.15
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PV(0.08/12, 12*20, 500, 0, 0)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-59775.15),
+            WITHIN_TYPE_CAST(0.0001)));
     }
 
 TEST_CASE("Nominal", "[finance]")

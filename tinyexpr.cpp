@@ -256,7 +256,7 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    static te_type te_pv(te_type rate, te_type nper, te_type pmt, te_type fv, te_type type)
+    static te_type te_pv(te_type rate, te_type nper, te_type pmt, te_type futureValue, te_type type)
         {
         if (!std::isfinite(rate) || !std::isfinite(nper) || !std::isfinite(pmt))
             {
@@ -264,9 +264,9 @@ namespace te_builtins
             }
 
         // optional args default like Excel
-        if (!std::isfinite(fv))
+        if (!std::isfinite(futureValue))
             {
-            fv = 0;
+            futureValue = 0;
             }
         if (!std::isfinite(type))
             {
@@ -289,7 +289,7 @@ namespace te_builtins
 
         if (rate == 0.0)
             {
-            return -(fv + pmt * nper);
+            return -(futureValue + pmt * nper);
             }
 
         const te_type powVal = std::pow(1 + rate, nper);
@@ -298,7 +298,7 @@ namespace te_builtins
             return te_parser::te_nan;
             }
 
-        return -(fv + pmt * (1 + rate * type) * (powVal - 1) / rate) / powVal;
+        return -(futureValue + pmt * (1 + rate * type) * (powVal - 1) / rate) / powVal;
         }
 
     [[nodiscard]]
