@@ -4287,6 +4287,105 @@ TEST_CASE("PV", "[finance]")
             WITHIN_TYPE_CAST(0.0001)));
     }
 
+TEST_CASE("PMT", "[finance]")
+    {
+    te_parser tep;
+
+    // Excel: =PMT(0.05/12, 60, 10000)
+    // Monthly payment on a $10,000 loan at 5% for 5 years
+    // Excel result ~ -188.71
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05/12, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-188.71),
+            WITHIN_TYPE_CAST(0.00002)));
+
+    // Excel: =PMT(0.05/12, 60, 10000, 0, 1)
+    // Payments at beginning of period -> slightly smaller payment
+    // Excel result ~ -187.93
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05/12, 60, 10000, 0, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-187.93),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // Excel: =PMT(0, 60, 12000)
+    // Zero interest: straight-line repayment
+    // Excel result = -200
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PMT(0, 60, 12000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-200)));
+
+    // Excel: =PMT(0.1, 1, 100)
+    // One-period loan at 10%
+    // Excel result = -110
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PMT(0.1, 1, 100)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-110),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // Excel: =PMT(0.05/12, 60, 10000, 1000)
+    // Loan with balloon payment
+    // Excel result ~ -203.42
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05/12, 60, 10000, 1000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-203.42),
+            WITHIN_TYPE_CAST(0.00002)));
+
+    // Excel data:
+    // Annual interest rate: 8%
+    // Number of months: 10
+    // Loan amount: $10,000
+
+    // Excel: =PMT(A2/12, A3, A4)
+    // Monthly payment
+    // Excel result: ($1,037.03)
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PMT(0.08/12, 10, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-1037.03),
+            WITHIN_TYPE_CAST(0.00002)));
+
+    // Excel: =PMT(A2/12, A3, A4, , 1)
+    // Payments at beginning of period
+    // Excel result: ($1,030.16)
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PMT(0.08/12, 10, 10000, 0, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-1030.16),
+            WITHIN_TYPE_CAST(0.00002)));
+
+    // Excel data:
+    // Annual interest rate: 6%
+    // Term: 18 years
+    // Target future value: $50,000
+
+    // Excel: =PMT(A9/12, A10*12, 0, A11)
+    // Monthly savings required
+    // Excel result ~ ($129.08)
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PMT(0.06/12, 18*12, 0, 50000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-129.08),
+            WITHIN_TYPE_CAST(0.00005)));
+
+    // Excel: rate <= -1 -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(-1, 10, 1000)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(-1.5, 10, 1000)"))));
+
+    // Excel: nper <= 0 -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05, 0, 1000)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05, -10, 1000)"))));
+
+    // Non-finite args -> NaN
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(NaN, 10, 1000)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05, NaN, 1000)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05, 10, NaN)"))));
+    }
+
 TEST_CASE("Nominal", "[finance]")
     {
     te_parser tep;

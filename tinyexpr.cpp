@@ -256,6 +256,51 @@ namespace te_builtins
         }
 
     [[nodiscard]]
+    static te_type te_pmt(te_type rate, te_type nper, te_type pv, te_type fv, te_type type)
+        {
+        if (!std::isfinite(rate) || !std::isfinite(nper) || !std::isfinite(pv))
+            {
+            return te_parser::te_nan;
+            }
+
+        if (!std::isfinite(fv))
+            {
+            fv = 0;
+            }
+        if (!std::isfinite(type))
+            {
+            type = 0;
+            }
+
+        if (nper <= 0)
+            {
+            return te_parser::te_nan;
+            }
+
+        if (rate <= -1.0)
+            {
+            return te_parser::te_nan;
+            }
+
+        // coerce type to 0 or 1
+        type = (type != 0) ? 1 : 0;
+
+        // zero-interest
+        if (rate == 0.0)
+            {
+            return -(pv + fv) / nper;
+            }
+
+        const te_type powVal = std::pow(1 + rate, nper);
+        if (!std::isfinite(powVal) || powVal == 0.0)
+            {
+            return te_parser::te_nan;
+            }
+
+        return -((pv * powVal) + fv) * rate / ((1 + (rate * type)) * (powVal - 1));
+        }
+
+    [[nodiscard]]
     static te_type te_pv(te_type rate, te_type nper, te_type pmt, te_type futureValue, te_type type)
         {
         if (!std::isfinite(rate) || !std::isfinite(nper) || !std::isfinite(pmt))
@@ -298,7 +343,8 @@ namespace te_builtins
             return te_parser::te_nan;
             }
 
-        return -(futureValue + pmt * (1 + rate * type) * (powVal - 1) / rate) / powVal;
+        const te_type annuity = (pmt * (1 + (rate * type)) * (powVal - 1)) / rate;
+        return -(futureValue + annuity) / powVal;
         }
 
     [[nodiscard]]
@@ -1545,6 +1591,8 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "pi", static_cast<te_fun0>(te_builtins::te_pi), TE_PURE },
     { "pow", static_cast<te_fun2>(te_builtins::te_pow), TE_PURE },
     { "power", /* Excel alias*/ static_cast<te_fun2>(te_builtins::te_pow), TE_PURE },
+    { "pmt", static_cast<te_fun5>(te_builtins::te_pmt),
+      static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "pv", static_cast<te_fun5>(te_builtins::te_pv),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "rand", static_cast<te_fun0>(te_builtins::te_random), TE_PURE },

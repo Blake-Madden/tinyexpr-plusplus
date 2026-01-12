@@ -3,11 +3,11 @@ The following are changes from the original TinyExpr C library:
 - Compiles as C++17 code.
 - `te_*` functions are now wrapped in a `te_parser` class.
 - `te_interp()`, `te_compile()`, and `te_eval()` have been replaced with `te_parser::compile()`, `te_parser::evaluate()`, and `te_parser::set_variables_and_functions()`.
-    `set_variables_and_functions()` sets your list of custom functions and variables. `compile()` compiles and optimizes an expression.
-    Finally, `evaluate()` will use the already compiled expression and return its result.
-    `evaluate()` also has an overload that compiles and evaluates an expression in one call.
-- Variable/function types (e.g., `TE_FUNCTION0`) have been removed; types are now deduced by the compiler. The available flags
-  for variables and functions are now just combinations of `TE_DEFAULT`, `TE_PURE`, and `TE_VARIADIC`.
+  `set_variables_and_functions()` sets your list of custom functions and variables. `compile()` compiles and optimizes an expression.
+  Finally, `evaluate()` will use the already compiled expression and return its result.
+  `evaluate()` also has an overload that compiles and evaluates an expression in one call.
+- Variable/function types (e.g., `TE_FUNCTION0`) have been removed; types are now deduced by the compiler.
+  The available flags for variables and functions are now just combinations of `TE_DEFAULT`, `TE_PURE`, and `TE_VARIADIC`.
 - Formula parsing is now case insensitive.
 - Added support for variadic functions (can accept 1-24 arguments); enabled through the `TE_VARIADIC` flag.
   (Refer to the `AVERAGE()` function in `tinyexp.cpp` for an example.)
@@ -34,12 +34,12 @@ The following are changes from the original TinyExpr C library:
   - `and`: returns true (i.e., non-zero) if all conditions are true (accepts 1-24 arguments).
   - `average`: returns the mean for a range of values (accepts 1-24 arguments).
   - `bitand`: bitwise AND.
-  - `bitlrotate`: bitwise left rotate. Versions of this are available for 8-, 16-, 32-, and 64-bit integers (if supported by the platform). (Only available if compiled as C++20.)
+  - `bitlrotate`: bitwise left rotate. Versions of this are available for 8-, 16-, 32-, and 64-bit integers (if supported by the platform).
   - `bitlshift`: left shift.
      Negative shift amount arguments (similar to *Excel*) are supported.
   - `bitnot`: bitwise NOT. Versions of this are available for 8-, 16-, 32-, and 64-bit integers (if supported by the platform).
   - `bitor`: bitwise OR.
-  - `bitrrotate`: bitwise right rotate. Versions of this are available for 8-, 16-, 32-, and 64-bit integers (if supported by the platform). (Only available if compiled as C++20.)
+  - `bitrrotate`: bitwise right rotate. Versions of this are available for 8-, 16-, 32-, and 64-bit integers (if supported by the platform).
   - `bitrshift`: right shift.
      Negative shift amount arguments (similar to *Excel*) are supported.
   - `bitxor`: bitwise XOR.
@@ -71,6 +71,7 @@ The following are changes from the original TinyExpr C library:
   - `not`: returns logical negation of value.
   - `permut`: alias for `npr()`, like the *Excel* function.
   - `power`: alias for `pow()`, like the *Excel* function.
+  - `pmt`: returns the periodic payment for an investment or loan based on a constant interest rate, a fixed number of periods, and a present value (like the *Excel* function).
   - `pv`: returns the present value of an investment, like the *Excel* function.
   - `rand`: returns random number between `0` and `1`.
      Note that this implementation uses the Mersenne Twister (`mt19937`) to generate random numbers.
@@ -127,8 +128,7 @@ The following are changes from the original TinyExpr C library:
 - All data fields are now initialized.
 - Added [Doxygen](https://github.com/doxygen/doxygen) comments.
 - Removed `te_print()` debug function.
-- Added `list_available_functions_and_variables()` function to display all available built-in and custom
-  functions and variables.
+- Added `list_available_functions_and_variables()` function to display all available built-in and custom functions and variables.
 - Added `get_expression()` function to get the last formula used.
 - Added `[[nodiscard]]` attributes to improve compile-time warnings.
 - Added `constexpr` and `noexcept` for C++ optimization.
