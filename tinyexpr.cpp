@@ -256,27 +256,116 @@ namespace te_builtins
         }
 
     [[nodiscard]]
-    static te_type te_pmt(te_type rate, te_type nper, te_type pv, te_type fv, te_type type)
+    static te_type te_nper(te_type rate, te_type pmt, te_type presentValue, te_type futureValue,
+                           te_type type)
         {
-        if (!std::isfinite(rate) || !std::isfinite(nper) || !std::isfinite(pv))
+        if (!std::isfinite(rate) || !std::isfinite(pmt) || !std::isfinite(presentValue))
             {
             return te_parser::te_nan;
             }
 
-        if (!std::isfinite(fv))
+        if (!std::isfinite(futureValue))
             {
-            fv = 0;
+            futureValue = 0;
             }
         if (!std::isfinite(type))
             {
             type = 0;
             }
 
-        if (nper <= 0)
+        type = (type != 0) ? 1 : 0;
+
+        if (rate <= -1.0)
             {
             return te_parser::te_nan;
             }
 
+        if (rate == 0.0)
+            {
+            if (pmt == 0.0)
+                {
+                return te_parser::te_nan;
+                }
+            return -(presentValue + futureValue) / pmt;
+            }
+
+        const te_type onePlusRate = 1 + rate;
+        const te_type paymentTerm = pmt * (1 + rate * type);
+
+        const te_type numerator = paymentTerm - futureValue * rate;
+        const te_type denominator = presentValue * rate + paymentTerm;
+        const te_type ratio = numerator / denominator;
+
+        if (!std::isfinite(ratio) || ratio <= 0.0 || onePlusRate <= 0.0)
+            {
+            return te_parser::te_nan;
+            }
+
+        return std::log(ratio) / std::log(onePlusRate);
+        }
+
+    [[nodiscard]]
+    static te_type te_fv(te_type rate, te_type nper, te_type pmt, te_type presentValue,
+                         te_type type)
+        {
+        if (!std::isfinite(rate) || !std::isfinite(nper) || !std::isfinite(pmt))
+            {
+            return te_parser::te_nan;
+            }
+        if (!std::isfinite(presentValue))
+            {
+            presentValue = 0;
+            }
+        if (!std::isfinite(type))
+            {
+            type = 0;
+            }
+        if (nper <= 0)
+            {
+            return te_parser::te_nan;
+            }
+        if (rate <= -1.0)
+            {
+            return te_parser::te_nan;
+            }
+
+        // coerce type to 0 or 1
+        type = (type != 0) ? 1 : 0;
+
+        if (rate == 0.0)
+            {
+            return -(presentValue + pmt * nper);
+            }
+
+        const te_type powVal = std::pow(1 + rate, nper);
+        if (!std::isfinite(powVal))
+            {
+            return te_parser::te_nan;
+            }
+
+        return -(presentValue * powVal + (pmt * (1 + (rate * type)) * (powVal - 1) / rate));
+        }
+
+    [[nodiscard]]
+    static te_type te_pmt(te_type rate, te_type nper, te_type presentValue, te_type futureValue,
+                          te_type type)
+        {
+        if (!std::isfinite(rate) || !std::isfinite(nper) || !std::isfinite(presentValue))
+            {
+            return te_parser::te_nan;
+            }
+        if (!std::isfinite(futureValue))
+            {
+            futureValue = 0;
+            }
+        if (!std::isfinite(type))
+            {
+            type = 0;
+            }
+        if (nper <= 0)
+            {
+            return te_parser::te_nan;
+            }
         if (rate <= -1.0)
             {
             return te_parser::te_nan;
@@ -288,7 +377,7 @@ namespace te_builtins
         // zero-interest
         if (rate == 0.0)
             {
-            return -(pv + fv) / nper;
+            return -(presentValue + futureValue) / nper;
             }
 
         const te_type powVal = std::pow(1 + rate, nper);
@@ -297,7 +386,8 @@ namespace te_builtins
             return te_parser::te_nan;
             }
 
-        return -((pv * powVal) + fv) * rate / ((1 + (rate * type)) * (powVal - 1));
+        return -((presentValue * powVal) + futureValue) * rate /
+               ((1 + (rate * type)) * (powVal - 1));
         }
 
     [[nodiscard]]
@@ -1561,6 +1651,8 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "fact", static_cast<te_fun1>(te_builtins::te_fac), TE_PURE },
     { "false", static_cast<te_fun0>(te_builtins::te_false_value), TE_PURE },
     { "floor", static_cast<te_fun1>(te_builtins::te_floor), TE_PURE },
+    { "fv", static_cast<te_fun5>(te_builtins::te_fv),
+      static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "iserr", static_cast<te_fun1>(te_builtins::te_is_nan), TE_PURE },
     { "iserror", static_cast<te_fun1>(te_builtins::te_is_nan), TE_PURE },
     { "iseven", static_cast<te_fun1>(te_builtins::te_is_even), TE_PURE },
@@ -1583,6 +1675,8 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "ncr", static_cast<te_fun2>(te_builtins::te_ncr), TE_PURE },
     { "nominal", static_cast<te_fun2>(te_builtins::te_nominal), TE_PURE },
     { "not", static_cast<te_fun1>(te_builtins::te_not), TE_PURE },
+    { "nper", static_cast<te_fun5>(te_builtins::te_nper),
+      static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "npr", static_cast<te_fun2>(te_builtins::te_npr), TE_PURE },
     { "odd", static_cast<te_fun1>(te_builtins::te_odd), TE_PURE },
     { "or", static_cast<te_fun24>(te_builtins::te_or_variadic),
@@ -2578,8 +2672,7 @@ te_expr* te_parser::te_compile(const std::string_view expression, std::set<te_va
         {
         optimize(root);
         }
-    catch ([[maybe_unused]]
-           const std::exception& exp)
+    catch ([[maybe_unused]] const std::exception& exp)
         {
         // parsed OK, but there was an evaluation error;
         // clean up and throw the message back up to compile()

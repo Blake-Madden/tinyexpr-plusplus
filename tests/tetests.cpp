@@ -4386,6 +4386,209 @@ TEST_CASE("PMT", "[finance]")
     CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05, 10, NaN)"))));
     }
 
+// --------------------------------------------------
+// NPER
+// --------------------------------------------------
+TEST_CASE("NPER", "[finance]")
+    {
+    te_parser tep;
+
+    // Excel: =NPER(0.05/12, -188.71, 10000)
+    // Loan paid off in 60 months
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("NPER(0.05/12, -188.71, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(60),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =NPER(0.05/12, -200, 10000)
+    // Higher payment -> fewer periods
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("NPER(0.05/12, -200, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(56.18429076),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =NPER(0, -200, 12000)
+    // Zero interest
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("NPER(0, -200, 12000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(60)));
+
+    // --------------------------------------------------
+    // Excel example (provided)
+    // --------------------------------------------------
+
+    // Excel data:
+    // Annual interest rate: 12%
+    // Payment each period: -100
+    // Present value: -1000
+    // Future value: 10000
+    // Payments at beginning of period
+
+    // Excel: =NPER(A2/12, A3, A4, A5, 1)
+    // Excel result: 59.67386567
+
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("NPER(0.12/12, -100, -1000, 10000, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(59.67386567),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =NPER(A2/12, A3, A4, A5)
+    // Payments at end of period
+    // Excel result: 60.08212285
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("NPER(0.12/12, -100, -1000, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(60.08212285),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: =NPER(A2/12, A3, A4)
+    // Future value defaults to 0
+    // Excel result: -9.7859404
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("NPER(0.12/12, -100, -1000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-9.57859404),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // --------------------------------------------------
+    // Invalid inputs
+    // --------------------------------------------------
+
+    // Excel: rate <= -1 -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("NPER(-1, -100, 1000)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("NPER(-1.2, -100, 1000)"))));
+
+    // Excel: pmt == 0 with rate == 0 -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("NPER(0, 0, 1000)"))));
+
+    // Non-finite args -> NaN
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("NPER(NaN, -100, 1000)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("NPER(0.05, NaN, 1000)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("NPER(0.05, -100, NaN)"))));
+    }
+
+TEST_CASE("FV", "[finance]")
+    {
+    te_parser tep;
+
+    // Excel: =FV(0.05/12, 60, -200)
+    // Savings $200/month at 5% for 5 years
+    // Excel result ~ $13,601.22 
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(0.05/12, 60, -200)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(13601.22),
+            WITHIN_TYPE_CAST(0.00005)));
+
+    // Excel: =FV(0.05/12, 60, -200, 0, 1)
+    // Payments at beginning of period
+    // Excel result ~ $13,657.89
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(0.05/12, 60, -200, 0, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(13657.89),
+            WITHIN_TYPE_CAST(0.00005)));
+
+    // Excel: =FV(0, 60, -200)
+    // Zero interest
+    // Excel result = 12,000
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(0, 60, -200)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(12000)));
+
+    // Excel: =FV(0.08/12, 360, -1000)
+    // Long-horizon compounding
+    // Excel result ~ $1,490,359.45
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(0.08/12, 360, -1000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(1490359.45),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // --------------------------------------------------
+    // FV – Excel examples
+    // --------------------------------------------------
+
+    // Example 1
+    // Excel data:
+    // Annual interest rate: 6%
+    // Number of payments: 10
+    // Payment: -200
+    // Present value: -500
+    // Payments at beginning of period
+    //
+    // Excel: =FV(A2/12, A3, A4, A5, A6)
+    // Excel result: $2,581.40
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(0.06/12, 10, -200, -500, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(2581.40),
+            WITHIN_TYPE_CAST(0.00005)));
+
+    // Example 2
+    // Excel data:
+    // Annual interest rate: 12%
+    // Number of payments: 12
+    // Payment: -1000
+    //
+    // Excel: =FV(A2/12, A3, A4)
+    // Excel result: $12,682.50
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(0.12/12, 12, -1000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(12682.50),
+            WITHIN_TYPE_CAST(0.00005)));
+
+    // Example 3
+    // Excel data:
+    // Annual interest rate: 11%
+    // Number of payments: 35
+    // Payment: -2000
+    // Payments at beginning of period
+    //
+    // Excel: =FV(A2/12, A3, A4, , A5)
+    // Excel result: $82,846.25
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(0.11/12, 35, -2000, 0, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(82846.25),
+            WITHIN_TYPE_CAST(0.00005)));
+
+    // Example 4
+    // Excel data:
+    // Annual interest rate: 6%
+    // Number of payments: 12
+    // Payment: -100
+    // Present value: -1000
+    // Payments at beginning of period
+    //
+    // Excel: =FV(A2/12, A3, A4, A5, A6)
+    // Excel result: $2,301.40
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(0.06/12, 12, -100, -1000, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(2301.40),
+            WITHIN_TYPE_CAST(0.00005)));
+
+    // Excel: rate <= -1 -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(-1, 10, -100)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(-1.5, 10, -100)"))));
+
+    // Excel: nper <= 0 -> #NUM!
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(0.05, 0, -100)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(0.05, -10, -100)"))));
+
+    // Non-finite args -> NaN
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(NaN, 10, -100)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(0.05, NaN, -100)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(0.05, 10, NaN)"))));
+    }
+
 TEST_CASE("Nominal", "[finance]")
     {
     te_parser tep;

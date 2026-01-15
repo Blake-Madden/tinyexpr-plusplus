@@ -51,6 +51,7 @@ The following are changes from the original TinyExpr C library:
   - `even`: returns a value rounded up to the nearest even integer.
   - `fact`: alias for `fac()`, like the *Excel* function.
   - `false`: returns `false` (i.e., `0`) in a boolean expression.
+  - `fv`: returns the future value of an investment.
   - `iserr`: returns true if an expression evaluates to NaN.
   - `iserror`: alias for `iserr`.
   - `iseven`: returns true if a number is even, false if odd.
@@ -66,6 +67,7 @@ The following are changes from the original TinyExpr C library:
   - `na`: returns `NaN` (i.e., Not-a-Number) in a boolean expression.
   - `nan`: alias for `na`.
   - `nominal`: returns the nominal annual interest rate, provided the effective rate and the number of compounding periods per year.
+  - `nper`: returns the number of periods for an investment.
   - `odd`: returns a value rounded up to the nearest odd integer.
   - `or`: returns true (i.e., non-zero) if any condition is true (accepts 1-24 arguments).
   - `not`: returns logical negation of value.

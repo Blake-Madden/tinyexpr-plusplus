@@ -110,7 +110,7 @@ Table: Statistical Functions\index{functions!statistical}
 | AND(Value1, Value2, ...) | Returns true if all conditions are true. |
 | IF(Condition, ValueIfTrue, ValueIfFalse) | If *Condition* is true (non-zero), then *ValueIfTrue* is returned; otherwise, *ValueIfFalse* is returned.<br>\linebreak Note that multiple `IF` commands can be nested to create a "case" statement\index{case statements}. |
 | IFS(Condition1, Value1, Condition2, Value2, ...) | Checks up to twelve conditions, returning the value corresponding to the first met condition.<br>\linebreak This is shorthand for multiple nested `IF` commands, providing better readability.<br>\linebreak Will accept 1–12 condition/value pairs.<br>\linebreak NaN will be returned if all conditions are false. |
-| NOT(Value) | Returns the logical negation of *Value.* |
+| NOT(Value) | Returns the logical negation of *Value*. |
 | OR(Value1, Value2, ...) | Returns true if any condition is true. |
 
 Table: Logic Functions\index{functions!logical}
@@ -126,7 +126,9 @@ Any subsequent arguments that evaluate to NaN will be ignored.
 | :-- | :-- |
 | DB(Cost, Salvage, Lifetime, Period, Month) | Returns the depreciation of an asset for a specified period using the fixed-declining balance method. |
 | EFFECT(NominalRate, Periods) | Returns the effective annual interest rate, provided the nominal annual interest rate and the number of compounding periods per year.<br>\linebreak NaN will be returned if *Periods* is < 1 or if *NominalRate* <= 0.  |
+| FV(Rate, Periods, Payment, [PresentValue], [Type]) | Returns the future value of an investment based on a constant interest rate, a fixed number of periods, and periodic payments.<br>\linebreak Note that *PresentValue* and *Type* are optional and default to 0.<br>\linebreak Also, *Type* specifies when payments are due: 0 = end of period, 1 = beginning of period.<br>\linebreak NaN will be returned if *Periods* <= 0 or if any required argument is not finite. |
 | NOMINAL(EffectiveRate, Periods) | Returns the nominal annual interest rate, provided the effective rate and the number of compounding periods per year.<br>\linebreak NaN will be returned if *Periods* is < 1 or if *EffectiveRate* <= 0. |
+| NPER(Rate, Payment, PresentValue, [FutureValue], [Type]) | Returns the number of periods for an investment or loan based on a constant interest rate, periodic payments, and present and future values.<br>\linebreak Note that *FutureValue* and *Type* are optional and default to 0.<br>\linebreak Also, *Type* specifies when payments are due: 0 = end of period, 1 = beginning of period.<br>\linebreak NaN will be returned if any required argument is not finite or if the calculation is not defined. |
 | PMT(Rate, Periods, PresentValue, [FutureValue], [Type]) | Returns the periodic payment for an investment or loan based on a constant interest rate, a fixed number of periods, and a present value.<br>\linebreak Note that *FutureValue* and *Type* are optional and default to 0.<br>\linebreak Also, *Type* specifies when payments are due: 0 = end of period, 1 = beginning of period.<br>\linebreak NaN will be returned if *Periods* <= 0 or if any required argument is not finite. |
 | PV(Rate, Periods, Payment, [FutureValue], [Type]) | Returns the present value of an investment based on a constant interest rate, a fixed number of periods, and periodic payments.<br>\linebreak Note that *FutureValue* and *Type* are optional and default to 0.<br>\linebreak Also, *Type* specifies when payments are due: 0 = end of period, 1 = beginning of period.<br>\linebreak NaN will be returned if *Periods* <= 0 or if any required argument is not finite. |
 
