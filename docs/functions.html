@@ -286,7 +286,6 @@ div.csl-indent {
 
 
 <p>The following built-in functions are available:</p>
-<div>
 <table class="caption-top table">
 <caption>Math Functions</caption>
 <colgroup>
@@ -482,7 +481,6 @@ div.csl-indent {
 </tr>
 </tbody>
 </table>
-</div>
 <div class="warningsection">
 <p><code>ISNA()</code> differs from some spreadsheet programs for certain expressions, such as divisions by zero. <em>TinyExpr++</em> will return true for this situation, while <em>Excel</em> will return false. This is because <em>Excel</em> distinguishes between <code>#DIV/0!</code> and <code>#N/A</code> errors, while <em>TinyExpr++</em> treats all invalid numbers (e.g., NaN, INF, -INF) as NaN.</p>
 </div>
@@ -647,7 +645,7 @@ div.csl-indent {
 </tr>
 <tr class="even">
 <td style="text-align: left;">NOT(Value)</td>
-<td style="text-align: left;">Returns the logical negation of <em>Value.</em></td>
+<td style="text-align: left;">Returns the logical negation of <em>Value</em>.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">OR(Value1, Value2, …)</td>
@@ -655,6 +653,9 @@ div.csl-indent {
 </tr>
 </tbody>
 </table>
+<div class="warningsection">
+<p><code>AND</code> and <code>OR</code> ignore NaN arguments during evaluation, so results may differ from <em>Excel</em> when subexpressions resolve to NaN.</p>
+</div>
 </div>
 <div class="notesection">
 <p>The first argument to any logic function must be valid (i.e., not NaN). If the first argument evaluates to NaN, then NaN will be returned. Any subsequent arguments that evaluate to NaN will be ignored.</p>
@@ -674,6 +675,14 @@ div.csl-indent {
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">CUMIPMT(Rate, Periods, PresentValue, StartPeriod, EndPeriod, Type)</td>
+<td style="text-align: left;">Returns the cumulative interest paid on a loan between <em>StartPeriod</em> and <em>EndPeriod</em>, inclusive.<br>Type* specifies when payments are due: 0 = end of period, 1 = beginning of period.<br>NaN will be returned if <em>Rate</em> &lt;= 0, <em>Periods</em> &lt;= 0, <em>PresentValue</em> &lt;= 0, if <em>StartPeriod</em> or <em>EndPeriod</em> are out of range, or if <em>Type</em> is not 0 or 1.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CUMPRINC(Rate, Periods, PresentValue, StartPeriod, EndPeriod, Type)</td>
+<td style="text-align: left;">Returns the cumulative principal paid on a loan between <em>StartPeriod</em> and <em>EndPeriod</em>, inclusive.<br>Note that <em>Type</em> specifies when payments are due: 0 = end of period, 1 = beginning of period.<br>NaN will be returned if <em>Rate</em> &lt;= 0, <em>Periods</em> &lt;= 0, <em>PresentValue</em> &lt;= 0, if <em>StartPeriod</em> or <em>EndPeriod</em> are out of range, or if <em>Type</em> is not 0 or 1.</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">DB(Cost, Salvage, Lifetime, Period, Month)</td>
 <td style="text-align: left;">Returns the depreciation of an asset for a specified period using the fixed-declining balance method.</td>
 </tr>
@@ -682,10 +691,30 @@ div.csl-indent {
 <td style="text-align: left;">Returns the effective annual interest rate, provided the nominal annual interest rate and the number of compounding periods per year.<br>NaN will be returned if <em>Periods</em> is &lt; 1 or if <em>NominalRate</em> &lt;= 0.</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">FV(Rate, Periods, Payment, [PresentValue], [Type])</td>
+<td style="text-align: left;">Returns the future value of an investment based on a constant interest rate, a fixed number of periods, and periodic payments.<br>Note that <em>PresentValue</em> and <em>Type</em> are optional and default to 0.<br>Also, <em>Type</em> specifies when payments are due: 0 = end of period, 1 = beginning of period.<br>NaN will be returned if <em>Periods</em> &lt;= 0 or if any required argument is not finite.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IPMT(Rate, Period, Periods, PresentValue, [FutureValue], [Type])</td>
+<td style="text-align: left;">Returns the interest portion of a payment for a specified period of an investment.<br>FutureValue* and <em>Type</em> are optional and default to 0.<br>Type* specifies when payments are due: 0 = end of period, 1 = beginning of period.</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">NOMINAL(EffectiveRate, Periods)</td>
 <td style="text-align: left;">Returns the nominal annual interest rate, provided the effective rate and the number of compounding periods per year.<br>NaN will be returned if <em>Periods</em> is &lt; 1 or if <em>EffectiveRate</em> &lt;= 0.</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">NPER(Rate, Payment, PresentValue, [FutureValue], [Type])</td>
+<td style="text-align: left;">Returns the number of periods for an investment or loan based on a constant interest rate, periodic payments, and present and future values.<br>Note that <em>FutureValue</em> and <em>Type</em> are optional and default to 0.<br>Also, <em>Type</em> specifies when payments are due: 0 = end of period, 1 = beginning of period.<br>NaN will be returned if any required argument is not finite or if the calculation is not defined.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PMT(Rate, Periods, PresentValue, [FutureValue], [Type])</td>
+<td style="text-align: left;">Returns the periodic payment for an investment or loan based on a constant interest rate, a fixed number of periods, and a present value.<br>Note that <em>FutureValue</em> and <em>Type</em> are optional and default to 0.<br>Also, <em>Type</em> specifies when payments are due: 0 = end of period, 1 = beginning of period.<br>NaN will be returned if <em>Periods</em> &lt;= 0 or if any required argument is not finite.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PPMT(Rate, Period, Periods, PresentValue, [FutureValue], [Type])</td>
+<td style="text-align: left;">Returns the principal portion of a payment for a specified period of an investment.<br>Note that <em>FutureValue</em> and <em>Type</em> are optional and default to 0.<br>Also, <em>Type</em> specifies when payments are due: 0 = end of period, 1 = beginning of period.<br>NaN will be returned if arguments are invalid or out of range.</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">PV(Rate, Periods, Payment, [FutureValue], [Type])</td>
 <td style="text-align: left;">Returns the present value of an investment based on a constant interest rate, a fixed number of periods, and periodic payments.<br>Note that <em>FutureValue</em> and <em>Type</em> are optional and default to 0.<br>Also, <em>Type</em> specifies when payments are due: 0 = end of period, 1 = beginning of period.<br>NaN will be returned if <em>Periods</em> &lt;= 0 or if any required argument is not finite.</td>
 </tr>

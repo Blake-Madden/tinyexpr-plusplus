@@ -79,12 +79,12 @@
 #include <type_traits>
 
 constexpr int TINYEXPR_CPP_MAJOR_VERSION = 1;
-constexpr int TINYEXPR_CPP_MINOR_VERSION = 0;
-constexpr int TINYEXPR_CPP_PATCH_VERSION = 1;
-constexpr int TINYEXPR_CPP_TWEAK_VERSION = 1;
+constexpr int TINYEXPR_CPP_MINOR_VERSION = 1;
+constexpr int TINYEXPR_CPP_PATCH_VERSION = 0;
+constexpr int TINYEXPR_CPP_TWEAK_VERSION = 0;
 #define TINYEXPR_CPP_COPYRIGHT                                                                     \
     "TinyExpr: Copyright (c) 2015-2020 Lewis Van Winkle\n"                                         \
-    "TinyExpr++: Copyright (c) 2020-2025 Blake Madden"
+    "TinyExpr++: Copyright (c) 2020-2026 Blake Madden"
 
 class te_parser;
 
