@@ -4194,6 +4194,133 @@ TEST_CASE("NaN Comparison", "[nan]")
 
 // Financial functions
 // --------------------------------------------------
+// IPMT
+// --------------------------------------------------
+TEST_CASE("IPMT", "[finance]")
+    {
+    te_parser tep;
+
+    // --------------------------------------------------
+    // Excel Online Help example
+    //
+    // Data:
+    // Annual interest rate: 10%
+    // Number of years: 3
+    // Present value: 8000
+    //
+    // Excel formula:
+    // =IPMT(0.10/12, 1, 3*12, 8000)
+    //
+    // Excel result: -66.67
+    // --------------------------------------------------
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.10/12, 1, 3*12, 8000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-66.67),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // --------------------------------------------------
+    // Excel: =IPMT(0.10/12, 2, 3*12, 8000)
+    // Interest portion for second period
+    // Excel result: -65.0710764092997
+    // --------------------------------------------------
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.10/12, 2, 3*12, 8000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-65.0710764092997),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // --------------------------------------------------
+    // Excel: =IPMT(0.05/12, 1, 60, 10000)
+    // First month's interest on a 5-year loan
+    // Excel result: -41.67
+    // --------------------------------------------------
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 1, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-41.67),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // --------------------------------------------------
+    // Excel: =IPMT(0.05/12, 12, 60, 10000)
+    // Interest portion after one year
+    // Excel result: -34.12
+    // --------------------------------------------------
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 12, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-34.7848954631707),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // --------------------------------------------------
+    // Payments at beginning of period
+    //
+    // Excel: =IPMT(0.05/12, 1, 60, 10000, 0, 1)
+    // First period interest is zero
+    // --------------------------------------------------
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 1, 60, 10000, 0, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(0.0)));
+
+    // --------------------------------------------------
+    // Excel: =IPMT(0.05/12, 2, 60, 10000, 0, 1)
+    // Interest starts accruing in second period
+    // Excel result: -40.88
+    // --------------------------------------------------
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 2, 60, 10000, 0, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-40.8836279262513),
+            WITHIN_TYPE_CAST(0.0000001)));
+
+    // --------------------------------------------------
+    // Zero interest rate
+    //
+    // Excel: =IPMT(0, 10, 60, 10000)
+    // Excel result: 0
+    // --------------------------------------------------
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0, 10, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(0.0)));
+
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("=IPMT(0.05/12, 1.5, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-41.3606399677465),
+            WITHIN_TYPE_CAST(0.0000001)));
+
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("=IPMT(-1, 1, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(10000),
+            WITHIN_TYPE_CAST(0.0000001)));
+
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("=IPMT(-1.1, 1, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(11000),
+            WITHIN_TYPE_CAST(0.0000001)));
+
+    // --------------------------------------------------
+    // Invalid inputs
+    // --------------------------------------------------
+
+    // period < 1
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 0, 60, 10000)"))));
+
+    // period > periods
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 61, 60, 10000)"))));
+
+    // non-finite args
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("IPMT(NaN, 1, 60, 10000)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, NaN, 60, 10000)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 1, NaN, 10000)"))));
+    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 1, 60, NaN)"))));
+    }
+
+// --------------------------------------------------
 // PV
 // --------------------------------------------------
 TEST_CASE("PV", "[finance]")

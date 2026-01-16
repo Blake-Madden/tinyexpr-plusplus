@@ -393,6 +393,78 @@ namespace te_builtins
         }
 
     [[nodiscard]]
+    static te_type te_ipmt(te_type rate, te_type period, te_type periods, te_type presentValue,
+                           te_type futureValue, te_type type)
+        {
+        if (!std::isfinite(rate) || !std::isfinite(period) || !std::isfinite(periods) ||
+            !std::isfinite(presentValue))
+            {
+            return te_parser::te_nan;
+            }
+
+        if (!std::isfinite(futureValue))
+            {
+            futureValue = 0;
+            }
+        if (!std::isfinite(type))
+            {
+            type = 0;
+            }
+
+        type = (type != 0) ? 1 : 0;
+
+        if (periods <= 0.0)
+            {
+            return te_parser::te_nan;
+            }
+        if (period < 1.0 || period > periods)
+            {
+            return te_parser::te_nan;
+            }
+        if (rate == 0.0)
+            {
+            return 0.0;
+            }
+        if (rate <= -1.0)
+            {
+            // Excel: linear interest regime for IPMT
+            if (type != 0 && period == 1.0)
+                {
+                return 0.0;
+                }
+
+            return -presentValue * rate;
+            }
+
+        const te_type payment = te_pmt(rate, periods, presentValue, futureValue, type);
+
+        if (!std::isfinite(payment))
+            {
+            return te_parser::te_nan;
+            }
+
+        te_type balance;
+
+        if (type == 1)
+            {
+            if (period == 1.0)
+                {
+                return 0.0;
+                }
+
+            balance = -(presentValue * std::pow(1 + rate, period - 2) +
+                        payment * (std::pow(1 + rate, period - 2) - 1) / rate + payment);
+            }
+        else
+            {
+            balance = -(presentValue * std::pow(1 + rate, period - 1) +
+                        payment * (std::pow(1 + rate, period - 1) - 1) / rate);
+            }
+
+        return balance * rate;
+        }
+
+    [[nodiscard]]
     static te_type te_pv(te_type rate, te_type nper, te_type pmt, te_type futureValue, te_type type)
         {
         if (!std::isfinite(rate) || !std::isfinite(nper) || !std::isfinite(pmt))
@@ -1662,6 +1734,8 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "isodd", static_cast<te_fun1>(te_builtins::te_is_odd), TE_PURE },
     { "if", static_cast<te_fun3>(te_builtins::te_if), TE_PURE },
     { "ifs", static_cast<te_fun24>(te_builtins::te_ifs),
+      static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
+    { "ipmt", static_cast<te_fun6>(te_builtins::te_ipmt),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "ln", static_cast<te_fun1>(te_builtins::te_log), TE_PURE },
     { "log10", static_cast<te_fun1>(te_builtins::te_log10), TE_PURE },

@@ -52,6 +52,7 @@ The following are changes from the original TinyExpr C library:
   - `fact`: alias for `fac()`, like the *Excel* function.
   - `false`: returns `false` (i.e., `0`) in a boolean expression.
   - `fv`: returns the future value of an investment.
+  - `ipmt`: returns the interest portion of a payment for a specified period of an investment.
   - `iserr`: returns true if an expression evaluates to NaN.
   - `iserror`: alias for `iserr`.
   - `iseven`: returns true if a number is even, false if odd.
