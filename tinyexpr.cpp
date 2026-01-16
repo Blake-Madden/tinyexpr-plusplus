@@ -437,31 +437,38 @@ namespace te_builtins
             }
 
         const te_type payment = te_pmt(rate, periods, presentValue, futureValue, type);
-
         if (!std::isfinite(payment))
             {
             return te_parser::te_nan;
             }
 
-        te_type balance;
+        // Excel: type == 1 has zero interest in the first period
+        if (type == 1 && period == 1.0)
+            {
+            return 0.0;
+            }
 
+        // compute FV at period - 1 (this must allow period - 1 == 0)
+        const te_type n = period - 1.0;
+        const te_type powVal = std::pow(1 + rate, n);
+        if (!std::isfinite(powVal))
+            {
+            return te_parser::te_nan;
+            }
+
+        // FV(r, n, pmt, pv, type) (note: no FV argument; payment already encodes it)
+        const te_type fv_at_n =
+            -(presentValue * powVal + payment * (1 + (rate * type)) * (powVal - 1) / rate);
+
+        te_type interest = fv_at_n * rate;
+
+        // Excel adjustment for type == 1
         if (type == 1)
             {
-            if (period == 1.0)
-                {
-                return 0.0;
-                }
-
-            balance = -(presentValue * std::pow(1 + rate, period - 2) +
-                        payment * (std::pow(1 + rate, period - 2) - 1) / rate + payment);
-            }
-        else
-            {
-            balance = -(presentValue * std::pow(1 + rate, period - 1) +
-                        payment * (std::pow(1 + rate, period - 1) - 1) / rate);
+            interest /= (1 + rate);
             }
 
-        return balance * rate;
+        return interest;
         }
 
     [[nodiscard]]
@@ -508,6 +515,143 @@ namespace te_builtins
 
         const te_type annuity = (pmt * (1 + (rate * type)) * (powVal - 1)) / rate;
         return -(futureValue + annuity) / powVal;
+        }
+
+    [[nodiscard]]
+    static te_type te_ppmt(te_type rate, te_type period, te_type periods, te_type presentValue,
+                           te_type futureValue, te_type type)
+        {
+        if (!std::isfinite(rate) || !std::isfinite(period) || !std::isfinite(periods) ||
+            !std::isfinite(presentValue))
+            {
+            return te_parser::te_nan;
+            }
+
+        if (!std::isfinite(futureValue))
+            {
+            futureValue = 0;
+            }
+        if (!std::isfinite(type))
+            {
+            type = 0;
+            }
+
+        if (period < 1.0 || period > periods || periods <= 0.0)
+            {
+            return te_parser::te_nan;
+            }
+
+        type = (type != 0) ? 1 : 0;
+
+        const te_type payment = te_pmt(rate, periods, presentValue, futureValue, type);
+        if (!std::isfinite(payment))
+            {
+            return te_parser::te_nan;
+            }
+
+        const te_type interest = te_ipmt(rate, period, periods, presentValue, futureValue, type);
+        if (!std::isfinite(interest))
+            {
+            return te_parser::te_nan;
+            }
+
+        return payment - interest;
+        }
+
+    [[nodiscard]]
+    static te_type te_cumipmt(te_type rate, te_type periods, te_type presentValue,
+                              te_type startPeriod, te_type endPeriod, te_type type)
+        {
+        if (!std::isfinite(rate) || !std::isfinite(periods) || !std::isfinite(presentValue) ||
+            !std::isfinite(startPeriod) || !std::isfinite(endPeriod) || !std::isfinite(type))
+            {
+            return te_parser::te_nan;
+            }
+
+        periods = std::trunc(periods);
+        startPeriod = std::trunc(startPeriod);
+        endPeriod = std::trunc(endPeriod);
+        type = std::trunc(type);
+
+        if (rate <= 0.0 || periods <= 0.0 || presentValue <= 0.0)
+            {
+            return te_parser::te_nan;
+            }
+
+        if (startPeriod < 1.0 || endPeriod < 1.0 || startPeriod > endPeriod || endPeriod > periods)
+            {
+            return te_parser::te_nan;
+            }
+
+        if (type != 0.0 && type != 1.0)
+            {
+            return te_parser::te_nan;
+            }
+
+        const int64_t from = static_cast<int64_t>(startPeriod);
+        const int64_t to = static_cast<int64_t>(endPeriod);
+
+        te_type total{ 0 };
+
+        for (int64_t p = from; p <= to; ++p)
+            {
+            const te_type ip =
+                te_ipmt(rate, static_cast<te_type>(p), periods, presentValue, 0, type);
+            if (!std::isfinite(ip))
+                {
+                return te_parser::te_nan;
+                }
+            total += ip;
+            }
+
+        return total;
+        }
+
+    [[nodiscard]]
+    static te_type te_cumprinc(te_type rate, te_type periods, te_type presentValue,
+                               te_type startPeriod, te_type endPeriod, te_type type)
+        {
+        if (!std::isfinite(rate) || !std::isfinite(periods) || !std::isfinite(presentValue) ||
+            !std::isfinite(startPeriod) || !std::isfinite(endPeriod) || !std::isfinite(type))
+            {
+            return te_parser::te_nan;
+            }
+
+        periods = std::trunc(periods);
+        startPeriod = std::trunc(startPeriod);
+        endPeriod = std::trunc(endPeriod);
+        type = std::trunc(type);
+
+        if (rate <= 0.0 || periods <= 0.0 || presentValue <= 0.0)
+            {
+            return te_parser::te_nan;
+            }
+
+        if (startPeriod < 1.0 || endPeriod < 1.0 || startPeriod > endPeriod || endPeriod > periods)
+            {
+            return te_parser::te_nan;
+            }
+
+        if (type != 0.0 && type != 1.0)
+            {
+            return te_parser::te_nan;
+            }
+
+        te_type total{ 0 };
+
+        for (int64_t p = (int64_t)startPeriod; p <= (int64_t)endPeriod; ++p)
+            {
+            const te_type principal = te_ppmt(rate, (te_type)p, periods, presentValue, 0, type);
+
+            if (!std::isfinite(principal))
+                {
+                return te_parser::te_nan;
+                }
+
+            total += principal;
+            }
+
+        return total;
         }
 
     [[nodiscard]]
@@ -1714,6 +1858,10 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "cos", static_cast<te_fun1>(te_builtins::te_cos), TE_PURE },
     { "cosh", static_cast<te_fun1>(te_builtins::te_cosh), TE_PURE },
     { "cot", static_cast<te_fun1>(te_builtins::te_cot), TE_PURE },
+    { "cumipmt", static_cast<te_fun6>(te_builtins::te_cumipmt),
+      static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
+    { "cumprinc", static_cast<te_fun6>(te_builtins::te_cumprinc),
+      static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "db", static_cast<te_fun5>(te_builtins::te_asset_depreciation),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "e", static_cast<te_fun0>(te_builtins::te_e), TE_PURE },
@@ -1758,9 +1906,11 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "permut", static_cast<te_fun2>(te_builtins::te_npr), TE_PURE },
     { "pi", static_cast<te_fun0>(te_builtins::te_pi), TE_PURE },
+    { "pmt", static_cast<te_fun5>(te_builtins::te_pmt),
+      static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "pow", static_cast<te_fun2>(te_builtins::te_pow), TE_PURE },
     { "power", /* Excel alias*/ static_cast<te_fun2>(te_builtins::te_pow), TE_PURE },
-    { "pmt", static_cast<te_fun5>(te_builtins::te_pmt),
+    { "ppmt", static_cast<te_fun6>(te_builtins::te_ppmt),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "pv", static_cast<te_fun5>(te_builtins::te_pv),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },

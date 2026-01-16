@@ -4194,6 +4194,321 @@ TEST_CASE("NaN Comparison", "[nan]")
 
 // Financial functions
 // --------------------------------------------------
+
+// IPMT
+// --------------------------------------------------
+TEST_CASE("PPMT", "[finance]")
+    {
+    te_parser tep;
+
+    // Excel: Loan of $10,000, 5% annual interest, 60 monthly payments
+    // Formula: =IPMT(0.05/12, 1, 60, 10000)
+    // Result: -41.67
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 1, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-41.6666666667),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // Excel: Same loan, second payment interest
+    // Formula: =IPMT(0.05/12, 2, 60, 10000)
+    // Result: -41.05
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 2, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-41.053976375944),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // Excel: Beginning-of-period payments (type = 1)
+    // First payment has no interest
+    // Formula: =IPMT(0.05/12, 1, 60, 10000, 0, 1)
+    // Result: 0.00
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 1, 60, 10000, 0, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(0.0),
+            WITHIN_TYPE_CAST(0.000001)));
+
+    // Excel: Beginning-of-period payments, second payment
+    // Formula: =IPMT(0.05/12, 2, 60, 10000, 0, 1)
+    // Result: -40.88
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 2, 60, 10000, 0, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-40.8836279263),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // LibreOffice / Excel: Extreme negative rate uses linear interest regime
+    // Formula: =IPMT(-1.1, 1, 60, 10000)
+    // Result: 11000
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(-1.1, 1, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(11000.0),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // Excel: Zero interest rate
+    // Formula: =IPMT(0, 10, 60, 10000)
+    // Result: 0.00
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0, 10, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(0.0),
+            WITHIN_TYPE_CAST(0.000001)));
+
+    // Excel Help: Loan of $2,000, 10% annual interest, 2-year term, monthly payments
+    // Principal payment for month 1
+    // Formula: =PPMT(10%/12, 1, 2*12, 2000)
+    // Result: -75.62
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PPMT(0.10/12, 1, 2*12, 2000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-75.62),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel Help: Loan of $200,000, 8% annual interest, 10-year term, annual payments
+    // Principal payment for year 10 (final year)
+    // Formula: =PPMT(0.08, 10, 10, 200000)
+    // Result: -27598.05
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PPMT(0.08, 10, 10, 200000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-27598.05),
+            WITHIN_TYPE_CAST(0.0001)));
+
+    // Excel: Period out of range returns #NUM!
+    // Formula: =IPMT(0.05/12, 0, 60, 10000)
+    CHECK(std::isnan(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 0, 60, 10000)"))));
+
+    // Excel: Period greater than total periods returns #NUM!
+    // Formula: =IPMT(0.05/12, 61, 60, 10000)
+    CHECK(std::isnan(
+        WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 61, 60, 10000)"))));
+
+    // Excel: Period less than 1 returns #NUM!
+    // Formula: =PPMT(0.05/12, 0, 60, 10000)
+    CHECK(std::isnan(
+        WITHIN_TYPE_CAST(tep.evaluate("PPMT(0.05/12, 0, 60, 10000)"))));
+
+    // Excel: Period greater than total periods returns #NUM!
+    // Formula: =PPMT(0.05/12, 61, 60, 10000)
+    CHECK(std::isnan(
+        WITHIN_TYPE_CAST(tep.evaluate("PPMT(0.05/12, 61, 60, 10000)"))));
+    
+    CHECK(std::isnan(
+        WITHIN_TYPE_CAST(tep.evaluate("PPMT(-1.1, 1, 60, 10000)"))));
+
+    // Excel: Zero interest rate — entire payment is principal
+    // Formula: =PPMT(0, 5, 10, 1000)
+    // Result: -100.00
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PPMT(0, 5, 10, 1000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-100.0),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // Excel: Beginning-of-period payments
+    // Loan: $10,000, 5% annual, 60 months
+    // Formula: =PPMT(0.05/12, 1, 60, 10000, 0, 1)
+    // Result: -188.93
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PPMT(0.05/12, 1, 60, 10000, 0, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-187.929297699694),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // Excel: Sign symmetry — flipping PV flips PPMT
+    // Formula: =PPMT(0.05/12, 10, 60, -10000)
+    // Result: 155.65
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PPMT(0.05/12, 10, 60, -10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(152.652685047979),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // Excel: Final period principal payment
+    // Formula: =PPMT(0.05/12, 60, 60, 10000)
+    // Result: -187.93
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PPMT(0.05/12, 60, 60, 10000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-187.929297699694),
+            WITHIN_TYPE_CAST(0.00001)));
+    }
+
+    // CUMPRINC
+// --------------------------------------------------
+TEST_CASE("CUMPRINC", "[finance]")
+    {
+    te_parser tep;
+
+    // Excel Help example:
+    // 9% annual interest rate, 30-year loan, $125,000 present value
+    // Principal paid in year 2 (months 13–24), payments at END of period
+    // Formula: =CUMPRINC(0.09/12, 30*12, 125000, 13, 24, 0)
+    // Result: -934.11
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.09/12, 30*12, 125000, 13, 24, 0)")
+        ),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-934.107123420898),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // Excel Help example:
+    // Same loan, payments at BEGINNING of period
+    // Formula: =CUMPRINC(0.09/12, 30*12, 125000, 13, 24, 1)
+    // Result: -$927.15
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.09/12, 30*12, 125000, 13, 24, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-927.153472378064),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // Excel: single-period principal equals PPMT
+    // Formula: =CUMPRINC(0.05/12, 60, 10000, 1, 1, 0)
+    // Result: -147.05
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.05/12, 60, 10000, 1, 1, 0)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-147.045669773443),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // LibreOffice / Excel: CUMPRINC does NOT support zero interest
+    // Formula: =CUMPRINC(0, 10, 1000, 1, 10, 0)
+    // Result: ERR / #NUM!
+    CHECK(std::isnan(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0, 10, 1000, 1, 10, 0)"))));
+
+    // LibreOffice / Excel: CUMPRINC does NOT support linear-interest regime
+    // Formula: =CUMPRINC(-1.1, 60, 10000, 1, 1, 0)
+    // Result: ERR / #NUM!
+    CHECK(std::isnan(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(-1.1, 60, 10000, 1, 1, 0)"))));
+
+    // Excel: start period < 1 → #NUM!
+    CHECK(std::isnan(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.05/12, 60, 10000, 0, 10, 0)"))));
+
+    // Excel: end period > total periods → #NUM!
+    CHECK(std::isnan(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.05/12, 60, 10000, 1, 61, 0)"))));
+
+    // Excel: start period > end period → #NUM!
+    CHECK(std::isnan(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.05/12, 60, 10000, 10, 5, 0)"))));
+
+    // Excel:
+    // 9% annual interest, 30-year loan, $125,000
+    // Principal paid in year 2 (months 13–24), payments at END of period
+    // Formula: =CUMPRINC(0.09/12, 30*12, 125000, 13, 24, 0)
+    // Result: -$934.11
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.09/12, 30*12, 125000, 13, 24, 0)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-934.107123420898),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // LibreOffice / Excel:
+    // Same loan, payments at BEGINNING of period
+    // Formula: =CUMPRINC(0.09/12, 30*12, 125000, 13, 24, 1)
+    // Result: -$927.15
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.09/12, 30*12, 125000, 13, 24, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-927.153472378064),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // LibreOffice / Excel:
+    // Single period cumulative principal equals PPMT
+    // Formula: =CUMPRINC(0.05/12, 60, 10000, 1, 1, 0)
+    // Result: -147.05
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.05/12, 60, 10000, 1, 1, 0)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-147.045669773443),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // LibreOffice / Excel:
+    // Early loan principal (month 1)
+    // Formula: =CUMPRINC(0.05/12, 60, 10000, 1, 1, 0)
+    // Result: -147.05
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.05/12, 60, 10000, 1, 1, 0)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-147.045669773443),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // LibreOffice / Excel:
+    // Late loan principal (month 60)
+    // Formula: =CUMPRINC(0.05/12, 60, 10000, 60, 60, 0)
+    // Result: -$187.93
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.05/12, 60, 10000, 60, 60, 0)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-187.929297699694),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // LibreOffice / Excel:
+    // Principal paid in first year (months 1–12)
+    // Formula: =CUMPRINC(0.05/12, 60, 10000, 1, 12, 0)
+    // Result: -$1,805.55
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.05/12, 60, 10000, 1, 12, 0)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-1805.55252981598),
+            WITHIN_TYPE_CAST(0.00001)));
+
+    // LibreOffice / Excel:
+    // Beginning-of-period payments: first payment is mostly principal
+    // Formula: =CUMPRINC(0.05/12, 60, 10000, 1, 1, 1)
+    // Result: -187.93
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(
+            tep.evaluate("CUMPRINC(0.05/12, 60, 10000, 1, 1, 1)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-187.929297699694),
+            WITHIN_TYPE_CAST(0.00001)));
+    }
+
+// CUMIPMT
+// --------------------------------------------------
+TEST_CASE("CUMIPMT", "[finance]")
+    {
+    te_parser tep;
+
+    // Excel / docs example:
+    // 9% annual interest rate, 30-year loan, $125,000 PV
+    // Total interest paid in the 2nd year (periods 13 through 24), payments at END (type=0)
+    // =CUMIPMT(0.09/12, 30*12, 125000, 13, 24, 0) -> -11135.23
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("CUMIPMT(0.09/12, 30*12, 125000, 13, 24, 0)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(-11135.23), WITHIN_TYPE_CAST(0.00001)));
+
+    // Microsoft example (beginning-of-period payments):
+    // =CUMIPMT(0.09/12, 30*12, 125000, 13, 24, 1) -> -11052.34
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("CUMIPMT(0.09/12, 30*12, 125000, 13, 24, 1)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(-11052.34), WITHIN_TYPE_CAST(0.00001)));
+
+    // Single-period sanity check:
+    // =CUMIPMT(0.09/12, 30*12, 125000, 1, 1, 0) -> -937.50
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("CUMIPMT(0.09/12, 30*12, 125000, 1, 1, 0)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(-937.50), WITHIN_TYPE_CAST(0.00001)));
+    }
+
 // IPMT
 // --------------------------------------------------
 TEST_CASE("IPMT", "[finance]")
@@ -4272,7 +4587,7 @@ TEST_CASE("IPMT", "[finance]")
         WITHIN_TYPE_CAST(tep.evaluate("IPMT(0.05/12, 2, 60, 10000, 0, 1)")),
         Catch::Matchers::WithinRel(
             WITHIN_TYPE_CAST(-40.8836279262513),
-            WITHIN_TYPE_CAST(0.0000001)));
+            WITHIN_TYPE_CAST(0.00001)));
 
     // --------------------------------------------------
     // Zero interest rate

@@ -46,6 +46,8 @@ The following are changes from the original TinyExpr C library:
   - `cot`: returns the cotangent of an angle.
   - `combin`: alias for `ncr()`, like the *Excel* function.
   - `clamp`: constrains a value to a range.
+  - `cumprinc`: returns the cumulative principal paid on a loan between two periods.
+  - `cumipmt`: returns the cumulative interest paid on a loan between two periods.
   - `db`: returns the depreciation of an asset for a specified period using the fixed-declining balance method.
   - `effect`: returns the effective annual interest rate, provided the nominal annual interest rate and the number of compounding periods per year.
   - `even`: returns a value rounded up to the nearest even integer.
@@ -75,6 +77,7 @@ The following are changes from the original TinyExpr C library:
   - `permut`: alias for `npr()`, like the *Excel* function.
   - `power`: alias for `pow()`, like the *Excel* function.
   - `pmt`: returns the periodic payment for an investment or loan based on a constant interest rate, a fixed number of periods, and a present value (like the *Excel* function).
+  - `ppmt`: returns the principal portion of a payment for a specified period of an investment.
   - `pv`: returns the present value of an investment, like the *Excel* function.
   - `rand`: returns random number between `0` and `1`.
      Note that this implementation uses the Mersenne Twister (`mt19937`) to generate random numbers.
