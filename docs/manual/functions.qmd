@@ -2,7 +2,6 @@
 
 The following built-in functions are available:
 
-::: {}
 | Function | Description |
 | :-- | :-- |
 | ABS(Number) | Absolute value of *Number*. |
@@ -52,7 +51,6 @@ The following built-in functions are available:
 | TRUNC(Number) | Discards the fractional part of *Number*.<br>\linebreak `TRUNC(-3.2)` = -3<br>\linebreak `TRUNC(3.2)` = 3 |
 
 Table: Math Functions\index{functions!math}
-:::
 
 ::: {.warningsection data-latex=""}
 `ISNA()` differs from some spreadsheet programs for certain expressions, such as divisions by zero.
@@ -104,7 +102,7 @@ Defining `TE_FLOAT` will disable all bitwise functions and operators.
 Table: Statistical Functions\index{functions!statistical}
 :::
 
-::: {.minipage data-latex="{\textwidth}"}
+:::: {.minipage data-latex="{\textwidth}"}
 | Function | Description |
 | :-- | :-- |
 | AND(Value1, Value2, ...) | Returns true if all conditions are true. |
@@ -114,7 +112,11 @@ Table: Statistical Functions\index{functions!statistical}
 | OR(Value1, Value2, ...) | Returns true if any condition is true. |
 
 Table: Logic Functions\index{functions!logical}
+
+::: {.warningsection data-latex=""}
+`AND` and `OR` ignore NaN arguments during evaluation, so results may differ from *Excel* when subexpressions resolve to NaN.
 :::
+::::
 
 ::: {.notesection data-latex=""}
 The first argument to any logic function must be valid (i.e., not NaN). If the first argument evaluates to NaN, then NaN will be returned.
