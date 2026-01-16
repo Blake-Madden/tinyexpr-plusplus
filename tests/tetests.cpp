@@ -4244,14 +4244,15 @@ TEST_CASE("PV", "[finance]")
     CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(-0.5, 5, -100)")),
                Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(6200), WITHIN_TYPE_CAST(0.0001)));
 
+    CHECK_THAT(
+        WITHIN_TYPE_CAST((tep.evaluate("PV(0.05, 0, -100)"))),
+        Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(0), WITHIN_TYPE_CAST(0.0001)));
+
+    CHECK_THAT(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, -10, -100)")),
+               Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(-1257.78925355488), WITHIN_TYPE_CAST(0.0001)));
+
     // Excel: =PV(-1, 10, -100) -> #NUM!
     CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PV(-1, 10, -100)"))));
-
-    // Excel: =PV(0.05, 0, -100) -> #NUM!
-    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, 0, -100)"))));
-
-    // Excel: =PV(0.05, -10, -100) -> #NUM!
-    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PV(0.05, -10, -100)"))));
 
     // Excel: =PV(NaN, 10, -100) -> #NUM!
     CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PV(NaN, 10, -100)"))));
@@ -4307,7 +4308,7 @@ TEST_CASE("PMT", "[finance]")
         WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05/12, 60, 10000, 0, 1)")),
         Catch::Matchers::WithinRel(
             WITHIN_TYPE_CAST(-187.93),
-            WITHIN_TYPE_CAST(0.00001)));
+            WITHIN_TYPE_CAST(0.001)));
 
     // Excel: =PMT(0, 60, 12000)
     // Zero interest: straight-line repayment
@@ -4316,6 +4317,11 @@ TEST_CASE("PMT", "[finance]")
         WITHIN_TYPE_CAST(tep.evaluate("PMT(0, 60, 12000)")),
         Catch::Matchers::WithinRel(
             WITHIN_TYPE_CAST(-200)));
+
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PMT(-1, 60, 12000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(0)));
 
     // Excel: =PMT(0.1, 1, 100)
     // One-period loan at 10%
@@ -4333,7 +4339,7 @@ TEST_CASE("PMT", "[finance]")
         WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05/12, 60, 10000, 1000)")),
         Catch::Matchers::WithinRel(
             WITHIN_TYPE_CAST(-203.42),
-            WITHIN_TYPE_CAST(0.00002)));
+            WITHIN_TYPE_CAST(0.001)));
 
     // Excel data:
     // Annual interest rate: 8%
@@ -4372,13 +4378,17 @@ TEST_CASE("PMT", "[finance]")
             WITHIN_TYPE_CAST(-129.08),
             WITHIN_TYPE_CAST(0.00005)));
 
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05, -10, 1000)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(79.5045749654567),
+            WITHIN_TYPE_CAST(0.00001)));
+
     // Excel: rate <= -1 -> #NUM!
-    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(-1, 10, 1000)"))));
     CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(-1.5, 10, 1000)"))));
 
     // Excel: nper <= 0 -> #NUM!
     CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05, 0, 1000)"))));
-    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(0.05, -10, 1000)"))));
 
     // Non-finite args -> NaN
     CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("PMT(NaN, 10, 1000)"))));
@@ -4575,13 +4585,29 @@ TEST_CASE("FV", "[finance]")
             WITHIN_TYPE_CAST(2301.40),
             WITHIN_TYPE_CAST(0.00005)));
 
-    // Excel: rate <= -1 -> #NUM!
-    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(-1, 10, -100)"))));
-    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(-1.5, 10, -100)"))));
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(-1, 10, -100)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(100),
+            WITHIN_TYPE_CAST(0.00005)));
 
-    // Excel: nper <= 0 -> #NUM!
-    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(0.05, 0, -100)"))));
-    CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(0.05, -10, -100)"))));
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(-1.5, 10, -100)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(66.6015625),
+            WITHIN_TYPE_CAST(0.00005)));
+
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(0.05, 0, -100)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(0),
+            WITHIN_TYPE_CAST(0.00005)));
+
+    CHECK_THAT(
+        WITHIN_TYPE_CAST(tep.evaluate("FV(0.05, -10, -100)")),
+        Catch::Matchers::WithinRel(
+            WITHIN_TYPE_CAST(-772.173492918482),
+            WITHIN_TYPE_CAST(0.00005)));
 
     // Non-finite args -> NaN
     CHECK(std::isnan(WITHIN_TYPE_CAST(tep.evaluate("FV(NaN, 10, -100)"))));

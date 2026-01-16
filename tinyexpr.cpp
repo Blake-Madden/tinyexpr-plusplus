@@ -312,6 +312,7 @@ namespace te_builtins
             {
             return te_parser::te_nan;
             }
+
         if (!std::isfinite(presentValue))
             {
             presentValue = 0;
@@ -320,16 +321,13 @@ namespace te_builtins
             {
             type = 0;
             }
-        if (nper <= 0)
+
+        // Excel: nper == 0 is valid
+        if (nper == 0)
             {
-            return te_parser::te_nan;
-            }
-        if (rate <= -1.0)
-            {
-            return te_parser::te_nan;
+            return -presentValue;
             }
 
-        // coerce type to 0 or 1
         type = (type != 0) ? 1 : 0;
 
         if (rate == 0.0)
@@ -362,13 +360,17 @@ namespace te_builtins
             {
             type = 0;
             }
-        if (nper <= 0)
+        if (nper == 0)
             {
             return te_parser::te_nan;
             }
-        if (rate <= -1.0)
+        if (rate < -1.0)
             {
             return te_parser::te_nan;
+            }
+        if (rate == -1.0)
+            {
+            return 0.0;
             }
 
         // coerce type to 0 or 1
@@ -398,7 +400,6 @@ namespace te_builtins
             return te_parser::te_nan;
             }
 
-        // optional args default like Excel
         if (!std::isfinite(futureValue))
             {
             futureValue = 0;
@@ -408,9 +409,9 @@ namespace te_builtins
             type = 0;
             }
 
-        if (nper <= 0)
+        if (nper == 0)
             {
-            return te_parser::te_nan;
+            return 0.0;
             }
 
         // Excel: rate <= -1 -> #NUM!
@@ -2672,7 +2673,8 @@ te_expr* te_parser::te_compile(const std::string_view expression, std::set<te_va
         {
         optimize(root);
         }
-    catch ([[maybe_unused]] const std::exception& exp)
+    catch ([[maybe_unused]]
+           const std::exception& exp)
         {
         // parsed OK, but there was an evaluation error;
         // clean up and throw the message back up to compile()
