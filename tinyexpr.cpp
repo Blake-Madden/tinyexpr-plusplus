@@ -449,18 +449,18 @@ namespace te_builtins
             }
 
         // compute FV at period - 1 (this must allow period - 1 == 0)
-        const te_type n = period - 1.0;
-        const te_type powVal = std::pow(1 + rate, n);
+        const te_type num = period - 1.0;
+        const te_type powVal = std::pow(1 + rate, num);
         if (!std::isfinite(powVal))
             {
             return te_parser::te_nan;
             }
 
         // FV(r, n, pmt, pv, type) (note: no FV argument; payment already encodes it)
-        const te_type fv_at_n =
+        const te_type fvAtN =
             -(presentValue * powVal + payment * (1 + (rate * type)) * (powVal - 1) / rate);
 
-        te_type interest = fv_at_n * rate;
+        te_type interest = fvAtN * rate;
 
         // Excel adjustment for type == 1
         if (type == 1)
@@ -588,20 +588,20 @@ namespace te_builtins
             return te_parser::te_nan;
             }
 
-        const int64_t from = static_cast<int64_t>(startPeriod);
-        const int64_t to = static_cast<int64_t>(endPeriod);
+        const auto fromPeriod = static_cast<int64_t>(startPeriod);
+        const auto toPeriod = static_cast<int64_t>(endPeriod);
 
         te_type total{ 0 };
 
-        for (int64_t p = from; p <= to; ++p)
+        for (int64_t period = fromPeriod; period <= toPeriod; ++period)
             {
-            const te_type ip =
-                te_ipmt(rate, static_cast<te_type>(p), periods, presentValue, 0, type);
-            if (!std::isfinite(ip))
+            const te_type interestPayment =
+                te_ipmt(rate, static_cast<te_type>(period), periods, presentValue, 0, type);
+            if (!std::isfinite(interestPayment))
                 {
                 return te_parser::te_nan;
                 }
-            total += ip;
+            total += interestPayment;
             }
 
         return total;
@@ -639,9 +639,11 @@ namespace te_builtins
 
         te_type total{ 0 };
 
-        for (int64_t p = (int64_t)startPeriod; p <= (int64_t)endPeriod; ++p)
+        for (auto period = static_cast<int64_t>(startPeriod);
+             period <= static_cast<int64_t>(endPeriod); ++period)
             {
-            const te_type principal = te_ppmt(rate, (te_type)p, periods, presentValue, 0, type);
+            const te_type principal =
+                te_ppmt(rate, static_cast<te_type>(period), periods, presentValue, 0, type);
 
             if (!std::isfinite(principal))
                 {
