@@ -56,12 +56,12 @@ DiagrammeR::grViz("digraph {
 
     <list>      =    <expr> {(",", ";" [dependent on locale]) <expr>}
     <expr>      =    <term> {("&" | "|") <term>}
-    <expr>      =    <term> {("<>" | "!=" | "=" | "<") | "<=" | ">" | ">=") <term>}
+    <expr>      =    <term> {("<>" | "!=" | "=" | "<" | "<=" | ">" | ">=") <term>}
     <expr>      =    <term> {("<<" | ">>") <term>}
     <expr>      =    <term> {("+" | "-") <term>}
     <term>      =    <factor> {("*" | "/" | "%") <factor>}
     <factor>    =    <power> {("^" | "**") <power>}
-    <power>     =    {("-" | "+")} <base>
+    <power>     =    {("-" | "+" | "~")} <base>
     <base>      =    <constant>
                    | <variable>
                    | <function-0> {"(" ")"}

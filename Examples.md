@@ -5,7 +5,7 @@ The following are examples demonstrating how to use TinyExpr++.
 ## Example 1
 
 ```cpp
-include "tinyexpr.h"
+#include "tinyexpr.h"
 #include <iostream>
 
 int main(int argc, char *argv[])
@@ -209,5 +209,5 @@ auto result = tep.evaluate("SUM(CELL 0, CELL 1, CELL 2, CELL 3, CELL 4)");
 
 // call the other function, getting the object's max value
 // (will be 8)
-res = tep.evaluate("CellMax()");
+result = tep.evaluate("CellMax()");
 ```

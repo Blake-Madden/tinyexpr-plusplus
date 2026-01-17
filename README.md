@@ -62,7 +62,7 @@ Please refer [here](TinyExprChanges.md) for a list of changes from the original 
 
 ## Building
 
-*TinyExpr++* is self-contained in two files: "tinyexpr.cpp and "tinyexpr.h". To use
+*TinyExpr++* is self-contained in two files: "tinyexpr.cpp" and "tinyexpr.h". To use
 *TinyExpr++*, simply add those two files to your project.
 
 The documentation can be built using the following:
@@ -332,7 +332,7 @@ auto result = tep.evaluate("SUM(CELL 0, CELL 1, CELL 2, CELL 3, CELL 4)");
 
 // call the other function, getting the object's max value
 // (will be 8)
-res = tep.evaluate("CellMax()");
+result = tep.evaluate("CellMax()");
 ```
 
 ## Non-US Formatted Formulas
@@ -367,11 +367,10 @@ int main(int argc, char *argv[])
     tep.set_list_separator(';');
 
     /* This will compile the expression and check for errors. */
-    auto r = tep.evaluate(expression);
+    const auto r = tep.evaluate(expression);
 
     if (tep.success())
         {
-        const double r = tep.evaluate(expression);
         std::cout << "Result:\n\t" << r << "\n";
         }
     else

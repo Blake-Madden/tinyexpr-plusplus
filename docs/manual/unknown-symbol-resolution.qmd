@@ -91,7 +91,7 @@ te_parser tep;
 // Create a handler for undefined tokens that will recognize
 // dynamic strings like "FY2004" or "FY1997" and convert them to 2004 and 1997.
 tep.set_unknown_symbol_resolver(
-    // Handler should except a string (which will be the unrecognized token)
+    // Handler should accept a string (which will be the unrecognized token)
     // and return a te_type.
     [](std::string_view str) -> te_type
     {

@@ -1,6 +1,6 @@
 The following are changes from the original TinyExpr C library:
 
-- Compiles as C++17 code.
+- Compiles as C++20 code.
 - `te_*` functions are now wrapped in a `te_parser` class.
 - `te_interp()`, `te_compile()`, and `te_eval()` have been replaced with `te_parser::compile()`, `te_parser::evaluate()`, and `te_parser::set_variables_and_functions()`.
   `set_variables_and_functions()` sets your list of custom functions and variables. `compile()` compiles and optimizes an expression.
@@ -10,7 +10,7 @@ The following are changes from the original TinyExpr C library:
   The available flags for variables and functions are now just combinations of `TE_DEFAULT`, `TE_PURE`, and `TE_VARIADIC`.
 - Formula parsing is now case insensitive.
 - Added support for variadic functions (can accept 1-24 arguments); enabled through the `TE_VARIADIC` flag.
-  (Refer to the `AVERAGE()` function in `tinyexp.cpp` for an example.)
+  (Refer to the `AVERAGE()` function in `tinyexpr.cpp` for an example.)
 - Added support for parsing formulas in non-US format (e.g., `pow(2,2; 2)` instead of `pow(2.2, 2)`). Useful for when the program's locale is non-English.
   (Refer to [Example 4](Examples.md) for a demonstration.)
 - `te_expr` is now a derivable base class. This means that you can derive from `te_expr`, add new fields to that derived class (e.g., arrays, strings, even other classes)

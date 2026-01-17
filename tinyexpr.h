@@ -288,7 +288,7 @@ class te_string_less
 
 /// @brief A compiled expression.
 /// @details Can also be an additional object that can be passed to
-///     te_confun0-te_confun7 functions via a te_variable.
+///     te_confun0-te_confun24 functions via a te_variable.
 class te_expr
     {
   public:
@@ -338,7 +338,7 @@ class te_variable
     te_variant_type m_value;
     /// @brief The type that m_value represents.
     te_variable_flags m_type{ TE_DEFAULT };
-    /// If @c m_value is a function pointer of type `te_confun0`-`te_confun7`, then
+    /// If @c m_value is a function pointer of type `te_confun0`-`te_confun24`, then
     /// this is passed to that function when called. This is useful for passing
     /// an object which manages additional data to your functions.
     te_expr* m_context{ nullptr };

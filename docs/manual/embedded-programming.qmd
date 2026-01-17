@@ -69,7 +69,7 @@ void OnInterrupt()
     const_cast<te_parser&>(vTep).set_variables_and_functions(
          { {"STRESS_L", 10.1},
            {"P_LEVEL", .5} });
-    const_cast<te_parser&>(vTep).compile(("STRESS_L*P_LEVEL"));
+    const_cast<te_parser&>(vTep).compile("STRESS_L*P_LEVEL");
 
     if (vTep.success())
         {
