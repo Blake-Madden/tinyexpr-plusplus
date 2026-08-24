@@ -11,11 +11,16 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: DoozyX/clang-format-lint-action@v0.20
-        with:
-          source: "."
-          exclude: ""
-          extensions: 'h,cpp'
-          style: file
-          clangFormatVersion: 20
+      - uses: actions/checkout@v7
+      - name: Install clang-format-19
+        run: sudo apt-get install -y clang-format-19
+      - name: Check formatting
+        run: |
+          # find all project-owned headers and sources, skipping build output
+          FILES=$(find . \( -name '*.h' -o -name '*.cpp' \) \
+            ! -path './.git/*' \
+            ! -path './build/*' \
+            ! -path './tests/bin/*')
+          echo "$FILES" | wc -l | xargs -I{} echo "Checking {} files..."
+          echo "$FILES" | xargs sed -i 's/\r//'
+          echo "$FILES" | xargs clang-format-19 --dry-run --Werror
