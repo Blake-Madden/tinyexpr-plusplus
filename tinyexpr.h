@@ -79,7 +79,7 @@
 #include <type_traits>
 
 constexpr int TINYEXPR_CPP_MAJOR_VERSION = 1;
-constexpr int TINYEXPR_CPP_MINOR_VERSION = 1;
+constexpr int TINYEXPR_CPP_MINOR_VERSION = 2;
 constexpr int TINYEXPR_CPP_PATCH_VERSION = 0;
 constexpr int TINYEXPR_CPP_TWEAK_VERSION = 0;
 #define TINYEXPR_CPP_COPYRIGHT                                                                     \
