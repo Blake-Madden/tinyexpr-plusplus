@@ -81,7 +81,7 @@ namespace te_builtins
     [[nodiscard]]
     static te_type te_is_nan(te_type val)
         {
-        return (!std::isfinite(val) ? 1 : 0);
+        return (!std::isfinite(val) ? te_true_value() : te_false_value());
         }
 
     [[nodiscard]]
@@ -273,7 +273,7 @@ namespace te_builtins
             type = 0;
             }
 
-        type = (type != 0) ? 1 : 0;
+        type = (type != 0) ? te_true_value() : te_false_value();
 
         if (rate <= -1.0)
             {
@@ -328,7 +328,7 @@ namespace te_builtins
             return -presentValue;
             }
 
-        type = (type != 0) ? 1 : 0;
+        type = (type != 0) ? te_true_value() : te_false_value();
 
         if (rate == 0.0)
             {
@@ -374,7 +374,7 @@ namespace te_builtins
             }
 
         // coerce type to 0 or 1
-        type = (type != 0) ? 1 : 0;
+        type = (type != 0) ? te_true_value() : te_false_value();
 
         // zero-interest
         if (rate == 0.0)
@@ -411,7 +411,7 @@ namespace te_builtins
             type = 0;
             }
 
-        type = (type != 0) ? 1 : 0;
+        type = (type != 0) ? te_true_value() : te_false_value();
 
         if (periods <= 0.0)
             {
@@ -449,7 +449,7 @@ namespace te_builtins
             }
 
         // compute FV at period - 1 (this must allow period - 1 == 0)
-        const te_type num = period - 1.0;
+        const te_type num = period - 1;
         const te_type powVal = std::pow(1 + rate, num);
         if (!std::isfinite(powVal))
             {
@@ -500,7 +500,7 @@ namespace te_builtins
             }
 
         // coerce type to 0 or 1
-        type = (type != 0) ? 1 : 0;
+        type = (type != 0) ? te_true_value() : te_false_value();
 
         if (rate == 0.0)
             {
@@ -541,7 +541,7 @@ namespace te_builtins
             return te_parser::te_nan;
             }
 
-        type = (type != 0) ? 1 : 0;
+        type = (type != 0) ? te_true_value() : te_false_value();
 
         const te_type payment = te_pmt(rate, periods, presentValue, futureValue, type);
         if (!std::isfinite(payment))
