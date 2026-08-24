@@ -46,8 +46,18 @@ if(TE_BUILD_TEST_RUNNER)
         endif()
     endif()
 
+    # ASAN has to be set here, before Catch2 is added, so that every target is
+    # built with it
     if(USE_ADDRESS_SANITIZE)
         message(STATUS "Address Sanitizer enabled")
+        if(MSVC)
+            # /RTC1 (from CMake's default Debug flags) is incompatible with ASAN
+            string(REGEX REPLACE "/RTC[1su]+" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+            add_compile_options($<$<CONFIG:Debug>:/fsanitize=address>)
+        else()
+            add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+            add_link_options(-fsanitize=address)
+        endif()
     endif()
 
     if(USE_CLANG_TIDY)
@@ -108,28 +118,17 @@ if(TE_BUILD_TEST_RUNNER)
             ../tinyexpr.cpp PROPERTIES COMPILE_FLAGS "-Wno-unused-function")
     endif()
     if(MSVC)
-        target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION
-                                   $<$<CONFIG:Release>:NDEBUG>)
+        target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Release>:NDEBUG>)
         # This warning:
         # C4554: check operator precedence for possible error; use parentheses to clarify precedence
         # is suppressed because of unit test, not the code itself.
-        if(USE_ADDRESS_SANITIZE)
-            target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /Zc:__cplusplus /MP /W3 /WX /wd4554
-                               $<$<CONFIG:Debug>:/Od /fsanitize=address> $<$<CONFIG:Release>:/O2>)
-        else()
-            target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /Zc:__cplusplus /MP /W3 /WX /wd4554
+        target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /Zc:__cplusplus /MP /W3 /WX /wd4554
                                $<$<CONFIG:Debug>:/Od> $<$<CONFIG:Release>:/O2>)
-        endif()
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC
             -Wall -Wextra -Wpedantic -Wshadow -Werror
             $<$<CONFIG:Debug>:-O0 -g>
             $<$<CONFIG:Release>:-O3>)
-        if(USE_ADDRESS_SANITIZE)
-            target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC 
-                -fsanitize=address -fno-omit-frame-pointer)
-            target_link_options(${CMAKE_PROJECT_NAME} PUBLIC -fsanitize=address)
-        endif()
     endif()
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Catch2::Catch2)
 
