@@ -5117,38 +5117,45 @@ TEST_CASE("Benchmarks", "[!benchmark]")
     te_parser tep;
     tep.set_variables_and_functions({ {"a", &benchmarkVar} });
 
+    tep.compile("a+5");
     BENCHMARK("a+5 Compiled")
-        { return tep.evaluate("a+5"); };
+        { return tep.evaluate(); };
     BENCHMARK("a+5 Native")
         { return bench_a5(benchmarkVar); };
 
+    tep.compile("5+a+5");
     BENCHMARK("5+a+5 Compiled")
-        { return tep.evaluate("5+a+5"); };
+        { return tep.evaluate(); };
     BENCHMARK("5+a+5 Native")
         { return bench_a55(benchmarkVar); };
 
+    tep.compile("abs(a+5)");
     BENCHMARK("abs(a+5) Compiled")
-        { return tep.evaluate("abs(a+5)"); };
+        { return tep.evaluate(); };
     BENCHMARK("abs(a+5) Native")
         { return bench_a5abs(benchmarkVar); };
 
+    tep.compile("sqrt(a^1.5+a^2.5)");
     BENCHMARK("sqrt(a^1.5+a^2.5) Compiled")
-        { return tep.evaluate("sqrt(a^1.5+a^2.5)"); };
+        { return tep.evaluate(); };
     BENCHMARK("sqrt(a^1.5+a^2.5) Native")
         { return bench_as(benchmarkVar); };
 
+    tep.compile("a+(5*2)");
     BENCHMARK("a+(5*2) Compiled")
-        { return tep.evaluate("a+(5*2)"); };
+        { return tep.evaluate(); };
     BENCHMARK("a+(5*2) Native")
         { return bench_a10(benchmarkVar); };
 
+    tep.compile("(a+5)*2");
     BENCHMARK("(a+5)*2 Compiled")
-        { return tep.evaluate("(a+5)*2"); };
+        { return tep.evaluate(); };
     BENCHMARK("(a+5)*2 Native")
         { return bench_a52(benchmarkVar); };
 
+    tep.compile("(1/(a+1)+2/(a+2)+3/(a+3))");
     BENCHMARK("(1/(a+1)+2/(a+2)+3/(a+3)) Compiled")
-        { return tep.evaluate("(1/(a+1)+2/(a+2)+3/(a+3))"); };
+        { return tep.evaluate(); };
     BENCHMARK("(1/(a+1)+2/(a+2)+3/(a+3)) Native")
         { return bench_al(benchmarkVar); };
     }
