@@ -433,6 +433,22 @@ class te_parser
         return std::numeric_limits<te_type>::digits >= std::numeric_limits<uint64_t>::digits;
         }
 
+    /// @private
+    /// @returns @c true if @c val is too large to convert to a `uint32_t`.
+    [[nodiscard]]
+    constexpr static bool te_exceeds_uint32(te_type val) noexcept
+        {
+        if constexpr (supports_32bit())
+            {
+            return val > static_cast<te_type>((std::numeric_limits<uint32_t>::max)());
+            }
+        else
+            {
+            // UINT32_MAX rounds up to 2^32 as a float, so the bound must be exclusive
+            return val >= static_cast<te_type>(uint64_t{ 1 } << 32);
+            }
+        }
+
     /// @returns The bits available in the internal data type.\n
     ///     This will affect the largest integer size that can be used in bitwise operations.
     [[nodiscard]]

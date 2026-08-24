@@ -1223,7 +1223,8 @@ TEST_CASE("Hex", "[hex]")
 
     CHECK(tep.evaluate("0x0") == 0);
     CHECK(tep.evaluate("0x8") == 8);
-    CHECK(tep.evaluate("0x1FFFFFFFFFFFFF") == 9007199254740991);
+    // (2^53)-1 isn't representable as a float; both sides round to 2^53 there
+    CHECK(tep.evaluate("0x1FFFFFFFFFFFFF") == static_cast<te_type>(9007199254740991));
     CHECK(tep.evaluate("0x57CEF7") == 5754615);
     CHECK(tep.evaluate("0x57CEF7") == 5754615);
     CHECK(tep.evaluate("-0X57CEF7") == -5754615);

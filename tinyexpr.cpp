@@ -751,7 +751,7 @@ namespace te_builtins
             {
             return te_parser::te_nan;
             }
-        if (val > (std::numeric_limits<unsigned int>::max)())
+        if (te_parser::te_exceeds_uint32(val))
             {
             return std::numeric_limits<te_type>::infinity();
             }
@@ -983,8 +983,7 @@ namespace te_builtins
             {
             return te_parser::te_nan;
             }
-        if (val1 > (std::numeric_limits<unsigned int>::max)() ||
-            val2 > (std::numeric_limits<unsigned int>::max)())
+        if (te_parser::te_exceeds_uint32(val1) || te_parser::te_exceeds_uint32(val2))
             {
             return std::numeric_limits<te_type>::infinity();
             }
@@ -1312,7 +1311,7 @@ namespace te_builtins
             {
             throw std::runtime_error("Bitwise NOT value must be positive.");
             }
-        if (val > std::numeric_limits<uint32_t>::max())
+        if (te_parser::te_exceeds_uint32(val))
             {
             throw std::runtime_error("Value is too large for bitwise NOT.");
             }
