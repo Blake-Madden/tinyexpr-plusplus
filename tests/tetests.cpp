@@ -50,7 +50,10 @@
 #include <catch2/benchmark/catch_benchmark_all.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <memory>
 #include <regex>
+#include <string>
+#include <vector>
 
 // clang-format off
 // NOLINTBEGIN
@@ -5109,6 +5112,354 @@ TEST_CASE("DB", "[finance]")
     CHECK(std::isnan(tep.evaluate("DB(1000000,100000,6,7.5,5)")));
     CHECK(std::isnan(tep.evaluate("DB(1000000,100000,6.5,7,5)")));
     CHECK(std::isnan(tep.evaluate("DB(1000000,100000,6,8)")));
+    }
+
+// These cover node ownership: te_parser owns its compiled tree and frees it via
+// te_free(), while contexts and variables are borrowed from the caller.
+TEST_CASE("Large expression trees", "[memory]")
+    {
+    te_type xVal{ 2 };
+    te_parser tep;
+    tep.set_variables_and_functions({ { "x", &xVal } });
+
+    constexpr int termCount{ 250 };
+    std::string bigExpr{ "x" };
+    for (int i = 1; i < termCount; ++i)
+        {
+        bigExpr += "+x";
+        }
+
+    CHECK(tep.evaluate(bigExpr) == termCount * xVal);
+    CHECK(tep.success());
+    CHECK(tep.evaluate() == termCount * xVal);
+
+    SECTION("Small expression after a large one")
+        {
+        // the previous tree must be freed, not leaked or double-freed
+        CHECK(tep.evaluate("x+1") == 3);
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == 3);
+        }
+
+    SECTION("Repeatedly recompiling a large expression")
+        {
+        for (int i = 0; i < 10; ++i)
+            {
+            CHECK(tep.evaluate(bigExpr) == termCount * xVal);
+            }
+        }
+
+    SECTION("Variable rebinding in a large tree")
+        {
+        xVal = 3;
+        CHECK(tep.evaluate() == termCount * xVal);
+        }
+    }
+
+TEST_CASE("Parser reuse after failed compile", "[memory]")
+    {
+    te_type xVal{ 3 };
+    te_parser tep;
+    tep.set_variables_and_functions({ { "x", &xVal } });
+
+    // every node is allocated before the trailing syntax error is reached,
+    // so this exercises discarding a large, partially built tree
+    std::string badExpr;
+    for (int i = 0; i < 250; ++i)
+        {
+        badExpr += "x+";
+        }
+    badExpr += "(";
+
+    CHECK(std::isnan(tep.evaluate(badExpr)));
+    CHECK_FALSE(tep.success());
+
+    CHECK(tep.evaluate("x*2") == 6);
+    CHECK(tep.success());
+    CHECK(tep.evaluate() == 6);
+
+    SECTION("Failure directly after a successful compile")
+        {
+        CHECK(tep.evaluate("x+x+x") == 9);
+        CHECK(std::isnan(tep.evaluate("x+*")));
+        CHECK_FALSE(tep.success());
+        CHECK(tep.evaluate("x-1") == 2);
+        }
+
+    SECTION("Math error while folding constants")
+        {
+        // throws from inside optimize(), which is a separate cleanup path
+        // from failing during the parse
+        CHECK(std::isnan(tep.evaluate("1+2+3+sqrt(-1)")));
+        CHECK_FALSE(tep.success());
+        CHECK(tep.evaluate("x+4") == 7);
+        CHECK(tep.success());
+        }
+    }
+
+TEST_CASE("Compiled expression outlives its source parser", "[memory]")
+    {
+    te_type xVal{ 4 };
+    te_type yVal{ 5 };
+
+    SECTION("Copy CTOR")
+        {
+        std::unique_ptr<te_parser> copied;
+            {
+            te_parser tep;
+            tep.set_variables_and_functions({ { "x", &xVal }, { "y", &yVal } });
+            CHECK(tep.evaluate("(x+y)*2") == 18);
+            copied = std::make_unique<te_parser>(tep);
+            }
+        // source parser (and its tree) is gone
+        CHECK(copied->evaluate() == 18);
+        CHECK(copied->success());
+        xVal = 5;
+        CHECK(copied->evaluate() == 20);
+        }
+
+    SECTION("Assignment")
+        {
+        te_parser copyTarget;
+            {
+            te_parser tep;
+            tep.set_variables_and_functions({ { "x", &xVal }, { "y", &yVal } });
+            CHECK(tep.evaluate("(x+y)*2") == 18);
+            copyTarget = tep;
+            }
+        CHECK(copyTarget.evaluate() == 18);
+        CHECK(copyTarget.success());
+        }
+
+    SECTION("Assigning over a parser that already has a compiled expression")
+        {
+        te_parser first;
+        first.set_variables_and_functions({ { "x", &xVal } });
+        CHECK(first.evaluate("x*100") == 400);
+
+        te_parser second;
+        second.set_variables_and_functions({ { "y", &yVal } });
+        CHECK(second.evaluate("y+1") == 6);
+
+        first = second;
+        CHECK(first.evaluate() == 6);
+        CHECK(second.evaluate() == 6);
+        }
+    }
+
+TEST_CASE("Parsers relocated in a container", "[memory]")
+    {
+    te_type xVal{ 7 };
+
+    // growing the vector copies every parser, so each copy must own its own
+    // tree rather than share the original's nodes
+    std::vector<te_parser> parsers;
+    for (int i = 0; i < 32; ++i)
+        {
+        te_parser tep;
+        tep.set_variables_and_functions({ { "x", &xVal } });
+        CHECK(tep.compile("x*" + std::to_string(i + 1)));
+        parsers.push_back(tep);
+        }
+
+    for (size_t i = 0; i < parsers.size(); ++i)
+        {
+        CHECK(parsers[i].evaluate() == xVal * static_cast<te_type>(i + 1));
+        }
+
+    parsers.erase(parsers.begin());
+    CHECK(parsers.front().evaluate() == xVal * 2);
+    }
+
+TEST_CASE("Closure context outlives the parser", "[memory]")
+    {
+    // the context object is owned by the caller; te_free_parameters() must skip
+    // the trailing context pointer that closure nodes carry
+    te_expr_array teArray{ TE_DEFAULT };
+
+        {
+        te_parser tep;
+        tep.set_variables_and_functions({ { "cell", cell, TE_DEFAULT, &teArray },
+                                          { "cellmax", cell_max, TE_DEFAULT, &teArray } });
+        CHECK(tep.evaluate("cell 0 + cellmax()") == 14);
+        }
+
+    // still intact after the parser is gone
+    CHECK(teArray.m_data[0] == 5);
+    CHECK(teArray.m_data[4] == 9);
+
+    // and still usable by another parser
+    te_parser tep2;
+    tep2.set_variables_and_functions({ { "cell", cell, TE_DEFAULT, &teArray } });
+    CHECK(tep2.evaluate("cell 4") == 9);
+
+    // a pure closure is constant folded at compile time, which frees the node's
+    // arguments but must leave the borrowed context alone
+    te_parser tep3;
+    tep3.set_variables_and_functions({ { "pcell", cell, TE_PURE, &teArray } });
+    CHECK(tep3.evaluate("pcell 2") == 7);
+    CHECK(tep3.evaluate() == 7);
+    CHECK(teArray.m_data[2] == 7);
+    }
+
+TEST_CASE("Custom functions and data in large expressions", "[memory]")
+    {
+    te_type extra{ 10 };
+    te_expr teContext{ TE_DEFAULT, &extra };
+    te_type xVal{ 1 };
+
+    te_parser tep;
+    tep.set_variables_and_functions(
+        { { "x", &xVal }, { "s7", sum7 }, { "c7", clo7, TE_DEFAULT, &teContext } });
+
+    SECTION("High-arity custom function")
+        {
+        std::string expr{ "0" };
+        for (int i = 0; i < 40; ++i)
+            {
+            expr += "+s7(x,x,x,x,x,x,x)";
+            }
+        CHECK(tep.evaluate(expr) == 40 * 7);
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == 40 * 7);
+
+        xVal = 2;
+        CHECK(tep.evaluate() == 40 * 14);
+        }
+
+    SECTION("High-arity closure")
+        {
+        // each closure node carries the borrowed context pointer in its
+        // parameter list alongside its arguments
+        std::string expr{ "0" };
+        for (int i = 0; i < 40; ++i)
+            {
+            expr += "+c7(x,x,x,x,x,x,x)";
+            }
+        // clo7 adds the context value (10) to its 7 arguments
+        CHECK(tep.evaluate(expr) == 40 * 17);
+        CHECK(tep.success());
+
+        // the context is only borrowed, so updating it is still seen
+        extra = 20;
+        CHECK(tep.evaluate() == 40 * 27);
+        }
+
+    SECTION("Context object outlives the parser")
+        {
+        std::string expr{ "0" };
+        for (int i = 0; i < 40; ++i)
+            {
+            expr += "+c7(x,x,x,x,x,x,x)";
+            }
+            {
+            te_parser scopedParser;
+            scopedParser.set_variables_and_functions(
+                { { "x", &xVal }, { "c7", clo7, TE_DEFAULT, &teContext } });
+            CHECK(scopedParser.evaluate(expr) == 40 * 17);
+            }
+        // the tree is freed, the caller's context is not
+        CHECK(std::get<const te_type*>(teContext.m_value) == &extra);
+        CHECK(extra == 10);
+        CHECK(tep.evaluate(expr) == 40 * 17);
+        }
+
+    SECTION("Lambdas")
+        {
+        te_parser lambdaParser;
+        lambdaParser.set_variables_and_functions(
+            { { "x", &xVal },
+              { "twice", [](te_type a) noexcept { return a * 2; } },
+              { "addall", [](te_type a, te_type b, te_type c) noexcept { return a + b + c; } } });
+
+        std::string expr{ "0" };
+        for (int i = 0; i < 60; ++i)
+            {
+            expr += "+twice(addall(x,x,x))";
+            }
+        CHECK(lambdaParser.evaluate(expr) == 60 * 6);
+        CHECK(lambdaParser.success());
+        CHECK(lambdaParser.evaluate() == 60 * 6);
+        }
+
+    SECTION("Unknown symbol resolver")
+        {
+        te_parser usrParser;
+        usrParser.set_unknown_symbol_resolver(
+            [](std::string_view str) -> te_type
+            { return str.starts_with("VAR") ? static_cast<te_type>(2) : te_parser::te_nan; });
+
+        std::string expr{ "VAR1" };
+        for (int i = 2; i <= 120; ++i)
+            {
+            expr += "+VAR" + std::to_string(i);
+            }
+
+        CHECK(usrParser.evaluate(expr) == 120 * 2);
+        CHECK(usrParser.success());
+        // the resolved symbols are purged afterwards, but their values were
+        // already folded into the tree
+        CHECK(usrParser.evaluate() == 120 * 2);
+        }
+
+    SECTION("Function removed after compiling")
+        {
+        CHECK(tep.evaluate("s7(x,x,x,x,x,x,x)") == 7);
+        // the compiled tree holds the function itself, not a lookup into
+        // the parser's symbol table
+        tep.remove_variable_or_function("s7");
+        CHECK(tep.evaluate() == 7);
+        // ...but recompiling it now fails, and leaves the parser usable
+        CHECK(std::isnan(tep.evaluate("s7(x,x,x,x,x,x,x)")));
+        CHECK_FALSE(tep.success());
+        CHECK(tep.evaluate("x+1") == 2);
+        }
+    }
+
+TEST_CASE("Discarded negate wrapper", "[memory]")
+    {
+    // factor() deletes a redundant negate node mid-parse and keeps its child,
+    // so the child must not be freed along with the wrapper
+    te_type xVal{ 3 };
+    te_parser tep;
+    tep.set_variables_and_functions({ { "x", &xVal } });
+
+    CHECK(tep.evaluate("-x") == -3);
+    CHECK(tep.evaluate("--x") == 3);
+    CHECK(tep.evaluate("---x") == -3);
+    CHECK(tep.evaluate("----x") == 3);
+    CHECK(tep.evaluate("-(-(-(-x)))") == 3);
+    CHECK(tep.evaluate("1 - -x") == 4);
+    CHECK(tep.evaluate("-x*-x") == 9);
+    CHECK(tep.evaluate("--x+--x") == 6);
+    // re-evaluating the last tree still works
+    CHECK(tep.evaluate() == 6);
+    }
+
+TEST_CASE("Constant folding with a large foldable subtree", "[memory]")
+    {
+    te_type xVal{ 1 };
+    te_parser tep;
+    tep.set_variables_and_functions({ { "x", &xVal } });
+
+    // the parenthesized part folds to a single constant, which frees the 100+
+    // child nodes that were built for it
+    std::string expr{ "x + (0" };
+    for (int i = 1; i <= 100; ++i)
+        {
+        expr += "+" + std::to_string(i);
+        }
+    expr += ")";
+
+    CHECK(tep.evaluate(expr) == 5051); // 1 + 5050
+    CHECK(tep.success());
+    CHECK(tep.evaluate() == 5051);
+
+    xVal = 2;
+    CHECK(tep.evaluate() == 5052);
+
+    // and the parser still works normally afterwards
+    CHECK(tep.evaluate("x*3") == 6);
     }
 
 TEST_CASE("Benchmarks", "[!benchmark]")
