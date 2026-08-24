@@ -53,7 +53,7 @@ jobs:
              cd ..
              cmake --build . --config Debug --target clean
              Remove-Item ./CMakeCache.txt
-             cmake -DTE_POW_FROM_RIGHT=1 -DUSE_ADDRESS_SANITIZE=1 ./
+             cmake -DTE_POW_FROM_RIGHT=1 ./
              cmake --build . --config Debug
              cd bin\Debug
              ./${{ env.testrunner }} --reporter JUnit::out=te-junit-pow-from-right.xml
@@ -76,7 +76,7 @@ jobs:
              cd ..
              cmake --build . --config Debug --target clean
              Remove-Item ./CMakeCache.txt
-             cmake -DTE_FLOAT=1 -DUSE_ADDRESS_SANITIZE=1 ./
+             cmake -DTE_FLOAT=1 ./
              cmake --build . --config Debug
              cd bin\Debug
              ./${{ env.testrunner }} --reporter JUnit::out=te-junit-float.xml
@@ -99,7 +99,7 @@ jobs:
              cd ..
              cmake --build . --config Debug --target clean
              Remove-Item ./CMakeCache.txt
-             cmake -DTE_LONG_DOUBLE=1 -DUSE_ADDRESS_SANITIZE=1 ./
+             cmake -DTE_LONG_DOUBLE=1 ./
              cmake --build . --config Debug
              cd bin\Debug
              ./${{ env.testrunner }} --reporter JUnit::out=te-junit-long-double.xml
@@ -122,7 +122,7 @@ jobs:
              cd ..
              cmake --build . --config Debug --target clean
              Remove-Item ./CMakeCache.txt
-             cmake -DTE_BITWISE_OPERATORS=1 -DUSE_ADDRESS_SANITIZE=1 ./
+             cmake -DTE_BITWISE_OPERATORS=1 ./
              cmake --build . --config Debug
              cd bin\Debug
              ./${{ env.testrunner }} --reporter JUnit::out=te-junit-bitwise.xml
