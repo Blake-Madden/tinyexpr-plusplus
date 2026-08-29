@@ -119,6 +119,7 @@ jobs:
             base="$(printf '%s' "$file" | sed 's#/#__#g')"
 
             clang-tidy -p "$BUILD_DIR" -fix=false "$file" \
+              --extra-arg=-std=c++20 \
               --extra-arg=-fno-color-diagnostics \
               --extra-arg=-fdiagnostics-color=never \
               > "logs/${base}.txt" 2>&1 || true
