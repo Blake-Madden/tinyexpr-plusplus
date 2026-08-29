@@ -1792,7 +1792,7 @@ namespace te_builtins
             return te_parser::te_nan;
             }
         // a number converts to itself
-        if (const auto* const num = std::get_if<te_type>(&args[0]); num != nullptr)
+        if (const auto* const num = std::get_if<te_type>(args.data()); num != nullptr)
             {
             return *num;
             }
@@ -1822,12 +1822,12 @@ namespace te_builtins
 
         // spaces are ignored anywhere in the text, so " 3 000 " is 3000
         // (spelled out to be locale independent)
-        constexpr std::string_view whitespace{ " \t\n\r" };
+        constexpr std::string_view WHITESPACE{ " \t\n\r" };
         std::string buffer;
         buffer.reserve(std::get<std::string_view>(args[0]).length());
         for (const auto chr : std::get<std::string_view>(args[0]))
             {
-            if (whitespace.find(chr) == std::string_view::npos)
+            if (WHITESPACE.find(chr) == std::string_view::npos)
                 {
                 buffer += chr;
                 }
@@ -1871,9 +1871,9 @@ namespace te_builtins
             {
             const auto* const localeInfo = std::localeconv();
             if (localeInfo != nullptr && localeInfo->decimal_point != nullptr &&
-                localeInfo->decimal_point[0] != 0)
+                *localeInfo->decimal_point != 0)
                 {
-                nativeDecimalSep = localeInfo->decimal_point[0];
+                nativeDecimalSep = *localeInfo->decimal_point;
                 }
             }
 
@@ -1900,16 +1900,17 @@ namespace te_builtins
 #else
         const auto result = static_cast<te_type>(std::strtod(normalized.c_str(), &nEnd));
 #endif
-        // unlike the lexer, the whole string has to convert
-        if (nEnd != normalized.c_str() + normalized.length())
+        // unlike the lexer, the whole string has to convert (i.e., stopped at the null terminator)
+        if (nEnd == nullptr || *nEnd != 0)
             {
             return te_parser::te_nan;
             }
 
+        constexpr te_type PERCENT_DIVISOR{ 100 };
         te_type scaled{ result };
         for (size_t i = 0; i < percentCount; ++i)
             {
-            scaled /= 100;
+            scaled /= PERCENT_DIVISOR;
             }
         return scaled;
         }
