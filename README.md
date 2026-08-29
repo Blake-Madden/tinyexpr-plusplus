@@ -49,6 +49,7 @@ Note: for current users of *TinyExpr++*, please see the [compatibility advisory]
 - Can add custom functions and variables easily.
 - Can bind constants at eval-time.
 - Supports variadic functions (taking between 1-24 arguments).
+- Supports functions that accept quoted string arguments (e.g., `DBQUERY("/Equipment/Temp")`).
 - Case insensitive.
 - Supports non-US formulas (e.g., `POW(2,2; 2)` instead of `POW(2.2, 2)`).
 - Supports C and C++ style comments within math expressions.

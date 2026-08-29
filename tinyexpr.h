@@ -54,6 +54,7 @@
 #include <cassert>
 #include <cctype>
 #include <cfloat>
+#include <clocale>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -65,6 +66,7 @@
 #include <limits>
 #include <random>
 #include <set>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -166,6 +168,21 @@ using te_confun22 = te_type (*)(const te_expr*, te_type, te_type, te_type, te_ty
 using te_confun23 = te_type (*)(const te_expr*, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type);
 using te_confun24 = te_type (*)(const te_expr*, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type, te_type);
 // clang-format on
+
+/// @brief A function argument, either a number or a string literal.
+/// @note A `std::string_view` points into the parser's copy of the expression.
+///     Do not store it beyond the compiled expression's lifetime.
+using te_arg = std::variant<te_type, std::string_view>;
+
+/// @brief A function taking any number of number-or-string arguments.
+/// @note The parser does not check the argument count for these.
+///     Review `args.size()` and each argument's type, returning te_parser::te_nan if invalid.
+/// @warning The span is only valid for the duration of the call.
+using te_arg_fun = te_type (*)(std::span<const te_arg>);
+/// @brief Context version of te_arg_fun (te_variable passes a client's te_expr first).
+/// @warning The span is only valid for the duration of the call.
+using te_arg_confun = te_type (*)(const te_expr*, std::span<const te_arg>);
+
 template<typename FuncType>
 struct te_fun_traits;
 
@@ -215,12 +232,30 @@ struct te_is_closure<ReturnType(const te_expr*, Args...)>
     constexpr static bool value{ true };
     };
 
+// te_arg_confun matches the above specializations, but is not a fixed-arity closure.
+template<>
+struct te_is_closure<te_arg_confun>
+    {
+    constexpr static bool value{ false };
+    };
+
 template<typename T>
 constexpr bool te_is_closure_v = te_is_closure<T>::value;
 
+// A string literal from the formula.
+template<typename T>
+constexpr bool te_is_string_v = std::is_same_v<T, std::string_view>;
+
+template<typename T>
+constexpr bool te_is_arg_function_v = std::is_same_v<T, te_arg_fun>;
+
+template<typename T>
+constexpr bool te_is_arg_closure_v = std::is_same_v<T, te_arg_confun>;
+
 template<typename T>
 constexpr bool te_is_function_v =
-    !te_is_constant_v<T> && !te_is_variable_v<T> && !te_is_closure_v<T>;
+    !te_is_constant_v<T> && !te_is_variable_v<T> && !te_is_closure_v<T> && !te_is_string_v<T> &&
+    !te_is_arg_function_v<T> && !te_is_arg_closure_v<T>;
 
 // functions for unknown symbol resolution
 using te_usr_noop = std::function<void()>;
@@ -239,7 +274,9 @@ using te_variant_type =
                  te_confun0, te_confun1, te_confun2, te_confun3, te_confun4, te_confun5, te_confun6,
                  te_confun7, te_confun8, te_confun9, te_confun10, te_confun11, te_confun12,
                  te_confun13, te_confun14, te_confun15, te_confun16, te_confun17, te_confun18,
-                 te_confun19, te_confun20, te_confun21, te_confun22, te_confun23, te_confun24>;
+                 te_confun19, te_confun20, te_confun21, te_confun22, te_confun23, te_confun24,
+                 // string literals and the functions that accept them
+                 te_arg_fun, te_arg_confun, std::string_view>;
 
 /// @brief A variable's flags, effecting how it is evaluated.
 /// @note This is a bitmask, so flags (TE_PURE and TE_VARIADIC) can be OR'ed.
@@ -879,6 +916,32 @@ class te_parser
         return (is_letter(chr) || (chr >= '0' && chr <= '9') || (chr == '_') || (chr == '.'));
         }
 
+    /// @returns The position of @p chr at or after @p startIndex, skipping quoted string
+    ///     literals, or `std::string::npos` if not found.
+    /// @param str The string to search.
+    /// @param chr The character to search for.
+    /// @param startIndex Where to begin accepting matches.
+    /// @note Quote state is tracked from the start of @p str, so this stays correct
+    ///     after the caller has erased earlier sections.
+    [[nodiscard]]
+    static size_t find_outside_of_string(const std::string& str, const char chr,
+                                         const size_t startIndex)
+        {
+        bool inString{ false };
+        for (size_t i = 0; i < str.length(); ++i)
+            {
+            if (str[i] == '"')
+                {
+                inString = !inString;
+                }
+            else if (!inString && str[i] == chr && i >= startIndex)
+                {
+                return i;
+                }
+            }
+        return std::string::npos;
+        }
+
     /// @returns An iterator to the custom variable or function with the given @c name,
     ///     or end of get_variables_and_functions() if not found.
     /// @param name The name of the function or variable to search for.
@@ -930,7 +993,9 @@ class te_parser
             [](const auto& var0) -> size_t
             {
                 using T = std::decay_t<decltype(var0)>;
-                if constexpr (te_is_constant_v<T> || te_is_variable_v<T>)
+                // te_arg_fun/te_arg_confun have no fixed arity, so base() sizes them
+                if constexpr (te_is_constant_v<T> || te_is_variable_v<T> || te_is_string_v<T> ||
+                              te_is_arg_function_v<T> || te_is_arg_closure_v<T>)
                     {
                     return 0;
                     }
@@ -953,7 +1018,7 @@ class te_parser
         }
 
     [[nodiscard]]
-    constexpr static te_type get_constant(const te_variant_type& var)
+    constexpr static te_type get_constant_value(const te_variant_type& var)
         {
         assert(std::holds_alternative<te_type>(var));
         return std::get<0>(var);
@@ -982,6 +1047,31 @@ class te_parser
                 return te_is_function_v<T>;
             },
             var);
+        }
+
+    [[nodiscard]]
+    constexpr static bool is_string(const te_variant_type& var) noexcept
+        {
+        return std::holds_alternative<std::string_view>(var);
+        }
+
+    [[nodiscard]]
+    constexpr static std::string_view get_string(const te_variant_type& var)
+        {
+        assert(std::holds_alternative<std::string_view>(var));
+        return std::get<std::string_view>(var);
+        }
+
+    [[nodiscard]]
+    constexpr static bool is_arg_function(const te_variant_type& var) noexcept
+        {
+        return std::holds_alternative<te_arg_fun>(var);
+        }
+
+    [[nodiscard]]
+    constexpr static bool is_arg_closure(const te_variant_type& var) noexcept
+        {
+        return std::holds_alternative<te_arg_confun>(var);
         }
 
 #define TE_DEF_FUNCTION(n)                                                                         \
@@ -1030,6 +1120,31 @@ class te_parser
     TE_DEF_CLOSURE(2);
 #undef TE_DEF_CLOSURE
 
+    /// @returns @c true for any function, including the ones taking te_arg.
+    [[nodiscard]]
+    constexpr static bool is_any_function(const te_variant_type& var)
+        {
+        return is_function(var) || is_arg_function(var);
+        }
+
+    /// @returns @c true for any context function, including the ones taking te_arg.
+    [[nodiscard]]
+    constexpr static bool is_any_closure(const te_variant_type& var)
+        {
+        return is_closure(var) || is_arg_closure(var);
+        }
+
+    /// @returns A node's real argument count, excluding a closure's context slot.
+    /// @note Use this instead of get_arity() for te_arg_fun/te_arg_confun nodes,
+    ///     whose arity is only known once base() has parsed them.
+    [[nodiscard]]
+    static size_t get_parameter_count(const te_expr* texp)
+        {
+        assert(texp != nullptr);
+        const auto ctxSlot = is_any_closure(texp->m_value) ? 1U : 0U;
+        return (texp->m_parameters.size() > ctxSlot) ? texp->m_parameters.size() - ctxSlot : 0;
+        }
+
     struct state
         {
         enum class token_type
@@ -1043,7 +1158,9 @@ class te_parser
             TOK_NUMBER,
             TOK_VARIABLE,
             TOK_FUNCTION,
-            TOK_INFIX
+            TOK_INFIX,
+            // only legal inside a te_arg_fun/te_arg_confun argument list
+            TOK_STRING
             };
 
         state(const char* expression, te_variable_flags varType, std::set<te_variable>& vars)

@@ -11,6 +11,13 @@ The following are changes from the original TinyExpr C library:
 - Formula parsing is now case insensitive.
 - Added support for variadic functions (can accept 1-24 arguments); enabled through the `TE_VARIADIC` flag.
   (Refer to the `AVERAGE()` function in `tinyexpr.cpp` for an example.)
+- Added support for quoted string arguments (e.g., `DBQUERY("/Equipment/Temp", 3)`), through the new `te_arg_fun` and `te_arg_confun` function types.
+  These accept a `std::span<const te_arg>`, where each `te_arg` is either a number or a `std::string_view`.
+  Any argument can be a string or a number in any position and there is no limit on the argument count.
+  Because there is no fixed arity, the parser does not verify the argument count for these.
+  (The function reviews `args.size()` and each argument's type itself.)
+  String literals are only valid as arguments to such a function, and functions still return numbers — *TinyExpr++* does not evaluate string expressions.
+  (Refer to the `NUMBERVALUE()` function in `tinyexpr.cpp`, or [Example 6](Examples.md), for a demonstration.)
 - Added support for parsing formulas in non-US format (e.g., `pow(2,2; 2)` instead of `pow(2.2, 2)`). Useful for when the program's locale is non-English.
   (Refer to [Example 4](Examples.md) for a demonstration.)
 - `te_expr` is now a derivable base class. This means that you can derive from `te_expr`, add new fields to that derived class (e.g., arrays, strings, even other classes)
@@ -20,7 +27,8 @@ The following are changes from the original TinyExpr C library:
 - Added exception support, where exceptions are thrown for situations like providing invalid separators. Calls to `compile` and `evaluate` should be wrapped in `try`...`catch` blocks.
 - Memory management is handled by the `te_parser` class (you no longer need to call `te_free`). Also, replaced `malloc/free` with `new/delete`.
 - Stricter type safety; uses `std::variant` (instead of unions) that support `double`, `const double*`,
-  and 16 specific function signatures (that will work with lambdas or function pointers).
+  `std::string_view`, and 52 specific function signatures (that will work with lambdas or function pointers):
+  `te_fun0`–`te_fun24`, `te_confun0`–`te_confun24`, `te_arg_fun`, and `te_arg_confun`.
   Also uses `std::initializer` lists (instead of various pointer operations).
 - Separate enums are now used between `te_expr` and `state`'s types and are more strongly typed.
 - Added support for C and C++ style comments (`//` and `/**/`).

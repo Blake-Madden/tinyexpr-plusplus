@@ -1790,7 +1790,12 @@ void te_parser::te_free_parameters(te_expr* texp)
         {
         return;
         }
-    if (is_closure(texp->m_value))
+    // a te_arg_confun that failed to parse may not have its context slot yet
+    if (is_any_closure(texp->m_value) && texp->m_parameters.empty())
+        {
+        return;
+        }
+    if (is_any_closure(texp->m_value))
         {
         // last param is the context object, we don't manage that here
         for (auto param = texp->m_parameters.begin(); param != texp->m_parameters.end() - 1;
@@ -1800,7 +1805,7 @@ void te_parser::te_free_parameters(te_expr* texp)
             *param = nullptr;
             }
         }
-    else if (is_function(texp->m_value))
+    else if (is_any_function(texp->m_value))
         {
         for (auto* param : texp->m_parameters)
             {
@@ -2058,7 +2063,8 @@ void te_parser::next_token(state* theState)
                     {
 #ifndef TE_NO_BOOKKEEPING
                     // keep track of what's been used in the formula
-                    if (is_function(m_currentVar->m_value) || is_closure(m_currentVar->m_value))
+                    if (is_any_function(m_currentVar->m_value) ||
+                        is_any_closure(m_currentVar->m_value))
                         {
                         m_usedFunctions.insert(m_currentVar->m_name);
                         }
@@ -2078,18 +2084,24 @@ void te_parser::next_token(state* theState)
                         theState->m_type = state::token_type::TOK_VARIABLE;
                         theState->m_value = m_currentVar->m_value;
                         }
-                    else if (is_function(m_currentVar->m_value))
+                    else if (is_any_function(m_currentVar->m_value))
                         {
                         theState->m_type = state::token_type::TOK_FUNCTION;
                         theState->m_varType = m_currentVar->m_type;
                         theState->m_value = m_currentVar->m_value;
                         }
-                    else if (is_closure(m_currentVar->m_value))
+                    else if (is_any_closure(m_currentVar->m_value))
                         {
                         theState->context = m_currentVar->m_context;
                         theState->m_type = state::token_type::TOK_FUNCTION;
                         theState->m_varType = m_currentVar->m_type;
                         theState->m_value = m_currentVar->m_value;
+                        }
+                    // a string-valued te_variable isn't supported; don't leave
+                    // m_type as TOK_NULL or the token is silently skipped
+                    else
+                        {
+                        theState->m_type = state::token_type::TOK_ERROR;
                         }
                     }
                 }
@@ -2098,7 +2110,29 @@ void te_parser::next_token(state* theState)
                 /* Look for an operator or special character. */
                 const auto tok = *theState->m_next;
                 std::advance(theState->m_next, 1);
-                if (tok == '+')
+                /* Read a string literal. There are no escapes; the next quote ends it. */
+                if (tok == '"')
+                    {
+                    const char* strStart = theState->m_next;
+                    while (*theState->m_next != 0 && *theState->m_next != '"')
+                        {
+                        std::advance(theState->m_next, 1);
+                        }
+                    if (*theState->m_next != '"')
+                        {
+                        // unterminated
+                        theState->m_type = state::token_type::TOK_ERROR;
+                        }
+                    else
+                        {
+                        theState->m_value =
+                            std::string_view{ strStart, static_cast<std::string_view::size_type>(
+                                                            theState->m_next - strStart) };
+                        theState->m_type = state::token_type::TOK_STRING;
+                        std::advance(theState->m_next, 1);
+                        }
+                    }
+                else if (tok == '+')
                     {
                     theState->m_type = state::token_type::TOK_INFIX;
                     theState->m_value = te_builtins::te_add;
@@ -2348,12 +2382,15 @@ te_expr* te_parser::base(state* theState)
         ret = new_expr(TE_DEFAULT, theState->m_value);
         next_token(theState);
         }
+    // TOK_STRING is only consumed by the te_arg_fun branch below, so reaching
+    // it here means a literal was used outside of a function's argument list
     else if (theState->m_type == state::token_type::TOK_NULL ||
              theState->m_type == state::token_type::TOK_ERROR ||
              theState->m_type == state::token_type::TOK_END ||
              theState->m_type == state::token_type::TOK_SEP ||
              theState->m_type == state::token_type::TOK_CLOSE ||
-             theState->m_type == state::token_type::TOK_INFIX)
+             theState->m_type == state::token_type::TOK_INFIX ||
+             theState->m_type == state::token_type::TOK_STRING)
         {
         ret = new_expr(TE_DEFAULT, te_variant_type{ te_nan });
         theState->m_type = state::token_type::TOK_ERROR;
@@ -2377,6 +2414,62 @@ te_expr* te_parser::base(state* theState)
                 {
                 next_token(theState);
                 }
+            }
+        }
+    else if (is_arg_function(theState->m_value) || is_arg_closure(theState->m_value))
+        {
+        /* <function> "(" [<expr> | <string> {"," <expr> | <string>}] ")" */
+        const bool isCtxFunc{ is_arg_closure(theState->m_value) };
+        te_expr* const context{ theState->context };
+
+        ret = new_expr(theState->m_varType, theState->m_value);
+        next_token(theState);
+
+        if (theState->m_type != state::token_type::TOK_OPEN)
+            {
+            theState->m_type = state::token_type::TOK_ERROR;
+            }
+        else
+            {
+            next_token(theState);
+            // no arguments at all
+            if (theState->m_type == state::token_type::TOK_CLOSE)
+                {
+                next_token(theState);
+                }
+            else
+                {
+                while (true)
+                    {
+                    if (theState->m_type == state::token_type::TOK_STRING)
+                        {
+                        ret->m_parameters.push_back(new_expr(TE_DEFAULT, theState->m_value));
+                        next_token(theState);
+                        }
+                    else
+                        {
+                        ret->m_parameters.push_back(expr_level1(theState));
+                        }
+                    if (theState->m_type != state::token_type::TOK_SEP)
+                        {
+                        break;
+                        }
+            next_token(theState);
+                    }
+            if (theState->m_type != state::token_type::TOK_CLOSE)
+                {
+                theState->m_type = state::token_type::TOK_ERROR;
+                }
+            else
+                {
+                next_token(theState);
+                }
+                }
+            }
+        // context slot goes last, matching te_free_parameters() and te_eval()
+        if (isCtxFunc)
+            {
+            ret->m_parameters.push_back(context);
             }
         }
     else if (is_function1(theState->m_value) || is_closure1(theState->m_value))
@@ -2806,6 +2899,37 @@ te_type te_parser::te_eval(const te_expr* texp)
                 {
                 return *var;
                 }
+            // a string literal has no numeric value of its own
+            if constexpr (te_is_string_v<T>)
+                {
+                return te_nan;
+                }
+            if constexpr (te_is_arg_function_v<T> || te_is_arg_closure_v<T>)
+                {
+                const size_t argCount = get_parameter_count(texp);
+                std::vector<te_arg> args;
+                args.reserve(argCount);
+                for (size_t i = 0; i < argCount; ++i)
+                    {
+                    const te_expr* param = texp->m_parameters[i];
+                    if (param != nullptr && is_string(param->m_value))
+                        {
+                        args.emplace_back(get_string(param->m_value));
+                        }
+                    else
+                        {
+                        args.emplace_back(te_eval(param));
+                        }
+                    }
+                if constexpr (te_is_arg_closure_v<T>)
+                    {
+                    return var(texp->m_parameters[argCount], args);
+                    }
+                else
+                    {
+                    return var(args);
+                    }
+                }
             if constexpr (std::is_same_v<T, te_fun0>)
                 {
                 return var();
@@ -2842,7 +2966,7 @@ void te_parser::optimize(te_expr* texp)
         return;
         }
     /* Evaluates as much as possible. */
-    if (is_constant(texp->m_value) || is_variable(texp->m_value))
+    if (is_constant(texp->m_value) || is_variable(texp->m_value) || is_string(texp->m_value))
         {
         return;
         }
@@ -2850,7 +2974,9 @@ void te_parser::optimize(te_expr* texp)
     /* Only optimize out functions flagged as pure. */
     if (is_pure(texp->m_type))
         {
-        const auto arity = get_arity(texp->m_value);
+        // not get_arity(), which is zero for te_arg_fun and would fold
+        // the call away without ever looking at its arguments
+        const auto arity = get_parameter_count(texp);
         bool known{ true };
         for (std::decay_t<decltype(arity)> i = 0; i < arity; ++i)
             {
@@ -2859,7 +2985,9 @@ void te_parser::optimize(te_expr* texp)
                 break;
                 }
             optimize(texp->m_parameters[i]);
-            if (!is_constant(texp->m_parameters[i]->m_value))
+            // string literals are constant too, so a pure function of them can fold
+            if (!is_constant(texp->m_parameters[i]->m_value) &&
+                !is_string(texp->m_parameters[i]->m_value))
                 {
                 known = false;
                 }
@@ -2936,7 +3064,7 @@ bool te_parser::compile(const std::string_view expression)
     size_t commentStart{ 0 };
     while (commentStart != std::string::npos)
         {
-        commentStart = m_expression.find('/', commentStart);
+        commentStart = find_outside_of_string(m_expression, '/', commentStart);
         if (commentStart == std::string::npos || commentStart == m_expression.length() - 1)
             {
             break;

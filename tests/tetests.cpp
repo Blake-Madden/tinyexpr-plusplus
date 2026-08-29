@@ -48,6 +48,7 @@
 #include "../tinyexpr.h"
 #include <array>
 #include <catch2/benchmark/catch_benchmark_all.hpp>
+#include <clocale>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <memory>
@@ -429,6 +430,137 @@ te_type cell_max(const te_expr* context)
     auto* c = dynamic_cast<const te_expr_array*>(context);
     return static_cast<te_type>(
         *std::max_element(c->m_data.cbegin(), c->m_data.cend()));
+    }
+
+// Records what the last te_arg_fun call actually received.
+std::vector<te_arg> lastArgs;
+
+// Length of the first argument if it's a string, plus any numeric arguments.
+te_type str_len_plus(std::span<const te_arg> args)
+    {
+    lastArgs.assign(args.begin(), args.end());
+    if (args.empty() || !std::holds_alternative<std::string_view>(args[0]))
+        { return te_parser::te_nan; }
+    te_type result = static_cast<te_type>(std::get<std::string_view>(args[0]).length());
+    for (size_t i = 1; i < args.size(); ++i)
+        {
+        if (!std::holds_alternative<te_type>(args[i]))
+            { return te_parser::te_nan; }
+        result += std::get<te_type>(args[i]);
+        }
+    return result;
+    }
+
+// Requires exactly two arguments, so wrong arity is observable.
+te_type str_pair(std::span<const te_arg> args)
+    {
+    if (args.size() != 2 ||
+        !std::holds_alternative<std::string_view>(args[0]) ||
+        !std::holds_alternative<te_type>(args[1]))
+        { return te_parser::te_nan; }
+    return static_cast<te_type>(std::get<std::string_view>(args[0]).length()) *
+           std::get<te_type>(args[1]);
+    }
+
+// Concatenated lengths of every string argument, ignoring position.
+te_type str_total(std::span<const te_arg> args)
+    {
+    te_type total{ 0 };
+    for (const auto& arg : args)
+        {
+        if (const auto* sv = std::get_if<std::string_view>(&arg); sv != nullptr)
+            { total += static_cast<te_type>(sv->length()); }
+        else
+            { total += std::get<te_type>(arg); }
+        }
+    return total;
+    }
+
+// Not TE_PURE, so it must be re-evaluated rather than folded.
+int strCallCount{ 0 };
+te_type str_counted(std::span<const te_arg> args)
+    {
+    ++strCallCount;
+    if (args.size() != 1 || !std::holds_alternative<std::string_view>(args[0]))
+        { return te_parser::te_nan; }
+    return static_cast<te_type>(std::get<std::string_view>(args[0]).length());
+    }
+
+// Read a value out of a (mock) database by its path.
+te_type db_query(std::span<const te_arg> args)
+    {
+    // the "database"
+    static const std::array<std::pair<std::string_view, te_type>, 3> db{ {
+        { "/Equipment/Temp", 21.5 },
+        { "/Equipment/Pressure", 101.3 },
+        { "/Equipment/Humidity", 44 } } };
+
+    if (args.empty() || args.size() > 2 ||
+        !std::holds_alternative<std::string_view>(args[0]))
+        { return te_parser::te_nan; }
+
+    const auto path = std::get<std::string_view>(args[0]);
+    const auto found = std::find_if(db.cbegin(), db.cend(),
+        [path](const auto& entry) { return entry.first == path; });
+    if (found == db.cend())
+        {
+        // optional second argument is the default for a missing key
+        if (args.size() == 2 && std::holds_alternative<te_type>(args[1]))
+            { return std::get<te_type>(args[1]); }
+        return te_parser::te_nan;
+        }
+    return found->second;
+    }
+
+// The same lookup, but against a client object rather than a static table.
+class te_database : public te_expr
+    {
+public:
+    explicit te_database(const te_variable_flags type) noexcept : te_expr(type) {}
+    std::array<std::pair<std::string_view, te_type>, 2> m_rows{ {
+        { "voltage", 240 },
+        { "current", 13 } } };
+    mutable int m_readCount{ 0 };
+    };
+
+te_type query_db(const te_expr* context, std::span<const te_arg> args)
+    {
+    auto* db = dynamic_cast<const te_database*>(context);
+    if (db == nullptr || args.size() != 1 ||
+        !std::holds_alternative<std::string_view>(args[0]))
+        { return te_parser::te_nan; }
+    ++db->m_readCount;
+    const auto key = std::get<std::string_view>(args[0]);
+    const auto found = std::find_if(db->m_rows.cbegin(), db->m_rows.cend(),
+        [key](const auto& row) { return row.first == key; });
+    return (found == db->m_rows.cend()) ? te_parser::te_nan : found->second;
+    }
+
+// te_arg_confun: indexes the context object's array by a named "cell."
+te_type cell_named(const te_expr* context, std::span<const te_arg> args)
+    {
+    auto* c = dynamic_cast<const te_expr_array*>(context);
+    if (c == nullptr || args.size() != 1 ||
+        !std::holds_alternative<std::string_view>(args[0]))
+        { return te_parser::te_nan; }
+    const auto name = std::get<std::string_view>(args[0]);
+    if (name == "first") { return static_cast<te_type>(c->m_data.front()); }
+    if (name == "last") { return static_cast<te_type>(c->m_data.back()); }
+    return te_parser::te_nan;
+    }
+
+// te_arg_confun taking a mix of strings and numbers.
+te_type cell_offset(const te_expr* context, std::span<const te_arg> args)
+    {
+    auto* c = dynamic_cast<const te_expr_array*>(context);
+    if (c == nullptr || args.size() != 2 ||
+        !std::holds_alternative<std::string_view>(args[0]) ||
+        !std::holds_alternative<te_type>(args[1]))
+        { return te_parser::te_nan; }
+    const auto name = std::get<std::string_view>(args[0]);
+    const auto offset = static_cast<size_t>(std::get<te_type>(args[1]));
+    if (name != "cell" || offset >= c->m_data.size()) { return te_parser::te_nan; }
+    return static_cast<te_type>(c->m_data[offset]);
     }
 
 te_type bench_a5(te_type a) {
@@ -5462,6 +5594,424 @@ TEST_CASE("Constant folding with a large foldable subtree", "[memory]")
     // and the parser still works normally afterwards
     CHECK(tep.evaluate("x*3") == 6);
     }
+
+TEST_CASE("String arguments", "[strings]")
+    {
+    te_parser tep;
+    tep.set_variables_and_functions({
+        { "strlenplus", static_cast<te_arg_fun>(str_len_plus), TE_PURE },
+        { "strpair", static_cast<te_arg_fun>(str_pair), TE_PURE },
+        { "strtotal", static_cast<te_arg_fun>(str_total), TE_PURE },
+        // same function, not pure, so the call survives optimize()
+        { "strlive", static_cast<te_arg_fun>(str_len_plus), TE_DEFAULT } });
+
+    SECTION("Basic")
+        {
+        CHECK(tep.evaluate("STRLENPLUS(\"abc\")") == 3);
+        CHECK(tep.success());
+        CHECK(tep.evaluate("STRLENPLUS(\"abc\", 3)") == 6);
+        CHECK(tep.evaluate("STRLENPLUS(\"\")") == 0);
+        CHECK(tep.evaluate("STRLENPLUS(\"a b c\")") == 5);
+        }
+
+    SECTION("Argument order")
+        {
+        // any position can be a string or a number
+        CHECK(tep.evaluate("STRTOTAL(\"abc\")") == 3);
+        CHECK(tep.evaluate("STRTOTAL(1, \"abc\")") == 4);
+        CHECK(tep.evaluate("STRTOTAL(\"ab\", 1, \"c\")") == 4);
+        CHECK(tep.evaluate("STRTOTAL(1, 2, 3)") == 6);
+        CHECK(tep.evaluate("STRTOTAL(\"a\", \"bb\", \"ccc\")") == 6);
+        }
+
+    SECTION("Arity is unbounded")
+        {
+        CHECK(tep.evaluate("STRTOTAL()") == 0);
+        CHECK(tep.success());
+        CHECK(tep.evaluate("STRTOTAL(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)") == 24);
+        // beyond the 24-argument ceiling of the te_fun family
+        CHECK(tep.evaluate("STRTOTAL(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)")
+              == 30);
+        CHECK(tep.success());
+        }
+
+    SECTION("Wrong arity is the function's problem, not the parser's")
+        {
+        // strpair wants exactly two arguments; the parse still succeeds
+        CHECK(tep.compile("STRPAIR(\"abc\")"));
+        CHECK(tep.success());
+        CHECK(std::isnan(tep.evaluate()));
+        CHECK(tep.compile("STRPAIR(\"abc\", 2, 3)"));
+        CHECK(std::isnan(tep.evaluate()));
+        CHECK(tep.evaluate("STRPAIR(\"abc\", 2)") == 6);
+        }
+
+    SECTION("Wrong argument type")
+        {
+        // strlenplus needs a string first
+        CHECK(std::isnan(tep.evaluate("STRLENPLUS(1)")));
+        CHECK(tep.success());
+        // and numbers after
+        CHECK(std::isnan(tep.evaluate("STRLENPLUS(\"a\", \"b\")")));
+        }
+
+    SECTION("Numeric expressions as arguments")
+        {
+        tep.add_variable_or_function({ "x", static_cast<te_type>(5) });
+        CHECK(tep.evaluate("STRLENPLUS(\"abc\", 2*x+1)") == 14);
+        CHECK(tep.evaluate("STRLENPLUS(\"abc\", MAX(1, 2, 3))") == 6);
+        CHECK(tep.evaluate("STRLENPLUS(\"abc\", STRLENPLUS(\"de\"))") == 5);
+        // and the result feeds back into numeric code
+        CHECK(tep.evaluate("STRLENPLUS(\"abc\") * 2") == 6);
+        CHECK(tep.evaluate("IF(STRLENPLUS(\"abcd\") > 3, 100, 200)") == 100);
+        CHECK(tep.evaluate("SUM(STRLENPLUS(\"ab\"), STRLENPLUS(\"cde\"))") == 5);
+        }
+
+    SECTION("Literal contents are passed through untouched")
+        {
+        CHECK(tep.evaluate("STRLENPLUS(\"a,b\")") == 3);
+        CHECK(tep.evaluate("STRLENPLUS(\"(((\")") == 3);
+        CHECK(tep.evaluate("STRLENPLUS(\"1+1\")") == 3);
+        CHECK(tep.evaluate("STRLENPLUS(\"  \")") == 2);
+        CHECK(tep.evaluate("STRLENPLUS(\"=\")") == 1);
+        // a leading '=' is only stripped from the expression, not from a literal
+        CHECK(tep.evaluate("=STRLENPLUS(\"=abc\")") == 4);
+        }
+
+    SECTION("Whitespace around literals")
+        {
+        CHECK(tep.evaluate("STRLENPLUS( \"abc\" )") == 3);
+        CHECK(tep.evaluate("STRLENPLUS(\t\"abc\"\t,\t3\t)") == 6);
+        CHECK(tep.evaluate("STRLENPLUS\n(\n\"abc\"\n)") == 3);
+        }
+
+    SECTION("Literals are only legal as arguments")
+        {
+        CHECK(std::isnan(tep.evaluate("\"abc\"")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("1 + \"abc\"")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("\"abc\" + 1")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("sin(\"abc\")")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("MAX(1, \"abc\")")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("-\"abc\"")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("(\"abc\")")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("\"a\" \"b\"")));
+        CHECK_FALSE(tep.success());
+        // a string result can't be produced, so this is still an error
+        CHECK(std::isnan(tep.evaluate("STRLENPLUS(\"a\") + \"b\"")));
+        CHECK_FALSE(tep.success());
+        }
+
+    SECTION("Malformed literals")
+        {
+        // unterminated
+        CHECK(std::isnan(tep.evaluate("STRLENPLUS(\"abc")));
+        CHECK_FALSE(tep.success());
+        CHECK(tep.get_last_error_position() != te_parser::npos);
+        CHECK(std::isnan(tep.evaluate("STRLENPLUS(\"")));
+        CHECK_FALSE(tep.success());
+        // stray closing quote
+        CHECK(std::isnan(tep.evaluate("STRLENPLUS(abc\")")));
+        CHECK_FALSE(tep.success());
+        // a quote swallows the rest of the call
+        CHECK(std::isnan(tep.evaluate("STRLENPLUS(\"abc\", \"3)")));
+        CHECK_FALSE(tep.success());
+        // missing close paren after a good literal
+        CHECK(std::isnan(tep.evaluate("STRLENPLUS(\"abc\"")));
+        CHECK_FALSE(tep.success());
+        // separator with nothing after it
+        CHECK(std::isnan(tep.evaluate("STRLENPLUS(\"abc\",)")));
+        CHECK_FALSE(tep.success());
+        // no parentheses at all
+        CHECK(std::isnan(tep.evaluate("strlenplus")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("strlenplus \"abc\"")));
+        CHECK_FALSE(tep.success());
+        }
+
+    SECTION("Error positions")
+        {
+        // the reported position should land at or after the offending quote
+        tep.compile("1 + \"abc\"");
+        CHECK_FALSE(tep.success());
+        CHECK(tep.get_last_error_position() >= 4);
+        tep.compile("STRLENPLUS(\"ok\") + \"abc\"");
+        CHECK_FALSE(tep.success());
+        CHECK(tep.get_last_error_position() >= 19);
+        // a successful parse clears it
+        CHECK(tep.compile("STRLENPLUS(\"abc\")"));
+        CHECK(tep.get_last_error_position() == te_parser::npos);
+        }
+
+    SECTION("Recovery after a failed parse")
+        {
+        CHECK(std::isnan(tep.evaluate("STRLENPLUS(\"abc")));
+        CHECK_FALSE(tep.success());
+        // the parser must still be usable
+        CHECK(tep.evaluate("STRLENPLUS(\"abcd\")") == 4);
+        CHECK(tep.success());
+        }
+
+    SECTION("What the function actually receives")
+        {
+        lastArgs.clear();
+        CHECK(tep.evaluate("STRLENPLUS(\"abc\", 2, 3)") == 8);
+        REQUIRE(lastArgs.size() == 3);
+        REQUIRE(std::holds_alternative<std::string_view>(lastArgs[0]));
+        CHECK(std::get<std::string_view>(lastArgs[0]) == "abc");
+        REQUIRE(std::holds_alternative<te_type>(lastArgs[1]));
+        CHECK(std::get<te_type>(lastArgs[1]) == 2);
+        CHECK(std::get<te_type>(lastArgs[2]) == 3);
+
+        // the view must point at the literal's own bytes, not a truncated
+        // or over-long slice of the surrounding expression
+        lastArgs.clear();
+        CHECK(tep.evaluate("STRLENPLUS(\"a\\b/c\")") == 5);
+        REQUIRE(lastArgs.size() == 1);
+        CHECK(std::get<std::string_view>(lastArgs[0]) == "a\\b/c");
+
+        lastArgs.clear();
+        CHECK(tep.evaluate("STRLENPLUS(\"\")") == 0);
+        REQUIRE(lastArgs.size() == 1);
+        REQUIRE(std::holds_alternative<std::string_view>(lastArgs[0]));
+        CHECK(std::get<std::string_view>(lastArgs[0]).empty());
+
+        // and it stays valid for the life of the compiled expression.
+        // strlive is not pure, so these re-evaluations really do call through.
+        CHECK(tep.compile("STRLIVE(\"persistent\")"));
+        lastArgs.clear();
+        CHECK(tep.evaluate() == 10);
+        REQUIRE(lastArgs.size() == 1);
+        CHECK(std::get<std::string_view>(lastArgs[0]) == "persistent");
+        lastArgs.clear();
+        CHECK(tep.evaluate() == 10);
+        REQUIRE(lastArgs.size() == 1);
+        CHECK(std::get<std::string_view>(lastArgs[0]) == "persistent");
+        }
+
+    SECTION("Recompiling from the stored expression keeps literals intact")
+        {
+        // set_constant() recompiles from m_expression, which the literals point into
+        tep.add_variable_or_function({ "k", static_cast<te_type>(1) });
+        CHECK(tep.evaluate("STRLIVE(\"abcde\") + k") == 6);
+        tep.set_constant("k", 10);
+        lastArgs.clear();
+        CHECK(tep.evaluate() == 15);
+        REQUIRE(lastArgs.size() == 1);
+        CHECK(std::get<std::string_view>(lastArgs[0]) == "abcde");
+        }
+
+    SECTION("Separator settings are respected")
+        {
+        te_parser euro;
+        euro.set_decimal_separator(',');
+        euro.set_list_separator(';');
+        euro.set_variables_and_functions(
+            { { "strlenplus", static_cast<te_arg_fun>(str_len_plus), TE_PURE } });
+        // ',' decimal numbers are left out; they also need the C locale set
+        CHECK(euro.evaluate("STRLENPLUS(\"abc\"; 2)") == 5);
+        CHECK(euro.evaluate("STRLENPLUS(\"abc\"; 2; 3)") == 8);
+        // a ',' inside a literal is neither a list nor a decimal separator
+        CHECK(euro.evaluate("STRLENPLUS(\"a,b\")") == 3);
+        CHECK(euro.evaluate("STRLENPLUS(\"1,5\")") == 3);
+        }
+    }
+
+TEST_CASE("String arguments and comments", "[strings][comments]")
+    {
+    te_parser tep;
+    tep.set_variables_and_functions(
+        { { "strlenplus", static_cast<te_arg_fun>(str_len_plus), TE_PURE } });
+
+    SECTION("Comment markers inside a literal survive")
+        {
+        CHECK(tep.evaluate("STRLENPLUS(\"http://example.com\")") == 18);
+        CHECK(tep.get_expression() == "STRLENPLUS(\"http://example.com\")");
+        CHECK(tep.evaluate("STRLENPLUS(\"//\")") == 2);
+        CHECK(tep.evaluate("STRLENPLUS(\"/* not a comment */\")") == 19);
+        CHECK(tep.evaluate("STRLENPLUS(\"/*\")") == 2);
+        CHECK(tep.evaluate("STRLENPLUS(\"*/\")") == 2);
+        // an unterminated /* inside a literal must not fail the compile
+        CHECK(tep.success());
+        }
+
+    SECTION("Real comments still strip")
+        {
+        CHECK(tep.evaluate("STRLENPLUS(\"abc\") // trailing") == 3);
+        CHECK(tep.evaluate("STRLENPLUS(/* inline */\"abc\")") == 3);
+        CHECK(tep.evaluate("/* lead */ STRLENPLUS(\"abc\")") == 3);
+        }
+
+    SECTION("Comments around and between literals")
+        {
+        CHECK(tep.evaluate("STRLENPLUS(\"ab\" /* x */, 1)") == 3);
+        CHECK(tep.evaluate("STRLENPLUS(\"a//b\") /* tail */") == 4);
+        }
+    }
+
+TEST_CASE("String arguments and optimization", "[strings][optimize]")
+    {
+    SECTION("Pure functions fold literal arguments")
+        {
+        te_parser tep;
+        tep.set_variables_and_functions(
+            { { "strlenplus", static_cast<te_arg_fun>(str_len_plus), TE_PURE } });
+        CHECK(tep.evaluate("STRLENPLUS(\"abcd\")") == 4);
+        CHECK(tep.evaluate("STRLENPLUS(\"abcd\") + 1") == 5);
+        }
+
+    SECTION("Non-pure functions are re-evaluated")
+        {
+        te_parser tep;
+        strCallCount = 0;
+        tep.set_variables_and_functions(
+            { { "counted", static_cast<te_arg_fun>(str_counted) } });
+        CHECK(tep.compile("COUNTED(\"abc\")"));
+        const auto afterCompile = strCallCount;
+        CHECK(tep.evaluate() == 3);
+        CHECK(tep.evaluate() == 3);
+        // each evaluate() must call through, not read a folded constant
+        CHECK(strCallCount == afterCompile + 2);
+        }
+
+    SECTION("A pure function of a variable is not folded away")
+        {
+        te_type x{ 2 };
+        te_parser tep;
+        tep.set_variables_and_functions({
+            { "strlenplus", static_cast<te_arg_fun>(str_len_plus), TE_PURE },
+            { "x", &x } });
+        CHECK(tep.compile("STRLENPLUS(\"abc\", x)"));
+        CHECK(tep.evaluate() == 5);
+        x = 10;
+        // if the call had been folded, this would still report 5
+        CHECK(tep.evaluate() == 13);
+        }
+    }
+
+TEST_CASE("String arguments and bookkeeping", "[strings][functions]")
+    {
+#ifndef TE_NO_BOOKKEEPING
+    te_parser tep;
+    tep.set_variables_and_functions({
+        { "strlenplus", static_cast<te_arg_fun>(str_len_plus), TE_PURE },
+        { "strpair", static_cast<te_arg_fun>(str_pair), TE_PURE } });
+
+    CHECK(tep.evaluate("STRLENPLUS(\"abc\")") == 3);
+    CHECK(tep.is_function_used("strlenplus"));
+    CHECK_FALSE(tep.is_variable_used("strlenplus"));
+    CHECK_FALSE(tep.is_function_used("strpair"));
+
+    tep.remove_unused_variables_and_functions();
+    CHECK(tep.evaluate("STRLENPLUS(\"abcd\")") == 4);
+    CHECK(std::isnan(tep.evaluate("STRPAIR(\"a\", 1)")));
+    CHECK_FALSE(tep.success());
+#endif
+    }
+
+TEST_CASE("String arguments with a context object", "[strings][closure]")
+    {
+    te_expr_array teArray{ TE_DEFAULT };
+
+    te_parser tep;
+    tep.set_variables_and_functions({
+        { "cellnamed", static_cast<te_arg_confun>(cell_named), TE_DEFAULT, &teArray },
+        { "celloffset", static_cast<te_arg_confun>(cell_offset), TE_DEFAULT, &teArray } });
+
+    SECTION("Context is delivered")
+        {
+        CHECK(tep.evaluate("CELLNAMED(\"first\")") == 5);
+        CHECK(tep.evaluate("CELLNAMED(\"last\")") == 9);
+        CHECK(std::isnan(tep.evaluate("CELLNAMED(\"middle\")")));
+        CHECK(tep.success());
+        }
+
+    SECTION("Mixed string and numeric arguments")
+        {
+        CHECK(tep.evaluate("CELLOFFSET(\"cell\", 0)") == 5);
+        CHECK(tep.evaluate("CELLOFFSET(\"cell\", 4)") == 9);
+        CHECK(tep.evaluate("CELLOFFSET(\"cell\", 2*1)") == 7);
+        CHECK(std::isnan(tep.evaluate("CELLOFFSET(\"cell\", 99)")));
+        CHECK(std::isnan(tep.evaluate("CELLOFFSET(\"nope\", 0)")));
+        }
+
+    SECTION("Wrong arity still returns cleanly")
+        {
+        CHECK(tep.compile("CELLNAMED(\"first\", 2)"));
+        CHECK(std::isnan(tep.evaluate()));
+        CHECK(tep.compile("CELLNAMED()"));
+        CHECK(std::isnan(tep.evaluate()));
+        }
+
+    SECTION("Combined with numeric operators")
+        {
+        CHECK(tep.evaluate("CELLNAMED(\"first\") + CELLNAMED(\"last\")") == 14);
+        CHECK(tep.evaluate("MAX(CELLNAMED(\"first\"), CELLNAMED(\"last\"))") == 9);
+        }
+
+    SECTION("Parse failure with a context function")
+        {
+        CHECK(std::isnan(tep.evaluate("CELLNAMED(\"first\"")));
+        CHECK_FALSE(tep.success());
+        CHECK(tep.evaluate("CELLNAMED(\"first\")") == 5);
+        }
+    }
+
+TEST_CASE("Database lookup example", "[strings][usr]")
+    {
+    SECTION("Free function")
+        {
+        te_parser tep;
+        tep.set_variables_and_functions(
+            { { "dbquery", static_cast<te_arg_fun>(db_query), TE_PURE } });
+
+        CHECK_THAT(tep.evaluate("DBQUERY(\"/Equipment/Temp\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(21.5)));
+        CHECK_THAT(tep.evaluate("DBQUERY(\"/Equipment/Pressure\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(101.3)));
+        CHECK(tep.evaluate("DBQUERY(\"/Equipment/Humidity\")") == 44);
+
+        // used in a real formula
+        CHECK_THAT(tep.evaluate("DBQUERY(\"/Equipment/Temp\") * 9 / 5 + 32"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(70.7)));
+        CHECK(tep.evaluate("IF(DBQUERY(\"/Equipment/Temp\") > 20, 1, 0)") == 1);
+        CHECK_THAT(tep.evaluate("(DBQUERY(\"/Equipment/Temp\") + DBQUERY(\"/Equipment/Humidity\")) / 2"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(32.75)));
+
+        // unknown key
+        CHECK(std::isnan(tep.evaluate("DBQUERY(\"/Equipment/Nope\")")));
+        CHECK(tep.success());
+        // optional default for a missing key
+        CHECK(tep.evaluate("DBQUERY(\"/Equipment/Nope\", 0)") == 0);
+        CHECK(tep.evaluate("DBQUERY(\"/Equipment/Nope\", -1)") == -1);
+        CHECK_THAT(tep.evaluate("DBQUERY(\"/Equipment/Temp\", 0)"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(21.5)));
+        }
+
+    SECTION("Bound to a client object")
+        {
+        te_database db{ TE_DEFAULT };
+        te_parser tep;
+        tep.set_variables_and_functions(
+            { { "query", static_cast<te_arg_confun>(query_db), TE_DEFAULT, &db } });
+
+        CHECK(tep.evaluate("QUERY(\"voltage\")") == 240);
+        CHECK(tep.evaluate("QUERY(\"current\")") == 13);
+        CHECK(tep.evaluate("QUERY(\"voltage\") * QUERY(\"current\")") == 3120);
+        CHECK(std::isnan(tep.evaluate("QUERY(\"missing\")")));
+
+        // the object really was consulted each time: 1 + 1 + 2 + 1
+        CHECK(db.m_readCount == 5);
+        }
+    }
+
+
 
 TEST_CASE("Benchmarks", "[!benchmark]")
     {
