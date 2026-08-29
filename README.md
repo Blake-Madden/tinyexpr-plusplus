@@ -425,7 +425,10 @@ the compiled expression returned by `te_compile()` would become:
                    | <function-0> {"(" ")"}
                    | <function-1> <power>
                    | <function-X> "(" <expr> {"," <expr>} ")"
+                   | <function-arg> "(" [<argument> {"," <argument>}] ")"
                    | "(" <list> ")"
+    <argument>  =    <expr> | <string>
+    <string>    =    '"' {any character except '"'} '"'
 
 In addition, whitespace between tokens is ignored.
 
@@ -434,6 +437,12 @@ of: letters `a`–`z` or `A`–`Z`, digits `0`–`9`, periods, and
 underscores. Constants can be integers or floating-point numbers, and can be in decimal,
 hexadecimal (e.g., `0x57CEF7`), or scientific notation (e.g., `1e3` for `1000`).
 A leading zero is not required (e.g., `.5` for `0.5`).
+
+String literals are opened and closed by a double quote and have no escape sequences.
+A string literal cannot contain a double quote.
+They are only valid as arguments to a function that accepts them (`<function-arg>` above).
+Using one anywhere else is a syntax error.
+Functions still return numbers; *TinyExpr++* does not evaluate string expressions.
 
 ## Supported Functions
 

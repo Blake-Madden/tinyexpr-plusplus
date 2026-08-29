@@ -23,3 +23,7 @@ IF(// Review the results from the analysis
 ```
 1. Comment that can span multiple lines.
 2. Single line comment.
+
+:::: {.notesection data-latex=""}
+Comments are stripped before the expression is parsed, but not from inside a quoted string literal\index{comments!string literals}.
+::::

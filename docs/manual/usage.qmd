@@ -24,6 +24,10 @@ Classes that derive from this can be bound to custom functions.
 In turn, this allows for connecting more complex, class-based objects to the parser.
 (Refer to [custom classes](#custom-classes).)
 
+`te_arg`: A single argument to a function that accepts strings, being either a `te_type` or a `std::string_view`.
+Functions bound to `te_arg_fun` or `te_arg_confun` receive a `std::span<const te_arg>`, which allows any number of string or numeric arguments in any order.
+(Refer to [string arguments](#string-arguments).)
+
 `te_parser::te_nan`: An invalid numeric value.
 This should be returned from user-defined functions to signal a failed calculation.
 

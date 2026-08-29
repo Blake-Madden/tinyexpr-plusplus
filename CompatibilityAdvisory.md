@@ -12,6 +12,18 @@
 - `set_decimal_separator()` now only accepts `.` or `,`; will throw otherwise.
 - `set_list_separator()` now only accepts `,` or `;`; will throw otherwise.
 
+## String Literals
+
+Functions bound to the new `te_arg_fun` and `te_arg_confun` types can accept quoted string arguments (e.g., `DBQUERY("/Equipment/Temp")`).
+Note the following differences from **Excel**:
+
+- Escaping a double quote by doubling it (**Excel**'s `""`) is **not** supported.
+  A literal is opened by a `"` and closed by the very next `"`.
+  A literal cannot contain a double quote at all.
+
+Also note that `te_variant_type` now includes `std::string_view` as an alternative.
+If you have your own overload set taking both a string type and a `te_variant_type`, calls with a string literal may now be ambiguous.
+
 ## Removed Functions
 
 The previously deprecated functions:

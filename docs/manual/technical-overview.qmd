@@ -67,4 +67,11 @@ DiagrammeR::grViz("digraph {
                    | <function-0> {"(" ")"}
                    | <function-1> <power>
                    | <function-X> "(" <expr> {"," <expr>} ")"
+                   | <function-arg> "(" [<argument> {"," <argument>}] ")"
                    | "(" <list> ")"
+    <argument>  =    <expr> | <string>
+    <string>    =    '"' {any character except '"'} '"'
+
+`<function-arg>` is a function bound to `te_arg_fun` or `te_arg_confun`, which accepts any number of string or numeric arguments.
+String literals are only valid there; using one anywhere else is a syntax error.
+(Refer to [Binding to Functions Accepting Strings](custom-extensions.html#string-arguments).)
