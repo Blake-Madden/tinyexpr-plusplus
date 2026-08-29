@@ -491,9 +491,9 @@ te_type db_query(std::span<const te_arg> args)
     {
     // the "database"
     static const std::array<std::pair<std::string_view, te_type>, 3> db{ {
-        { "/Equipment/Temp", 21.5 },
-        { "/Equipment/Pressure", 101.3 },
-        { "/Equipment/Humidity", 44 } } };
+        { "/Equipment/Temp", static_cast<te_type>(21.5) },
+        { "/Equipment/Pressure", static_cast<te_type>(101.3) },
+        { "/Equipment/Humidity", static_cast<te_type>(44) } } };
 
     if (args.empty() || args.size() > 2 ||
         !std::holds_alternative<std::string_view>(args[0]))
@@ -518,8 +518,8 @@ class te_database : public te_expr
 public:
     explicit te_database(const te_variable_flags type) noexcept : te_expr(type) {}
     std::array<std::pair<std::string_view, te_type>, 2> m_rows{ {
-        { "voltage", 240 },
-        { "current", 13 } } };
+        { "voltage", static_cast<te_type>(240) },
+        { "current", static_cast<te_type>(13) } } };
     mutable int m_readCount{ 0 };
     };
 
@@ -1517,11 +1517,20 @@ TEST_CASE("Power", "[power]")
     CHECK(tep.evaluate("-(2)^2") == tep.evaluate("-(2^2)"));
     CHECK(tep.success());
 
-    /* TODO POW FROM RIGHT IS STILL BUGGY
-    {"(-2)^2", "4"},
-    {"(-1)^0", "1"},
-    {"(-5)^0", "1"},
-    {"-2^-3^-4", "-(2^(-(3^-4)))"}*/
+    CHECK(tep.evaluate("(-2)^2") == tep.evaluate("4"));
+    CHECK(tep.success());
+
+    CHECK(tep.evaluate("(-1)^0") == tep.evaluate("1"));
+    CHECK(tep.success());
+
+    CHECK(tep.evaluate("(-5)^0") == tep.evaluate("1"));
+    CHECK(tep.success());
+
+    CHECK(tep.evaluate("2^-3^4") == tep.evaluate("2^(-(3^4))"));
+    CHECK(tep.success());
+
+    CHECK(tep.evaluate("-2^-3^-4") == tep.evaluate("-(2^(-(3^-4)))"));
+    CHECK(tep.success());
 #elif defined(TE_BITWISE_OPERATORS)
     CHECK(tep.evaluate("2**3**4") == tep.evaluate("(2**3)**4"));
     CHECK(tep.success());
@@ -1560,6 +1569,9 @@ TEST_CASE("Power", "[power]")
     CHECK(tep.success());
 
     CHECK(tep.evaluate("(-5)**0") == tep.evaluate("1"));
+    CHECK(tep.success());
+
+    CHECK(tep.evaluate("2**-3**4") == tep.evaluate("(2**(-3))**4"));
     CHECK(tep.success());
 
     CHECK(tep.evaluate("-2**-3**-4") == tep.evaluate("((-2)**(-3))**(-4)"));
@@ -1602,6 +1614,9 @@ TEST_CASE("Power", "[power]")
     CHECK(tep.success());
 
     CHECK(tep.evaluate("(-5)^0") == tep.evaluate("1"));
+    CHECK(tep.success());
+
+    CHECK(tep.evaluate("2^-3^4") == tep.evaluate("(2^(-3))^4"));
     CHECK(tep.success());
 
     CHECK(tep.evaluate("-2^-3^-4") == tep.evaluate("((-2)^(-3))^(-4)"));

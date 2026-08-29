@@ -2898,41 +2898,52 @@ te_expr* te_parser::factor(te_parser::state* theState)
     // second from the highest level of operator precedence
     te_expr* ret = power(theState);
 
-    int neg{ 0 };
+    // A unary to the left of '^' applies to the whole chain, so lift it off
+    // and put it back at the end. only lift one that power() wrote itself;
+    // "(-2)^2" is 4, not -(2^2)
+    te_fun1 leftUnary{ nullptr };
 
-    if (ret->m_type == TE_PURE && is_function1(ret->m_value) &&
-        get_function1(ret->m_value) == te_builtins::te_negate)
+    if (theState->m_appliedUnary && ret->m_type == TE_PURE && is_function1(ret->m_value))
         {
+        leftUnary = get_function1(ret->m_value);
         te_expr* se = ret->m_parameters[0];
         delete ret;
         ret = se;
-        neg = 1;
         }
 
-    te_expr* insertion{ nullptr };
+    // Where the next exponent goes, which is what makes '^' go right-to-left.
+    // A unary on an exponent applies to the rest of the chain, so the slot
+    // moves inside it.
+    te_expr* slotOwner{ nullptr };
+    size_t slotIndex{ 0 };
     while (theState->m_type == state::token_type::TOK_INFIX && is_function2(theState->m_value) &&
            (get_function2(theState->m_value) == static_cast<te_fun2>(te_builtins::te_pow)))
         {
         const te_fun2 t = get_function2(theState->m_value);
         next_token(theState);
 
-        if (insertion)
+        te_expr* exponent = power(theState);
+        const bool exponentIsUnary{ theState->m_appliedUnary };
+
+        te_expr* insert{ nullptr };
+        if (slotOwner != nullptr)
             {
-            /* Make exponentiation go right-to-left. */
-            te_expr* insert = new_expr(TE_PURE, t, { insertion->m_parameters[1], power(theState) });
-            insertion->m_parameters[1] = insert;
-            insertion = insert;
+            insert = new_expr(TE_PURE, t, { slotOwner->m_parameters[slotIndex], exponent });
+            slotOwner->m_parameters[slotIndex] = insert;
             }
         else
             {
-            ret = new_expr(TE_PURE, t, { ret, power(theState) });
-            insertion = ret;
+            ret = new_expr(TE_PURE, t, { ret, exponent });
+            insert = ret;
             }
+
+        slotOwner = exponentIsUnary ? exponent : insert;
+        slotIndex = exponentIsUnary ? 0 : 1;
         }
 
-    if (neg)
+    if (leftUnary != nullptr)
         {
-        ret = new_expr(TE_PURE, te_variant_type(te_builtins::te_negate), { ret });
+        ret = new_expr(TE_PURE, te_variant_type(leftUnary), { ret });
         }
 
     return ret;
@@ -3000,6 +3011,9 @@ te_expr* te_parser::power(state* theState)
         {
         ret = base(theState);
         }
+
+    // set last, so that any nesting inside base() can't clobber it
+    theState->m_appliedUnary = (theSign == -1 || bitwiseNot);
 
     return ret;
     }

@@ -1174,6 +1174,9 @@ class te_parser
         te_variable_flags m_varType{ TE_DEFAULT };
         te_variant_type m_value;
         te_expr* context{ nullptr };
+        // whether the last power() wrote a unary itself
+        // (separates "-1" from "(-1)")
+        bool m_appliedUnary{ false };
 
         std::set<te_variable>& m_lookup;
         };
