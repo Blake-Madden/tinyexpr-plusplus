@@ -81,6 +81,102 @@ const auto r = tep.evaluate("mysum(5, 6)");
 :::
 
 ::: {.minipage data-latex="{\textwidth}"}
+## Binding to Functions Accepting Strings {-#string-arguments}
+
+Functions can also accept quoted string literals\index{functions!string arguments} from a formula.
+For example:
+
+```{.cpp}
+DBQUERY("/Equipment/Temp", 3)
+```
+
+Such a function takes a `std::span` of `te_arg`, where each `te_arg` is either a number or a string:
+
+```{.cpp}
+using te_arg = std::variant<te_type, std::string_view>;
+
+using te_arg_fun = te_type (*)(std::span<const te_arg>);
+using te_arg_confun = te_type (*)(const te_expr*, std::span<const te_arg>);
+```
+
+Any argument can be a string or a number, in any position, and there is no limit on how many are passed.
+Because of this, the parser does not verify the argument count the way it does for `te_fun0`--`te_fun24`.
+Review `args.size()` and each argument's type yourself, returning `te_parser::te_nan` if the call is not valid:
+
+```{.cpp}
+te_type db_query(std::span<const te_arg> args)
+    {
+    if (args.size() != 2 ||
+        !std::holds_alternative<std::string_view>(args[0]) ||
+        !std::holds_alternative<te_type>(args[1]))
+        { return te_parser::te_nan; }
+
+    // 'lookup' could be a database query or such
+    return lookup(std::get<std::string_view>(args[0]),
+                  std::get<te_type>(args[1]));
+    }
+
+te_parser tep;
+tep.set_variables_and_functions(
+{
+    { "dbquery", static_cast<te_arg_fun>(db_query) }
+});
+
+const auto r = tep.evaluate(R"(DBQUERY("/Equipment/Temp", 3))");
+```
+
+Note the cast to `te_arg_fun`; this tells the compiler which of the function types to bind to.
+
+A `te_arg_confun` receives a client object as its first argument, exactly like the `te_confun0`--`te_confun24` functions described in [Binding to Custom Classes](#custom-classes):
+
+```{.cpp}
+class te_database : public te_expr
+    {
+public:
+    explicit te_database(const te_variable_flags type) noexcept :
+        te_expr(type) {}
+    std::map<std::string, te_type, std::less<>> m_rows =
+        { { "voltage", 240 }, { "current", 13 } };
+    };
+
+te_type query_db(const te_expr* context, std::span<const te_arg> args)
+    {
+    auto* db = dynamic_cast<const te_database*>(context);
+    if (db == nullptr || args.size() != 1 ||
+        !std::holds_alternative<std::string_view>(args[0]))
+        { return te_parser::te_nan; }
+
+    const auto found = db->m_rows.find(std::get<std::string_view>(args[0]));
+    return (found == db->m_rows.cend()) ? te_parser::te_nan : found->second;
+    }
+
+te_database db{ TE_DEFAULT };
+
+te_parser tep;
+tep.set_variables_and_functions(
+    {
+        { "query", static_cast<te_arg_confun>(query_db), TE_DEFAULT, &db }
+    });
+
+// will be 3120
+const auto r = tep.evaluate(R"(QUERY("voltage") * QUERY("current"))");
+```
+
+A string literal is opened and closed by a double quote.
+There are no escape sequences, so a literal cannot itself contain a double quote.
+
+:::: {.warningsection data-latex=""}
+String literals are only valid as arguments to these functions.
+Using one anywhere else (`sin("abc")`, `1 + "abc"`, or `"abc"` on its own) is a syntax error.
+::::
+
+:::: {.notesection data-latex=""}
+A `std::string_view` argument points into the parser's copy of the expression, so it remains valid for the lifetime of the compiled expression.
+The `std::span`, however, is only valid for the duration of the call; copy anything you need to keep.
+::::
+:::
+
+::: {.minipage data-latex="{\textwidth}"}
 ## Binding to Custom Classes {-#custom-classes}
 
 A class derived from `te_expr` can be bound to custom functions\index{classes!binding to custom}.

@@ -211,3 +211,103 @@ auto result = tep.evaluate("SUM(CELL 0, CELL 1, CELL 2, CELL 3, CELL 4)");
 // (will be 8)
 result = tep.evaluate("CellMax()");
 ```
+
+## Example 6: Functions Accepting Strings
+
+Functions can accept quoted string literals from a formula.
+Such a function takes a `std::span` of `te_arg`, where each `te_arg` is either a number or a `std::string_view`.
+
+Any argument can be a string or a number in any position, and there is no limit on how many can be passed.
+Because of this, these functions have no fixed arity.
+The parser therefore does not verify the argument count the way it does for `te_fun0`–`te_fun24`.
+The function should review `args.size()` and each argument's type itself:
+
+```cpp
+#include "tinyexpr.h"
+#include <iostream>
+#include <map>
+#include <span>
+#include <string>
+#include <variant>
+
+// A stand-in for a real database.
+const std::map<std::string, double, std::less<>> DB =
+    {
+        { "/Equipment/Temp", 21.5 },
+        { "/Equipment/Pressure", 101.3 }
+    };
+
+double db_query(std::span<const te_arg> args)
+    {
+    // One required argument (the path), and an optional default
+    // for when the path isn't found.
+    if (args.empty() || args.size() > 2 ||
+        !std::holds_alternative<std::string_view>(args[0]))
+        { return te_parser::te_nan; }
+
+    const auto found = DB.find(std::get<std::string_view>(args[0]));
+    if (found == DB.cend())
+        {
+        return (args.size() == 2 && std::holds_alternative<double>(args[1])) ?
+            std::get<double>(args[1]) : te_parser::te_nan;
+        }
+    return found->second;
+    }
+
+int main()
+    {
+    te_parser tep;
+    tep.set_variables_and_functions(
+        {
+            // the cast tells the compiler which function type to bind to
+            { "dbquery", static_cast<te_arg_fun>(db_query) }
+        });
+
+    // 21.5
+    std::cout << tep.evaluate(R"(DBQUERY("/Equipment/Temp"))") << "\n";
+
+    // convert to Fahrenheit: 70.7
+    std::cout << tep.evaluate(R"(DBQUERY("/Equipment/Temp") * 9 / 5 + 32)") << "\n";
+
+    // fall back to a default for an unknown path: 0
+    std::cout << tep.evaluate(R"(DBQUERY("/Equipment/Nope", 0))") << "\n";
+
+    return EXIT_SUCCESS;
+    }
+```
+
+To bind such a function to a class instead, use `te_arg_confun`.
+It receives the client object as its first argument, exactly like the functions in Example 5:
+
+```cpp
+class te_database : public te_expr
+    {
+public:
+    explicit te_database(const te_variable_flags type) noexcept :
+        te_expr(type) {}
+    std::map<std::string, double, std::less<>> m_rows =
+        { { "voltage", 240 }, { "current", 13 } };
+    };
+
+double query_db(const te_expr* context, std::span<const te_arg> args)
+    {
+    auto* db = dynamic_cast<const te_database*>(context);
+    if (db == nullptr || args.size() != 1 ||
+        !std::holds_alternative<std::string_view>(args[0]))
+        { return te_parser::te_nan; }
+
+    const auto found = db->m_rows.find(std::get<std::string_view>(args[0]));
+    return (found == db->m_rows.cend()) ? te_parser::te_nan : found->second;
+    }
+
+te_database db{ TE_DEFAULT };
+
+te_parser tep;
+tep.set_variables_and_functions(
+    {
+        { "query", static_cast<te_arg_confun>(query_db), TE_DEFAULT, &db }
+    });
+
+// will be 3120
+const double r = tep.evaluate(R"(QUERY("voltage") * QUERY("current"))");
+```

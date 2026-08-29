@@ -276,6 +276,55 @@ const double r = tep.evaluate("mysum(5, 6)");
 // will be 11
 ```
 
+## Binding to Functions Accepting Strings
+
+Functions can also accept quoted string literals from a formula (e.g, looking a value up by name):
+
+```
+DBQUERY("/Equipment/Temp", 3)
+```
+
+Such a function takes a `std::span` of `te_arg`, where each `te_arg` is either a number or a string:
+
+```cpp
+using te_arg = std::variant<double, std::string_view>;
+
+using te_arg_fun = double (*)(std::span<const te_arg>);
+using te_arg_confun = double (*)(const te_expr*, std::span<const te_arg>);
+```
+
+Any argument can be a string or a number, in any position, and there is no limit on how many are passed.
+Because of this, the parser does not verify the argument count the way it does for `te_fun0`–`te_fun24`.
+Review `args.size()` and each argument's type yourself, returning `te_parser::te_nan` if the call is not valid:
+
+```cpp
+double db_query(std::span<const te_arg> args)
+    {
+    if (args.size() != 2 ||
+        !std::holds_alternative<std::string_view>(args[0]) ||
+        !std::holds_alternative<double>(args[1]))
+        { return te_parser::te_nan; }
+
+    // 'lookup' could be a database query or such
+    return lookup(std::get<std::string_view>(args[0]),
+                  std::get<double>(args[1]));
+    }
+
+te_parser tep;
+tep.set_variables_and_functions(
+{
+    { "dbquery", static_cast<te_arg_fun>(db_query) }
+});
+
+const double r = tep.evaluate(R"(DBQUERY("/Equipment/Temp", 3))");
+```
+
+Note the cast to `te_arg_fun`; this tells the compiler which of the function types to bind to.
+A `te_arg_confun` receives a client object as its first argument, the same way the `te_confun0`–`te_confun24` functions do (see below).
+
+Note that a `std::string_view` argument points into the parser's copy of the expression, so it remains valid for the lifetime of the compiled expression.
+The `std::span`, however, is only valid for the duration of the call.
+
 ## Binding to Custom Classes
 
 A class derived from `te_expr` can be bound to custom functions. This enables you to
