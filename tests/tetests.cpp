@@ -6286,7 +6286,7 @@ TEST_CASE("String arguments and memory", "[strings][memory]")
         CHECK_FALSE(tep.success());
         CHECK(std::isnan(tep.evaluate("STRTOTAL(\"a\", CELLOFFSET(\"cell\"")));
         CHECK_FALSE(tep.success());
-    }
+        }
 
     SECTION("Context function with a half-built argument list")
         {
@@ -6322,7 +6322,7 @@ TEST_CASE("String arguments and memory", "[strings][memory]")
         for (int i = 0; i < 100; ++i)
             {
             expr += (i > 0) ? ", \"ab\"" : "\"ab\"";
-    }
+            }
         expr += ")";
 
         CHECK(tep.evaluate(expr) == 200);
@@ -6344,13 +6344,184 @@ TEST_CASE("String arguments outlive the expression they came from", "[strings][m
         CHECK(original.compile("STRLIVE(\"persistent\")"));
         CHECK(original.evaluate() == 10);
         copied = original;
-    }
+        }
 
     // original is gone, along with the buffer its views pointed into
     lastArgs.clear();
     CHECK(copied.evaluate() == 10);
     REQUIRE(lastArgs.size() == 1);
     CHECK(std::get<std::string_view>(lastArgs[0]) == "persistent");
+    }
+
+TEST_CASE("NUMBERVALUE is locale independent", "[numbervalue][strings]")
+    {
+    // strtod() reads the C locale's decimal point, which NUMBERVALUE must not inherit
+    const char* const currentLocale = std::setlocale(LC_NUMERIC, nullptr);
+    // copy it; the next setlocale() call may overwrite that buffer
+    const std::string savedLocale{ (currentLocale != nullptr) ? currentLocale : "C" };
+
+    // whichever of these the platform has, all using ',' as the decimal point
+    const std::array<const char*, 6> commaLocales = { "de-DE",       "de_DE.UTF-8", "de_DE.utf8",
+                                                      "de_DE",       "fr-FR",       "fr_FR.UTF-8" };
+    const char* applied{ nullptr };
+    for (const auto* const loc : commaLocales)
+        {
+        if (std::setlocale(LC_NUMERIC, loc) != nullptr)
+            {
+            applied = loc;
+            break;
+            }
+        }
+
+    // only CHECK below, never REQUIRE, so the locale is always restored
+    if (applied == nullptr)
+        {
+        WARN("No comma-decimal locale installed; NUMBERVALUE's locale independence "
+             "was not verified on this platform.");
+        }
+    else
+        {
+        te_parser tep;
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1234.56\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1,234.56\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1.234,56\", \",\", \".\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"3.5%\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(0.035)));
+        CHECK(tep.evaluate("NUMBERVALUE(\"1,234,567\")") == 1234567);
+        CHECK(tep.evaluate("NUMBERVALUE(\"42\")") == 42);
+        }
+
+    std::setlocale(LC_NUMERIC, savedLocale.c_str());
+    }
+
+// sets LC_NUMERIC to a locale whose decimal point is ','; nullptr if the platform has none.
+// hyphens are the MSVC spelling, underscores the glibc/BSD one
+[[nodiscard]] const char* apply_comma_decimal_locale()
+    {
+    const std::array<const char*, 8> commaLocales = {
+        "de-DE",       "de_DE.UTF-8", "de_DE.utf8",  "de_DE",
+        "fr-FR",       "fr_FR.UTF-8", "es_ES.UTF-8", "German_Germany.1252"
+    };
+    for (const auto* const loc : commaLocales)
+        {
+        if (std::setlocale(LC_NUMERIC, loc) == nullptr)
+            {
+            continue;
+            }
+        // a name is only accepted if it really moved the decimal point
+        const auto* const localeInfo = std::localeconv();
+        if (localeInfo != nullptr && localeInfo->decimal_point != nullptr &&
+            localeInfo->decimal_point[0] == ',')
+            {
+            return loc;
+            }
+        }
+    return nullptr;
+    }
+
+TEST_CASE("Locale that disagrees with the parser's separators is an error", "[locale]")
+    {
+    const char* const currentLocale = std::setlocale(LC_NUMERIC, nullptr);
+    // copy it; the next setlocale() call may overwrite that buffer
+    const std::string savedLocale{ (currentLocale != nullptr) ? currentLocale : "C" };
+
+    const auto* const applied = apply_comma_decimal_locale();
+
+    // only CHECK below, never REQUIRE, so the locale is always restored
+    if (applied == nullptr)
+        {
+        WARN("No comma-decimal locale installed; the lexer's locale mismatch guard "
+             "was not verified on this platform.");
+        }
+    else
+        {
+        te_parser tep;
+        // separators are per-parser; a German LC_NUMERIC is not this parser's setting
+        CHECK(tep.get_decimal_separator() == '.');
+        CHECK(tep.get_list_separator() == ',');
+
+        // strtod() reads "1,5" as one number under this locale, which would turn a
+        // two-element list into 1.5; the mismatch is reported instead of answered
+        CHECK(std::isnan(tep.evaluate("1,5")));
+        CHECK_FALSE(tep.success());
+        CHECK(tep.get_last_error_position() != te_parser::npos);
+
+        CHECK(std::isnan(tep.evaluate("SUM(1,5)")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("MAX(1,5)")));
+        CHECK_FALSE(tep.success());
+
+        // numbers with no separator in them are untouched by the locale
+        CHECK(tep.evaluate("SUM(1)") == 1);
+        CHECK(tep.evaluate("2+3") == 5);
+        CHECK(tep.success());
+
+        // still open: strtod() stops at the '.' this parser is set to, so the lexer
+        // reads "1" and then fails on ".5"; the guard reports it but cannot convert it
+        CHECK(std::isnan(tep.evaluate("1.5")));
+        CHECK_FALSE(tep.success());
+        }
+
+    std::setlocale(LC_NUMERIC, savedLocale.c_str());
+    }
+
+TEST_CASE("Locale that agrees with the parser's separators", "[locale]")
+    {
+    const char* const currentLocale = std::setlocale(LC_NUMERIC, nullptr);
+    // copy it; the next setlocale() call may overwrite that buffer
+    const std::string savedLocale{ (currentLocale != nullptr) ? currentLocale : "C" };
+
+    const auto* const applied = apply_comma_decimal_locale();
+
+    // only CHECK below, never REQUIRE, so the locale is always restored
+    if (applied == nullptr)
+        {
+        WARN("No comma-decimal locale installed; German-formatted formulas were "
+             "not verified on this platform.");
+        }
+    else
+        {
+        te_parser tep;
+        tep.set_decimal_separator(',');
+        tep.set_list_separator(';');
+
+        CHECK_THAT(4.84,
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("POW(2,2; 2)"))));
+        CHECK(tep.success());
+
+        // ',' is the decimal point here, not a separator
+        CHECK_THAT(2.2, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("2,2"))));
+        CHECK(tep.evaluate("1,5") == 1.5);
+        CHECK(tep.evaluate(",5") == .5);
+        CHECK(tep.success());
+
+        // ';' separates the arguments
+        CHECK(tep.evaluate("SUM(1,5; 2)") == 3.5);
+        CHECK(tep.evaluate("MAX(1,5; 2,5)") == 2.5);
+        CHECK_THAT(2.42, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(tep.evaluate("2,2 + ,22"))));
+        CHECK(tep.success());
+
+        // plain integers and operators are unaffected
+        CHECK(tep.evaluate("2+3") == 5);
+        CHECK(tep.evaluate("SUM(1; 2; 3)") == 6);
+        CHECK(tep.success());
+
+        // the US spelling is a syntax error under this configuration
+        CHECK(std::isnan(tep.evaluate("POW(2.2, 2)")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("SUM(1, 2)")));
+        CHECK_FALSE(tep.success());
+
+        // NUMBERVALUE takes its separators as arguments, so the locale is irrelevant to it
+        CHECK_THAT(1234.56, Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(
+                                tep.evaluate("NUMBERVALUE(\"1.234,56\"; \",\"; \".\")"))));
+        CHECK(tep.success());
+        }
+
+    std::setlocale(LC_NUMERIC, savedLocale.c_str());
     }
 
 TEST_CASE("Benchmarks", "[!benchmark]")

@@ -2104,6 +2104,12 @@ void te_parser::next_token(state* theState)
 #else
             theState->m_value = static_cast<te_type>(std::strtod(theState->m_next, &nEnd));
 #endif
+            // Normally strtod() stops at the list separator and the lexer reads it next.
+            // It only consumes one if the locale's decimal point is that separator,
+            // which means the locale and the parser (get_decimal_separator()) disagree.
+            // Raise a syntax error in that case.
+            const std::string_view consumed{ theState->m_next,
+                                             static_cast<size_t>(nEnd - theState->m_next) };
             theState->m_next = nEnd;
             theState->m_type = state::token_type::TOK_NUMBER;
             }

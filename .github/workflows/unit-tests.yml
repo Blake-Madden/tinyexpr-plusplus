@@ -18,7 +18,10 @@ jobs:
         run: |
              sudo apt install cmake
              sudo apt install lcov
-          
+             # a comma-decimal locale, for the [locale] tests
+             sudo apt install -y locales
+             sudo locale-gen de_DE.UTF-8
+
       - name: build & run tests
         run: |
              cd ..
