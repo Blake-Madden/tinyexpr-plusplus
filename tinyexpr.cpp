@@ -2111,7 +2111,9 @@ void te_parser::next_token(state* theState)
             const std::string_view consumed{ theState->m_next,
                                              static_cast<size_t>(nEnd - theState->m_next) };
             theState->m_next = nEnd;
-            theState->m_type = state::token_type::TOK_NUMBER;
+            theState->m_type = (consumed.find(get_list_separator()) == std::string_view::npos) ?
+                                   state::token_type::TOK_NUMBER :
+                                   state::token_type::TOK_ERROR;
             }
         else
             {
@@ -2594,16 +2596,16 @@ te_expr* te_parser::base(state* theState)
                         {
                         break;
                         }
-            next_token(theState);
+                    next_token(theState);
                     }
-            if (theState->m_type != state::token_type::TOK_CLOSE)
-                {
-                theState->m_type = state::token_type::TOK_ERROR;
-                }
-            else
-                {
-                next_token(theState);
-                }
+                if (theState->m_type != state::token_type::TOK_CLOSE)
+                    {
+                    theState->m_type = state::token_type::TOK_ERROR;
+                    }
+                else
+                    {
+                    next_token(theState);
+                    }
                 }
             }
         // context slot goes last, matching te_free_parameters() and te_eval()
