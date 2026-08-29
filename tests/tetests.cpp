@@ -6539,6 +6539,89 @@ TEST_CASE("Locale that agrees with the parser's separators", "[locale]")
     std::setlocale(LC_NUMERIC, savedLocale.c_str());
     }
 
+TEST_CASE("Nesting depth", "[depth]")
+    {
+    // "((((...1...))))"
+    const auto nestedParens = [](const size_t depth)
+        { return std::string(depth, '(') + "1" + std::string(depth, ')'); };
+    // "sin sin sin ... 1"
+    const auto nestedCalls = [](const size_t depth)
+        {
+        std::string expr;
+        for (size_t i = 0; i < depth; ++i)
+            {
+            expr += "sin ";
+            }
+        return expr + "1";
+        };
+
+    te_parser tep;
+
+    SECTION("Within the limit")
+        {
+        CHECK(tep.evaluate(nestedParens(10)) == 1);
+        CHECK(tep.success());
+
+        CHECK(tep.evaluate(nestedParens(static_cast<size_t>(TE_MAX_DEPTH) / 2)) == 1);
+        CHECK(tep.success());
+
+        // one paren for each level, plus the innermost constant
+        CHECK(tep.evaluate(nestedParens(static_cast<size_t>(TE_MAX_DEPTH) - 1)) == 1);
+        CHECK(tep.success());
+
+        CHECK(std::isfinite(tep.evaluate(nestedCalls(10))));
+        CHECK(tep.success());
+
+        CHECK(std::isfinite(tep.evaluate(nestedCalls(static_cast<size_t>(TE_MAX_DEPTH) - 1))));
+        CHECK(tep.success());
+        }
+
+    SECTION("Beyond the limit")
+        {
+        CHECK(std::isnan(tep.evaluate(nestedParens(static_cast<size_t>(TE_MAX_DEPTH)))));
+        CHECK_FALSE(tep.success());
+        CHECK(tep.get_last_error_message() == "Expression is nested too deeply.");
+        CHECK(tep.get_last_error_position() != te_parser::npos);
+
+        CHECK(std::isnan(tep.evaluate(nestedParens(static_cast<size_t>(TE_MAX_DEPTH) * 4))));
+        CHECK_FALSE(tep.success());
+
+        CHECK(std::isnan(tep.evaluate(nestedParens(5000))));
+        CHECK_FALSE(tep.success());
+
+        CHECK(std::isnan(tep.evaluate(nestedCalls(static_cast<size_t>(TE_MAX_DEPTH)))));
+        CHECK_FALSE(tep.success());
+
+        CHECK(std::isnan(tep.evaluate(nestedCalls(5000))));
+        CHECK_FALSE(tep.success());
+        }
+
+    SECTION("A long run of unclosed parentheses fails instead of crashing")
+        {
+        CHECK(std::isnan(tep.evaluate(std::string(5000, '('))));
+        CHECK_FALSE(tep.success());
+        }
+
+    SECTION("The parser still works after a too-deep expression")
+        {
+        CHECK(std::isnan(tep.evaluate(nestedParens(5000))));
+        CHECK_FALSE(tep.success());
+
+        CHECK(tep.evaluate("2+2") == 4);
+        CHECK(tep.success());
+        CHECK(tep.get_last_error_message().empty());
+        }
+
+    SECTION("Depth is per-compile, not cumulative")
+        {
+        for (int i = 0; i < 10; ++i)
+            {
+            CHECK(tep.evaluate(nestedParens(static_cast<size_t>(TE_MAX_DEPTH) - 1)) == 1);
+            CHECK(tep.success());
+            }
+        }
+    }
+
 TEST_CASE("Benchmarks", "[!benchmark]")
     {
     te_type benchmarkVar{ 9 };

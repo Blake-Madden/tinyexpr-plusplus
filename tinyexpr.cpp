@@ -2497,6 +2497,25 @@ void te_parser::next_token(state* theState)
 //--------------------------------------------------
 te_expr* te_parser::base(state* theState)
     {
+    // base() is the only place the descent recurses back on itself, so this is
+    // where nesting is capped. Without it, deeply nested input could overflow the stack.
+    if (theState->m_depth >= static_cast<size_t>(TE_MAX_DEPTH))
+        {
+        m_lastErrorMessage = "Expression is nested too deeply.";
+        theState->m_type = state::token_type::TOK_ERROR;
+        return new_expr(TE_DEFAULT, te_variant_type{ te_nan });
+        }
+
+    ++theState->m_depth;
+    te_expr* ret = base_impl(theState);
+    --theState->m_depth;
+
+    return ret;
+    }
+
+//--------------------------------------------------
+te_expr* te_parser::base_impl(state* theState)
+    {
     /* <base>      =    <constant> | <variable> | <function-0> {"(" ")"} | <function-1> <power> |
                         <function-X> "(" <expr> {"," <expr>} ")" | "(" <list> ")" */
     te_expr* ret{ nullptr };

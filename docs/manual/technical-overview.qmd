@@ -75,3 +75,6 @@ DiagrammeR::grViz("digraph {
 `<function-arg>` is a function bound to `te_arg_fun` or `te_arg_confun`, which accepts any number of string or numeric arguments.
 String literals are only valid there; using one anywhere else is a syntax error.
 (Refer to [Binding to Functions Accepting Strings](custom-extensions.html#string-arguments).)
+
+Because the parser is recursive, `<base>` nesting (parentheses and function application) is limited to 128 levels.
+Deeper nesting is a syntax error, rather than a possible stack overflow (refer to [`TE_MAX_DEPTH`](compile-time-options.html#te-max-depth)).

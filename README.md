@@ -493,6 +493,10 @@ They are only valid as arguments to a function that accepts them (`<function-arg
 Using one anywhere else is a syntax error.
 Functions still return numbers; *TinyExpr++* does not evaluate string expressions.
 
+Expression nesting (parentheses and function application) is limited to 128 levels;
+anything deeper is a syntax error, rather than a possible stack overflow.
+Define `TE_MAX_DEPTH` when compiling to change that limit.
+
 ## Supported Functions
 
 *TinyExpr++* supports addition (`+`), subtraction/negation (`-`), multiplication (`*`),

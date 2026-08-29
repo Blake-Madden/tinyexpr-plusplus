@@ -50,6 +50,18 @@ From this, the presence of a function or variable in the expression can be verif
 Turning this option off can provide a small optimization, as it will result in less heap allocations and search operations.
 Defining `TE_NO_BOOKKEEPING` will disable this feature.
 
+## `TE_MAX_DEPTH` {-#te-max-depth}
+
+*TinyExpr++* uses a recursive descent parser, so deeply nested input consumes stack space as it is parsed.
+To keep that bounded, expression nesting (parentheses and function application) is limited to 128 levels.
+An expression nested deeper than that fails to compile and reports an error, instead of possibly overflowing the stack.
+
+Define `TE_MAX_DEPTH` as the level that you want if 128 is not suitable (e.g., if running on a platform with a smaller stack):
+
+```cpp
+#define TE_MAX_DEPTH 64
+```
+
 ## `TE_POW_FROM_RIGHT` {-}
 
 By default, *TinyExpr++* does exponentiation from left to right.

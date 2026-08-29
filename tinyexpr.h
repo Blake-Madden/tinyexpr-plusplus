@@ -113,6 +113,12 @@ using te_type = double;
     #error TE_FLOAT and TE_BITWISE_OPERATORS compile options cannot be combined. TE_FLOAT will not support bitwise operations.
 #endif
 
+/// @brief How deeply an expression may nest parentheses and function calls;
+///     anything deeper is a parse error, rather than a possible stack overflow.
+#ifndef TE_MAX_DEPTH
+    #define TE_MAX_DEPTH 128
+#endif
+
 class te_expr;
 // clang-format off
 // regular functions
@@ -1177,6 +1183,8 @@ class te_parser
         // whether the last power() wrote a unary itself
         // (separates "-1" from "(-1)")
         bool m_appliedUnary{ false };
+        // how many base() calls are currently on the stack
+        size_t m_depth{ 0 };
 
         std::set<te_variable>& m_lookup;
         };
@@ -1253,8 +1261,11 @@ class te_parser
         }
 
     void next_token(state* theState);
+    // depth-limited wrapper around base_impl()
     [[nodiscard]]
     te_expr* base(state* theState);
+    [[nodiscard]]
+    te_expr* base_impl(state* theState);
     [[nodiscard]]
     te_expr* power(state* theState);
     [[nodiscard]]
