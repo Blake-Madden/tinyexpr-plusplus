@@ -6011,7 +6011,347 @@ TEST_CASE("Database lookup example", "[strings][usr]")
         }
     }
 
+TEST_CASE("NUMBERVALUE", "[numbervalue][strings]")
+    {
+    te_parser tep;
 
+    SECTION("Excel's documented examples")
+        {
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"2.500,27\", \",\", \".\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(2500.27)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"3.5%\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(0.035)));
+        // deliberately lowercase; the parser is case insensitive
+        CHECK(tep.evaluate("numbervalue(\"3 000\")") == 3000);
+        }
+
+    SECTION("Plain numbers with default separators")
+        {
+        CHECK(tep.evaluate("NUMBERVALUE(\"42\")") == 42);
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"3.5\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(3.5)));
+        CHECK(tep.evaluate("NUMBERVALUE(\"0\")") == 0);
+        CHECK(tep.evaluate("NUMBERVALUE(\"-42\")") == -42);
+        CHECK(tep.evaluate("NUMBERVALUE(\"+42\")") == 42);
+        CHECK(tep.evaluate("NUMBERVALUE(\"1,234\")") == 1234);
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1,234.56\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        CHECK(tep.evaluate("NUMBERVALUE(\"1,234,567\")") == 1234567);
+        }
+
+    SECTION("Explicit separators")
+        {
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1.234,56\", \",\", \".\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        // group separator defaults to ',' when only the decimal one is given
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1234,56\", \",\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        // unusual separators are fine
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1|234;56\", \";\", \"|\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        // only the first character of a separator argument is used
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1.234,56\", \",xyz\", \".abc\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        }
+
+    SECTION("Group separator placement")
+        {
+        // before the decimal separator it is ignored
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1,2,3.5\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(123.5)));
+        CHECK(tep.evaluate("NUMBERVALUE(\"1,2,3\")") == 123);
+        CHECK(tep.evaluate("NUMBERVALUE(\"1,23,456\")") == 123456);
+        // after it, an error
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1.234,56\")")));
+        CHECK(tep.success());
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1.5,\")")));
+        }
+
+    SECTION("Repeated decimal separator is an error")
+        {
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1.2.3\")")));
+        CHECK(tep.success());
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1,2,3\", \",\", \".\")")));
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"..\")")));
+        }
+
+    SECTION("Whitespace is ignored anywhere")
+        {
+        CHECK(tep.evaluate("NUMBERVALUE(\"  42  \")") == 42);
+        CHECK(tep.evaluate("NUMBERVALUE(\"4 2\")") == 42);
+        CHECK(tep.evaluate("NUMBERVALUE(\" 3 000 \")") == 3000);
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1 234 . 5\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.5)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"3.5 %\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(0.035)));
+        }
+
+    SECTION("Empty text is zero")
+        {
+        CHECK(tep.evaluate("NUMBERVALUE(\"\")") == 0);
+        CHECK(tep.success());
+        // whitespace-only collapses to empty
+        CHECK(tep.evaluate("NUMBERVALUE(\"   \")") == 0);
+        }
+
+    SECTION("Percent signs are cumulative")
+        {
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"15%\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(0.15)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"9%%\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(0.0009)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"9%%%\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(0.000009)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"-15%\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(-0.15)));
+        CHECK(tep.evaluate("NUMBERVALUE(\"100%\")") == 1);
+        CHECK(tep.evaluate("NUMBERVALUE(\"0%\")") == 0);
+        // a percent sign with no number is an error
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"%\")")));
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"%5\")")));
+        }
+
+    SECTION("Scientific notation")
+        {
+        CHECK(tep.evaluate("NUMBERVALUE(\"1e3\")") == 1000);
+        CHECK(tep.evaluate("NUMBERVALUE(\"1.5e3\")") == 1500);
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1.5e-2\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(0.015)));
+        }
+
+    SECTION("Numeric passthrough")
+        {
+        CHECK(tep.evaluate("NUMBERVALUE(5)") == 5);
+        CHECK(tep.evaluate("NUMBERVALUE(-5)") == -5);
+        CHECK(tep.evaluate("NUMBERVALUE(2+3)") == 5);
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(pi)"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(3.14159), WITHIN_TYPE_CAST(0.00001)));
+        }
+
+    SECTION("Rejected input")
+        {
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"abc\")")));
+        CHECK(tep.success());
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"12abc\")")));
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"abc12\")")));
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"$42\")")));
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"-\")")));
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\".\")")));
+        // no date/time serial support, unlike Excel's VALUE
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"16:48:00\")")));
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1/1/2026\")")));
+        }
+
+    SECTION("Divergences from Excel that follow from strtod()")
+        {
+        // Excel returns #VALUE! for all of these.
+        // NUMBERVALUE accepts whatever the lexer does, hex literals included (see [hex]).
+        CHECK(tep.evaluate("NUMBERVALUE(\"0x1F\")") == 31);
+        CHECK(tep.evaluate("NUMBERVALUE(\"0X10\")") == 16);
+        CHECK(std::isinf(tep.evaluate("NUMBERVALUE(\"inf\")")));
+        CHECK(std::isinf(tep.evaluate("NUMBERVALUE(\"INFINITY\")")));
+        CHECK(std::isinf(tep.evaluate("NUMBERVALUE(\"-inf\")")));
+        // this one is indistinguishable from the error return
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"nan\")")));
+        CHECK(tep.success());
+        }
+
+    SECTION("Invalid separator arguments")
+        {
+        // the two separators cannot be the same character
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1.5\", \".\", \".\")")));
+        CHECK(tep.success());
+        // an empty separator has no first character to use
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1.5\", \"\")")));
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1.5\", \".\", \"\")")));
+        // separators must be text, not numbers
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1.5\", 1)")));
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1.5\", \".\", 2)")));
+        }
+
+    SECTION("Wrong arity")
+        {
+        CHECK(tep.compile("NUMBERVALUE()"));
+        CHECK(std::isnan(tep.evaluate()));
+        CHECK(tep.compile("NUMBERVALUE(\"1\", \".\", \",\", \"extra\")"));
+        CHECK(std::isnan(tep.evaluate()));
+        }
+
+    SECTION("In larger formulas")
+        {
+        CHECK(tep.evaluate("NUMBERVALUE(\"1,000\") + 1") == 1001);
+        CHECK(tep.evaluate("NUMBERVALUE(\"10\") * NUMBERVALUE(\"20\")") == 200);
+        CHECK(tep.evaluate("SUM(NUMBERVALUE(\"1\"), NUMBERVALUE(\"2\"), NUMBERVALUE(\"3\"))") == 6);
+        CHECK(tep.evaluate("IF(NUMBERVALUE(\"5\") > 3, 100, 200)") == 100);
+        // pow(), not '^', which is XOR under TE_BITWISE_OPERATORS
+        CHECK(tep.evaluate("POW(NUMBERVALUE(\"2\"), NUMBERVALUE(\"3\"))") == 8);
+        CHECK(tep.evaluate("NUMBERVALUE(\"1.5\") + NUMBERVALUE(\"1,5\", \",\")") == 3);
+        }
+
+    SECTION("Folded, since NUMBERVALUE is pure")
+        {
+        CHECK(tep.compile("NUMBERVALUE(\"1,000\")"));
+        CHECK(tep.evaluate() == 1000);
+        CHECK(tep.evaluate() == 1000);
+        }
+
+    SECTION("Unaffected by the parser's own separators")
+        {
+        te_parser euro;
+        euro.set_decimal_separator(',');
+        euro.set_list_separator(';');
+        // the formula uses ';' and ',', but NUMBERVALUE's own defaults do not change
+        CHECK_THAT(euro.evaluate("NUMBERVALUE(\"1.234,56\"; \",\"; \".\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        CHECK_THAT(euro.evaluate("NUMBERVALUE(\"1,234.56\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        }
+
+    SECTION("Listed as a built-in")
+        {
+        const auto report = tep.list_available_functions_and_variables();
+        CHECK(report.find("numbervalue") != std::string::npos);
+        }
+    }
+
+TEST_CASE("String-valued variables are rejected", "[strings]")
+    {
+    // a te_variable can be built from a std::string_view, which the parser has no use for.
+    // If these start succeeding, next_token() lost the else that maps an unusable
+    // variant to TOK_ERROR, and the token is being silently skipped instead.
+    te_parser tep;
+    tep.set_variables_and_functions({ { "sv", std::string_view{ "abc" } } });
+
+    CHECK(std::isnan(tep.evaluate("sv")));
+    CHECK_FALSE(tep.success());
+    CHECK(std::isnan(tep.evaluate("sv + 1")));
+    CHECK_FALSE(tep.success());
+    CHECK(std::isnan(tep.evaluate("SUM(sv, 1)")));
+    CHECK_FALSE(tep.success());
+    // the parser is still usable
+    CHECK(tep.evaluate("1 + 1") == 2);
+    }
+
+TEST_CASE("String arguments with a null context", "[strings][closure]")
+    {
+    // registered without a context object, so the function is handed nullptr
+    te_parser tep;
+    tep.set_variables_and_functions(
+        { { "cellnamed", static_cast<te_arg_confun>(cell_named) } });
+
+    CHECK(std::isnan(tep.evaluate("CELLNAMED(\"first\")")));
+    CHECK(tep.success());
+    CHECK(std::isnan(tep.evaluate("CELLNAMED(\"first\") + 1")));
+    CHECK(tep.success());
+    // and a failed parse over a null context slot is still clean
+    CHECK(std::isnan(tep.evaluate("CELLNAMED(\"first\"")));
+    CHECK_FALSE(tep.success());
+    }
+
+TEST_CASE("String arguments and memory", "[strings][memory]")
+    {
+    te_expr_array teArray{ TE_DEFAULT };
+
+    te_parser tep;
+    tep.set_variables_and_functions({
+        { "strtotal", static_cast<te_arg_fun>(str_total), TE_PURE },
+        { "celloffset", static_cast<te_arg_confun>(cell_offset), TE_DEFAULT, &teArray } });
+
+    SECTION("Arguments already parsed when the call fails")
+        {
+        // each of these builds argument nodes before hitting the error,
+        // so the half-built call has to be freed
+        CHECK(std::isnan(tep.evaluate("STRTOTAL(1, 2, \"a\", 3")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("STRTOTAL(1, 2, \"a")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("STRTOTAL(\"a\", \"b\", \"c\",")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("STRTOTAL(1, 2, 3) +")));
+        CHECK_FALSE(tep.success());
+        // adjacent literals, with no separator between them
+        CHECK(std::isnan(tep.evaluate("STRTOTAL(\"a\" \"b\")")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("STRTOTAL(\"a\", \"b\" \"c\")")));
+        CHECK_FALSE(tep.success());
+        }
+
+    SECTION("Nested calls that fail")
+        {
+        CHECK(std::isnan(tep.evaluate("STRTOTAL(STRTOTAL(\"a\", 1), \"b\"")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("STRTOTAL(STRTOTAL(\"a\", 1), \"b")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("SUM(STRTOTAL(\"a\"), STRTOTAL(\"b\"")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("STRTOTAL(\"a\", CELLOFFSET(\"cell\"")));
+        CHECK_FALSE(tep.success());
+    }
+
+    SECTION("Context function with a half-built argument list")
+        {
+        // the context slot belongs to the caller and must survive the failure
+        CHECK(std::isnan(tep.evaluate("CELLOFFSET(\"cell\", 1, 2")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("CELLOFFSET(\"cell\", 1,")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("CELLOFFSET(\"cell")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("CELLOFFSET(")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("CELLOFFSET")));
+        CHECK_FALSE(tep.success());
+        // the object is untouched and still usable
+        CHECK(tep.evaluate("CELLOFFSET(\"cell\", 0)") == 5);
+        CHECK(teArray.m_data.front() == 5);
+        }
+
+    SECTION("A throwing argument unwinds the half-built call")
+        {
+        // division by zero throws out of optimize(), after the nodes are built
+        CHECK(std::isnan(tep.evaluate("STRTOTAL(\"a\", 1/0)")));
+        CHECK_FALSE(tep.success());
+        CHECK(std::isnan(tep.evaluate("CELLOFFSET(\"cell\", 1/0)")));
+        CHECK_FALSE(tep.success());
+        CHECK(tep.evaluate("STRTOTAL(\"a\", 1)") == 2);
+        }
+
+    SECTION("Folding a large all-literal call frees its children")
+        {
+        std::string expr{ "STRTOTAL(" };
+        for (int i = 0; i < 100; ++i)
+            {
+            expr += (i > 0) ? ", \"ab\"" : "\"ab\"";
+    }
+        expr += ")";
+
+        CHECK(tep.evaluate(expr) == 200);
+        CHECK(tep.success());
+        CHECK(tep.evaluate() == 200);
+        CHECK(tep.evaluate("1+1") == 2);
+        }
+    }
+
+TEST_CASE("String arguments outlive the expression they came from", "[strings][memory]")
+    {
+    // the views point into the parser's own copy of the expression, so a copy
+    // of the parser has to re-point them into its own buffer
+    te_parser copied;
+        {
+        te_parser original;
+        original.set_variables_and_functions(
+            { { "strlive", static_cast<te_arg_fun>(str_len_plus), TE_DEFAULT } });
+        CHECK(original.compile("STRLIVE(\"persistent\")"));
+        CHECK(original.evaluate() == 10);
+        copied = original;
+    }
+
+    // original is gone, along with the buffer its views pointed into
+    lastArgs.clear();
+    CHECK(copied.evaluate() == 10);
+    REQUIRE(lastArgs.size() == 1);
+    CHECK(std::get<std::string_view>(lastArgs[0]) == "persistent");
+    }
 
 TEST_CASE("Benchmarks", "[!benchmark]")
     {

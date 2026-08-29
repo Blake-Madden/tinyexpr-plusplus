@@ -79,6 +79,7 @@ The following are changes from the original TinyExpr C library:
   - `nan`: alias for `na`.
   - `nominal`: returns the nominal annual interest rate, provided the effective rate and the number of compounding periods per year.
   - `nper`: returns the number of periods for an investment.
+  - `numbervalue`: converts text to a number in a locale-independent way, like the *Excel* function.
   - `odd`: returns a value rounded up to the nearest odd integer.
   - `or`: returns true (i.e., non-zero) if any condition is true (accepts 1-24 arguments).
   - `not`: returns logical negation of value.

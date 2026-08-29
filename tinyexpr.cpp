@@ -1781,6 +1781,138 @@ namespace te_builtins
         {
         return val2;
         }
+
+    // Converts text into a number, locale independently.
+    // NaN stands in for Excel's #VALUE! error.
+    [[nodiscard]]
+    static te_type te_numbervalue(std::span<const te_arg> args)
+        {
+        if (args.empty() || args.size() > 3)
+            {
+            return te_parser::te_nan;
+            }
+        // a number converts to itself
+        if (const auto* const num = std::get_if<te_type>(&args[0]); num != nullptr)
+            {
+            return *num;
+            }
+        if (!std::holds_alternative<std::string_view>(args[0]))
+            {
+            return te_parser::te_nan;
+            }
+
+        // only the first character of a separator argument is used
+        const auto getSeparatorArg = [&args](const size_t index, const char defaultSep) -> char
+        {
+            if (index >= args.size())
+                {
+                return defaultSep;
+                }
+            const auto* const sep = std::get_if<std::string_view>(&args[index]);
+            return (sep == nullptr || sep->empty()) ? static_cast<char>(0) : sep->front();
+        };
+
+        const char decimalSep = getSeparatorArg(1, '.');
+        // the default group separator is whichever of '.' and ',' the decimal one isn't
+        const char groupSep = getSeparatorArg(2, (decimalSep == ',') ? '.' : ',');
+        if (decimalSep == 0 || groupSep == 0 || decimalSep == groupSep)
+            {
+            return te_parser::te_nan;
+            }
+
+        // spaces are ignored anywhere in the text, so " 3 000 " is 3000
+        // (spelled out to be locale independent)
+        constexpr std::string_view whitespace{ " \t\n\r" };
+        std::string buffer;
+        buffer.reserve(std::get<std::string_view>(args[0]).length());
+        for (const auto chr : std::get<std::string_view>(args[0]))
+            {
+            if (whitespace.find(chr) == std::string_view::npos)
+                {
+                buffer += chr;
+                }
+            }
+        // an empty string is zero
+        if (buffer.empty())
+            {
+            return static_cast<te_type>(0);
+            }
+
+        // trailing percent signs are cumulative
+        size_t percentCount{ 0 };
+        while (!buffer.empty() && buffer.back() == '%')
+            {
+            ++percentCount;
+            buffer.pop_back();
+            }
+        if (buffer.empty())
+            {
+            return te_parser::te_nan;
+            }
+
+        const auto decimalPos = buffer.find_first_of(decimalSep);
+        // more than one decimal separator is an error
+        if (decimalPos != std::string::npos &&
+            buffer.find_first_of(decimalSep, decimalPos + 1) != std::string::npos)
+            {
+            return te_parser::te_nan;
+            }
+        // a group separator after the decimal separator is an error,
+        // before it is simply ignored
+        if (decimalPos != std::string::npos &&
+            buffer.find_first_of(groupSep, decimalPos) != std::string::npos)
+            {
+            return te_parser::te_nan;
+            }
+
+        // strtod() reads the C locale's decimal point, so rewrite to that, not '.'
+        char nativeDecimalSep{ '.' };
+        if (decimalPos != std::string::npos)
+            {
+            const auto* const localeInfo = std::localeconv();
+            if (localeInfo != nullptr && localeInfo->decimal_point != nullptr &&
+                localeInfo->decimal_point[0] != 0)
+                {
+                nativeDecimalSep = localeInfo->decimal_point[0];
+                }
+            }
+
+        std::string normalized;
+        normalized.reserve(buffer.length());
+        for (const auto chr : buffer)
+            {
+            if (chr == groupSep)
+                {
+                continue;
+                }
+            normalized += (chr == decimalSep) ? nativeDecimalSep : chr;
+            }
+        if (normalized.empty())
+            {
+            return te_parser::te_nan;
+            }
+
+        char* nEnd{ nullptr };
+#ifdef TE_FLOAT
+        const auto result = static_cast<te_type>(std::strtof(normalized.c_str(), &nEnd));
+#elif defined(TE_LONG_DOUBLE)
+        const auto result = static_cast<te_type>(std::strtold(normalized.c_str(), &nEnd));
+#else
+        const auto result = static_cast<te_type>(std::strtod(normalized.c_str(), &nEnd));
+#endif
+        // unlike the lexer, the whole string has to convert
+        if (nEnd != normalized.c_str() + normalized.length())
+            {
+            return te_parser::te_nan;
+            }
+
+        te_type scaled{ result };
+        for (size_t i = 0; i < percentCount; ++i)
+            {
+            scaled /= 100;
+            }
+        return scaled;
+        }
     } // namespace te_builtins
 
 //--------------------------------------------------
@@ -1907,6 +2039,8 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "nper", static_cast<te_fun5>(te_builtins::te_nper),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
     { "npr", static_cast<te_fun2>(te_builtins::te_npr), TE_PURE },
+    // accepts 1-3 arguments
+    { "numbervalue", static_cast<te_arg_fun>(te_builtins::te_numbervalue), TE_PURE },
     { "odd", static_cast<te_fun1>(te_builtins::te_odd), TE_PURE },
     { "or", static_cast<te_fun24>(te_builtins::te_or_variadic),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
