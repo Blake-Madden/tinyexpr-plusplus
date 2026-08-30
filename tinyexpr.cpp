@@ -2,7 +2,7 @@
 /*
  * TINYEXPR - Tiny recursive descent parser and evaluation engine in C
  *
- * Copyright (c) 2015-2020 Lewis Van Winkle
+ * Copyright (c) 2015-2026 Lewis Van Winkle
  *
  * http://CodePlea.com
  *
@@ -1820,54 +1820,54 @@ namespace te_builtins
             return te_parser::te_nan;
             }
 
-        // spaces are ignored anywhere in the text, so " 3 000 " is 3000
-        // (spelled out to be locale independent)
+        // only leading and trailing spaces are ignored; an interior space may be a
+        // group separator (the character list is spelled out to be locale independent)
         constexpr std::string_view WHITESPACE{ " \t\n\r" };
-        std::string buffer;
-        buffer.reserve(std::get<std::string_view>(args[0]).length());
-        for (const auto chr : std::get<std::string_view>(args[0]))
+        std::string_view text{ std::get<std::string_view>(args[0]) };
+        while (!text.empty() && WHITESPACE.find(text.front()) != std::string_view::npos)
             {
-            if (WHITESPACE.find(chr) == std::string_view::npos)
-                {
-                buffer += chr;
-                }
+            text.remove_prefix(1);
             }
         // an empty string is zero
-        if (buffer.empty())
+        if (text.empty())
             {
             return static_cast<te_type>(0);
             }
 
-        // trailing percent signs are cumulative
+        // trailing percent signs are cumulative, and trailing spaces are ignored
         size_t percentCount{ 0 };
-        while (!buffer.empty() && buffer.back() == '%')
+        while (!text.empty() &&
+               (text.back() == '%' || WHITESPACE.find(text.back()) != std::string_view::npos))
             {
-            ++percentCount;
-            buffer.pop_back();
+            if (text.back() == '%')
+                {
+                ++percentCount;
+                }
+            text.remove_suffix(1);
             }
-        if (buffer.empty())
+        if (text.empty())
             {
             return te_parser::te_nan;
             }
 
-        const auto decimalPos = buffer.find_first_of(decimalSep);
+        const auto decimalPos = text.find_first_of(decimalSep);
         // more than one decimal separator is an error
-        if (decimalPos != std::string::npos &&
-            buffer.find_first_of(decimalSep, decimalPos + 1) != std::string::npos)
+        if (decimalPos != std::string_view::npos &&
+            text.find_first_of(decimalSep, decimalPos + 1) != std::string_view::npos)
             {
             return te_parser::te_nan;
             }
         // a group separator after the decimal separator is an error,
         // before it is simply ignored
-        if (decimalPos != std::string::npos &&
-            buffer.find_first_of(groupSep, decimalPos) != std::string::npos)
+        if (decimalPos != std::string_view::npos &&
+            text.find_first_of(groupSep, decimalPos) != std::string_view::npos)
             {
             return te_parser::te_nan;
             }
 
         // strtod() reads the C locale's decimal point, so rewrite to that, not '.'
         char nativeDecimalSep{ '.' };
-        if (decimalPos != std::string::npos)
+        if (decimalPos != std::string_view::npos)
             {
             const auto* const localeInfo = std::localeconv();
             if (localeInfo != nullptr && localeInfo->decimal_point != nullptr &&
@@ -1877,9 +1877,10 @@ namespace te_builtins
                 }
             }
 
+        // strtod() needs a null-terminated buffer, so this is where the copy has to happen
         std::string normalized;
-        normalized.reserve(buffer.length());
-        for (const auto chr : buffer)
+        normalized.reserve(text.length());
+        for (const auto chr : text)
             {
             if (chr == groupSep)
                 {

@@ -1,7 +1,7 @@
 /*
  * TINYEXPR - Tiny recursive descent parser and evaluation engine in C
  *
- * Copyright (c) 2015-2020 Lewis Van Winkle
+ * Copyright (c) 2015-2026 Lewis Van Winkle
  *
  * http://CodePlea.com
  *
@@ -6037,7 +6037,8 @@ TEST_CASE("NUMBERVALUE", "[numbervalue][strings]")
         CHECK_THAT(tep.evaluate("NUMBERVALUE(\"3.5%\")"),
                    Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(0.035)));
         // deliberately lowercase; the parser is case insensitive
-        CHECK(tep.evaluate("numbervalue(\"3 000\")") == 3000);
+        // (unlike Excel, an interior space has to be declared as the group separator)
+        CHECK(tep.evaluate("numbervalue(\"3 000\", \".\", \" \")") == 3000);
         }
 
     SECTION("Plain numbers with default separators")
@@ -6090,15 +6091,41 @@ TEST_CASE("NUMBERVALUE", "[numbervalue][strings]")
         CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"..\")")));
         }
 
-    SECTION("Whitespace is ignored anywhere")
+    SECTION("Only leading and trailing whitespace is ignored")
         {
         CHECK(tep.evaluate("NUMBERVALUE(\"  42  \")") == 42);
-        CHECK(tep.evaluate("NUMBERVALUE(\"4 2\")") == 42);
-        CHECK(tep.evaluate("NUMBERVALUE(\" 3 000 \")") == 3000);
-        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1 234 . 5\")"),
-                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.5)));
+        CHECK(tep.evaluate("NUMBERVALUE(\"\t42\r\n\")") == 42);
+        // spaces between the number and its percent signs are trailing
         CHECK_THAT(tep.evaluate("NUMBERVALUE(\"3.5 %\")"),
                    Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(0.035)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"9 % %\")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(0.0009)));
+        // an interior space is not ignored, it has to be a declared group separator
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"4 2\")")));
+        CHECK(tep.success());
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\" 3 000 \")")));
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1 234 . 5\")")));
+        }
+
+    SECTION("Space as the group separator")
+        {
+        CHECK(tep.evaluate("NUMBERVALUE(\" 3 000 \", \".\", \" \")") == 3000);
+        CHECK(tep.evaluate("NUMBERVALUE(\"1 234 567\", \".\", \" \")") == 1234567);
+        // with a decimal separator as well, which is the point of the space grouping
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1 234.56\", \".\", \" \")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1 234,56\", \",\", \" \")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234.56)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1 234 567,89\", \",\", \" \")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(1234567.89)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\" -1 234,5 \", \",\", \" \")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(-1234.5)));
+        CHECK_THAT(tep.evaluate("NUMBERVALUE(\"1 234,5%\", \",\", \" \")"),
+                   Catch::Matchers::WithinRel(WITHIN_TYPE_CAST(12.345)));
+        // still an error after the decimal separator
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1234,5 6\", \",\", \" \")")));
+        CHECK(tep.success());
+        CHECK(std::isnan(tep.evaluate("NUMBERVALUE(\"1 234.5 6\", \".\", \" \")")));
         }
 
     SECTION("Empty text is zero")

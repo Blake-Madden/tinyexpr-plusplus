@@ -20,6 +20,11 @@ Note the following differences from **Excel**:
 - Escaping a double quote by doubling it (**Excel**'s `""`) is **not** supported.
   A literal is opened by a `"` and closed by the very next `"`.
   A literal cannot contain a double quote at all.
+- `NUMBERVALUE()` only ignores the spaces around its text, while **Excel** ignores them anywhere in it.
+  Polish, Swedish, and French all group with a space, so discarding every space would make `"3 000"` unreadable as three thousand.
+- (Officially they group with a non-breaking space, `U+00A0`, or `U+202F` for French, but a regular space is what gets typed by hand.)
+  Pass the space as the group separator instead: `NUMBERVALUE("3 000", ".", " ")` is `3000`.
+  Note that separators are a single `char`, so a *UTF-8* non-breaking space (`0xC2 0xA0`) cannot be used as one.
 
 Also note that `te_variant_type` now includes `std::string_view` as an alternative.
 If you have your own overload set taking both a string type and a `te_variant_type`, calls with a string literal may now be ambiguous.

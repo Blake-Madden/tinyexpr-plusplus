@@ -278,7 +278,7 @@ const double r = tep.evaluate("mysum(5, 6)");
 
 ## Binding to Functions Accepting Strings
 
-Functions can also accept quoted string literals from a formula (e.g, looking a value up by name):
+Functions can also accept quoted string literals from a formula (e.g., looking a value up by name):
 
 ```
 DBQUERY("/Equipment/Temp", 3)

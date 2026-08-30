@@ -36,7 +36,7 @@ The following built-in functions are available:
 | NAN | Alias for `NA()`. |
 | NCR(Number, NumberChosen) | Alias for `COMBIN()`. |
 | NPR(Number, NumberChosen) | Alias for `PERMUT()`. |
-| NUMBERVALUE(Text, DecimalSeparator, GroupSeparator) | Converts *Text* to a number, independent of the current locale.<br>\linebreak *DecimalSeparator* and *GroupSeparator* are optional and default to `.` and `,`. If only *DecimalSeparator* is given, then *GroupSeparator* defaults to whichever of `.` and `,` it is not.<br>\linebreak Only the first character of a separator is used, and the two cannot be the same.<br>\linebreak Trailing percent signs are cumulative, so `NUMBERVALUE("9%%")` = 0.0009.<br>\linebreak An empty *Text* returns `0`.<br>\linebreak A group separator before the decimal separator is ignored. After it, NaN is returned.<br>\linebreak NaN is also returned if the decimal separator appears more than once, or if *Text* does not fully convert.<br>\linebreak `NUMBERVALUE("2.500,27", ",", ".")` = 2500.27<br>\linebreak `NUMBERVALUE("1,234.56")` = 1234.56<br>\linebreak `NUMBERVALUE("3.5%")` = 0.035 |
+| NUMBERVALUE(Text, DecimalSeparator, GroupSeparator) | Converts *Text* to a number, independent of the current locale.<br>\linebreak *DecimalSeparator* and *GroupSeparator* are optional and default to `.` and `,`. If only *DecimalSeparator* is given, then *GroupSeparator* defaults to whichever of `.` and `,` it is not.<br>\linebreak Only the first character of a separator is used, and the two cannot be the same.<br>\linebreak Trailing percent signs are cumulative, so `NUMBERVALUE("9%%")` = 0.0009.<br>\linebreak An empty *Text* returns `0`.<br>\linebreak A group separator before the decimal separator is ignored. After it, NaN is returned.<br>\linebreak NaN is also returned if the decimal separator appears more than once, or if *Text* does not fully convert.<br>\linebreak Spaces at the start and end of *Text* are ignored, but a space inside it is not (refer to the warning below).<br>\linebreak `NUMBERVALUE("2.500,27", ",", ".")` = 2500.27<br>\linebreak `NUMBERVALUE("1,234.56")` = 1234.56<br>\linebreak `NUMBERVALUE("3.5%")` = 0.035<br>\linebreak `NUMBERVALUE("3 000", ".", " ")` = 3000 |
 | ODD(Number) | Returns *Number* rounded up to the nearest odd integer.<br>\linebreak Values are always rounded away from zero (e.g., `ODD(-4)` = -5). |
 | PERMUT(Number, NumberChosen) | Returns the number of permutations for a given number (*NumberChosen*) of items that can be selected *Number* of items.<br>\linebreak A permutation is any set of items where order is important.<br>\linebreak (This differs from combinations, where order is not important). |
 | POW(Base, Exponent) | Raises *Base* to any power.<br>\linebreak For fractional exponents, *Base* must be greater than 0. |
@@ -57,6 +57,25 @@ Table: Math Functions\index{functions!math}
 `ISNA()` differs from some spreadsheet programs for certain expressions, such as divisions by zero.
 *TinyExpr++* will return true for this situation, while *Excel* will return false.
 This is because *Excel* distinguishes between `#DIV/0!` and `#N/A` errors, while *TinyExpr++* treats all invalid numbers (e.g., NaN, INF, -INF) as NaN.
+:::
+
+::: {.warningsection data-latex=""}
+`NUMBERVALUE()` only ignores the spaces around *Text*, while *Excel* ignores them anywhere in it.
+Polish, Swedish, and French all group with a space, so discarding every space would make `"3 000"` unreadable as three thousand.
+(Officially they group with a non-breaking space, `U+00A0`, or `U+202F` for French, but a regular space is what gets typed by hand.)
+Pass the space as *GroupSeparator* instead:
+
+```
+NUMBERVALUE("3 000")             // NaN
+NUMBERVALUE("3 000", ".", " ")   // 3000
+```
+
+(Trailing spaces are still removed, so `NUMBERVALUE("3.5 %")` is 0.035.)
+:::
+
+::: {.notesection data-latex=""}
+Separators are a single `char`, so a *UTF-8* non-breaking space (`0xC2 0xA0`) cannot be used as one.
+Convert such spaces to a regular one before compiling the formula.
 :::
 
 {{< pagebreak >}}

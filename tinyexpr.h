@@ -2,7 +2,7 @@
 /*
  * TINYEXPR - Tiny recursive descent parser and evaluation engine in C
  *
- * Copyright (c) 2015-2020 Lewis Van Winkle
+ * Copyright (c) 2015-2026 Lewis Van Winkle
  *
  * http://CodePlea.com
  *
@@ -47,8 +47,8 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#ifndef __TINYEXPR_PLUS_PLUS_H__
-#define __TINYEXPR_PLUS_PLUS_H__
+#ifndef TINYEXPR_PLUS_PLUS_H
+#define TINYEXPR_PLUS_PLUS_H
 
 #include <algorithm>
 #include <cassert>
@@ -85,7 +85,7 @@ constexpr int TINYEXPR_CPP_MINOR_VERSION = 2;
 constexpr int TINYEXPR_CPP_PATCH_VERSION = 0;
 constexpr int TINYEXPR_CPP_TWEAK_VERSION = 0;
 #define TINYEXPR_CPP_COPYRIGHT                                                                     \
-    "TinyExpr: Copyright (c) 2015-2020 Lewis Van Winkle\n"                                         \
+    "TinyExpr: Copyright (c) 2015-2026 Lewis Van Winkle\n"                                         \
     "TinyExpr++: Copyright (c) 2020-2026 Blake Madden"
 
 class te_parser;
@@ -1325,4 +1325,4 @@ class te_parser
 #endif
     };
 
-#endif // __TINYEXPR_PLUS_PLUS_H__
+#endif // TINYEXPR_PLUS_PLUS_H
