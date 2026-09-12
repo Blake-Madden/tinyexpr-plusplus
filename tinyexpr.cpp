@@ -1794,6 +1794,7 @@ namespace te_builtins
         return std::get_if<std::string_view>(args.data());
         }
 
+    // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     [[nodiscard]]
     static te_type te_arabic(std::span<const te_arg> args)
         {
@@ -1805,7 +1806,6 @@ namespace te_builtins
             }
         auto romanVal = [](const char romanChar) -> int
         {
-            // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
             switch (romanChar)
                 {
             case 'I':
@@ -1832,7 +1832,6 @@ namespace te_builtins
             default:
                 return -1;
                 }
-            // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
         };
         for (const char romanChar : *romanText)
             {
@@ -1878,9 +1877,9 @@ namespace te_builtins
                 (romanIdx + 1 < romanText->size()) ? romanVal((*romanText)[romanIdx + 1]) : 0;
             if (currVal < nextVal)
                 {
-                if (!((currVal == 1 && (nextVal == 5 || nextVal == 10)) ||
-                      (currVal == 10 && (nextVal == 50 || nextVal == 100)) ||
-                      (currVal == 100 && (nextVal == 500 || nextVal == 1000))))
+                if (!((currVal == 1 && (nextVal == 5 || nextVal == 10))) &&
+                    !((currVal == 10 && (nextVal == 50 || nextVal == 100))) &&
+                    !((currVal == 100 && (nextVal == 500 || nextVal == 1000))))
                     {
                     return te_parser::te_nan;
                     }
@@ -2001,6 +2000,8 @@ namespace te_builtins
         return static_cast<te_type>(static_cast<int64_t>(octValue));
         }
 #endif // !TE_FLOAT
+
+    // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
     // Converts text into a number, locale independently.
     // NaN stands in for Excel's #VALUE! error.
