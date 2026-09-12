@@ -1791,19 +1791,21 @@ namespace te_builtins
             {
             return nullptr;
             }
-        return std::get_if<std::string_view>(&args[0]);
+        return std::get_if<std::string_view>(args.data());
         }
 
     [[nodiscard]]
     static te_type te_arabic(std::span<const te_arg> args)
         {
+        constexpr int MAX_TEXT_LENGTH{ 255 };
         const auto* const romanText = get_single_string_arg(args);
-        if (romanText == nullptr || romanText->empty() || romanText->size() > 255)
+        if (romanText == nullptr || romanText->empty() || romanText->size() > MAX_TEXT_LENGTH)
             {
             return te_parser::te_nan;
             }
         auto romanVal = [](const char romanChar) -> int
         {
+            // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
             switch (romanChar)
                 {
             case 'I':
@@ -1830,6 +1832,7 @@ namespace te_builtins
             default:
                 return -1;
                 }
+            // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
         };
         for (const char romanChar : *romanText)
             {
