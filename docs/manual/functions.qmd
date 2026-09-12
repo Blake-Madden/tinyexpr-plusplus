@@ -6,6 +6,7 @@ The following built-in functions are available:
 | :-- | :-- |
 | ABS(Number) | Absolute value of *Number*. |
 | ACOS(Number) | Returns the arccosine, or inverse cosine, of *Number*. The arccosine is the angle whose cosine is number.<br>\linebreak The returned angle is given in radians in the range `0` (zero) to `PI`. |
+| ARABIC(Text) | Converts a Roman numeral (*Text*) to a number, like the *Excel* function.<br>\linebreak *Text* is case-insensitive.<br>\linebreak An invalid or malformed numeral returns NaN.<br>\linebreak `ARABIC("MCMXCIX")` = 1999 |
 | ASIN(Number) | Returns the arcsine, or inverse sine function, of *Number*, where -1 <= *Number* <= 1. The arcsine is the angle whose sine is *Number*. The returned angle is given in radians where -pi/2 <= angle <= pi/2. |
 | ATAN(x) | Returns the principal value of the arc tangent of *x*, expressed in radians. |
 | ATAN2(y, x) | Returns the principal value of the arc tangent of *y*,*x*, expressed in radians. |
@@ -54,6 +55,21 @@ The following built-in functions are available:
 Table: Math Functions\index{functions!math}
 
 ::: {.warningsection data-latex=""}
+`ARABIC()` is stricter than some spreadsheet programs, which accept malformed Roman numerals.
+For example, other programs may return `99` for `ARABIC("IC")`, even though `I` cannot subtract from `C`.
+*TinyExpr++* returns NaN for that, since it is not a properly formed Roman numeral.
+A numeral is only accepted if:
+
+- It uses only the letters `I`, `V`, `X`, `L`, `C`, `D`, and `M` (case-insensitive).
+- `I`, `X`, and `C` repeat no more than four times in a row (e.g., `IIII`, `XXXX`, `CCCC`).
+  This is an additive form for 4, 40, and 400 that remains common alongside the subtractive one.
+  `M` repeats no more than three times, since a fourth would exceed the largest representable numeral, `3999` (`MMMCMXCIX`).
+  `V`, `L`, and `D` never repeat.
+- Subtraction is only allowed for `I` before `V`/`X`, `X` before `L`/`C`, and `C` before `D`/`M`.
+- A repeated numeral cannot immediately precede a subtractive pair (e.g., `IIX`).
+:::
+
+::: {.warningsection data-latex=""}
 `ISNA()` differs from some spreadsheet programs for certain expressions, such as divisions by zero.
 *TinyExpr++* will return true for this situation, while *Excel* will return false.
 This is because *Excel* distinguishes between `#DIV/0!` and `#N/A` errors, while *TinyExpr++* treats all invalid numbers (e.g., NaN, INF, -INF) as NaN.
@@ -82,6 +98,7 @@ Convert such spaces to a regular one before compiling the formula.
 
 | Function | Description |
 | :-- | :-- |
+| BIN2DEC(Text) | Converts a binary string (*Text*) to a number, like the *Excel* function.<br>\linebreak *Text* may be up to 10 digits and is read as two's complement.<br>\linebreak `BIN2DEC("1111111111")` = -1 |
 | BITAND(Number1, Number2) | Returns a bitwise 'AND' of two (integral) numbers.<br>\linebreak (Both numbers must be positive and cannot exceed `(2^48)-1`.) |
 | BITLROTATE8(Number, RotateAmount) | Returns *Number* left rotated to the most significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak Numbers are rotated as an unsigned 8-bit integer. |
 | BITLROTATE16(Number, RotateAmount) | Returns *Number* left rotated to the most significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak Numbers are rotated as an unsigned 16-bit integer. |
@@ -102,13 +119,15 @@ Convert such spaces to a regular one before compiling the formula.
 | BITRROTATE(Number, RotateAmount) | Returns *Number* right rotated to the least significant bit by the specified number (*RotateAmount*) of bits.<br>\linebreak Numbers are rotated as either a 32- or 64-bit integer (depending on what is supported by the compiler). |
 | BITRSHIFT(Number, ShiftAmount) | Returns *Number* right shifted by the specified number (*ShiftAmount*) of bits.<br>\linebreak Numbers cannot exceed `(2^48)-1` and *ShiftAmount* cannot exceed `53` (or `63`, if 64-bit is supported). |
 | BITXOR(Number1, Number2) | Returns a bitwise 'XOR' of two (integral) numbers.<br>\linebreak (Both numbers must be positive and cannot exceed `(2^48)-1`.) |
+| HEX2DEC(Text) | Converts a hexadecimal string (*Text*) to a number, like the *Excel* function.<br>\linebreak *Text* may be up to 10 digits and is read as two's complement.<br>\linebreak `HEX2DEC("FFFFFFFFFF")` = -1 |
+| OCT2DEC(Text) | Converts an octal string (*Text*) to a number, like the *Excel* function.<br>\linebreak *Text* may be up to 10 digits and is read as two's complement.<br>\linebreak `OCT2DEC("7777777777")` = -1 |
 | SUPPORTS32BIT() | Returns true if 32-bit integers are supported.<br>\linebreak This will affect the supported range of values for bitwise operations. |
 | SUPPORTS64BIT() | Returns true if 64-bit integers are supported.<br>\linebreak This will affect the supported range of values for bitwise operations. |
 
 Table: Engineering Functions\index{functions!engineering}
 
 ::: {.warningsection data-latex=""}
-Defining `TE_FLOAT` will disable all bitwise functions and operators.
+Defining `TE_FLOAT` will disable all bitwise functions and operators, along with `BIN2DEC()`, `HEX2DEC()`, and `OCT2DEC()`.
 :::
 
 {{< pagebreak >}}

@@ -1782,6 +1782,223 @@ namespace te_builtins
         return val2;
         }
 
+    // Extracts the sole string argument shared by the single-argument text builtins.
+    // Returns nullptr when the arity or argument type is wrong.
+    [[nodiscard]]
+    static const std::string_view* get_single_string_arg(std::span<const te_arg> args)
+        {
+        if (args.size() != 1)
+            {
+            return nullptr;
+            }
+        return std::get_if<std::string_view>(&args[0]);
+        }
+
+    [[nodiscard]]
+    static te_type te_arabic(std::span<const te_arg> args)
+        {
+        const auto* const romanText = get_single_string_arg(args);
+        if (romanText == nullptr || romanText->empty() || romanText->size() > 255)
+            {
+            return te_parser::te_nan;
+            }
+        auto romanVal = [](const char romanChar) -> int
+        {
+            switch (romanChar)
+                {
+            case 'I':
+            case 'i':
+                return 1;
+            case 'V':
+            case 'v':
+                return 5;
+            case 'X':
+            case 'x':
+                return 10;
+            case 'L':
+            case 'l':
+                return 50;
+            case 'C':
+            case 'c':
+                return 100;
+            case 'D':
+            case 'd':
+                return 500;
+            case 'M':
+            case 'm':
+                return 1000;
+            default:
+                return -1;
+                }
+        };
+        for (const char romanChar : *romanText)
+            {
+            if (romanVal(romanChar) < 0)
+                {
+                return te_parser::te_nan;
+                }
+            }
+        size_t repeatCount{ 1 };
+        for (size_t romanIdx = 1; romanIdx < romanText->size(); ++romanIdx)
+            {
+            // compare numeric values (not raw chars) so mixed-case repeats
+            // (e.g., "Vv", "IiIi") are validated the same as single-case ones
+            const int repeatVal = romanVal((*romanText)[romanIdx]);
+            if (repeatVal == romanVal((*romanText)[romanIdx - 1]))
+                {
+                ++repeatCount;
+                if (repeatVal == 5 || repeatVal == 50 || repeatVal == 500)
+                    {
+                    return te_parser::te_nan;
+                    }
+                // I, X, and C may repeat a 4th time (e.g., "IIII", "XXXX", "CCCC"),
+                // an additive form for 4/40/400 that remains common alongside the
+                // subtractive one. M is capped at 3, as a 4th would exceed the
+                // largest representable numeral, 3999 ("MMMCMXCIX")
+                const size_t maxRepeats{ (repeatVal == 1000) ? static_cast<size_t>(3) :
+                                                               static_cast<size_t>(4) };
+                if (repeatCount > maxRepeats)
+                    {
+                    return te_parser::te_nan;
+                    }
+                }
+            else
+                {
+                repeatCount = 1;
+                }
+            }
+        te_type total{ 0 };
+        for (size_t romanIdx = 0; romanIdx < romanText->size(); ++romanIdx)
+            {
+            const int currVal = romanVal((*romanText)[romanIdx]);
+            const int nextVal =
+                (romanIdx + 1 < romanText->size()) ? romanVal((*romanText)[romanIdx + 1]) : 0;
+            if (currVal < nextVal)
+                {
+                if (!((currVal == 1 && (nextVal == 5 || nextVal == 10)) ||
+                      (currVal == 10 && (nextVal == 50 || nextVal == 100)) ||
+                      (currVal == 100 && (nextVal == 500 || nextVal == 1000))))
+                    {
+                    return te_parser::te_nan;
+                    }
+                if (romanIdx > 0 && romanVal((*romanText)[romanIdx - 1]) == currVal)
+                    {
+                    return te_parser::te_nan;
+                    }
+                total -= static_cast<te_type>(currVal);
+                }
+            else
+                {
+                total += static_cast<te_type>(currVal);
+                }
+            }
+        return total;
+        }
+
+// HEX2DEC/BIN2DEC/OCT2DEC can return integers larger than 2^24, which a 32-bit
+// float (TE_FLOAT) cannot represent exactly. Like the bitwise builtins, these
+// are excluded when the parser's data type is float.
+#ifndef TE_FLOAT
+    [[nodiscard]]
+    static te_type te_hex2dec(std::span<const te_arg> args)
+        {
+        const auto* const hexText = get_single_string_arg(args);
+        if (hexText == nullptr || hexText->empty() || hexText->size() > 10)
+            {
+            return te_parser::te_nan;
+            }
+        auto hexVal = [](const char hexChar) -> int
+        {
+            if (hexChar >= '0' && hexChar <= '9')
+                {
+                return hexChar - '0';
+                }
+            if (hexChar >= 'A' && hexChar <= 'F')
+                {
+                return hexChar - 'A' + 10;
+                }
+            if (hexChar >= 'a' && hexChar <= 'f')
+                {
+                return hexChar - 'a' + 10;
+                }
+            return -1;
+        };
+        uint64_t hexValue{ 0 };
+        for (const char hexChar : *hexText)
+            {
+            const int digit = hexVal(hexChar);
+            if (digit < 0)
+                {
+                return te_parser::te_nan;
+                }
+            hexValue = (hexValue << 4) | static_cast<uint64_t>(digit);
+            }
+        if (hexText->size() == 10)
+            {
+            constexpr uint64_t LIMIT{ uint64_t{ 1 } << 40 };
+            constexpr uint64_t HALF{ uint64_t{ 1 } << 39 };
+            if (hexValue >= HALF)
+                {
+                hexValue = hexValue - LIMIT;
+                }
+            }
+        return static_cast<te_type>(static_cast<int64_t>(hexValue));
+        }
+
+    [[nodiscard]]
+    static te_type te_bin2dec(std::span<const te_arg> args)
+        {
+        const auto* const binText = get_single_string_arg(args);
+        if (binText == nullptr || binText->empty() || binText->size() > 10)
+            {
+            return te_parser::te_nan;
+            }
+        uint64_t binValue{ 0 };
+        for (const char binChar : *binText)
+            {
+            if (binChar != '0' && binChar != '1')
+                {
+                return te_parser::te_nan;
+                }
+            binValue = (binValue << 1) | static_cast<uint64_t>(binChar - '0');
+            }
+        if (binText->size() == 10 && (*binText)[0] == '1')
+            {
+            binValue -= (uint64_t{ 1 } << 10);
+            }
+        return static_cast<te_type>(static_cast<int64_t>(binValue));
+        }
+
+    [[nodiscard]]
+    static te_type te_oct2dec(std::span<const te_arg> args)
+        {
+        const auto* const octText = get_single_string_arg(args);
+        if (octText == nullptr || octText->empty() || octText->size() > 10)
+            {
+            return te_parser::te_nan;
+            }
+        uint64_t octValue{ 0 };
+        for (const char octChar : *octText)
+            {
+            if (octChar < '0' || octChar > '7')
+                {
+                return te_parser::te_nan;
+                }
+            octValue = (octValue << 3) | static_cast<uint64_t>(octChar - '0');
+            }
+        if (octText->size() == 10)
+            {
+            constexpr uint64_t HALF{ uint64_t{ 1 } << 29 };
+            constexpr uint64_t LIMIT{ uint64_t{ 1 } << 30 };
+            if (octValue >= HALF)
+                {
+                octValue = octValue - LIMIT;
+                }
+            }
+        return static_cast<te_type>(static_cast<int64_t>(octValue));
+        }
+#endif // !TE_FLOAT
+
     // Converts text into a number, locale independently.
     // NaN stands in for Excel's #VALUE! error.
     [[nodiscard]]
@@ -1956,12 +2173,14 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     // variadic, accepts 1-24 arguments
     { "and", static_cast<te_fun24>(te_builtins::te_and_variadic),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
+    { "arabic", static_cast<te_arg_fun>(te_builtins::te_arabic), TE_PURE },
     { "asin", static_cast<te_fun1>(te_builtins::te_asin), TE_PURE },
     { "atan", static_cast<te_fun1>(te_builtins::te_atan), TE_PURE },
     { "atan2", static_cast<te_fun2>(te_builtins::te_atan2), TE_PURE },
     { "average", static_cast<te_fun24>(te_builtins::te_average),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
 #ifndef TE_FLOAT
+    { "bin2dec", static_cast<te_arg_fun>(te_builtins::te_bin2dec), TE_PURE },
     { "bitand", static_cast<te_fun2>(te_builtins::te_bitwise_and), TE_PURE },
     { "bitor", static_cast<te_fun2>(te_builtins::te_bitwise_or), TE_PURE },
     #if __cplusplus >= 202002L
@@ -2014,6 +2233,9 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "floor", static_cast<te_fun1>(te_builtins::te_floor), TE_PURE },
     { "fv", static_cast<te_fun5>(te_builtins::te_fv),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },
+#ifndef TE_FLOAT
+    { "hex2dec", static_cast<te_arg_fun>(te_builtins::te_hex2dec), TE_PURE },
+#endif
     { "iserr", static_cast<te_fun1>(te_builtins::te_is_nan), TE_PURE },
     { "iserror", static_cast<te_fun1>(te_builtins::te_is_nan), TE_PURE },
     { "iseven", static_cast<te_fun1>(te_builtins::te_is_even), TE_PURE },
@@ -2043,6 +2265,9 @@ const std::set<te_variable> te_parser::m_functions = { // NOLINT
     { "npr", static_cast<te_fun2>(te_builtins::te_npr), TE_PURE },
     // accepts 1-3 arguments
     { "numbervalue", static_cast<te_arg_fun>(te_builtins::te_numbervalue), TE_PURE },
+#ifndef TE_FLOAT
+    { "oct2dec", static_cast<te_arg_fun>(te_builtins::te_oct2dec), TE_PURE },
+#endif
     { "odd", static_cast<te_fun1>(te_builtins::te_odd), TE_PURE },
     { "or", static_cast<te_fun24>(te_builtins::te_or_variadic),
       static_cast<te_variable_flags>(TE_PURE | TE_VARIADIC) },

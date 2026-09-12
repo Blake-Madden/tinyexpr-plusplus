@@ -6256,6 +6256,223 @@ TEST_CASE("NUMBERVALUE", "[numbervalue][strings]")
         }
     }
 
+TEST_CASE("ARABIC", "[arabic][strings]")
+    {
+    te_parser tep;
+    SECTION("Excel examples")
+        {
+        CHECK(tep.evaluate(R"(ARABIC("XIV"))") == 14);
+        CHECK(tep.evaluate(R"(ARABIC("MMXXVI"))") == 2026);
+        CHECK(tep.evaluate(R"(ARABIC("IV"))") == 4);
+        CHECK(tep.evaluate(R"(ARABIC("CCXLVI"))") == 246);
+        CHECK(tep.evaluate(R"(ARABIC("DCCLXXXIX"))") == 789);
+        CHECK(tep.evaluate(R"(ARABIC("MMCDXXI"))") == 2'421);
+        CHECK(tep.evaluate(R"(ARABIC("MLXVI"))") == 1'066);
+        CHECK(tep.evaluate(R"(ARABIC("MDCCLXXVI"))") == 1776);
+        CHECK(tep.evaluate(R"(ARABIC("MMXXVI"))") == 2026);
+        // odd forms, but used historically
+        CHECK(tep.evaluate(R"(ARABIC("MDCDIII"))") == 1903);
+        CHECK(tep.evaluate(R"(ARABIC("MDCCCCX"))") == 1910);
+        }
+    SECTION("Basic")
+        {
+        CHECK(tep.evaluate(R"(ARABIC("I"))") == 1);
+        CHECK(tep.evaluate(R"(ARABIC("X"))") == 10);
+        CHECK(tep.evaluate(R"(ARABIC("MCMXCIX"))") == 1999);
+        CHECK(tep.evaluate(R"(ARABIC("LVIII"))") == 58);
+        }
+    SECTION("Invalid -> NaN")
+        {
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("ABC"))")));
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("VX"))")));
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("IC"))")));
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC(""))")));
+        CHECK(std::isnan(tep.evaluate("ARABIC()")));
+        CHECK(tep.success());
+        }
+    SECTION("Invalid repeats -> NaN")
+        {
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("VV"))")));      // V never repeats
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("LL"))")));      // L never repeats
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("DD"))")));      // D never repeats
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("IIIII"))")));   // more than 4 I
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("XXXXX"))")));   // more than 4 X
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("CCCCC"))")));   // more than 4 C
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("MMMM"))")));    // more than 3 M
+        CHECK(tep.success());
+        }
+    SECTION("4th-repeat additive form (I, X, C only)")
+        {
+        // an additive 4th repeat is accepted for I, X, C (e.g., clock faces
+        // using "IIII" for four); M has no such allowance since a 4th M would
+        // exceed the largest representable numeral, 3999 ("MMMCMXCIX")
+        CHECK(tep.evaluate(R"(ARABIC("IIII"))") == 4);
+        CHECK(tep.evaluate(R"(ARABIC("XXXX"))") == 40);
+        CHECK(tep.evaluate(R"(ARABIC("CCCC"))") == 400);
+        }
+    SECTION("Invalid subtractive notation -> NaN")
+        {
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("IL"))")));      // I only subtracts from V, X
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("IM"))")));
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("XM"))")));      // X only subtracts from L, C
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("IIX"))")));     // repeated numeral before a subtraction
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("XXC"))")));
+        CHECK(tep.success());
+        }
+    SECTION("Subtractive notation at each magnitude")
+        {
+        CHECK(tep.evaluate(R"(ARABIC("IX"))") == 9);
+        CHECK(tep.evaluate(R"(ARABIC("XL"))") == 40);
+        CHECK(tep.evaluate(R"(ARABIC("XC"))") == 90);
+        CHECK(tep.evaluate(R"(ARABIC("CD"))") == 400);
+        CHECK(tep.evaluate(R"(ARABIC("CM"))") == 900);
+        CHECK(tep.evaluate(R"(ARABIC("MMMCMXCIX"))") == 3999);
+        CHECK(tep.evaluate(R"(ARABIC("cm"))") == 900);
+        }
+    SECTION("In formulas / pure")
+        {
+        CHECK(tep.evaluate(R"(ARABIC("X") + ARABIC("I"))") == 11);
+        CHECK(tep.compile(R"(ARABIC("IV"))"));
+        CHECK(tep.evaluate() == 4);
+        }
+    SECTION("Edge - case-insensitive and limits")
+        {
+        CHECK(tep.evaluate(R"(ARABIC("xiv"))") == 14);
+        CHECK(tep.evaluate(R"(ARABIC("M"))") == 1000);
+        CHECK(tep.evaluate(R"(ARABIC("MMM"))") == 3000);
+        }
+    SECTION("Mixed-case malformed -> NaN")
+        {
+        // validation is case-insensitive: mixed-case repeats are rejected
+        // exactly as their single-case equivalents ("VV", "LL", "DD")
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("Vv"))")));
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("vV"))")));
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("Ll"))")));
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("dD"))")));
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("IiIiI"))")));   // more than 4 I
+        CHECK(std::isnan(tep.evaluate(R"(ARABIC("XxXxX"))")));   // more than 4 X
+        CHECK(tep.success());
+        }
+    SECTION("Mixed-case 4th-repeat additive form")
+        {
+        CHECK(tep.evaluate(R"(ARABIC("IiIi"))") == 4);
+        CHECK(tep.evaluate(R"(ARABIC("XxXx"))") == 40);
+        }
+    SECTION("Listed")
+        {
+        CHECK(tep.list_available_functions_and_variables().find("arabic") != std::string::npos);
+        }
+    }
+
+// HEX2DEC/BIN2DEC/OCT2DEC are not registered under TE_FLOAT (values can exceed
+// a 32-bit float's exact integer range).
+#ifndef TE_FLOAT
+TEST_CASE("HEX2DEC", "[hex2dec][strings]")
+    {
+    te_parser tep;
+    SECTION("Excel examples")
+        {
+        CHECK(tep.evaluate(R"(HEX2DEC("A5"))") == 165);
+        CHECK(tep.evaluate(R"(HEX2DEC("FFFFFFFF00"))") == -256);
+        }
+    SECTION("Basic")
+        {
+        CHECK(tep.evaluate(R"(HEX2DEC("FF"))") == 255);
+        CHECK(tep.evaluate(R"(HEX2DEC("ff"))") == 255);
+        CHECK(tep.evaluate(R"(HEX2DEC("0"))") == 0);
+        }
+    SECTION("Invalid -> NaN")
+        {
+        CHECK(std::isnan(tep.evaluate(R"(HEX2DEC("GG"))")));
+        CHECK(std::isnan(tep.evaluate(R"(HEX2DEC("FFFFFFFFFFF"))")));
+        CHECK(std::isnan(tep.evaluate(R"(HEX2DEC(""))")));
+        CHECK(std::isnan(tep.evaluate("HEX2DEC()")));
+        CHECK(tep.success());
+        }
+    SECTION("Edge")
+        {
+        CHECK(tep.evaluate(R"(HEX2DEC("00FF"))") == 255);
+        CHECK(tep.evaluate(R"(HEX2DEC("8000000000"))") == -549755813888);   // sign bit set exactly
+        CHECK(tep.evaluate(R"(HEX2DEC("7FFFFFFFFF"))") == 549755813887);    // largest positive (10 digits)
+        CHECK(tep.evaluate(R"(HEX2DEC("FFFFFFFFFF"))") == -1);              // all ones (10 digits)
+        CHECK(tep.evaluate(R"(HEX2DEC("0000000001"))") == 1);               // 10 digits, sign bit clear
+        }
+    SECTION("Wrong arity / type -> NaN")
+        {
+        CHECK(std::isnan(tep.evaluate("HEX2DEC(255)")));
+        CHECK(std::isnan(tep.evaluate(R"(HEX2DEC("FF","00"))")));
+        CHECK(std::isnan(tep.evaluate(R"(HEX2DEC(" FF"))")));               // whitespace is not a hex digit
+        CHECK(tep.success());
+        }
+    SECTION("Listed")
+        {
+        CHECK(tep.list_available_functions_and_variables().find("hex2dec") != std::string::npos);
+        }
+    }
+
+TEST_CASE("BIN2DEC", "[bin2dec][strings]")
+    {
+    te_parser tep;
+    SECTION("Basic")
+        {
+        CHECK(tep.evaluate(R"(BIN2DEC("1010"))") == 10);
+        CHECK(tep.evaluate(R"(BIN2DEC("1111111111"))") == -1);
+        CHECK(tep.evaluate(R"(BIN2DEC("0"))") == 0);
+        }
+    SECTION("Invalid -> NaN")
+        {
+        CHECK(std::isnan(tep.evaluate(R"(BIN2DEC("102"))")));
+        CHECK(std::isnan(tep.evaluate(R"(BIN2DEC("11111111111"))")));
+        CHECK(std::isnan(tep.evaluate(R"(BIN2DEC(""))")));
+        CHECK(std::isnan(tep.evaluate("BIN2DEC()")));
+        CHECK(std::isnan(tep.evaluate("BIN2DEC(1010)")));
+        CHECK(std::isnan(tep.evaluate(R"(BIN2DEC("10","01"))")));
+        CHECK(tep.success());
+        }
+    SECTION("Edge")
+        {
+        CHECK(tep.evaluate(R"(BIN2DEC("1111111110"))") == -2);
+        CHECK(tep.evaluate(R"(BIN2DEC("1000000000"))") == -512);
+        CHECK(tep.evaluate(R"(BIN2DEC("0111111111"))") == 511);
+        }
+    SECTION("Listed")
+        {
+        CHECK(tep.list_available_functions_and_variables().find("bin2dec") != std::string::npos);
+        }
+    }
+
+TEST_CASE("OCT2DEC", "[oct2dec][strings]")
+    {
+    te_parser tep;
+    SECTION("Basic")
+        {
+        CHECK(tep.evaluate(R"(OCT2DEC("77"))") == 63);
+        CHECK(tep.evaluate(R"(OCT2DEC("7777777777"))") == -1);
+        CHECK(tep.evaluate(R"(OCT2DEC("0"))") == 0);
+        }
+    SECTION("Invalid -> NaN")
+        {
+        CHECK(std::isnan(tep.evaluate(R"(OCT2DEC("89"))")));
+        CHECK(std::isnan(tep.evaluate(R"(OCT2DEC("77777777777"))")));
+        CHECK(std::isnan(tep.evaluate(R"(OCT2DEC(""))")));
+        CHECK(std::isnan(tep.evaluate("OCT2DEC()")));
+        CHECK(std::isnan(tep.evaluate("OCT2DEC(77)")));
+        CHECK(std::isnan(tep.evaluate(R"(OCT2DEC("7","7"))")));
+        CHECK(tep.success());
+        }
+    SECTION("Edge")
+        {
+        CHECK(tep.evaluate(R"(OCT2DEC("7777777776"))") == -2);
+        CHECK(tep.evaluate(R"(OCT2DEC("4000000000"))") == -536870912);
+        CHECK(tep.evaluate(R"(OCT2DEC("3777777777"))") == 536870911);
+        }
+    SECTION("Listed")
+        {
+        CHECK(tep.list_available_functions_and_variables().find("oct2dec") != std::string::npos);
+        }
+    }
+#endif // !TE_FLOAT
+
 TEST_CASE("String-valued variables are rejected", "[strings]")
     {
     // a te_variable can be built from a std::string_view, which the parser has no use for.

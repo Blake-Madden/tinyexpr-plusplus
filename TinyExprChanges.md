@@ -40,7 +40,9 @@ The following are changes from the original TinyExpr C library:
 - Added support for custom handlers to resolve unknown variables.
 - Added new built-in functions:
   - `and`: returns true (i.e., non-zero) if all conditions are true (accepts 1-24 arguments).
+  - `arabic`: converts a Roman numeral string to a number, like the *Excel* function.
   - `average`: returns the mean for a range of values (accepts 1-24 arguments).
+  - `bin2dec`: converts a binary string to a number, like the *Excel* function.
   - `bitand`: bitwise AND.
   - `bitlrotate`: bitwise left rotate. Versions of this are available for 8-, 16-, 32-, and 64-bit integers (if supported by the platform).
   - `bitlshift`: left shift.
@@ -62,6 +64,7 @@ The following are changes from the original TinyExpr C library:
   - `fact`: alias for `fac()`, like the *Excel* function.
   - `false`: returns `false` (i.e., `0`) in a boolean expression.
   - `fv`: returns the future value of an investment.
+  - `hex2dec`: converts a hexadecimal string to a number, like the *Excel* function.
   - `ipmt`: returns the interest portion of a payment for a specified period of an investment.
   - `iserr`: returns true if an expression evaluates to NaN.
   - `iserror`: alias for `iserr`.
@@ -80,6 +83,7 @@ The following are changes from the original TinyExpr C library:
   - `nominal`: returns the nominal annual interest rate, provided the effective rate and the number of compounding periods per year.
   - `nper`: returns the number of periods for an investment.
   - `numbervalue`: converts text to a number in a locale-independent way, like the *Excel* function.
+  - `oct2dec`: converts an octal string to a number, like the *Excel* function.
   - `odd`: returns a value rounded up to the nearest odd integer.
   - `or`: returns true (i.e., non-zero) if any condition is true (accepts 1-24 arguments).
   - `not`: returns logical negation of value.
