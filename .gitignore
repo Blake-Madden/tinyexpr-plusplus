@@ -1,4 +1,4 @@
-﻿/tests/.vs
+/tests/.vs
 /tests/bin/
 /tests/out/
 /.vs
@@ -23,4 +23,4 @@ CMakeSettings.json
 /docs/search.json
 /docs/technical-overview_files/figure-pdf
 /docs/images/cover.png
-/docs/manual
+/docs/manual/site_libs

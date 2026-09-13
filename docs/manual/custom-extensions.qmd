@@ -124,7 +124,9 @@ tep.set_variables_and_functions(
 
 const auto r = tep.evaluate(R"(DBQUERY("/Equipment/Temp", 3))");
 ```
+:::
 
+::: {.minipage data-latex="{\textwidth}"}
 Note the cast to `te_arg_fun`; this tells the compiler which of the function types to bind to.
 
 A `te_arg_confun` receives a client object as its first argument, exactly like the `te_confun0`--`te_confun24` functions described in [Binding to Custom Classes](#custom-classes):

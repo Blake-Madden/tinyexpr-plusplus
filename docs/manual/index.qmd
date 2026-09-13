@@ -3,11 +3,7 @@
 
 if (!require("pacman")) install.packages("pacman")
 library(pacman)
-pacman::p_load(DiagrammeR, webshot)
-if (!webshot::is_phantomjs_installed())
-  {
-  webshot::install_phantomjs()
-  }
+pacman::p_load(DiagrammeR, DiagrammeRsvg, rsvg, digest)
 ```
 
 ::: {.content-visible when-format="html"}
@@ -42,6 +38,7 @@ It's open-source, free, easy-to-use, and self-contained in a single source and h
 - Can add a custom handler to resolve unknown variables.
 - Can bind constants at eval-time.
 - Supports variadic functions (taking between 1–24 arguments).
+- Supports functions that accept quoted string arguments (e.g., `DBQUERY("/Equipment/Temp")`).
 - Case-insensitive formulas.
   End-user expressions are evaluated without regard to case.
 - Supports non-US formulas (e.g., `POW(2,2; 2)` instead of `POW(2.2, 2)`).
