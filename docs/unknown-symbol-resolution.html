@@ -370,7 +370,7 @@ div.csl-indent {
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Create a handler for undefined tokens that will recognize</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">// dynamic strings like "FY2004" or "FY1997" and convert them to 2004 and 1997.</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>tep<span class="op">.</span>set_unknown_symbol_resolver<span class="op">(</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Handler should except a string (which will be the unrecognized token)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Handler should accept a string (which will be the unrecognized token)</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// and return a te_type.</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">[](</span><span class="bu">std::</span>string_view str<span class="op">)</span> <span class="op">-&gt;</span> <span class="dt">te_type</span></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>

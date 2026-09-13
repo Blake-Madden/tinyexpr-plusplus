@@ -82,7 +82,7 @@ div.csl-indent {
 
 <link href="site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
 
-<script src="site_libs/grViz-binding-1.0.11/grViz.js"></script>
+<script src="site_libs/grViz-binding-1.0.12/grViz.js"></script>
 
 
 
@@ -298,15 +298,15 @@ div.csl-indent {
 <p><code>te_parser::evaluate()</code> uses a simple recursive descent parser to compile your expression into a syntax tree. For example, the expression <code>"sin x + 1/4"</code> parses as:</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-5d2d794c9980d0a90980" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-5d2d794c9980d0a90980">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"÷\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n  node5 [label = \"1\", style=filled, fillcolor = \"#add8e6\"]\n  node6 [label = \"4\", style=filled, fillcolor = \"#add8e6\"]\n  \n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  node3 -> node5\n  node3 -> node6\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-efe39c072e6d83f43e90" style="width:50%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-efe39c072e6d83f43e90">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"÷\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n  node5 [label = \"1\", style=filled, fillcolor = \"#add8e6\"]\n  node6 [label = \"4\", style=filled, fillcolor = \"#add8e6\"]\n  \n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  node3 -> node5\n  node3 -> node6\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p><code>te_parser::evaluate()</code> also automatically prunes constant branches. In this example, the compiled expression returned by <code>compile()</code> would become:</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-e030c04f6658a9d543e3" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-e030c04f6658a9d543e3">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = oval]        \n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"0.25\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n\n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-c09c1a99b82e6c86b85b" style="width:50%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-c09c1a99b82e6c86b85b">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n\n  node [shape = oval]\n  node1 [label = \"+\"]\n  node2 [label = \"sin\"]\n  node3 [label =  \"0.25\", style=filled, fillcolor = \"#add8e6\"]\n  node4 [label = \"x\"]\n\n  # edge definitions with the node IDs\n  node1 -> node2 -> node4\n  node1 -> node3\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <section id="grammar" class="level2 unnumbered">
@@ -314,18 +314,23 @@ div.csl-indent {
 <p><em>TinyExpr++</em> parses the following grammar (from lowest-to-highest operator precedence):</p>
 <pre><code>&lt;list&gt;      =    &lt;expr&gt; {(",", ";" [dependent on locale]) &lt;expr&gt;}
 &lt;expr&gt;      =    &lt;term&gt; {("&amp;" | "|") &lt;term&gt;}
-&lt;expr&gt;      =    &lt;term&gt; {("&lt;&gt;" | "!=" | "=" | "&lt;") | "&lt;=" | "&gt;" | "&gt;=") &lt;term&gt;}
+&lt;expr&gt;      =    &lt;term&gt; {("&lt;&gt;" | "!=" | "=" | "&lt;" | "&lt;=" | "&gt;" | "&gt;=") &lt;term&gt;}
 &lt;expr&gt;      =    &lt;term&gt; {("&lt;&lt;" | "&gt;&gt;") &lt;term&gt;}
 &lt;expr&gt;      =    &lt;term&gt; {("+" | "-") &lt;term&gt;}
 &lt;term&gt;      =    &lt;factor&gt; {("*" | "/" | "%") &lt;factor&gt;}
 &lt;factor&gt;    =    &lt;power&gt; {("^" | "**") &lt;power&gt;}
-&lt;power&gt;     =    {("-" | "+")} &lt;base&gt;
+&lt;power&gt;     =    {("-" | "+" | "~")} &lt;base&gt;
 &lt;base&gt;      =    &lt;constant&gt;
                | &lt;variable&gt;
                | &lt;function-0&gt; {"(" ")"}
                | &lt;function-1&gt; &lt;power&gt;
                | &lt;function-X&gt; "(" &lt;expr&gt; {"," &lt;expr&gt;} ")"
-               | "(" &lt;list&gt; ")"</code></pre>
+               | &lt;function-arg&gt; "(" [&lt;argument&gt; {"," &lt;argument&gt;}] ")"
+               | "(" &lt;list&gt; ")"
+&lt;argument&gt;  =    &lt;expr&gt; | &lt;string&gt;
+&lt;string&gt;    =    '"' {any character except '"'} '"'</code></pre>
+<p><code>&lt;function-arg&gt;</code> is a function bound to <code>te_arg_fun</code> or <code>te_arg_confun</code>, which accepts any number of string or numeric arguments. String literals are only valid there; using one anywhere else is a syntax error. (Refer to <a href="custom-extensions.html#string-arguments">Binding to Functions Accepting Strings</a>.)</p>
+<p>Because the parser is recursive, <code>&lt;base&gt;</code> nesting (parentheses and function application) is limited to 128 levels. Deeper nesting is a syntax error, rather than a possible stack overflow (refer to <a href="compile-time-options.html#te-max-depth"><code>TE_MAX_DEPTH</code></a>).</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list" style="display: none">

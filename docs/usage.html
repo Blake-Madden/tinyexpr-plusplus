@@ -334,6 +334,7 @@ div.csl-indent {
 </div>
 <p><code>te_variable</code>: A user-defined variable or function that can be embedded into a <code>te_parser</code>. (Refer to <a href="custom-extensions.html#custom-variables">custom variables</a>.)</p>
 <p><code>te_expr</code>: The base class for a compiled expression. Classes that derive from this can be bound to custom functions. In turn, this allows for connecting more complex, class-based objects to the parser. (Refer to <a href="custom-extensions.html#custom-classes">custom classes</a>.)</p>
+<p><code>te_arg</code>: A single argument to a function that accepts strings, being either a <code>te_type</code> or a <code>std::string_view</code>. Functions bound to <code>te_arg_fun</code> or <code>te_arg_confun</code> receive a <code>std::span&lt;const te_arg&gt;</code>, which allows any number of string or numeric arguments in any order. (Refer to <a href="custom-extensions.html#string-arguments">string arguments</a>.)</p>
 <p><code>te_parser::te_nan</code>: An invalid numeric value. This should be returned from user-defined functions to signal a failed calculation.</p>
 <p><code>te_parser::npos</code>: An invalid position. This is returned from <code>te_parser::get_last_error_position()</code> when no error occurred.</p>
 <p><code>te_usr_noop</code>: A no-op function. When passed to <code>te_parser::set_unknown_symbol_resolver()</code>, will disable unknown symbol resolution. (Refer to <a href="unknown-symbol-resolution.html" class="quarto-xref">ch.&nbsp;<span>9</span></a>.)</p>
